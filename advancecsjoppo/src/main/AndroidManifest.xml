@@ -1,0 +1,34 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.advance.supplier.csj">
+
+    <!-- 如果有视频相关的广告且使用textureView播放，请务必添加，否则黑屏 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
+
+    <application
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true">
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <provider
+            android:name="com.vkyb.kv.kvnepo.TTFileProvider"
+            android:authorities="${applicationId}.TTFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/adv_csj_file_paths" />
+        </provider>
+        <provider
+            android:name="com.vkyb.kv.kvnepo.multipro.TTMultiProvider"
+            android:authorities="${applicationId}.TTMultiProvider"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

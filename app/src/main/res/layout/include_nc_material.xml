@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- 原生广告的图片资源 -->
+    <ImageView
+        android:id="@+id/img_poster"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- 原生三小图 -->
+    <LinearLayout
+        android:id="@+id/native_3img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <ImageView
+            android:id="@+id/img_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY" />
+
+        <ImageView
+            android:id="@+id/img_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY" />
+
+        <ImageView
+            android:id="@+id/img_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY" />
+    </LinearLayout>
+</FrameLayout>

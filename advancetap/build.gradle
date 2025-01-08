@@ -1,0 +1,77 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.kezong.fat-aar'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+//maven依赖的项目名称
+def pomName = "advance-tap"
+def extVersionName = ""
+def libVersionName = "3.16.3.20"
+def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
+
+advanceVersionName = advanceVersionName + extVersionName
+
+def outputName = pomName + "_" + advanceVersionName + ".aar"
+
+
+android {
+    compileSdkVersion 32
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 32
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    println "advanceVersionName = " + advanceVersionName
+
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+configurations.embed.transitive = true
+
+dependencies {
+
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+
+    def libName = "TapAD_" + libVersionName
+    api fileTree(dir: 'libs', include: [libName + '.aar'])
+
+    compileOnly project(path: ':advancelib')
+    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+
+}
+
+
+android.libraryVariants.all { variant ->
+    variant.outputs.all {
+        outputFileName = outputName
+    }
+}

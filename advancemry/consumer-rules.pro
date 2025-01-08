@@ -1,0 +1,3 @@
+ -keep class com.advance.supplier.** {*;}
+ -keep class com.mercury.sdk.** {*;}
+ -keep class com.bayes.sdk.basic.** {*;}

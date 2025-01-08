@@ -1,0 +1,79 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.kezong.fat-aar'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+//maven依赖的项目名称
+def pomName = "advance-gdt"
+def extVersionName = ""
+def libVersionName = "4.603.1473"
+def advanceVersionName = "${rootProject.ext.advance_version}_4603"
+def advanceVersionCode = 1
+
+advanceVersionName = advanceVersionName + extVersionName
+
+def outputName = pomName + "_" + advanceVersionName + ".aar"
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 29
+        versionCode advanceVersionCode
+        versionName advanceVersionName
+
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+    println "advanceVersionName = " + advanceVersionName
+
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+// If the value is changed to true, the dependencies of the remote dependency will also be embedded in the final aar.
+// the default value of transitive is false
+configurations.embed.transitive = true
+
+dependencies {
+
+//    compileOnly 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+
+    def libName = "GDTSDK.unionNormal." + libVersionName
+    api fileTree(dir: 'libs', include: [libName + '.aar'])
+//    def version = '4.602.1472'
+//        api "com.qq.e.union:union:${version}"
+
+    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+
+    compileOnly project(path: ':advancelib')
+
+}
+
+android.libraryVariants.all { variant ->
+    variant.outputs.all {
+        outputFileName = outputName
+    }
+}
+

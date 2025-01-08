@@ -1,0 +1,187 @@
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.advance.advancesdkdemo"
+
+        minSdkVersion 17
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true    // true时，生成多个dex
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "x86", "x86_64", "arm64-v8a"
+        }
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('advanceDev.jks')
+            storePassword "123456"
+            keyAlias "key0"
+            keyPassword "123456"
+        }
+
+        release {
+            storeFile file('advanceDev.jks')
+            storePassword "123456"
+            keyAlias "key0"
+            keyPassword "123456"
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+
+    buildTypes {
+        debug {
+
+            buildConfigField "String", "BUILD_DATA", getBuildTime()
+
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            buildConfigField "String", "BUILD_DATA", getBuildTime()
+
+            minifyEnabled true
+            signingConfig signingConfigs.release
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+
+private static String getBuildTime() {
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("EEEE MM-dd HH:mm")
+//    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yy-MM月dd日-HH时mm分")
+    LocalDateTime now = LocalDateTime.now()
+    String dateTime = dtf.format(now)
+    return "\"${dateTime}\""
+}
+
+//dependencies {
+//    implementation 'com.android.support:appcompat-v7:28.0.0'
+//    implementation 'com.android.support.constraint:constraint-layout:2.0.1'
+//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2', {
+//        exclude group: 'com.android.support', module: 'support-annotations'
+//    }
+//    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+//}
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+dependencies {
+// debugImplementation because LeakCanary should only run in debug builds.
+//        debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+
+    //引入Advance SDK --------start--------
+//    compileOnly project(path: ':advancelib')
+
+    //必须，Advance聚合SDK核心引入，包含了mercury变现SDK。如果gradle引入异常，请参考根目录gradle配置（确保maven依赖在最前面）然后重试
+    implementation project(path: ':advancelib')
+    implementation project(path: ':advancemry')
+
+    //穿山甲、广点通、百度、快手SDK 引入 ---start ，包含了广告aar以及渠道处理逻辑
+    implementation project(path: ':advancegdt')
+    implementation project(path: ':advancecsj')
+//    implementation project(path: ':advancecsjoppo')
+    implementation project(path: ':advancebd')
+    implementation project(path: ':advanceks')
+
+    //注意：接入快手需要同时引入以下support库，请确保添加
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    //穿山甲、广点通、百度、快手SDK 引入 ---end
+
+    //(可选)tanx广告SDK -- start --
+    //tanx-adapter 引入
+    implementation project(path: ':advancetanx')
+
+    //tanx-sdk
+    def versionCode = "3.5.3"
+    implementation(group: 'com.tanx', name: 'TanxCoreSDK', version: versionCode) {
+        //去掉tanx内的第三方引用，避免产生冲突，APP接入时请注意此处配置
+        exclude group: 'com.github.bumptech.glide'
+        exclude group: 'com.squareup.okhttp3'
+        exclude group: 'com.alibaba'
+        exclude group: 'com.umeng.umsdk'
+    }
+    implementation(group: 'com.tanx', name: 'TanxUISDK', version: versionCode) {
+        //去掉tanx内的第三方引用，避免产生冲突，APP接入时请注意此处配置
+        exclude group: 'com.github.bumptech.glide'
+        exclude group: 'com.squareup.okhttp3'
+        exclude group: 'com.alibaba'
+        exclude group: 'com.umeng.umsdk'
+    }
+
+    //tanx广告SDK需要用到得公共库，如果版本不一致请一定要检查，确认广告执行正常
+    implementation 'com.alibaba:fastjson:1.1.72.android'
+    //使用高版本得glide 必须要进行自定义图片加载器，否则tanx会执行异常
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    //tanx广告SDK -- end --
+
+
+    //(可选)tap广告SDK -- start --
+    //taptap adapter引入，已包含taptap对应版本的aar文件
+    implementation project(path: ':advancetap')
+
+    //taptap sdk 需要用到的三方，注意查看APP自身是否有相关重复引入，避免产生冲突 --start
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.0.1'
+//    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    //建议使用此版本glide
+//    implementation "com.github.bumptech.glide:glide:4.9.0"
+
+//    implementation "com.android.support:appcompat-v7:28.0.0"
+    implementation "com.android.support:support-annotations:28.0.0"
+//    implementation "com.android.support:support-v4:28.0.0"
+//    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    //taptap sdk 需要用到的三方库 --end
+
+    //(可选)tap广告SDK -- end --
+
+
+    //引入Advance SDK --------end--------
+
+//
+//        以下部分为公共引用部分
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.6'
+
+    implementation "com.android.support:multidex:1.0.3"
+
+    implementation(name: 'circleimageview-2.2.0', ext: 'aar')
+    implementation 'com.github.pedrovgs:lynx:1.1.0' //显示logcat插件
+
+}

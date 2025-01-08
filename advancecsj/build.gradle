@@ -1,0 +1,90 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.kezong.fat-aar'
+
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+
+def pomName = "advance-csj"
+
+def libVersionName = "6415"
+def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
+
+def advanceVersionCode = 1
+
+def outputName = pomName + "_" + advanceVersionName + ".aar"
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode advanceVersionCode
+        versionName advanceVersionName
+
+        consumerProguardFiles 'consumer-rules.pro'
+
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "x86", "x86_64", "arm64-v8a"
+        }
+    }
+
+    buildTypes {
+//        debug {
+//            minifyEnabled false
+//        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+    println "advanceVersionName = " + advanceVersionName
+
+}
+
+android.libraryVariants.all { variant ->
+    variant.outputs.all {
+        outputFileName = outputName
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+// If the value is changed to true, the dependencies of the remote dependency will also be embedded in the final aar.
+// the default value of transitive is false
+configurations.embed.transitive = true
+
+dependencies {
+
+    compileOnly 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+
+    //离线aar包引入方式
+//    def name = "open_ad_sdk_${libVersionName}.aar"
+//    api fileTree(dir: 'libs', include: [name])
+//
+
+
+//    融合版本显上依赖方式
+    def version = '6.4.1.5'
+    api "com.pangle.cn:mediation-sdk:${version}"
+
+
+    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+
+    compileOnly project(path: ':advancelib')
+}

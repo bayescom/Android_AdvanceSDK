@@ -1,0 +1,128 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'com.kezong.fat-aar'
+
+
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+def pomName = "advance-tanx"
+
+def advanceVersionName = "${rootProject.ext.advance_version}_353"
+def advanceVersionCode = 1
+
+
+def outputName = pomName + "_" + advanceVersionName + ".aar"
+
+
+android {
+    compileSdkVersion 29
+//    resourcePrefix 'advtanx_'
+
+    dexOptions {
+        incremental true
+        jumboMode = true
+        preDexLibraries = false
+        javaMaxHeapSize "8g"
+    }
+    lintOptions {
+        abortOnError false
+        disable 'InvalidPackage'
+    }
+    defaultConfig {
+        minSdkVersion 20
+        targetSdkVersion 29
+        versionCode advanceVersionCode
+        versionName advanceVersionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+    packagingOptions {
+        pickFirst 'lib/arm64-v8a/libsgmiddletierso-5.5.53.so'
+        pickFirst 'lib/armeabi-v7a/libsgmiddletierso-5.5.53.so'
+
+        pickFirst 'lib/arm64-v8a/libsgmiddletier.so'
+        pickFirst 'lib/armeabi-v7a/libsgmiddletier.so'
+
+        pickFirst 'lib/arm64-v8a/libsgmain.so'
+        pickFirst 'lib/armeabi-v7a/libsgmain.so'
+
+        pickFirst 'lib/arm64-v8a/libsgmainso-5.5.51.so'
+        pickFirst 'lib/armeabi-v7a/libsgmainso-5.5.51.so'
+
+        pickFirst 'lib/arm64-v8a/libsgnocaptcha.so'
+        pickFirst 'lib/armeabi-v7a/libsgnocaptcha.so'
+        pickFirst 'lib/x86/libsgnocaptcha.so'
+
+        pickFirst 'lib/arm64-v8a/libsgsecuritybodyso-5.5.61.so'
+        pickFirst 'lib/armeabi-v7a/libsgsecuritybodyso-5.5.61.so'
+
+        pickFirst 'lib/arm64-v8a/libsgsecuritybody.so'
+        pickFirst 'lib/armeabi-v7a/libsgsecuritybody.so'
+
+        pickFirst 'lib/arm64-v8a/libxquic.so'
+        pickFirst 'lib/armeabi-v7a/libxquic.so'
+        pickFirst 'lib/arm64-v8a/libtnet-4.0.0.so'
+        pickFirst 'lib/armeabi-v7a/libtnet-4.0.0.so'
+
+    }
+
+    buildTypes {
+        debug {
+//            shrinkResources true
+        }
+        release {
+            minifyEnabled false
+//            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    println "advanceVersionName = " + advanceVersionName
+
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+android.libraryVariants.all { variant ->
+    variant.outputs.all {
+        outputFileName = outputName
+    }
+}
+configurations.embed.transitive = true
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    def versionCode = "3.5.3"
+    api(group: 'com.tanx', name: 'TanxCoreSDK', version: versionCode) {
+        exclude group: 'com.github.bumptech.glide'
+        exclude group: 'com.squareup.okhttp3'
+        exclude group: 'com.alibaba'
+        exclude group: 'com.umeng.umsdk'
+    }
+    api(group: 'com.tanx', name: 'TanxUISDK', version: versionCode) {
+        //去掉tanx内的第三方引用，避免产生冲突，APP接入时请注意此处配置
+        exclude group: 'com.github.bumptech.glide'
+        exclude group: 'com.squareup.okhttp3'
+        exclude group: 'com.alibaba'
+        exclude group: 'com.umeng.umsdk'
+    }
+
+    compileOnly project(path: ':advancelib')
+    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+}
+

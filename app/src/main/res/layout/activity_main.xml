@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="advance Demo"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+
+
+        <Button
+            android:id="@+id/banner_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:onClick="onBanner"
+            android:text="横幅" />
+
+        <Button
+            android:id="@+id/splash_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onSplash"
+            android:text="开屏" />
+
+
+        <Button
+            android:id="@+id/interstitial_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onInterstitial"
+            android:text="插屏" />
+
+
+        <Button
+            android:id="@+id/native_express_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onNativeExpress"
+            android:text="原生模板" />
+
+        <Button
+            android:id="@+id/native_express_recycler_view_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onNativeExpressRecyclerView"
+            android:text="原生模板RecyclerView" />
+
+        <Button
+            android:id="@+id/rewardvideo_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onRewardVideo"
+            android:text="激励视频" />
+
+
+        <Button
+            android:id="@+id/btn_rf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="renderFeed"
+            android:text="自渲染信息流" />
+
+
+        <Button
+            android:id="@+id/fullvideo_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onFullVideo"
+            android:text="全屏视频" />
+
+        <Button
+            android:id="@+id/btn_draw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="draw"
+            android:text="draw视频信息流" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="版本：" />
+    </LinearLayout>
+
+</ScrollView>

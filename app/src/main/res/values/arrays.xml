@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="sdk_platform">
+        <item>Mercury</item>
+        <item>穿山甲</item>
+        <item>广点通</item>
+        <item>百度</item>
+        <item>快手</item>
+        <item>tanx</item>
+        <item>taptap</item>
+    </string-array>
+</resources>

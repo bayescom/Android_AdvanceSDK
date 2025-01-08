@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/background"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <!--  开屏广告容器区域：-->
+        <FrameLayout
+            android:id="@+id/splash_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <!--  自定义跳过按钮 -->
+        <!--  按钮要保证可见，推荐一开始给透明背景，当广告load出来后再设置成想要的背景样式 -->
+        <TextView
+            android:id="@+id/skip_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="70dp"
+            android:layout_gravity="right"
+            android:layout_margin="15dp"
+            android:background="@color/trans"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:visibility="visible" />
+
+    </FrameLayout>
+
+
+</LinearLayout>

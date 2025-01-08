@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@color/black" />
+
+        <com.advance.core.srender.widget.AdvRFRootView
+            android:id="@+id/adv_root"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="25dp">
+
+                <include layout="@layout/include_nc_top_layout" />
+
+                <TextView
+                    android:id="@+id/tv_nc_ad_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="3dp"
+                    android:ellipsize="end"
+                    android:lineSpacingMultiplier="1"
+                    android:maxLines="2"
+                    android:singleLine="false"
+                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp" />
+
+
+                <FrameLayout
+                    android:id="@+id/custom_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <!-- 视频组件 -->
+                    <com.advance.core.srender.widget.AdvRFVideoView
+                        android:id="@+id/adv_video"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:scaleType="centerCrop" />
+
+                    <include layout="@layout/include_nc_material" />
+
+                    <com.advance.core.srender.widget.AdvRFLogoView
+                        android:id="@+id/adv_logo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|bottom" />
+                </FrameLayout>
+
+                <include layout="@layout/include_nc_creative_btn_layout" />
+
+                <include layout="@layout/include_nc_download_ele_layout" />
+
+            </LinearLayout>
+
+        </com.advance.core.srender.widget.AdvRFRootView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="@color/colorAccent" />
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

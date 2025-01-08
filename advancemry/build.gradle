@@ -1,0 +1,69 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.kezong.fat-aar'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+//2024-06-03 变更pom名称为 advance-core，同时捆绑advancelib内容，废弃原来得 advancelib发布任务
+def pomName = "advance-core"
+
+//定义mercury版本号
+def meryVersion = '4.4.0'
+def advanceVersionName = "${rootProject.ext.advance_version}_440"
+def advanceVersionCode = 1
+
+
+def outputName = pomName + "_" + advanceVersionName + ".aar"
+
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 29
+        versionCode advanceVersionCode
+        versionName advanceVersionName
+
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+    buildTypes {
+        debug {
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+    println "advanceVersionName = " + advanceVersionName
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+android.libraryVariants.all { variant ->
+    variant.outputs.all {
+        outputFileName = outputName
+    }
+}
+configurations.embed.transitive = true
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+//   同时绑定倍业SDK版本 和 聚合核心实现部分
+    compileOnly project(path: ':advancelib')
+    api "io.github.bayescom:mercury-sdk:${meryVersion}"
+
+}
+

@@ -1,0 +1,74 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'com.kezong.fat-aar'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+//maven依赖的项目名称
+def pomName = "advance-bd"
+def libVersionName = "9352"
+def extVersionName = ""
+def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
+
+advanceVersionName = advanceVersionName + extVersionName
+def outputName = pomName + "_" + advanceVersionName + ".aar"
+def advanceVersionCode = 1
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 29
+        versionCode advanceVersionCode
+        versionName advanceVersionName
+
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+    println "advanceVersionName = " + advanceVersionName
+
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+// If the value is changed to true, the dependencies of the remote dependency will also be embedded in the final aar.
+// the default value of transitive is false
+configurations.embed.transitive = true
+
+dependencies {
+
+    compileOnly 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    api fileTree(dir: 'libs', include: ["Baidu_MobAds_SDK_${libVersionName}.aar"])
+
+
+    compileOnly project(path: ':advancelib')
+    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+
+}
+
+android.libraryVariants.all { variant ->
+    variant.outputs.all {
+        outputFileName = outputName
+    }
+}
+
