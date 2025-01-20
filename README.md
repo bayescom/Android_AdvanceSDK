@@ -8,7 +8,7 @@
 
 2.异常上报地址：全局搜索`AdvanceConfig`类名，修改其中的`SDK_ERR_REPORT_URL` 和 `SDK_ERR_REPORT_URL_HTTPS`链接地址为自己的请求地址即可，也就是**Stella**项目的事件上报请求地址：http://yourdomain.com/sdkevent
 
-3.请求加密key：全局搜索`AdvanceSecurityCore`类名，修改其中的`sKey`成员变量为自己的key
+3.请求加密key：全局搜索`AdvanceSecurityCore`类名，修改其中的`sKey`成员变量为自己的key，key需要是16位字符串
 
 
 ## 项目结构说明
