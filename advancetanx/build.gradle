@@ -1,11 +1,5 @@
 apply plugin: 'com.android.library'
 
-apply plugin: 'com.kezong.fat-aar'
-
-
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
-
 def pomName = "advance-tanx"
 
 def advanceVersionName = "${rootProject.ext.advance_version}_353"
@@ -98,7 +92,6 @@ android.libraryVariants.all { variant ->
         outputFileName = outputName
     }
 }
-configurations.embed.transitive = true
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])

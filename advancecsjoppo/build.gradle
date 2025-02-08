@@ -1,8 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.kezong.fat-aar'
-
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
 
 
 def pomName = "advance-csj-oppo"
@@ -62,9 +58,6 @@ repositories {
     }
 }
 
-// If the value is changed to true, the dependencies of the remote dependency will also be embedded in the final aar.
-// the default value of transitive is false
-configurations.embed.transitive = true
 
 dependencies {
 

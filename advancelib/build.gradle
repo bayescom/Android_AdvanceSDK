@@ -1,7 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.kezong.fat-aar'
-//apply plugin: 'maven-publish'
-//apply plugin: 'signing'
 
 //maven依赖的项目名称
 def pomName = "advance-core"
