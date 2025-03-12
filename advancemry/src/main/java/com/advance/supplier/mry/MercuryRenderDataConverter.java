@@ -17,21 +17,21 @@ import java.util.List;
 public class MercuryRenderDataConverter implements AdvanceRFADData {
     NativeADData mMryData;
     SdkSupplier mSdkSupplier;
-    public static final String TAG = "[GdtRenderDataConverter] ";
+    public static final String TAG = "[MercuryRenderDataConverter] ";
 
     public MercuryRenderDataConverter(NativeADData mryData, SdkSupplier sdkSupplier) {
         try {
             this.mMryData = mryData;
             this.mSdkSupplier = sdkSupplier;
 
-            LogUtil.devDebug(TAG + "mGdtData  inf  print start ");
+            LogUtil.devDebug(TAG + "adData  inf  print start ");
             LogUtil.devDebug(TAG + getTitle());
             LogUtil.devDebug(TAG + getDesc());
             LogUtil.devDebug(TAG + getVideoImageUrl());
             LogUtil.devDebug(TAG + "isVideo = " + isVideo());
             LogUtil.devDebug(TAG + "isDownloadAD = " + isDownloadAD());
             LogUtil.devDebug(TAG + "getECPM = " + getECPM());
-            LogUtil.devDebug(TAG + "mGdtData  inf  print end");
+            LogUtil.devDebug(TAG + "adData  inf  print end");
         } catch (Throwable e) {
             e.printStackTrace();
         }

@@ -1,11 +1,10 @@
 apply plugin: 'com.android.library'
 
-//2024-06-03 变更pom名称为 advance-core，同时捆绑advancelib内容，废弃原来得 advancelib发布任务
 def pomName = "advance-core"
 
 //定义mercury版本号
-def meryVersion = '4.4.0'
-def advanceVersionName = "${rootProject.ext.advance_version}_440"
+def meryVersion = '4.4.2'
+def advanceVersionName = "${rootProject.ext.advance_version}_442"
 def advanceVersionCode = 1
 
 
@@ -57,7 +56,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-//   同时绑定倍业SDK版本 和 聚合核心实现部分
     compileOnly project(path: ':advancelib')
     api "io.github.bayescom:mercury-sdk:${meryVersion}"
 

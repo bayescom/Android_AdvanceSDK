@@ -41,7 +41,7 @@ public class KSUtil implements AdvanceSplashPlusManager.ZoomCall {
 
             SdkSupplier supplier = adapter.sdkSupplier;
             if (supplier == null) {
-                eMsg = tag + "initAD failed BaseParallelAdapter null";
+                eMsg = tag + "initAD failed supplier null";
 
                 LogUtil.e(eMsg);
                 if (initResult != null) {
@@ -92,7 +92,7 @@ public class KSUtil implements AdvanceSplashPlusManager.ZoomCall {
                 if (initResult != null) {
                     initResult.success();
                 }
-                AdvanceSetting.getInstance().hasCSJInit = true;
+                AdvanceSetting.getInstance().hasKSInit = true;
                 return;
             } else if (innerInitStatus == AdvanceKSManager.INIT_STATUS_FAILED) {
                 LogUtil.d(tag + "inner init failed");
@@ -126,7 +126,7 @@ public class KSUtil implements AdvanceSplashPlusManager.ZoomCall {
                                     if (initResult != null)
                                         initResult.success();
                                 }
-                                AdvanceSetting.getInstance().hasCSJInit = true;
+                                AdvanceSetting.getInstance().hasKSInit = true;
 
                                 if (byScheduleTimer != null) {
                                     byScheduleTimer.cancel();
@@ -144,7 +144,7 @@ public class KSUtil implements AdvanceSplashPlusManager.ZoomCall {
                                     if (initResult != null)
                                         initResult.success();
                                 }
-                                AdvanceSetting.getInstance().hasCSJInit = true;
+                                AdvanceSetting.getInstance().hasKSInit = true;
 
                                 if (byScheduleTimer != null) {
                                     byScheduleTimer.cancel();

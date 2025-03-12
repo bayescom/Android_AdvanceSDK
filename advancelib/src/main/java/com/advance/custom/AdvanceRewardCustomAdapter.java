@@ -28,4 +28,33 @@ public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapte
             e.printStackTrace();
         }
     }
+
+    public void handleClose(){
+        try {
+            if (null != setting) {
+                setting.adapterAdClose();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleComplete(){
+        try {
+            if (null != setting) {
+                setting.adapterVideoComplete();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void handleSkip(){
+        try {
+            if (null != setting) {
+                setting.adapterVideoSkipped();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
