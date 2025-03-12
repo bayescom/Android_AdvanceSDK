@@ -53,6 +53,7 @@ public class AdvanceConfig {
     public static final String SDK_ID_KS = "5";
     public static final String SDK_ID_TANX = "7";
     public static final String SDK_ID_TAP = "10";
+    public static final String SDK_ID_SIG = "11";
 
 
     static final String NOT_SUPPORT_SUPPLIER_TIPS = "不支持的SDK渠道，跳过该渠道加载。如需加载此渠道，请查看文档使用自定义渠道或者自定义广告来完成广告展示";

@@ -28,6 +28,7 @@ public class SupplierBridgeUtil {
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_KS, "ks.KSGlobalConfig"));
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_TANX, "tanx.TanxGlobalConfig"));
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_TAP, "tap.TapGlobalConfig"));
+            supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_SIG, "sigmob.SigmobGlobalConfig"));
 
             AdvanceConfig.getInstance().availableAdapterConfigMap = new HashMap<>();
             for (AdvanceSupConfigModel supConfigModel : supportSupList) {

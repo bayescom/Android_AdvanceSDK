@@ -311,6 +311,7 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
             initAdapter(AdvanceConfig.SDK_ID_KS, "ks.KSSplashAdapter");
             initAdapter(AdvanceConfig.SDK_ID_TANX, "tanx.TanxSplashAdapter");
             initAdapter(AdvanceConfig.SDK_ID_TAP, "tap.TapSplashAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_SIG, "sigmob.SigmobSplashAdapter");
         } catch (Throwable e) {
 //            e.printStackTrace();
         }

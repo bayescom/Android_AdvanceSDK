@@ -210,6 +210,7 @@ public class AdvanceNetManger {
                     extJsonObj.putOpt("ks_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_KS));
                     extJsonObj.putOpt("tanx_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TANX));
                     extJsonObj.putOpt("tap_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TAP));
+                    extJsonObj.putOpt("sig_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_SIG));
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }

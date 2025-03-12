@@ -1,7 +1,6 @@
 package com.advance.supplier.sigmob;
 
 import android.app.Activity;
-import android.view.ViewGroup;
 
 import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
