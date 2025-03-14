@@ -109,6 +109,7 @@ dependencies {
 //    implementation project(path: ':advancecsjoppo')
     implementation project(path: ':advancebd')
     implementation project(path: ':advanceks')
+    implementation project(path: ':advancesigmob')
 
     //注意：接入快手需要同时引入以下support库，请确保添加
     implementation 'com.android.support:appcompat-v7:28.0.0'

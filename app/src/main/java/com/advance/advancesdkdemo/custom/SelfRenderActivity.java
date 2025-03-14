@@ -116,9 +116,10 @@ public class SelfRenderActivity extends Activity {
         String csjID = "10003120";
         String ylhID = "10003121";
         String mryID = "10003122";
+        String sigmobID = "10011941";
 
         //广告初始化，传入聚合广告位id
-        advanceRenderFeed = new AdvanceRenderFeed(this, ylhID);
+        advanceRenderFeed = new AdvanceRenderFeed(this, sigmobID);
         //设置期望图片大小，单位px，主要是设置给穿山甲使用，不设置将使用默认值 640*320
         advanceRenderFeed.setCsjImgSize(1080, 720);
         //设置广告请求回调

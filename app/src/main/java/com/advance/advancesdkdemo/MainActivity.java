@@ -22,6 +22,7 @@ import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.kwad.sdk.api.KsAdSDK;
 import com.mercury.sdk.core.config.MercuryAD;
 import com.qq.e.comm.managers.status.SDKStatus;
+import com.sigmob.windad.WindAds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                         "百度 SDK 版本号： " + bdV + "\n" +
                         "快手 SDK 版本号： " + ksV + "\n" +
                         "tanx SDK 版本号：" + SdkConstant.getSdkVersion() + "\n" +
+                        "Sigmob SDK 版本号：" + WindAds.getVersion() + "\n" +
                         "TapTap SDK 版本号： " + com.tapsdk.tapad.BuildConfig.VERSION_NAME + "\n"
         );
 

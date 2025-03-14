@@ -14,8 +14,8 @@ public abstract class AdvanceSplashCustomAdapter extends AdvanceBaseCustomAdapte
     public TextView skipView;
     public String skipText = "跳过 %d";
 
-    public AdvanceSplashCustomAdapter(Activity activity, SplashSetting splashSetting) {
-        super(new SoftReference<>(activity), splashSetting);
+    public AdvanceSplashCustomAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting splashSetting) {
+        super(softReferenceActivity, splashSetting);
         this.splashSetting = splashSetting;
 
         try {

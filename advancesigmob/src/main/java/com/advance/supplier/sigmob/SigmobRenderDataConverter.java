@@ -29,6 +29,7 @@ public class SigmobRenderDataConverter implements AdvanceRFADData {
             LogUtil.devDebug(TAG + "isVideo = " + isVideo());
             LogUtil.devDebug(TAG + "isDownloadAD = " + isDownloadAD());
             LogUtil.devDebug(TAG + "getECPM = " + getECPM());
+            LogUtil.devDebug(TAG + "imgurl = " + getImgList().get(0));
             LogUtil.devDebug(TAG + "adData  inf  print end");
         } catch (Exception e) {
             e.printStackTrace();

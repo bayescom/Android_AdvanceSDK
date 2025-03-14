@@ -2,8 +2,8 @@ package com.advance.supplier.sigmob;
 
 import android.app.Activity;
 
+import com.advance.BaseSplashAdapter;
 import com.advance.SplashSetting;
-import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
@@ -13,14 +13,17 @@ import com.sigmob.windad.Splash.WindSplashAdRequest;
 import com.sigmob.windad.WindAdError;
 import com.sigmob.windad.WindAds;
 
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
+public class SigmobSplashAdapter extends BaseSplashAdapter {
     private WindSplashAD splashAd;
 
-    public SigmobSplashAdapter(Activity activity, SplashSetting splashSetting) {
-        super(activity, splashSetting);
+    private boolean isSkip = false;
+
+    public SigmobSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting setting) {
+        super(softReferenceActivity, setting);
     }
 
     @Override
@@ -97,9 +100,12 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
                 @Override
                 public void onSplashAdClose(String placementId) {
                     LogUtil.simple(TAG + "onSplashAdClose");
-
-                    if (splashSetting != null) {
-                        splashSetting.adapterDidTimeOver();
+                    if (setting != null) {
+                        if (isSkip) {
+                            setting.adapterDidSkip();
+                        } else {
+                            setting.adapterDidTimeOver();
+                        }
                     }
                 }
 
@@ -107,9 +113,7 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
                 public void onSplashAdSkip(String s) {
                     LogUtil.simple(TAG + "onSplashAdSkip");
 
-                    if (splashSetting != null) {
-                        splashSetting.adapterDidSkip();
-                    }
+                    isSkip = true;
                 }
             });
 
@@ -142,7 +146,7 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
     public void show() {
         try {
             if (splashAd != null) {
-                splashAd.show(splashSetting.getAdContainer());
+                splashAd.show(setting.getAdContainer());
             }
         } catch (Exception e) {
             e.printStackTrace();

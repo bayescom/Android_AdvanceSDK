@@ -2,6 +2,7 @@ package com.advance.core.srender;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.advance.core.srender.widget.AdvRFLogoView;
 import com.advance.core.srender.widget.AdvRFRootView;
@@ -20,10 +21,12 @@ public class AdvanceRFMaterialProvider extends BYBaseModel {
     public AdvRFLogoView logoView;
     //点击view，必需
     public ArrayList<View> clickViews = new ArrayList<>();
-    //创意按钮view，可选，仅穿山甲会用到
+    //创意按钮view，可选，
     public ArrayList<View> creativeViews = new ArrayList<>();
     //    关闭按钮view，不同adn可能广告回调关闭时机不同，穿山甲有dislike逻辑
     public View disLikeView;
+    //主图片列表，仅sigmob会用到，且会自己执行渲染逻辑 (目前测试即使不给赋值，依然可以正常开发者自己调用url渲染广告，并且正常曝光)
+    public ArrayList<ImageView> imageViews = new ArrayList<>();
     //    下载监听器，仅穿山甲支持
     public AdvanceRFDownloadListener downloadListener;
     //    视频播放监听器
