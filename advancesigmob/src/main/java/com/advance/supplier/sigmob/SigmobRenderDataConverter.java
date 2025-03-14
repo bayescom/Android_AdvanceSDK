@@ -5,6 +5,9 @@ import com.advance.core.srender.AdvanceRFADData;
 import com.advance.core.srender.AdvanceRFDownloadElement;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
+import com.bayes.sdk.basic.util.BYLog;
+import com.bayes.sdk.basic.util.BYStringUtil;
 import com.sigmob.sdk.base.models.SigImage;
 import com.sigmob.windad.natives.WindNativeAdData;
 
@@ -28,6 +31,15 @@ public class SigmobRenderDataConverter implements AdvanceRFADData {
             LogUtil.devDebug(TAG + getVideoImageUrl());
             LogUtil.devDebug(TAG + "isVideo = " + isVideo());
             LogUtil.devDebug(TAG + "isDownloadAD = " + isDownloadAD());
+            LogUtil.devDebug(TAG + "getECPM = " + getECPM());
+            String permissText = "";
+            String permissUrl = "";
+            if (mRenderAD != null && mRenderAD.getAdAppInfo() != null) {
+                permissText = mRenderAD.getAdAppInfo().getPermissions();
+                permissUrl = mRenderAD.getAdAppInfo().getPermissionsUrl();
+            }
+            LogUtil.devDebug(TAG + "permissText = " + permissText);
+            LogUtil.devDebug(TAG + "permissUrl = " + permissUrl);
             LogUtil.devDebug(TAG + "getECPM = " + getECPM());
             LogUtil.devDebug(TAG + "imgurl = " + getImgList().get(0));
             LogUtil.devDebug(TAG + "adData  inf  print end");
@@ -139,6 +151,89 @@ public class SigmobRenderDataConverter implements AdvanceRFADData {
 
     @Override
     public AdvanceRFDownloadElement getDownloadElement() {
-        return null;
+
+        if (mRenderAD == null || mRenderAD.getAdAppInfo() == null) {
+            return null;
+        }
+        return new SigmobDownloadElement();
     }
+
+
+    class SigmobDownloadElement implements AdvanceRFDownloadElement {
+
+        @Override
+        public String getAppName() {
+            return mRenderAD.getAdAppInfo().getAppName();
+        }
+
+        @Override
+        public String getAppVersion() {
+            return mRenderAD.getAdAppInfo().getVersionName();
+        }
+
+        @Override
+        public String getAppDeveloper() {
+            return mRenderAD.getAdAppInfo().getAuthorName();
+        }
+
+        @Override
+        public String getPrivacyUrl() {
+            return mRenderAD.getAdAppInfo().getPrivacyAgreementUrl();
+        }
+
+        @Override
+        public String getPermissionUrl() {
+            return mRenderAD.getAdAppInfo().getPermissionsUrl();
+        }
+
+        @Override
+        public void getPermissionList(BYAbsCallBack<ArrayList<AdvDownloadPermissionModel>> callBack) {
+
+            try {
+                String permissText = mRenderAD.getAdAppInfo().getPermissions();
+
+                if (permissText != null && permissText.length() > 1) {
+                    // 去除首尾方括号
+                    String content = permissText.substring(1, permissText.length() - 1);
+
+                    // 分割字符串并处理空格和引号
+                    ArrayList<AdvDownloadPermissionModel> resultList = new ArrayList<>();
+                    for (String item : content.split(",\\s*")) {  // 用逗号分割，允许逗号后有空格的格式
+                        String cleanedItem = item.trim().replaceAll("^\"|\"$", "");
+
+                        if (BYStringUtil.isNotEmpty(cleanedItem)) {
+                            AdvDownloadPermissionModel model = new AdvDownloadPermissionModel();
+                            model.permTitle = cleanedItem;
+                            resultList.add(model);
+                        }
+                    }
+                    // 验证输出
+                    BYLog.dev(TAG + resultList);
+                    if (callBack != null) {
+                        callBack.invoke(resultList);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public String getFunctionDescUrl() {
+            return mRenderAD.getAdAppInfo().getDescriptionUrl();
+        }
+
+        @Override
+        public String getFunctionDescText() {
+            return mRenderAD.getAdAppInfo().getDescription();
+        }
+
+        @Override
+        public long getPkgSize() {
+            return mRenderAD.getAdAppInfo().getAppSize();
+        }
+    }
+
+
 }

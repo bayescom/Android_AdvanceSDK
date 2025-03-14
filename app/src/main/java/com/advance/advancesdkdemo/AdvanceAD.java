@@ -137,7 +137,8 @@ public class AdvanceAD {
 
             @Override
             public String getDevOaid() {
-                return super.getDevOaid();
+                return "ad1sfnlkanfa1233";
+//                return super.getDevOaid();
             }
 
             @Override
