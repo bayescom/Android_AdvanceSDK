@@ -188,6 +188,7 @@ public class AdvanceAD {
             @Override
             public void onAdLoaded() {
 
+                advanceSplash.show();
                 logAndToast(mActivity, "广告加载成功");
             }
 
@@ -223,7 +224,8 @@ public class AdvanceAD {
 
         });
         //必须：请求广告
-        advanceSplash.loadStrategy();
+        advanceSplash.loadOnly();
+
     }
 
 
