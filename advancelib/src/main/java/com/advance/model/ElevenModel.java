@@ -10,6 +10,7 @@ public class ElevenModel implements Serializable {
     public SupplierSettingModel setting;
     public ArrayList<SdkSupplier> suppliers;
     public GMParams gmParams;
+    public ServerRewardModel serverReward;
 
     public String httpResult="";
 

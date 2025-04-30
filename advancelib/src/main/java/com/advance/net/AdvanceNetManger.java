@@ -15,6 +15,7 @@ import com.advance.model.AdvanceReqModel;
 import com.advance.model.ElevenModel;
 import com.advance.model.GMParams;
 import com.advance.model.SdkSupplier;
+import com.advance.model.ServerRewardModel;
 import com.advance.model.SupplierSettingModel;
 import com.advance.utils.AdvanceSecurityCore;
 import com.advance.utils.LogUtil;
@@ -26,6 +27,7 @@ import com.bayes.sdk.basic.net.BYReqCallBack;
 import com.bayes.sdk.basic.net.BYReqModel;
 import com.bayes.sdk.basic.util.BYCacheUtil;
 import com.bayes.sdk.basic.util.BYSPUtil;
+import com.bayes.sdk.basic.util.BYSecurityCore;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 
@@ -210,7 +212,8 @@ public class AdvanceNetManger {
                     extJsonObj.putOpt("ks_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_KS));
                     extJsonObj.putOpt("tanx_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TANX));
                     extJsonObj.putOpt("tap_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TAP));
-                    extJsonObj.putOpt("sig_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_SIG));
+//                    extJsonObj.putOpt("oppo_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_OPPO));
+                    //todo 如何增加自定义渠道方式得版本号采集
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -295,6 +298,21 @@ public class AdvanceNetManger {
                 }
 
 
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
+            try {
+                JSONObject reward = jsonObject.optJSONObject("server_reward");
+                if (reward != null) {
+                    ServerRewardModel serverReward = new ServerRewardModel();
+
+                    serverReward.url = reward.optString("url");
+                    serverReward.rewardCount = reward.optInt("count");
+                    serverReward.rewardName = reward.optString("name");
+
+                    elevenModel.serverReward = serverReward;
+                }
             } catch (Throwable e) {
                 e.printStackTrace();
             }

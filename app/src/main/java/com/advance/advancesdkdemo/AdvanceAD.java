@@ -348,19 +348,26 @@ public class AdvanceAD {
 //        TanxGlobalConfig.setMediaUID("你的mediaUID");
 
         //初始化，注意需要时再初始化，不要复用。
-        final AdvanceRewardVideo advanceRewardVideo = new AdvanceRewardVideo(mActivity, id);
+        final AdvanceRewardVideo advanceRewardVideo = new AdvanceRewardVideo(id);
         baseAD = advanceRewardVideo;
+
+        //服务端验证相关信息填写---start
+        advanceRewardVideo.setUserId("用户唯一标识，服务端验证必须");
+        advanceRewardVideo.setRewardName("激励名称，非必填，透传给广告SDK、app服务器使用");
+        advanceRewardVideo.setRewardCount(1); //激励数量，非必填，透传给广告SDK、app服务器使用
+        advanceRewardVideo.setExtraInfo("补充信息，服务端验证时，透传给app服务端");
+        //服务端验证相关信息填写---end
+
         //设置通用事件监听器
         advanceRewardVideo.setAdListener(new AdvanceRewardVideoListener() {
             @Override
             public void onAdLoaded(AdvanceRewardVideoItem advanceRewardVideoItem) {
                 logAndToast(mActivity, "广告加载成功");
-
                 // 如果有业务需求，可以提前加载广告，在需要的时候调用show进行展示
                 // 为了方便理解，这里在收到广告后直接调用广告展示，有可能会出现一段时间的缓冲状态。
-                if (baseAD != null) {
+                if (advanceRewardVideo != null) {
                     //展示广告
-                    baseAD.show();
+                    advanceRewardVideo.show(mActivity);
                 }
             }
 

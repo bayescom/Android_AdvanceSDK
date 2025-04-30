@@ -2,6 +2,7 @@ package com.advance.advancesdkdemo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.FrameLayout;
 
 public class BannerActivity extends AppCompatActivity {
@@ -20,4 +21,9 @@ public class BannerActivity extends AppCompatActivity {
     }
 
 
+    public void loadBanner(View view) {
+        //初始化并加载banner广告
+        ad = new AdvanceAD(this);
+        ad.loadBanner(Constants.TestIds.bannerAdspotId, rl);
+    }
 }

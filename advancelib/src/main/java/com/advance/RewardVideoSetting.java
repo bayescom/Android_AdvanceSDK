@@ -45,4 +45,8 @@ public interface RewardVideoSetting extends BaseSetting {
     String getExtraInfo();
 
     Activity getShowActivity();
+
+    String getRewardName();
+
+    int getRewardCount();
 }

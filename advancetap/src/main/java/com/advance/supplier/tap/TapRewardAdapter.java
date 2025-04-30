@@ -9,6 +9,7 @@ import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
+import com.bayes.sdk.basic.util.BYStringUtil;
 import com.tapsdk.tapad.AdRequest;
 import com.tapsdk.tapad.TapAdNative;
 import com.tapsdk.tapad.TapRewardVideoAd;
@@ -180,8 +181,15 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
             tapAdNative = TapUtil.getTapADManger(ctx);
 
             int spaceId = TapUtil.getPlaceId(getPosID());
+            String userID = AdvanceTapManger.getInstance().customTapUserId;
+            if (BYStringUtil.isEmpty(userID)) {
+                userID = setting.getUserId();
+            }
             AdRequest request = new AdRequest.Builder().withSpaceId(spaceId)
-                    .withUserId(AdvanceTapManger.getInstance().customTapUserId)
+                    .withUserId(userID)
+                    .withRewordAmount(setting.getRewardCount())
+                    .withRewordName(setting.getRewardName())
+                    .withExtra1(setting.getExtraInfo())
                     .build();
 
             tapAdNative.loadRewardVideoAd(request, new TapAdNative.RewardVideoAdListener() {

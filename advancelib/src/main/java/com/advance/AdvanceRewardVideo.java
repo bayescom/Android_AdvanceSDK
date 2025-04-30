@@ -5,13 +5,21 @@ import android.text.TextUtils;
 
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.itf.AdvanceRewardExtInterface;
+import com.advance.model.ServerRewardModel;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.RewardGMCallBack;
 import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceLoader;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.net.BYNetRequest;
+import com.bayes.sdk.basic.net.BYReqCallBack;
+import com.bayes.sdk.basic.net.BYReqModel;
+import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYThreadUtil;
+import com.mercury.sdk.util.MercuryConstants;
+
+import org.json.JSONObject;
 
 public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideoSetting, AdvanceRewardExtInterface {
     private AdvanceRewardVideoListener listener;
@@ -25,6 +33,8 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
 
     private String userId = "";//全渠道统一的用户id。用来服务端校验透传
     private String extraInfo = "";//全渠道统一的自定义参数。用来服务端校验透传
+    private String rewardName = "";
+    private int rewardCount = 0;
 
     @Deprecated
     private boolean isGdtVO = false;
@@ -222,7 +232,8 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
             initAdapter(AdvanceConfig.SDK_ID_KS, "ks.KSRewardAdapter");
             initAdapter(AdvanceConfig.SDK_ID_TANX, "tanx.TanxRewardAdapter");
             initAdapter(AdvanceConfig.SDK_ID_TAP, "tap.TapRewardAdapter");
-            initAdapter(AdvanceConfig.SDK_ID_SIG, "sigmob.SigmobRewardAdapter");
+//            initAdapter(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoRewardAdapter");
+
 
         } catch (Throwable e) {
             e.printStackTrace();
@@ -343,23 +354,137 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
     }
 
     public void adapterAdReward() {
-        BYThreadUtil.switchMainThread(new BYBaseCallBack() {
-            @Override
-            public void call() {
-                if (null != listener) {
-                    listener.onAdReward();
+        try {
+            LogUtil.simple(TAG + " 收到adn激励回调");
+
+            if (isAdvanceServerReward()) {
+                //请求服务器链接，获取激励验证结果。仅当验证通过才回调onAdReward，失败返回时通过onRewardServerInf回调出去
+                LogUtil.simple(TAG + "  准备发起Advance服务端激励验证");
+                final RewardServerCallBackInf callBackInf = new RewardServerCallBackInf();
+                ServerRewardModel serverReward = mElevenModel.serverReward;
+                if (serverReward != null) {
+                    BYReqModel reqModel = new BYReqModel();
+                    reqModel.reqUrl = serverReward.url;
+                    reqModel.timeoutMs = 5000;
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.putOpt("timestamp", System.currentTimeMillis());
+                        jsonObject.putOpt("user_id", userId);
+                        jsonObject.putOpt("reward_amount", getRewardCount());
+                        jsonObject.putOpt("reward_name", getRewardName());
+                        jsonObject.putOpt("extra", extraInfo);
+
+                        jsonObject.putOpt("trans_id", getAdvanceId());
+                        jsonObject.putOpt("placement_id", advanceAdspotId);
+
+                        SdkSupplier currentSupplier = getCurrentSupplier();
+                        if (currentSupplier != null) {
+                            jsonObject.putOpt("adn_channel_id", currentSupplier.id);
+                            jsonObject.putOpt("adn_adspot_id", currentSupplier.adspotid);
+                            callBackInf.supId = currentSupplier.id;
+                        }
+
+                        callBackInf.rewardAmount = getRewardCount();
+                        callBackInf.rewardName = getRewardName();
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                    reqModel.reqBody = jsonObject;
+                    BYNetRequest.post(reqModel, new BYReqCallBack() {
+                        @Override
+                        public void onSuccess(String ctx) {
+                            try {
+                                JSONObject result = new JSONObject(ctx);
+                                int code = result.optInt("code");
+                                String msg = result.optString("msg");
+
+                                if (code == 1) {
+                                    callBackInf.rewardVerify = true;
+                                } else {
+                                    callBackInf.rewardVerify = false;
+                                    callBackInf.errorCode = code;
+                                    callBackInf.errMsg = msg;
+                                }
+                                //回调开发者
+                                BYThreadUtil.switchMainThread(new BYBaseCallBack() {
+                                    @Override
+                                    public void call() {
+                                        if (null != listener) {
+                                            listener.onRewardServerInf(callBackInf);
+                                        }
+                                    }
+                                });
+
+                            } catch (Throwable e) {
+                                e.printStackTrace();
+                                callBackInf.rewardVerify = false;
+                                callBackInf.errorCode = AdvanceError.ERROR_REWARD_SERVER_VERIFY_JSON_DECODE_FAILED;
+                                callBackInf.errMsg = "服务端验证激励奖励，json结果解析失败";
+                                //回调开发者
+                                BYThreadUtil.switchMainThread(new BYBaseCallBack() {
+                                    @Override
+                                    public void call() {
+                                        if (null != listener) {
+                                            listener.onRewardServerInf(callBackInf);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailed(int code, String reason) {
+                            callBackInf.rewardVerify = false;
+                            callBackInf.errorCode = code;
+                            callBackInf.errMsg = "激励奖励请求服务端验证失败，reason：" + reason;
+                            //回调开发者
+                            BYThreadUtil.switchMainThread(new BYBaseCallBack() {
+                                @Override
+                                public void call() {
+                                    if (null != listener) {
+                                        listener.onRewardServerInf(callBackInf);
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                } else {
+                    callBackInf.errorCode = AdvanceError.ERROR_REWARD_SERVER_VERIFY_EMPTY_SDK;
+                    callBackInf.errMsg = "未获取到当前广告数据，无法执行服务端验证流程";
+                    BYThreadUtil.switchMainThread(new BYBaseCallBack() {
+                        @Override
+                        public void call() {
+                            if (null != listener) {
+                                listener.onRewardServerInf(callBackInf);
+                            }
+                        }
+                    });
                 }
-                if (rewardGMCallBack != null) {
-                    rewardGMCallBack.onAdReward();
-                }
+            } else {
+                BYThreadUtil.switchMainThread(new BYBaseCallBack() {
+                    @Override
+                    public void call() {
+                        if (null != listener) {
+                            listener.onAdReward();
+                        }
+                        if (rewardGMCallBack != null) {
+                            rewardGMCallBack.onAdReward();
+                        }
+                    }
+                });
+
             }
-        });
-
-
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void postRewardServerInf(final RewardServerCallBackInf inf) {
+        if (isAdvanceServerReward()) {
+            return;
+        }
         BYThreadUtil.switchMainThread(new BYBaseCallBack() {
             @Override
             public void call() {
@@ -369,6 +494,19 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
             }
         });
 
+    }
+
+    //是否为聚合SDK端进行的服务器激励验证
+    private boolean isAdvanceServerReward() {
+        boolean isServerReward = false;
+        try {
+            if (mElevenModel != null && mElevenModel.serverReward != null) {
+                isServerReward = BYStringUtil.isNotEmpty(mElevenModel.serverReward.url);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isServerReward;
     }
 
 
@@ -386,5 +524,41 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
 
     public void setExtraInfo(String extraInfo) {
         this.extraInfo = extraInfo;
+    }
+
+    public void setRewardName(String name) {
+        rewardName = name;
+    }
+
+    public void setRewardCount(int count) {
+        rewardCount = count;
+    }
+
+    //    优先取用户配置的有效值
+    public String getRewardName() {
+        try {
+            if (BYStringUtil.isNotEmpty(rewardName)) {
+                return rewardName;
+            } else {
+                return mElevenModel.serverReward.rewardName;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    //    优先取用户配置的有效值
+    public int getRewardCount() {
+        try {
+            if (rewardCount > 0) {
+                return rewardCount;
+            } else {
+                return mElevenModel.serverReward.rewardCount;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

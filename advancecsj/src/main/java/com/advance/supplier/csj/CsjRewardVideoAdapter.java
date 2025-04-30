@@ -248,6 +248,8 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
                     //必传参数，表来标识应用侧唯一用户；若非服务器回调模式或不需sdk透传
                     //可设置为空字符串
                     .setUserID(advanceRewardVideo.getUserId())
+                    .setRewardAmount(advanceRewardVideo.getRewardCount())
+                    .setRewardName(advanceRewardVideo.getRewardName())
                     .setOrientation(advanceRewardVideo.getOrientation())  //设置期望视频播放的方向，为TTAdConstant.HORIZONTAL或TTAdConstant.VERTICAL
                     .setMediaExtra(advanceRewardVideo.getExtraInfo()) //用户透传的信息，可不传
 //                    .setDownloadType(AdvanceSetting.getInstance().csj_downloadType)
@@ -262,6 +264,8 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
                     //必传参数，表来标识应用侧唯一用户；若非服务器回调模式或不需sdk透传
                     //可设置为空字符串
                     .setUserID(advanceRewardVideo.getUserId())
+                    .setRewardAmount(advanceRewardVideo.getRewardCount())
+                    .setRewardName(advanceRewardVideo.getRewardName())
                     .setOrientation(advanceRewardVideo.getOrientation())  //设置期望视频播放的方向，为TTAdConstant.HORIZONTAL或TTAdConstant.VERTICAL
                     .setMediaExtra(advanceRewardVideo.getExtraInfo()) //用户透传的信息，可不传
 //                    .setDownloadType(AdvanceSetting.getInstance().csj_downloadType)

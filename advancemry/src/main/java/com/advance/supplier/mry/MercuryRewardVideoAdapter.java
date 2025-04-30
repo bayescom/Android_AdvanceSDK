@@ -8,6 +8,7 @@ import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.mercury.sdk.core.rewardvideo.MercuryRewardOptions;
 import com.mercury.sdk.core.rewardvideo.MercuryRewardResult;
 import com.mercury.sdk.core.rewardvideo.RewardVideoAD;
 import com.mercury.sdk.core.rewardvideo.RewardVideoADListener;
@@ -172,6 +173,13 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
     protected void paraLoadAd() {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
         rewardVideoAD = new RewardVideoAD(getRealContext(), sdkSupplier.adspotid, this);
+        // (可选) 激励相关参数配置
+        rewardVideoAD.setRewardOptions(new MercuryRewardOptions.Builder()
+                .setUserID(advanceRewardVideo.getUserId()) //用户唯一id，服务端验证时必传
+                .setRewardName(advanceRewardVideo.getRewardName()) // 发放奖励名称
+                .setRewardAmount(advanceRewardVideo.getRewardCount()) // 发放奖励数量
+                .setExtCustomInf(advanceRewardVideo.getExtraInfo()) // 额外自定义信息
+                .build());
         MercuryRewardVideoAdItem mercuryRewardVideoAdItem = new MercuryRewardVideoAdItem(this, rewardVideoAD);
         mercuryRewardVideoAdItem.loadAD();
         rewardVideoItem = mercuryRewardVideoAdItem;
@@ -200,6 +208,9 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
 
     @Override
     public boolean isValid() {
-        return rewardVideoAD != null;
+        if (rewardVideoAD == null) {
+            return false;
+        }
+        return rewardVideoAD.isValid();
     }
 }

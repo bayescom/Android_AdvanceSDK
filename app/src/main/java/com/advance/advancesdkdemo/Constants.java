@@ -15,7 +15,8 @@ public class Constants {
         public static final String interstitialAdspotId = "10011942"; //插屏-Sigmob
         public static final String nativeExpressAdspotId = "10007794"; //原生模板信息流
 //        public static final String rewardAdspotId = "10007797"; //激励视频
-        public static final String rewardAdspotId = "10011943"; //激励视频-Sigmob
+//        public static final String rewardAdspotId = "10011943"; //激励视频-Sigmob
+        public static final String rewardAdspotId = "10003101"; //激励视频-优量汇测试
         public static final String fullScreenVideoAdspotId = "10007825"; //全屏视频
 
         public static final String drawAdspotId = "10005127"; //draw信息流 -快手

@@ -188,6 +188,7 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
                 .pid(sdkSupplier.adspotid)
                 .setMediaUid(AdvanceTanxSetting.getInstance().mediaUID)
                 .setRewardParam(AdvanceTanxSetting.getInstance().rewardParam)
+                .setUserId(setting.getUserId())
                 .build();
         int timeout = sdkSupplier.timeout <= 0 ? 5000 : sdkSupplier.timeout;
 

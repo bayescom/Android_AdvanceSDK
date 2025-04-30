@@ -3,8 +3,8 @@ apply plugin: 'com.android.library'
 def pomName = "advance-core"
 
 //定义mercury版本号
-def meryVersion = '4.4.3'
-def advanceVersionName = "${rootProject.ext.advance_version}_443"
+def meryVersion = '4.5.0'
+def advanceVersionName = "${rootProject.ext.advance_version}_450"
 def advanceVersionCode = 1
 
 
