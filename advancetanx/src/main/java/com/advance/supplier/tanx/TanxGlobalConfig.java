@@ -1,6 +1,6 @@
 package com.advance.supplier.tanx;
 
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.itf.AdvanceSupplierBridge;

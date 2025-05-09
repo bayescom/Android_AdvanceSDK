@@ -1,6 +1,6 @@
 package com.advance.core.model;
 
-import android.support.annotation.Keep;
+import androidx.annotation.Keep;
 
 //对外暴露的广告渠道信息
 @Keep

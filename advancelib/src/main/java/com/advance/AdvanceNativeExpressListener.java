@@ -1,6 +1,6 @@
 package com.advance;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.View;
 
 import java.util.List;

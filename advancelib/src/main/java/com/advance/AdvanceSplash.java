@@ -2,7 +2,7 @@ package com.advance;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.LayoutRes;
+import androidx.annotation.LayoutRes;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;

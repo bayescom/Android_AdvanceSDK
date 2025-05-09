@@ -1,11 +1,9 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.View;
 
-import com.advance.AdvanceNativeExpressAdItem;
-import com.advance.BaseParallelAdapter;
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;

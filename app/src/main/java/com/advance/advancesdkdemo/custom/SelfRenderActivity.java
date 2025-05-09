@@ -5,8 +5,8 @@ import static com.advance.advancesdkdemo.util.DemoUtil.logAndToast;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;

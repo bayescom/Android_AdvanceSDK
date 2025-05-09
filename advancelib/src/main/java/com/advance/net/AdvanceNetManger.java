@@ -5,7 +5,7 @@ import static com.advance.net.AdvanceJson.convertJsonArrayToList;
 import static com.advance.net.AdvanceJson.convertJsonToGroup;
 import static com.advance.utils.AdvanceUtil.generateKey;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.advance.AdvanceConfig;
@@ -27,7 +27,6 @@ import com.bayes.sdk.basic.net.BYReqCallBack;
 import com.bayes.sdk.basic.net.BYReqModel;
 import com.bayes.sdk.basic.util.BYCacheUtil;
 import com.bayes.sdk.basic.util.BYSPUtil;
-import com.bayes.sdk.basic.util.BYSecurityCore;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 
