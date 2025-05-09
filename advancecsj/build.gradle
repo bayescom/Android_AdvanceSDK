@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 
 def pomName = "advance-csj"
 
-def libVersionName = "6415"
+def libVersionName = "6817"
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
 
 def advanceVersionCode = 1
@@ -16,7 +16,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 24
         targetSdkVersion 29
         versionCode advanceVersionCode
         versionName advanceVersionName
@@ -67,17 +67,17 @@ dependencies {
 
 
     //离线aar包引入方式
-//    def name = "open_ad_sdk_${libVersionName}.aar"
-//    api fileTree(dir: 'libs', include: [name])
+    def name = "open_ad_sdk_${libVersionName}.aar"
+    api fileTree(dir: 'libs', include: [name])
 //
 
 
 //    融合版本显上依赖方式
-    def version = '6.4.1.5'
-    api "com.pangle.cn:mediation-sdk:${version}"
+//    def version = '6.4.1.5'
+//    api "com.pangle.cn:mediation-sdk:${version}"
 
 
-    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
 
     compileOnly project(path: ':advancelib')
 }

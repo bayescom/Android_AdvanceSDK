@@ -148,15 +148,15 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
 
     }
 
-    @Override
-    public void onVideoDownloadSuccess() {
-        LogUtil.simple(TAG + "onVideoDownloadSuccess");
-
-    }
-
-    @Override
-    public void onVideoDownloadFailed() {
-        LogUtil.simple(TAG + "onVideoDownloadFailed");
-
-    }
+//    @Override
+//    public void onVideoDownloadSuccess() {
+//        LogUtil.simple(TAG + "onVideoDownloadSuccess");
+//
+//    }
+//
+//    @Override
+//    public void onVideoDownloadFailed() {
+//        LogUtil.simple(TAG + "onVideoDownloadFailed");
+//
+//    }
 }

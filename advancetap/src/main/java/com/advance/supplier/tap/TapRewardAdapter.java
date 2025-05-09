@@ -158,6 +158,20 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
                         }
                     }
 
+                    @Override
+                    public void onAdClick() {
+                        LogUtil.simple(TAG + "onAdClick");
+
+                        handleClick();
+                    }
+
+
+                    @Override
+                    public void onAdValidShow() {
+                        LogUtil.simple(TAG + "onAdValidShow");
+
+                    }
+
                 });
 
                 adData.showRewardVideoAd(setting.getShowActivity());
@@ -187,8 +201,8 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
             }
             AdRequest request = new AdRequest.Builder().withSpaceId(spaceId)
                     .withUserId(userID)
-                    .withRewordAmount(setting.getRewardCount())
-                    .withRewordName(setting.getRewardName())
+                    .withRewardAmount(setting.getRewardCount())
+                    .withRewardName(setting.getRewardName())
                     .withExtra1(setting.getExtraInfo())
                     .build();
 

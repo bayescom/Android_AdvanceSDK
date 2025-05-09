@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 def pomName = "advance-tanx"
 
-def advanceVersionName = "${rootProject.ext.advance_version}_353"
+def advanceVersionName = "${rootProject.ext.advance_version}_3710"
 def advanceVersionCode = 1
 
 
@@ -100,7 +100,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    def versionCode = "3.5.3"
+    def versionCode = "3.7.10"
     api(group: 'com.tanx', name: 'TanxCoreSDK', version: versionCode) {
         exclude group: 'com.github.bumptech.glide'
         exclude group: 'com.squareup.okhttp3'
@@ -116,6 +116,6 @@ dependencies {
     }
 
     compileOnly project(path: ':advancelib')
-    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
 }
 

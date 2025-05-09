@@ -38,6 +38,7 @@ import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYCacheUtil;
+import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYThreadPoolUtil;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 import com.bayes.sdk.basic.util.BYUtil;
@@ -126,7 +127,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, ShowListener {
 
     //是否在子线程进行load，默认false，因为快手SDK不支持子线程调用load。
     protected boolean loadWithAsync = false;
-    protected boolean canRepeatShow = false;
+    protected boolean isReard = false;
 
     public AdvanceBaseAdspot(Activity activity, String mediaId, String adspotId) {
         try {
@@ -482,6 +483,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, ShowListener {
                     }
                 }
                 if (allBidResult) {
+                    // TODO: 2022/8/26 如果此时并行还未执行结束，并无法进行bidding比价，浪费了时间。同时bid timeout时有一样得问题
                     LogUtil.devDebug(BTAG + "allBid hasResult");
 //                    if (isParaGroupEmpty()) {
 //                        handleOnlyBidding();
@@ -549,6 +551,8 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, ShowListener {
             }
             //成功状态下 调用过show，不再需要继续调用了
             if (currentSdkSupplier.resultStatus == AdvanceConstant.SDK_RESULT_CODE_SUCC && currentSdkSupplier.hasCallShow) {
+                //仅tanx reward才可以多次调用show
+                boolean canRepeatShow = isReard && BYStringUtil.isEqual(currentSdkSupplier.id, AdvanceConfig.SDK_ID_TANX);
                 if (!canRepeatShow) {
                     LogUtil.e(BTAG + "广告成功后调用过show方法，不再重复调用");
                     return;
@@ -895,6 +899,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, ShowListener {
             reqModel.reqId = reqId;
             reqModel.requestForceTimeout = true;
 
+            //todo 23-06-25 注意线程运行情况
             AdvanceNetManger.requestSupplierList(reqModel, new BYAbsCallBack<ElevenModel>() {
                 @Override
                 public void invoke(final ElevenModel elevenModel) {

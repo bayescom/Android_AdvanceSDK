@@ -101,10 +101,22 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                 }
 
                 @Override
+                public void onClickCommitSuccess(ITanxAd iTanxAd) {
+                    LogUtil.simple(TAG + "onClickCommitSuccess");
+
+                }
+
+                @Override
                 public void onAdShow(ITanxAd iTanxAd) {
                     LogUtil.simple(TAG + "onAdShow");
 
                     handleShow();
+                }
+
+                @Override
+                public void onExposureCommitSuccess(ITanxAd iTanxAd) {
+                    LogUtil.simple(TAG + "onExposureCommitSuccess");
+
                 }
             });
             interExpressAD.showAd(activity, AdvanceTanxSetting.getInstance().tableScreenParam);

@@ -138,8 +138,8 @@ public class TapUtil {
                     @Override
                     public boolean isCanUseAndroidId() {
                         String cusAID = advancePrivacyController.getDevAndroidID();
-                        //如果用户传递为空，或默认未配置，认为SDK不能获取Androidid信息
-                        return !BYStringUtil.isEmpty(cusAID);
+                        //如果用户传递为空，或默认未配置，true，允许SDK获取； 若用户配置了id，则不再允许SDK获取
+                        return BYStringUtil.isEmpty(cusAID);
                     }
 
                     @Override

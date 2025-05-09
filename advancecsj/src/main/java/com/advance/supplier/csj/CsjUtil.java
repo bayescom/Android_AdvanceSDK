@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceSetting;
@@ -19,12 +20,14 @@ import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 import com.bayes.sdk.basic.widget.BYScheduleTimer;
+import com.bytedance.sdk.openadsdk.CSJSplashAd;
 import com.bytedance.sdk.openadsdk.LocationProvider;
 import com.bytedance.sdk.openadsdk.TTAdConfig;
 import com.bytedance.sdk.openadsdk.TTAdConstant;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTCustomController;
 
+import java.lang.ref.SoftReference;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -153,6 +156,10 @@ public class CsjUtil implements AdvanceSplashPlusManager.ZoomCall {
             if (BYUtil.isDev()) {
 //           客户端 bidding 测试媒体
 //                resultAppID = "5412264";
+
+//                resultAppID = "5669453"; //维度为来
+//                resultAppID = "5412551"; //ceshi
+//                resultAppID = "5001121"; //demo id
             }
 
             LogUtil.high("[CsjUtil.initCsj] 穿山甲 appID：" + resultAppID);
@@ -246,7 +253,8 @@ public class CsjUtil implements AdvanceSplashPlusManager.ZoomCall {
                     .debug(BYUtil.isDebug()) //测试阶段打开，可以通过日志排查问题，上线时去除该调用
                     .appName(AdvanceConfig.getInstance().getAppName());
             try { //避免部分配置被突然移除，导致初始化异常
-                ttBuilder //使用TextureView控件播放视频,默认为SurfaceView,当有SurfaceView冲突的场景，可以使用TextureView
+                ttBuilder
+//                        .useTextureView(true) //使用TextureView控件播放视频,默认为SurfaceView,当有SurfaceView冲突的场景，可以使用TextureView
                         .titleBarTheme(TTAdConstant.TITLE_BAR_THEME_LIGHT)
                         .allowShowNotify(true) //是否允许sdk展示通知栏提示
                         // .allowShowPageWhenScreenLock(true) //是否在锁屏场景支持展示广告落地页
@@ -433,9 +441,137 @@ public class CsjUtil implements AdvanceSplashPlusManager.ZoomCall {
 
     @Override
     public void zoomOut(Activity activity) {
-
+//        LogUtil.simple("CsjUtil start zoomOut");
+//
+//        CSJSplashClickEyeManager splashClickEyeManager = CSJSplashClickEyeManager.getInstance();
+//        boolean isSupportSplashClickEye = splashClickEyeManager.isSupportSplashClickEye();
+//        if (!isSupportSplashClickEye) {
+//            LogUtil.simple("notSupportSplashClickEye");
+//            splashClickEyeManager.clearSplashStaticData();
+//            return;
+//        }
+//        View splashClickEyeView = addSplashClickEyeView(activity);
+//        if (splashClickEyeView == null) {
+//            return;
+//        }
+//        activity.overridePendingTransition(0, 0);
+//
+//        TTSplashAd splashAd = splashClickEyeManager.getSplashAd();
+//        HomeSplashClickEyeListener splashClickEyeListener = new HomeSplashClickEyeListener(splashClickEyeView, splashAd);
+//        if (splashAd != null) {
+//            splashAd.setSplashClickEyeListener(splashClickEyeListener);
+//        }
+//
+//        //新版本调用点睛逻辑
+//        CSJSplashAd splashNewAd = splashClickEyeManager.getCSJSplashAd();
+//        SplashClickEyeListener splashNewClickEyeListener = new SplashClickEyeListener(splashClickEyeView, splashNewAd);
+//        if (splashNewAd != null) {
+//            splashNewAd.setSplashClickEyeListener(splashNewClickEyeListener);
+//        }
+//
+//        //根据设定延迟自动关闭小窗口
+//        AdvanceUtil.autoClose(splashClickEyeView);
     }
 
+
+    static class SplashClickEyeListener implements CSJSplashAd.SplashClickEyeListener {
+
+        private SoftReference<View> mSplashView;
+
+        private SoftReference<CSJSplashAd> mSplashAd;
+
+
+        public SplashClickEyeListener(View splashView, CSJSplashAd splashAd) {
+            mSplashView = new SoftReference<>(splashView);
+            mSplashAd = new SoftReference<>(splashAd);
+        }
+
+        @Override
+        public void onSplashClickEyeReadyToShow(CSJSplashAd bean) {
+
+        }
+
+        @Override
+        public void onSplashClickEyeClick() {
+
+        }
+
+        @Override
+        public void onSplashClickEyeClose() {
+            try {
+                //接收点击关闭按钮的事件将开屏点睛移除。
+                if (mSplashView != null && mSplashView.get() != null) {
+                    mSplashView.get().setVisibility(View.GONE);
+                    AdvanceUtil.removeFromParent(mSplashView.get());
+                    mSplashView = null;
+                    mSplashAd = null;
+                }
+                CSJSplashClickEyeManager.getInstance().clearSplashStaticData();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+//    private View addSplashClickEyeView(final Activity activity) {
+//        final CSJSplashClickEyeManager splashClickEyeManager = CSJSplashClickEyeManager.getInstance();
+//        final TTSplashAd splashAd = splashClickEyeManager.getSplashAd();
+//        return splashClickEyeManager.startSplashClickEyeAnimationInTwoActivity((ViewGroup) activity.getWindow().getDecorView(),
+//                (ViewGroup) activity.findViewById(android.R.id.content), new CSJSplashClickEyeManager.AnimationCallBack() {
+//                    @Override
+//                    public void animationStart(int animationTime) {
+//                    }
+//
+//                    @Override
+//                    public void animationEnd() {
+//                        try {
+//                            if (splashAd != null) {
+//                                splashAd.splashClickEyeAnimationFinish();
+//                            }
+//                            if (splashClickEyeManager != null) {
+//                                splashClickEyeManager.getCSJSplashAd().showSplashClickEyeView((ViewGroup) activity.findViewById(android.R.id.content));
+//                            }
+//                        } catch (Throwable e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                });
+//    }
+
+
+//    static class HomeSplashClickEyeListener implements ISplashClickEyeListener {
+//
+//        private SoftReference<View> mSplashView;
+//        private SoftReference<TTSplashAd> mSplashAd;
+//
+//        public HomeSplashClickEyeListener(View splashView, TTSplashAd splashAd) {
+//            mSplashView = new SoftReference<>(splashView);
+//            mSplashAd = new SoftReference<>(splashAd);
+//        }
+//
+//        @Override
+//        public void onSplashClickEyeAnimationStart() {
+//        }
+//
+//        @Override
+//        public void onSplashClickEyeAnimationFinish() {
+//            //小窗展示五秒后会自动回调此方法，导致页面自动关闭。手动点击窗口上的关闭按钮亦会回调此方法。
+//            //接收点击关闭按钮的事件将开屏点睛移除。
+//            LogUtil.high("[HomeSplashClickEyeListener] onSplashClickEyeAnimationFinish ； close mSplashView");
+//            if (mSplashView != null && mSplashView.get() != null) {
+//                mSplashView.get().setVisibility(View.GONE);
+//                AdvanceUtil.removeFromParent(mSplashView.get());
+//                mSplashView = null;
+//                mSplashAd = null;
+//            }
+//            CSJSplashClickEyeManager.getInstance().clearSplashStaticData();
+//        }
+//
+//        @Override
+//        public boolean isSupportSplashClickEye(boolean isSupport) {
+//            return isSupport;
+//        }
+//    }
 
     public interface InitListener {
         void success();

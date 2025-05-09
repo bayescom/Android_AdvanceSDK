@@ -33,6 +33,15 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     @Override
     public void show() {
         try {
+//            if (AdvanceUtil.isDev()) {//todo 测试逻辑，正式上线需移除
+//                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "测试渲染异常");
+//                    }
+//                }, 1000);
+//                return;
+//            }
             String nullTip = TAG + "请先加载广告或者广告已经展示过";
             if (newVersionAd != null) {
                 newVersionAd.showFullScreenVideoAd(activity, TTAdConstant.RitScenes.GAME_GIFT_BONUS, null);

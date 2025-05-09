@@ -80,10 +80,22 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
                 }
 
                 @Override
+                public void onClickCommitSuccess(ITanxRewardVideoAd iTanxRewardVideoAd) {
+                    LogUtil.simple(TAG + "onClickCommitSuccess");
+
+                }
+
+                @Override
                 public void onAdShow(ITanxRewardVideoAd iTanxRewardVideoAd) {
                     LogUtil.simple(TAG + "onAdShow");
 
                     handleShow();
+                }
+
+                @Override
+                public void onExposureCommitSuccess(ITanxRewardVideoAd iTanxRewardVideoAd) {
+                    LogUtil.simple(TAG + "onExposureCommitSuccess");
+
                 }
 
                 @Override

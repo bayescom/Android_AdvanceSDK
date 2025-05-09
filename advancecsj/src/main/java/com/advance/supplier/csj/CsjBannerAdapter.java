@@ -5,9 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.advance.AdvanceConfig;
-import com.advance.AdvanceSetting;
 import com.advance.BannerSetting;
-import com.advance.BaseParallelAdapter;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;

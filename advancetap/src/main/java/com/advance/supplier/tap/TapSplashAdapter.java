@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.advance.BaseSplashAdapter;
 import com.advance.SplashSetting;
@@ -15,7 +14,6 @@ import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.tapsdk.tapad.AdRequest;
-import com.tapsdk.tapad.TapAdManager;
 import com.tapsdk.tapad.TapAdNative;
 import com.tapsdk.tapad.TapSplashAd;
 
@@ -57,8 +55,10 @@ public class TapSplashAdapter extends BaseSplashAdapter {
     @Override
     public void doDestroy() {
         try {
-            if (adData != null)
+            if (adData != null) {
                 adData.dispose();
+                adData.destroyView();
+            }
             TapUtil.removeTapMap(getRealContext());
         } catch (Throwable e) {
             e.printStackTrace();
@@ -98,6 +98,7 @@ public class TapSplashAdapter extends BaseSplashAdapter {
             if (null != skipView) {
                 skipView.setVisibility(View.INVISIBLE);
             }
+//            adData.show(activity);
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
@@ -146,7 +147,7 @@ public class TapSplashAdapter extends BaseSplashAdapter {
 
                         updateBidding(TapUtil.getBiddingPrice(tapSplashAd.getMediaExtraInfo()));
 
-                        handleSucceed();
+
 
                         adData.setSplashInteractionListener(new TapSplashAd.AdInteractionListener() {
                             @Override
@@ -168,8 +169,30 @@ public class TapSplashAdapter extends BaseSplashAdapter {
                                 }
                                 destroy();
                             }
+
+                            @Override
+                            public void onAdClick() {
+                                LogUtil.simple(TAG + "onAdClick");
+
+                                handleClick();
+                            }
+
+                            @Override
+                            public void onAdShow() {
+                                LogUtil.simple(TAG + "onAdShow");
+
+                                handleShow();
+
+                            }
+
+                            @Override
+                            public void onAdValidShow() {
+                                LogUtil.simple(TAG + "onAdValidShow");
+
+                            }
                         });
 
+                        handleSucceed();
                     } catch (Throwable e) {
                         e.printStackTrace();
                         runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));

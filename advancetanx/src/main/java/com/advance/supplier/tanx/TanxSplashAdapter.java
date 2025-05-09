@@ -9,6 +9,7 @@ import com.advance.SplashSetting;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.alimm.tanx.core.ad.ITanxAd;
 import com.alimm.tanx.core.ad.ad.template.rendering.splash.ITanxSplashExpressAd;
 import com.alimm.tanx.core.ad.bean.TanxBiddingInfo;
 import com.alimm.tanx.core.ad.listener.ITanxAdLoader;
@@ -58,6 +59,7 @@ public class TanxSplashAdapter extends BaseSplashAdapter {
         TanxUtil.initTanx(this, new TanxUtil.InitListener() {
             @Override
             public void success() {
+                // TODO: 2023/9/5 测试开启线程池来加载广告请求方法
                 startLoadAD();
             }
 
@@ -151,6 +153,18 @@ public class TanxSplashAdapter extends BaseSplashAdapter {
                     LogUtil.simple(TAG + "onAdShake");
 
                     handleClick();
+                }
+
+                @Override
+                public void onClickCommitSuccess(ITanxAd iTanxAd) {
+                    LogUtil.simple(TAG + "onClickCommitSuccess");
+
+                }
+
+                @Override
+                public void onExposureCommitSuccess(ITanxAd iTanxAd) {
+                    LogUtil.simple(TAG + "onExposureCommitSuccess");
+
                 }
 
                 @Override

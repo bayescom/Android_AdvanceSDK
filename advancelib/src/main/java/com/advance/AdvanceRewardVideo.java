@@ -17,7 +17,6 @@ import com.bayes.sdk.basic.net.BYReqCallBack;
 import com.bayes.sdk.basic.net.BYReqModel;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYThreadUtil;
-import com.mercury.sdk.util.MercuryConstants;
 
 import org.json.JSONObject;
 
@@ -51,12 +50,12 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
 
     public AdvanceRewardVideo(Activity activity, String adspotId) {
         super(activity, "", adspotId);
-        canRepeatShow = true;
+        isReard = true;
     }
 
     public AdvanceRewardVideo(String adspotId) {
         super(adspotId);
-        canRepeatShow = true;
+        isReard = true;
     }
 
     public void show(Activity activity) {

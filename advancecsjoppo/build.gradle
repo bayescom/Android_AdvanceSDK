@@ -72,7 +72,7 @@ dependencies {
     api fileTree(dir: 'libs', include: [name])
 
 
-    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
 
     compileOnly project(path: ':advancelib')
 }

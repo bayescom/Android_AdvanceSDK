@@ -1,4 +1,4 @@
-//package com.advance.supplier.tap;
+package com.advance.supplier.tap;//package com.advance.supplier.tap;
 //
 //import android.app.Activity;
 //

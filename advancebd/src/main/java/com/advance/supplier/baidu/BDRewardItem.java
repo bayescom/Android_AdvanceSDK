@@ -2,9 +2,9 @@ package com.advance.supplier.baidu;
 
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceRewardVideoItem;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.model.AdvanceError;
 import com.baidu.mobads.sdk.api.RewardVideoAd;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 
 @Deprecated

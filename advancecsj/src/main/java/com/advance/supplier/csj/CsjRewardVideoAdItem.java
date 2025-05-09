@@ -5,8 +5,8 @@ import android.os.Bundle;
 
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceRewardVideoItem;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.model.AdvanceError;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 import com.bytedance.sdk.openadsdk.TTAppDownloadListener;
 import com.bytedance.sdk.openadsdk.TTRewardVideoAd;
@@ -210,7 +210,7 @@ public class CsjRewardVideoAdItem implements AdvanceRewardVideoItem {
     public void setShowDownLoadBar(boolean isShow) {
         try {
 
-            ttRewardVideoAd.setShowDownLoadBar(isShow);
+//            ttRewardVideoAd.setShowDownLoadBar(isShow);
         } catch (Throwable e) {
             e.printStackTrace();
         }

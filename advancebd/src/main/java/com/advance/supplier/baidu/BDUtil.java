@@ -1,7 +1,6 @@
 package com.advance.supplier.baidu;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -10,7 +9,6 @@ import com.advance.AdvanceSetting;
 import com.advance.BaseParallelAdapter;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.utils.AdvanceSplashPlusManager;
-import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.BDAdConfig;
 import com.baidu.mobads.sdk.api.BDDialogParams;
@@ -80,7 +78,7 @@ public class BDUtil implements AdvanceSplashPlusManager.ZoomCall {
                             .setDlDialogType(BDDialogParams.TYPE_BOTTOM_POPUP)
                             .setDlDialogAnimStyle(BDDialogParams.ANIM_STYLE_NONE)
                             .build())
-                    .setHttps(AdvanceBDManager.getInstance().bDSupportHttps)//如果设置为true，那么banner广告将会无法展示，todo 这是SDK的bug，需要观察后续版本是否解决了
+//                    .setHttps(AdvanceBDManager.getInstance().bDSupportHttps)//如果设置为true，那么banner广告将会无法展示，
                     .setDebug(BYUtil.isDebug())
                     .build(context);
             bdAdConfig.init();

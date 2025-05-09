@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 //maven依赖的项目名称
 def pomName = "advance-ks"
 def extVersionName = ""
-def libVersionName = "3369"
+def libVersionName = "3376"
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
 
 def advanceVersionCode = 1
@@ -19,7 +19,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 18
         targetSdkVersion 29
         versionCode advanceVersionCode
         versionName advanceVersionName
@@ -64,7 +64,7 @@ dependencies {
     api fileTree(dir: 'libs', include: [libName + '.aar'])
 
     compileOnly project(path: ':advancelib')
-    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
 }
 
 

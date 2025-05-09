@@ -63,7 +63,7 @@ dependencies {
 
     compileOnly(name: 'oaid_sdk_1.0.25', ext: 'aar')
     //倍业SDK
-    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
 
     compileOnly "com.qq.e.union:union:4.510.1380"
 

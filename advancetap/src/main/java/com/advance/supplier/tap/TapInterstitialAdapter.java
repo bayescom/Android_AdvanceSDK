@@ -124,6 +124,12 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
                                 handleFailed(AdvanceError.ERROR_TAP_RENDER_ERR, "InterstitialAdInteractionListener onAdError");
                             }
+
+                            @Override
+                            public void onAdValidShow() {
+                                LogUtil.simple(TAG + " onAdValidShow");
+
+                            }
                         });
 
                     } catch (Throwable e) {

@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 
 //maven依赖的项目名称
 def pomName = "advance-bd"
-def libVersionName = "9352"
+def libVersionName = "9391"
 def extVersionName = ""
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
 
@@ -56,7 +56,7 @@ dependencies {
 
 
     compileOnly project(path: ':advancelib')
-    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
 
 }
 

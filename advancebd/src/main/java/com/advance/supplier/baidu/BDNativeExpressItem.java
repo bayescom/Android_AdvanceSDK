@@ -1,4 +1,4 @@
-//package com.advance.supplier.baidu;
+package com.advance.supplier.baidu;//package com.advance.supplier.baidu;
 //
 //import android.app.Activity;
 //import android.os.Handler;

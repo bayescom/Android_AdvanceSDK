@@ -107,7 +107,7 @@ dependencies {
     implementation project(path: ':advancegdt')
     implementation project(path: ':advancecsj')
 //    implementation project(path: ':advancecsjoppo')
-    implementation project(path: ':advancebd')
+//    implementation project(path: ':advancebd')  //新版本百度必须要在AndroidX环境下
     implementation project(path: ':advanceks')
     implementation project(path: ':advancesigmob')
 

@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 //maven依赖的项目名称
 def pomName = "advance-tap"
 def extVersionName = ""
-def libVersionName = "3.16.3.20"
+def libVersionName = "3.16.3.45"
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
 
 advanceVersionName = advanceVersionName + extVersionName
@@ -61,7 +61,7 @@ dependencies {
     api fileTree(dir: 'libs', include: [libName + '.aar'])
 
     compileOnly project(path: ':advancelib')
-    compileOnly 'io.github.bayescom:mercury-sdk:4.4.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
 
 }
 

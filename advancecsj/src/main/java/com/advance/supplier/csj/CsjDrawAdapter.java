@@ -2,19 +2,20 @@ package com.advance.supplier.csj;
 
 import android.app.Activity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceDrawSetting;
 import com.advance.custom.AdvanceDrawCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.util.BYUtil;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
+import com.bytedance.sdk.openadsdk.TTDrawFeedAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
+import com.bytedance.sdk.openadsdk.mediation.ad.MediationExpressRenderListener;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
     private TTAdNative mTTAdNative;
     private String TAG = "[CsjDrawAdapter] ";
     TTNativeExpressAd ad;
+    TTDrawFeedAd newAD;
 
     public CsjDrawAdapter(Activity activity, AdvanceDrawSetting setting) {
         super(activity, setting);
@@ -71,6 +73,9 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
             if (isADViewAdded(ad.getExpressAdView())) {
                 ad.render();
             }
+//            if (isADViewAdded(newAD.getAdView())) {
+//                newAD.render();
+//            }
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
@@ -89,6 +94,15 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
         //step3:创建TTAdNative对象,用于调用广告请求接口
         mTTAdNative = ttAdManager.createAdNative(activity.getApplicationContext());
 
+        //ces
+
+        if (BYUtil.isDev()) {
+
+//            sdkSupplier.adspotid = "964573305"; //维度为来
+//            sdkSupplier.adspotid = "964575564"; //ceshi
+//            sdkSupplier.adspotid = "901121041"; //demoid
+        }
+
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId(sdkSupplier.adspotid)
                 .setSupportDeepLink(true)
@@ -97,7 +111,74 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
 //                .setAdLoadType(PRELOAD)//推荐使用，用于标注此次的广告请求用途为预加载（当做缓存）还是实时加载，方便后续为开发者优化相关策略
                 .build();
 
+//        mTTAdNative.loadDrawFeedAd(adSlot, new TTAdNative.DrawFeedAdListener() {
+//            @Override
+//            public void onError(int code, String message) {
+//                LogUtil.simple(TAG + "onError" + code + message);
+//
+//                handleFailed(code, message);
+//            }
+//
+//            @Override
+//            public void onDrawFeedAdLoad(List<TTDrawFeedAd> ads) {
+//                try {
+//                    LogUtil.simple(TAG + "onNativeExpressAdLoad, ads = " + ads);
+//
+//                    if (ads == null || ads.isEmpty()) {
+//                        handleFailed(AdvanceError.ERROR_DATA_NULL, "ads empty");
+//                        return;
+//                    }
+//                    newAD = ads.get(0);
+//                    if (newAD == null) {
+//                        String nMsg = TAG + " ad null";
+//                        AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, nMsg);
+//                        runParaFailed(error);
+//                        return;
+//                    }
+//                    updateBidding(CsjUtil.getEcpmValue(TAG, newAD.getMediaExtraInfo()));
+//
+////            ad.setCanInterruptVideoPlay(false);
+//                    newAD.setExpressRenderListener(getExpressAdInteractionListener());
+//
+//                    handleSucceed();
+//
+//                } catch (Throwable e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
         mTTAdNative.loadExpressDrawFeedAd(adSlot, this);
+    }
+
+    private MediationExpressRenderListener getExpressAdInteractionListener() {
+        return new MediationExpressRenderListener() {
+            @Override
+            public void onRenderFail(View view, String msg, int code) {
+                String log = "onRenderFail : code = " + code + ",msg =" + msg;
+                LogUtil.simple(TAG + "onRenderFail, log = " + log);
+
+                handleFailed(AdvanceError.ERROR_RENDER_FAILED, log);
+            }
+
+            @Override
+            public void onAdClick() {
+                LogUtil.simple(TAG + "onAdClicked, ");
+
+                handleClick();
+            }
+
+            @Override
+            public void onAdShow() {
+                LogUtil.simple(TAG + "onAdShow ");
+
+                handleShow();
+            }
+
+            @Override
+            public void onRenderSuccess(View view, float width, float height, boolean isExpress) {
+                LogUtil.simple(TAG + "onRenderSuccess, width = " + width + ",height = " + height + ", isExpress = " + isExpress);
+            }
+        };
     }
 
     @Override

@@ -85,6 +85,18 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
                 }
 
                 @Override
+                public void onClickCommitSuccess(ITanxAd iTanxAd) {
+                    LogUtil.simple(TAG + "onClickCommitSuccess");
+
+                }
+
+                @Override
+                public void onExposureCommitSuccess(ITanxAd iTanxAd) {
+                    LogUtil.simple(TAG + "onExposureCommitSuccess");
+
+                }
+
+                @Override
                 public void onError(String s) {
                     LogUtil.simple(TAG + "onError ," + s);
 

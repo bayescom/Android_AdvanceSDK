@@ -105,7 +105,7 @@ public class AdvanceBanner extends AdvanceBaseAdspot implements BannerSetting {
             initAdapter(AdvanceConfig.SDK_ID_CSJ, "csj.CsjBannerAdapter");
             initAdapter(AdvanceConfig.SDK_ID_GDT, "gdt.GdtBannerAdapter");
             initAdapter(AdvanceConfig.SDK_ID_MERCURY, "mry.MercuryBannerAdapter");
-            initAdapter(AdvanceConfig.SDK_ID_BAIDU, "baidu.BDBannerAdapter");
+//            initAdapter(AdvanceConfig.SDK_ID_BAIDU, "baidu.BDBannerAdapter");
             initAdapter(AdvanceConfig.SDK_ID_TAP, "tap.TapBannerAdapter");
         } catch (Throwable e) {
             e.printStackTrace();

@@ -7,11 +7,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.advance.AdvanceConfig;
+import com.advance.AdvanceSetting;
 import com.advance.BaseSplashAdapter;
 import com.advance.SplashSetting;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.util.BYUtil;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.CSJAdError;
 import com.bytedance.sdk.openadsdk.CSJSplashAd;
@@ -25,6 +27,7 @@ import java.lang.ref.SoftReference;
 public class CsjSplashAdapter extends BaseSplashAdapter {
     private CSJSplashAd newSplashAd;
     private String TAG = "[CsjSplashAdapter] ";
+//    boolean useOldApi = false;
 
     public CsjSplashAdapter(SoftReference<Activity> activity, SplashSetting setting) {
         super(activity, setting);
@@ -55,13 +58,12 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
             //获取SplashView
             View view;
 
-
             if (newSplashAd == null) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "newSplashAd null"));
                 return;
             }
             view = newSplashAd.getSplashView();
-
+            initNewSplashClickEyeData(newSplashAd, view);
             boolean isDestroy = AdvanceUtil.isActivityDestroyed(getRealActivity(setting.getAdContainer()));
             if (isDestroy) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "ActivityDestroyed"));
@@ -105,6 +107,7 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
 
     private void initAD() {
         //初始化值
+        CSJSplashClickEyeManager.getInstance().setSupportSplashClickEye(false);
 
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
@@ -121,6 +124,14 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
     }
 
     private void startLoad() {
+//        当后台下发 versionTag 为1时，使用旧版本api调用方法
+
+
+        if (BYUtil.isDev()) {
+//           客户端 bidding 测试广告位
+//            sdkSupplier.adspotid = "888483708";
+//            useOldApi = true;
+        }
         final TTAdManager ttAdManager = TTAdSdk.getAdManager();
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
             ttAdManager.requestPermissionIfNecessary(getRealContext());
@@ -150,6 +161,7 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
         }
         TTAdNative ttAdNative = ttAdManager.createAdNative(getRealContext());
         int timeout = sdkSupplier.timeout <= 0 ? 5000 : sdkSupplier.timeout;
+
 
         ttAdNative.loadSplashAd(adSlot, new TTAdNative.CSJSplashAdListener() {
             @Override
@@ -234,5 +246,134 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
         }
     }
 
+    /**
+     * 以下为点睛广告特殊处理
+     */
+
+    //是否进行点睛广告的展示
+    private void switchSplashClickShow() {
+        try {
+            if (setting == null) {
+                return;
+            }
+            if (setting.isShowInSingleActivity()) {
+                new CsjUtil().zoomOut(getRealActivity(setting.getAdContainer()));
+            } else {
+                AdvanceSetting.getInstance().isSplashSupportZoomOut = true;
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+    NewSplashClickEyeListener mSplashClickEyeListener;
+
+    private void initNewSplashClickEyeData(CSJSplashAd splashAd, View splashView) {
+        try {
+            if (splashAd == null || splashView == null) {
+                return;
+            }
+            Activity adAct = getRealActivity(setting.getAdContainer());
+            mSplashClickEyeListener = new NewSplashClickEyeListener(adAct, splashAd, setting.getAdContainer(), splashView);
+
+            splashAd.setSplashClickEyeListener(mSplashClickEyeListener);
+            CSJSplashClickEyeManager.getInstance().init(adAct);
+            CSJSplashClickEyeManager.getInstance().setCSJSplashInfo(splashAd, splashView, adAct.getWindow().getDecorView());
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static class NewSplashClickEyeListener implements CSJSplashAd.SplashClickEyeListener {
+        private SoftReference<Activity> mActivity;
+
+        private CSJSplashAd mSplashAd;
+        private ViewGroup mSplashContainer;
+        private boolean mIsFromSplashClickEye = true;
+        private View mSplashView;
+
+        public NewSplashClickEyeListener(Activity activity, CSJSplashAd splashAd, ViewGroup splashContainer, View splashView) {
+            mActivity = new SoftReference<>(activity);
+            mSplashAd = splashAd;
+            mSplashContainer = splashContainer;
+            mSplashView = splashView;
+        }
+
+        private void finishActivity() {
+            try {
+                if (mActivity.get() == null) {
+                    return;
+                }
+                mActivity.get().finish();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void startSplashAnimationStart(final CSJSplashAd bean) {
+            try {
+                if (mActivity.get() == null || bean == null || mSplashContainer == null) {
+                    return;
+                }
+
+                if (!mIsFromSplashClickEye) {
+                    return;
+                }
+                CSJSplashClickEyeManager splashClickEyeManager = CSJSplashClickEyeManager.getInstance();
+                ViewGroup content = mActivity.get().findViewById(android.R.id.content);
+                splashClickEyeManager.startSplashClickEyeAnimation(mSplashView, content, mSplashContainer, new CSJSplashClickEyeManager.AnimationCallBack() {
+                    @Override
+                    public void animationStart(int animationTime) {
+                    }
+
+                    @Override
+                    public void animationEnd() {
+                        bean.showSplashClickEyeView(mSplashContainer);
+                        CSJSplashClickEyeManager.getInstance().clearSplashStaticData();
+                    }
+                });
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onSplashClickEyeReadyToShow(CSJSplashAd bean) {
+            try {
+                Log.d("CSJSplashActivity", "onSplashClickEyeCanShow ");
+                CSJSplashClickEyeManager splashClickEyeManager = CSJSplashClickEyeManager.getInstance();
+                splashClickEyeManager.setSupportSplashClickEye(true);
+                //开始执行开屏点睛动画
+                startSplashAnimationStart(bean);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onSplashClickEyeClick() {
+            Log.d("CSJSplashActivity", "onSplashClickEyeClick 点睛点击");
+        }
+
+        @Override
+        public void onSplashClickEyeClose() {
+            try {
+                Log.d("CSJSplashActivity", "onSplashClickEyeClose");
+                //sdk关闭了了点睛悬浮窗
+                CSJSplashClickEyeManager splashClickEyeManager = CSJSplashClickEyeManager.getInstance();
+                boolean isSupport = splashClickEyeManager.isSupportSplashClickEye();
+                if (mIsFromSplashClickEye && isSupport) {
+                    finishActivity();
+                }
+                splashClickEyeManager.clearSplashStaticData();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

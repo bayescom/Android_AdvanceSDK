@@ -23,14 +23,13 @@ import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ad.feed.ITanxFeedAd;
 import com.alimm.tanx.core.ad.ad.feed.ITanxFeedInteractionListener;
 import com.alimm.tanx.core.ad.ad.feed.ITanxFeedVideoAdListener;
-import com.alimm.tanx.core.ad.ad.feed.ITanxVideoView;
+import com.alimm.tanx.core.ad.ad.feed.ITanxFeedVideoPlayer;
 import com.alimm.tanx.core.ad.listener.ITanxAdLoader;
 import com.alimm.tanx.core.ad.loader.ITanxRequestLoader;
 import com.alimm.tanx.core.ad.view.TanxAdView;
 import com.alimm.tanx.core.request.TanxAdSlot;
 import com.alimm.tanx.core.request.TanxError;
 import com.alimm.tanx.core.request.TanxPlayerError;
-import com.alimm.tanx.core.ut.impl.TanxFeedUt;
 import com.alimm.tanx.core.utils.LogUtils;
 import com.alimm.tanx.ui.TanxSdk;
 import com.bayes.sdk.basic.device.BYDisplay;
@@ -113,10 +112,22 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 }
 
                 @Override
+                public void onClickCommitSuccess(ITanxFeedAd feedAd) {
+                    LogUtil.simple(TAG + "onClickCommitSuccess");
+
+                }
+
+                @Override
                 public void onAdShow(ITanxFeedAd feedAd) {
                     LogUtil.simple(TAG + "onAdShow");
 
                     handleShow();
+                }
+
+                @Override
+                public void onExposureCommitSuccess(ITanxFeedAd feedAd) {
+                    LogUtil.simple(TAG + "onExposureCommitSuccess");
+
                 }
             });
             //核心：视频广告渲染
@@ -314,7 +325,7 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 if (context == null) {
                     context = getRealContext();
                 }
-                ITanxVideoView iTanxVideoView = nativeAD.getITanxVideoView(context);
+                ITanxFeedVideoPlayer iTanxVideoView = nativeAD.getITanxVideoView(context);
 
                 final AdvanceRFVideoEventListener videoEventListener = rfMaterialProvider.videoEventListener;
                 View tanxVideoView = iTanxVideoView.getVideoAdView(new ITanxFeedVideoAdListener<ITanxFeedAd>() {

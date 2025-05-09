@@ -137,6 +137,12 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
                                 handleClick();
                             }
 
+                            @Override
+                            public void onAdValidShow() {
+                                LogUtil.simple(TAG + " onAdValidShow");
+
+                            }
+
                         });
 
                     } catch (Throwable e) {
