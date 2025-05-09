@@ -12,8 +12,10 @@ import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.device.BYDevice;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.sigmob.windad.OnInitializationListener;
+import com.sigmob.windad.OnStartListener;
 import com.sigmob.windad.WindAdError;
 import com.sigmob.windad.WindAdOptions;
 import com.sigmob.windad.WindAds;
@@ -68,7 +70,7 @@ public class SigmobUtil {
 
 
             final AdvancePrivacyController advancePrivacyController = AdvanceSetting.getInstance().advPrivacyController;
-            WindAds ads = WindAds.sharedAds();
+            final WindAds ads = WindAds.sharedAds();
             WindAdOptions windAdOptions = new WindAdOptions(appId, appKey);
 
             if (advancePrivacyController != null) {
@@ -130,7 +132,7 @@ public class SigmobUtil {
                      */
                     @Override
                     public boolean isCanUseOaid() {
-                        return advancePrivacyController.canUseOaid();
+                        return SigmobSetting.getInstance().isCanUseOaid;
                     }
 
                     /**
@@ -140,7 +142,17 @@ public class SigmobUtil {
                      */
                     @Override
                     public String getDevOaid() {
-                        return advancePrivacyController.getDevOaid();
+                        String byOaid = "";
+                        try {
+                            String settingOaid = advancePrivacyController.getDevOaid();
+                            if (BYStringUtil.isNotEmpty(settingOaid)) {
+                                return settingOaid;
+                            }
+                            byOaid = BYDevice.getOaidValue();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return byOaid;
                     }
 
                     /**
@@ -194,29 +206,71 @@ public class SigmobUtil {
                         }
                         return null;
                     }
+
+
+                    /**
+                     * 是否允许 SDK 查询运营商编码（4.22.0 版本新增）
+                     *
+                     * @return true 可以使用，false 禁止使用
+                     */
+                    public boolean isCanUseSimOperator() {
+                        return SigmobSetting.getInstance().isCanUseSimOperator;
+                    }
+
+                    /**
+                     * isCanUseSimOperator=false 时，Sigmob 使用开发者传入的运营商编码，例如：46000（4.22.0 版本新增）
+                     */
+                    public String getDevSimOperatorCode() {
+                        return SigmobSetting.getInstance().devSimOperatorCode;
+                    }
+
+                    /**
+                     * isCanUseSimOperator=false 时，Sigmob 使用开发者传入的运营商名称，例如：中国移动（4.22.0 版本新增）
+                     */
+                    public String getDevSimOperatorName() {
+                        return SigmobSetting.getInstance().devSimOperatorName;
+                    }
                 });
             }
 
             Context context = adapter.getRealContext();
             //SDK初始化
-            ads.startWithOptions(context, windAdOptions, new OnInitializationListener() {
+            ads.init(context, windAdOptions, new OnInitializationListener() {
                 @Override
-                public void OnInitializationSuccess() {
-                    LogUtil.devDebug(tag + "OnInitializationSuccess SDK 初始化成功 ");
+                public void onInitializationSuccess() {
+                    LogUtil.devDebug(tag + "onInitializationSuccess SDK 初始化成功 ");
 
-                    SigmobSetting.getInstance().lastAppID = appId;
-                    SigmobSetting.getInstance().hasInit = true;
+                    ads.start(new OnStartListener() {
+                        @Override
+                        public void onStartSuccess() {
+                            LogUtil.devDebug(tag + "onStartSuccess SDK 启动成功 ");
 
-                    hasCallBack[0] = true;
-                    if (initResult != null) {
-                        initResult.success();
-                    }
+                            SigmobSetting.getInstance().lastAppID = appId;
+                            SigmobSetting.getInstance().hasInit = true;
+
+                            hasCallBack[0] = true;
+                            if (initResult != null) {
+                                initResult.success();
+                            }
+                        }
+
+                        @Override
+                        public void onStartFail(String error) {
+                            LogUtil.e(tag + "onStartFail SDK 启动失败 " + error);
+
+                            AdvanceSetting.getInstance().hasKSInit = false;
+
+                            hasCallBack[0] = true;
+                            if (initResult != null) {
+                                initResult.fail(AdvanceError.ERROR_INIT_DEFAULT + "", error);
+                            }
+                        }
+                    });
                 }
 
                 @Override
-                public void OnInitializationFail(String error) {
-
-                    LogUtil.e(tag + "OnInitializationFail SDK 初始化失败 " + error);
+                public void onInitializationFail(String error) {
+                    LogUtil.e(tag + "onInitializationFail SDK 初始化失败 " + error);
 
                     AdvanceSetting.getInstance().hasKSInit = false;
 
@@ -226,6 +280,33 @@ public class SigmobUtil {
                     }
                 }
             });
+//            ads.startWithOptions(context, windAdOptions, new OnInitializationListener() {
+//                @Override
+//                public void OnInitializationSuccess() {
+//                    LogUtil.devDebug(tag + "OnInitializationSuccess SDK 初始化成功 ");
+//
+//                    SigmobSetting.getInstance().lastAppID = appId;
+//                    SigmobSetting.getInstance().hasInit = true;
+//
+//                    hasCallBack[0] = true;
+//                    if (initResult != null) {
+//                        initResult.success();
+//                    }
+//                }
+//
+//                @Override
+//                public void OnInitializationFail(String error) {
+//
+//                    LogUtil.e(tag + "OnInitializationFail SDK 初始化失败 " + error);
+//
+//                    AdvanceSetting.getInstance().hasKSInit = false;
+//
+//                    hasCallBack[0] = true;
+//                    if (initResult != null) {
+//                        initResult.fail(AdvanceError.ERROR_INIT_DEFAULT + "", error);
+//                    }
+//                }
+//            });
             LogUtil.devDebug(tag + "startWithOptions 初始化调用");
 
         } catch (Throwable e) {
@@ -267,16 +348,16 @@ public class SigmobUtil {
     }
 
 
-    public static double getEcpmNumber(String ecpm){
+    public static double getEcpmNumber(String ecpm) {
         double result = 0;
         try {
-            if (BYStringUtil.isNotEmpty(ecpm)){
+            if (BYStringUtil.isNotEmpty(ecpm)) {
                 result = AdvanceUtil.caseObjectToDouble(ecpm);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return  result;
+        return result;
     }
 }

@@ -9,15 +9,16 @@ public class Constants {
     public static class TestIds {
         //以下测试id默认配置了穿山甲广告
 //        public static final String splashAdspotId = "10007770"; //开屏-mercury
-        public static final String splashAdspotId = "10007774"; //开屏-百度
-//        public static final String splashAdspotId = "10011940"; //开屏-Sigmob
+//        public static final String splashAdspotId = "10007774"; //开屏-百度
+        public static final String splashAdspotId = "10011940"; //开屏-Sigmob
         public static final String bannerAdspotId = "10007795"; //banner
 //        public static final String interstitialAdspotId = "10007796"; //插屏
         public static final String interstitialAdspotId = "10011942"; //插屏-Sigmob
-        public static final String nativeExpressAdspotId = "10007794"; //原生模板信息流
+//        public static final String nativeExpressAdspotId = "10007794"; //原生模板信息流
+        public static final String nativeExpressAdspotId = "10007821"; //原生模板信息流-百度
 //        public static final String rewardAdspotId = "10007797"; //激励视频
-//        public static final String rewardAdspotId = "10011943"; //激励视频-Sigmob
-        public static final String rewardAdspotId = "10003101"; //激励视频-优量汇测试
+        public static final String rewardAdspotId = "10011943"; //激励视频-Sigmob
+//        public static final String rewardAdspotId = "10003101"; //激励视频-优量汇测试
         public static final String fullScreenVideoAdspotId = "10007825"; //全屏视频
 
         public static final String drawAdspotId = "10005127"; //draw信息流 -快手
