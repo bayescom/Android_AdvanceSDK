@@ -20,12 +20,14 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
     private int csjImageWidth = 640;
     private int csjImageHeight = 320;
     private int expressViewWidth = 360; //4.2.3 宽度默认dp修改为360
+    private boolean userSetWh = false;
     private int expressViewHeight = 0;
     //无用设置，推荐仅设置expressViewsize
     @Deprecated
     private boolean gdtfullWidth = false;
     @Deprecated
     private boolean gdtAutoHeight = false;
+    // TODO: 2023/5/24 聚合静音部分设置、自动播放设置等方法
     private boolean videoMute = true;
     private int gdtMaxVideoDuration = 60;
     private ViewGroup adContainer;
@@ -52,10 +54,22 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
         adContainer = container;
 
         try {
+            if (userSetWh) {
+                LogUtil.devDebug("用户设置了具体宽高，不再自动检查布局的宽高了 ");
+                return;
+            }
             adContainer.post(new Runnable() {
                 @Override
                 public void run() {
                     try {
+                        if (userSetWh) {
+                            LogUtil.devDebug("用户设置了具体宽高，不再自动检查布局的宽高了 2 ");
+                            return;
+                        }
+                        //   todo 宽高度需考虑含padding自适应布局方式。
+
+//                        adContainer.getPaddingBottom()
+
                         if (adContainer.getWidth() > 0) {
                             expressViewWidth = BYDisplay.px2dp(adContainer.getWidth());
                             LogUtil.devDebug("set expressViewWidth as adContainer Width= " + expressViewWidth);
@@ -88,6 +102,7 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
     }
 
     public AdvanceNativeExpress setExpressViewAcceptedSize(int width, int height) {
+        userSetWh = true;
         this.expressViewWidth = width;
         this.expressViewHeight = height;
         return this;
@@ -159,6 +174,7 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
             initAdapter(AdvanceConfig.SDK_ID_BAIDU, "baidu.BDNativeExpressAdapter");
             initAdapter(AdvanceConfig.SDK_ID_KS, "ks.KSNativeExpressAdapter");
             initAdapter(AdvanceConfig.SDK_ID_TANX, "tanx.TanxNativeExpressAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoNativeExpressAdapter");
         } catch (Throwable e) {
             e.printStackTrace();
         }

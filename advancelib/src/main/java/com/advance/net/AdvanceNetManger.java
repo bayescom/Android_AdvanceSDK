@@ -17,7 +17,6 @@ import com.advance.model.GMParams;
 import com.advance.model.SdkSupplier;
 import com.advance.model.ServerRewardModel;
 import com.advance.model.SupplierSettingModel;
-import com.advance.utils.AdvanceSecurityCore;
 import com.advance.utils.LogUtil;
 import com.advance.utils.SupplierBridgeUtil;
 import com.bayes.sdk.basic.device.BYDevice;
@@ -27,6 +26,7 @@ import com.bayes.sdk.basic.net.BYReqCallBack;
 import com.bayes.sdk.basic.net.BYReqModel;
 import com.bayes.sdk.basic.util.BYCacheUtil;
 import com.bayes.sdk.basic.util.BYSPUtil;
+import com.bayes.sdk.basic.util.BYSecurityCore;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 
@@ -170,7 +170,7 @@ public class AdvanceNetManger {
 
 
                 LogUtil.devDebug("secretObject.toString() = " + secretObject.toString());
-                String device_encinfo = AdvanceSecurityCore.getInstance().encrypt(secretObject.toString());
+                String device_encinfo = BYSecurityCore.getInstance().encrypt(secretObject.toString());
                 jsonObject.putOpt("device_encinfo", device_encinfo);
 
             } catch (Throwable e) {
@@ -211,8 +211,9 @@ public class AdvanceNetManger {
                     extJsonObj.putOpt("ks_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_KS));
                     extJsonObj.putOpt("tanx_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TANX));
                     extJsonObj.putOpt("tap_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TAP));
+                    extJsonObj.putOpt("oppo_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_OPPO));
                     extJsonObj.putOpt("sig_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_SIG));
-//                    extJsonObj.putOpt("oppo_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_OPPO));
+
                     //todo 如何增加自定义渠道方式得版本号采集
                 } catch (Throwable e) {
                     e.printStackTrace();

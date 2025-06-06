@@ -21,12 +21,12 @@ import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 import com.bayes.sdk.basic.widget.BYScheduleTimer;
-import com.vkyb.kv.kvnepo.CSJSplashAd;
-import com.vkyb.kv.kvnepo.LocationProvider;
-import com.vkyb.kv.kvnepo.TTCustomController;
-import com.vkyb.kv.kvnepo.TTVfConfig;
-import com.vkyb.kv.kvnepo.TTVfConstant;
-import com.vkyb.kv.kvnepo.TTVfSdk;
+import com.bykv.vk.openvk.CSJSplashAd;
+import com.bykv.vk.openvk.LocationProvider;
+import com.bykv.vk.openvk.TTCustomController;
+import com.bykv.vk.openvk.TTVfConfig;
+import com.bykv.vk.openvk.TTVfConstant;
+import com.bykv.vk.openvk.TTVfSdk;
 
 import java.lang.ref.SoftReference;
 import java.util.Arrays;
@@ -125,6 +125,18 @@ public class CsjUtil implements AdvanceSplashPlusManager.ZoomCall {
                 return;
             }
 
+//---人人版本特殊处理，聚合维度不再进行穿山甲初始化调用，直接回调 todo 是否需要 isSdkReady 判断拦截？
+//            boolean isReady = TTVfSdk.isSdkReady();
+//            if (isReady) {
+//            LogUtil.d(tag + "always init success");
+//            if (listener != null) {
+//                listener.success();
+//            }
+//            } else {
+//                if (listener != null) {
+//                    listener.fail(AdvanceError.ERROR_CSJ_NOT_READY, "穿山甲初始化 isSdkReady = false ，不进行广告请求");
+//                }
+//            }
 
             boolean hasInit = AdvanceSetting.getInstance().hasCSJInit;
             if (hasInit) {

@@ -352,5 +352,12 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
+    @Override
+    public boolean isValid() {
+        if (mRenderAD != null && mRenderAD.getMediationManager() != null) {
+            return mRenderAD.getMediationManager().isReady();
+        }
+        return super.isValid();
+    }
 
 }

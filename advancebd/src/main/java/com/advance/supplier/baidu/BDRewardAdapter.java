@@ -62,6 +62,14 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
         }
     }
 
+//    @Override
+//    public boolean isValid() {
+//        if (mRewardVideoAd != null) {
+//            return mRewardVideoAd.isReady();
+//        }
+//        return super.isValid();
+//    }
+
 
     //以下为广告回调事件
 
@@ -170,16 +178,16 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
         }
     }
 
-    @Override
-    public boolean isValid() {
-        try {
-            if (mRewardVideoAd == null) {
-                return false;
-            }
-            return mRewardVideoAd.isReady();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+//    @Override
+//    public boolean isValid() {
+//        try {
+//            if (mRewardVideoAd == null) {
+//                return false;
+//            }
+//            return mRewardVideoAd.isReady();
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 }

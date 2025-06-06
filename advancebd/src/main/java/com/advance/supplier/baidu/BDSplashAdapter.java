@@ -204,6 +204,15 @@ public class BDSplashAdapter extends BaseSplashAdapter implements SplashInteract
         handleFailed(AdvanceError.ERROR_BD_FAILED, s);
     }
 
+
+//    @Override
+//    public boolean isValid() {
+//        if (splashAd != null) {
+//            return splashAd.isReady();
+//        }
+//        return super.isValid();
+//    }
+
     @Override
     public void show() {
         try {

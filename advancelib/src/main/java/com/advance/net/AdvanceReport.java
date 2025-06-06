@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 //上报相关处理
 public class AdvanceReport {
+    // TODO: 2023/5/24 上报如何保证去重效果？目前多次点击会出现多次上报
     public static void reportToUrls(final ArrayList<String> reportList) {
         reportToUrls(reportList, false);
     }

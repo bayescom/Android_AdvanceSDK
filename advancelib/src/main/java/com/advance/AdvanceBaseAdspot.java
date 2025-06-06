@@ -21,7 +21,7 @@ import com.advance.net.AdvanceReport;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.BaseGMCallBackListener;
 import com.advance.itf.StrategyListener;
-import com.advance.itf.ShowListener;
+import com.advance.itf.RenderEvent;
 import com.advance.model.AdStatus;
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public abstract class AdvanceBaseAdspot implements BaseSetting, ShowListener {
+public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     private Activity activity;
     protected Context mContext;
     protected SoftReference<Activity> softReferenceActivity;
@@ -521,6 +521,39 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, ShowListener {
         return false;
     }
 
+    @Override
+    public boolean isValid() {
+        try {
+            if (TextUtils.isEmpty(currentSDKId)) {
+                LogUtil.e(BTAG + "-isValid- 未选中任何SDK");
+                return false;
+            }
+            if (supplierAdapters == null || supplierAdapters.size() == 0) {
+                LogUtil.e(BTAG + "-isValid- 无可用渠道");
+                return false;
+            }
+            if (currentSdkSupplier == null) {
+                LogUtil.e(BTAG + "-isValid- 未找到当前执行渠道");
+                return false;
+            }
+            String priority = currentSdkSupplier.priority + "";
+            final BaseParallelAdapter adapter = supplierAdapters.get(priority);
+
+            if (adapter == null) {
+                LogUtil.e(BTAG + "-isValid- 未找到当前渠道下adapter，渠道id：" + currentSDKId + ", priority = " + priority);
+                return false;
+            }
+            if (adapter.isDestroy) {
+                LogUtil.e(BTAG + "-isValid- 广告已销毁，请重新发起请求");
+                return false;
+            }
+            return adapter.isValid();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     /**
      * ShowListener , 用来统一调用adapter中的show方法
      */
@@ -563,6 +596,14 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, ShowListener {
             if (AdvanceUtil.isActivityDestroyed(getADActivity())) {
                 LogUtil.e(BTAG + "广告已经销毁，无法进行展现");
                 handleFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "ActivityDestroyed"), currentSdkSupplier);
+                return;
+            }
+            if (!isValid()) {
+                String tip = "广告已经失效，无法进行展现";
+                LogUtil.e(BTAG + tip);
+                // 此时如果广告失效，会执行失败逻辑，再次流转策略，选中下一优先级广告。如果没有广告了，会抛出对应错误码，如果有成功的下一优先级广告，则会回调广告成功，开发者再次调用展示将执行下一优先级的展示方法。
+//              TODO: 2025/6/5   是否有必要直接对外抛错？？？亦或者有下一优先级广告不再回调成功事件，而是直接进行展示调用
+                handleFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, tip), currentSdkSupplier);
                 return;
             }
             LogUtil.devDebug(BTAG + "start adapter show");

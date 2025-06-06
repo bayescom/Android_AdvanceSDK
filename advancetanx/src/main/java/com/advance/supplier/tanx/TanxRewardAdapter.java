@@ -265,6 +265,7 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return iTanxRewardVideoExpressAd != null;
+//        return iTanxRewardVideoExpressAd != null;
+        return super.isValid();
     }
 }

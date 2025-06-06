@@ -8,9 +8,9 @@ import com.advance.FullScreenVideoSetting;
 import com.advance.model.AdvanceError;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
-import com.vkyb.kv.kvnepo.TTAppDownloadListener;
-import com.vkyb.kv.kvnepo.TTFullVideoObject;
-import com.vkyb.kv.kvnepo.TTVfConstant;
+import com.bykv.vk.openvk.TTAppDownloadListener;
+import com.bykv.vk.openvk.TTFullVideoObject;
+import com.bykv.vk.openvk.TTVfConstant;
 
 @Deprecated
 public class CsjFullScreenVideoItem implements AdvanceFullScreenItem {

@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 
 def pomName = "advance-csj-oppo"
 
-def libVersionName = "6428"
+def libVersionName = "6843"
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName + ""
 
 def advanceVersionCode = 1

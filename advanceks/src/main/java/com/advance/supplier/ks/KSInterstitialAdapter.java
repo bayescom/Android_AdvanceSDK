@@ -1,7 +1,6 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
-import androidx.annotation.Nullable;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -17,6 +16,8 @@ import com.kwad.sdk.api.KsScene;
 import java.util.List;
 
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
+
+import androidx.annotation.Nullable;
 
 public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter implements KsInterstitialAd.AdInteractionListener {
     private InterstitialSetting setting;

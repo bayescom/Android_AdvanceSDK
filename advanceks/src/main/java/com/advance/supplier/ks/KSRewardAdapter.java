@@ -61,37 +61,37 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
 
             }
 
-                @Override
-                public void onRewardVideoResult(@Nullable List<KsRewardVideoAd> list) {
-                    LogUtil.simple(TAG + "onRewardVideoResult  ");
+            @Override
+            public void onRewardVideoResult(@Nullable List<KsRewardVideoAd> list) {
+                LogUtil.simple(TAG + "onRewardVideoResult  ");
 
-                }
+            }
 
 //                @Override
 //                public void onRequestResult(int adNumber) {
 //                    LogUtil.simple(TAG + "onRequestResult，广告填充数量：" + adNumber);
 //                }
 
-                @Override
-                public void onRewardVideoAdLoad(@Nullable List<KsRewardVideoAd> list) {
-                    LogUtil.simple(TAG + " onRewardVideoAdLoad");
-                    try {
-                        if (list == null || list.size() == 0 || list.get(0) == null) {
-                            handleFailed(AdvanceError.ERROR_DATA_NULL, "");
-                        } else {
-                            ad = list.get(0);
-                            rewardVideoItem = new KSRewardItem(null, KSRewardAdapter.this, ad);
-                            ad.setRewardAdInteractionListener(KSRewardAdapter.this);
-                            updateBidding(ad.getECPM());
-                            handleSucceed();
-                        }
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                        handleFailed(AdvanceError.ERROR_EXCEPTION_LOAD, "");
+            @Override
+            public void onRewardVideoAdLoad(@Nullable List<KsRewardVideoAd> list) {
+                LogUtil.simple(TAG + " onRewardVideoAdLoad");
+                try {
+                    if (list == null || list.size() == 0 || list.get(0) == null) {
+                        handleFailed(AdvanceError.ERROR_DATA_NULL, "");
+                    } else {
+                        ad = list.get(0);
+                        rewardVideoItem = new KSRewardItem(null, KSRewardAdapter.this, ad);
+                        ad.setRewardAdInteractionListener(KSRewardAdapter.this);
+                        updateBidding(ad.getECPM());
+                        handleSucceed();
                     }
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    handleFailed(AdvanceError.ERROR_EXCEPTION_LOAD, "");
                 }
-            });
-        }
+            }
+        });
+    }
 
 
     //服务端回调参数设置
@@ -250,13 +250,12 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
     @Override
     public boolean isValid() {
         try {
-            if (ad == null) {
-                return false;
+            if (ad != null) {
+                return ad.isAdEnable();
             }
-            return ad.isAdEnable();
         } catch (Throwable e) {
             e.printStackTrace();
-            return false;
         }
+        return super.isValid();
     }
 }

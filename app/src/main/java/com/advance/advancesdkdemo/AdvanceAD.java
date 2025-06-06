@@ -339,6 +339,7 @@ public class AdvanceAD {
 
     }
 
+    boolean hasRewardShow = false;
     /**
      * 加载并展示激励视频广告。
      * 也可以选择性先提前加载，然后在合适的时机再调用展示方法
@@ -363,6 +364,9 @@ public class AdvanceAD {
             @Override
             public void onAdLoaded(AdvanceRewardVideoItem advanceRewardVideoItem) {
                 logAndToast(mActivity, "广告加载成功");
+                if (hasRewardShow){
+                    return;
+                }
                 // 如果有业务需求，可以提前加载广告，在需要的时候调用show进行展示
                 // 为了方便理解，这里在收到广告后直接调用广告展示，有可能会出现一段时间的缓冲状态。
                 if (advanceRewardVideo != null && advanceRewardVideo.isValid()) {
@@ -375,6 +379,7 @@ public class AdvanceAD {
             @Override
             public void onAdShow() {
                 logAndToast(mActivity, "广告展示");
+                hasRewardShow = true;
             }
 
             @Override

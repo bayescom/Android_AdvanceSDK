@@ -39,6 +39,7 @@ import com.kwad.sdk.api.KsNativeAd;
 import com.kwad.sdk.api.KsScene;
 import com.kwad.sdk.api.model.AdSourceLogoType;
 import com.kwad.sdk.api.model.KsNativeConvertType;
+import com.mercury.sdk.util.MercuryTool;
 
 import java.util.ArrayList;
 import java.util.HashMap;

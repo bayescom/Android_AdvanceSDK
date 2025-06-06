@@ -9,11 +9,11 @@ import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
-import com.vkyb.kv.kvnepo.TTRdVideoObject;
-import com.vkyb.kv.kvnepo.TTVfManager;
-import com.vkyb.kv.kvnepo.TTVfNative;
-import com.vkyb.kv.kvnepo.TTVfSdk;
-import com.vkyb.kv.kvnepo.VfSlot;
+import com.bykv.vk.openvk.TTRdVideoObject;
+import com.bykv.vk.openvk.TTVfManager;
+import com.bykv.vk.openvk.TTVfNative;
+import com.bykv.vk.openvk.TTVfSdk;
+import com.bykv.vk.openvk.VfSlot;
 
 public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements TTVfNative.RdVideoVfListener {
 
@@ -327,19 +327,27 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         }
     }
 
+//    @Override
+//    public boolean isValid() {
+//        try {
+//            if (ttRewardVideoAd == null) {
+//                return false;
+//            }
+//            long expirationTime = ttRewardVideoAd.getExpirationTimestamp();
+//            long currentTime = System.currentTimeMillis();
+//            LogUtil.devDebug(TAG + "isReady check:expirationTime = " + expirationTime + ", currentTime = " + currentTime);
+//            return expirationTime > currentTime;
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+
     @Override
     public boolean isValid() {
-        try {
-            if (ttRewardVideoAd == null) {
-                return false;
-            }
-            long expirationTime = ttRewardVideoAd.getExpirationTimestamp();
-            long currentTime = System.currentTimeMillis();
-            LogUtil.devDebug(TAG + "isReady check:expirationTime = " + expirationTime + ", currentTime = " + currentTime);
-            return expirationTime > currentTime;
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return false;
+        if (ttRewardVideoAd != null && ttRewardVideoAd.getMediationManager() != null) {
+            return ttRewardVideoAd.getMediationManager().isReady();
         }
+        return super.isValid();
     }
 }

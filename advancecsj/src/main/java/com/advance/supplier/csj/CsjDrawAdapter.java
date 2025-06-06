@@ -2,6 +2,8 @@ package com.advance.supplier.csj;
 
 import android.app.Activity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceDrawSetting;
@@ -14,6 +16,7 @@ import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTDrawFeedAd;
+import com.bytedance.sdk.openadsdk.TTNativeAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.bytedance.sdk.openadsdk.mediation.ad.MediationExpressRenderListener;
 
@@ -247,5 +250,13 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public boolean isValid() {
+        if (ad != null && ad.getMediationManager() != null) {
+            return ad.getMediationManager().isReady();
+        }
+        return super.isValid();
     }
 }

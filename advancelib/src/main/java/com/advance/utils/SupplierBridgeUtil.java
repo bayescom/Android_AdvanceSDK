@@ -18,6 +18,7 @@ public class SupplierBridgeUtil {
                 return;
             }
 
+            // TODO: 2025/2/20 自定义adn如何增加至该方法？ 是否必要？
 //全部已有的渠道信息。    包含了获取config实例需要的所有参数信息。
             ArrayList<AdvanceSupConfigModel> supportSupList = new ArrayList<>();
 //            后续如果添加SDK，只需要在这里添加并指定好对应的类名即可
@@ -29,6 +30,7 @@ public class SupplierBridgeUtil {
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_TANX, "tanx.TanxGlobalConfig"));
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_TAP, "tap.TapGlobalConfig"));
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_SIG, "sigmob.SigmobGlobalConfig"));
+            supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoGlobalConfig"));
 
             AdvanceConfig.getInstance().availableAdapterConfigMap = new HashMap<>();
             for (AdvanceSupConfigModel supConfigModel : supportSupList) {

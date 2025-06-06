@@ -5,8 +5,8 @@ import android.os.Bundle;
 
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceRewardVideoItem;
-import com.advance.model.AdvanceError;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
+import com.advance.model.AdvanceError;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 import com.bytedance.sdk.openadsdk.TTAppDownloadListener;
 import com.bytedance.sdk.openadsdk.TTRewardVideoAd;

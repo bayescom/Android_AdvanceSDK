@@ -206,4 +206,12 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
             advanceFullScreenVideo.adapterVideoSkipped();
 
     }
+
+    @Override
+    public boolean isValid() {
+        if (ttFullScreenVideoAd != null && ttFullScreenVideoAd.getMediationManager() != null) {
+            return ttFullScreenVideoAd.getMediationManager().isReady();
+        }
+        return super.isValid();
+    }
 }

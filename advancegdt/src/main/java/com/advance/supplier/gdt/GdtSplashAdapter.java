@@ -35,6 +35,16 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
     @Override
     public void show() {
         LogUtil.devDebug(TAG + " show");
+//        if (AdvanceUtil.isDev()) {//todo 测试逻辑，正式上线需移除
+//            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "测试渲染异常");
+//                }
+//            },1000);
+////            handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "测试渲染异常");
+//            return;
+//        }
         try {
             if (splashAD == null) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, "splashAd null"));
@@ -292,5 +302,13 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean isValid() {
+        if (splashAD != null) {
+            return splashAD.isValid();
+        }
+        return super.isValid();
     }
 }

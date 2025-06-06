@@ -219,6 +219,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
             rewardVideoAD.setServerSideVerificationOptions(new ServerSideVerificationOptions.Builder().setUserId(userId).setCustomData(extraInfo).build());
         }
         rewardVideoAD.loadAD();
+//        LogUtil.devDebug(TAG + " , sdk = " + sdkSupplier + " reqid:" + advanceRewardVideo.getAdvanceId());
     }
 
 
@@ -267,14 +268,22 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
 
     @Override
     public boolean isValid() {
-        try {
-            if (rewardVideoAD == null) {
-                return false;
-            }
+        if (rewardVideoAD != null) {
             return rewardVideoAD.isValid();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return false;
         }
+        return super.isValid();
     }
+//
+//    @Override
+//    public boolean isValid() {
+//        try {
+//            if (rewardVideoAD == null) {
+//                return false;
+//            }
+//            return rewardVideoAD.isValid();
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 }

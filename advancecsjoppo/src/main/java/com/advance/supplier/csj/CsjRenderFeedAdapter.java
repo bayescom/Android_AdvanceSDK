@@ -14,14 +14,14 @@ import com.advance.core.srender.AdvanceRFVideoEventListener;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
-import com.vkyb.kv.kvnepo.TTAppDownloadListener;
-import com.vkyb.kv.kvnepo.TTNtObject;
-import com.vkyb.kv.kvnepo.TTVfDislike;
-import com.vkyb.kv.kvnepo.TTVfManager;
-import com.vkyb.kv.kvnepo.TTVfNative;
-import com.vkyb.kv.kvnepo.TTVfObject;
-import com.vkyb.kv.kvnepo.TTVfSdk;
-import com.vkyb.kv.kvnepo.VfSlot;
+import com.bykv.vk.openvk.TTAppDownloadListener;
+import com.bykv.vk.openvk.TTNtObject;
+import com.bykv.vk.openvk.TTVfDislike;
+import com.bykv.vk.openvk.TTVfManager;
+import com.bykv.vk.openvk.TTVfNative;
+import com.bykv.vk.openvk.TTVfObject;
+import com.bykv.vk.openvk.TTVfSdk;
+import com.bykv.vk.openvk.VfSlot;
 
 import java.util.List;
 import java.util.Map;
@@ -352,4 +352,11 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
 
+    @Override
+    public boolean isValid() {
+        if (mRenderAD != null && mRenderAD.getMediationManager() != null) {
+            return mRenderAD.getMediationManager().isReady();
+        }
+        return super.isValid();
+    }
 }

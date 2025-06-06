@@ -7,12 +7,12 @@ import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
-import com.vkyb.kv.kvnepo.TTFullVideoObject;
-import com.vkyb.kv.kvnepo.TTVfConstant;
-import com.vkyb.kv.kvnepo.TTVfManager;
-import com.vkyb.kv.kvnepo.TTVfNative;
-import com.vkyb.kv.kvnepo.TTVfSdk;
-import com.vkyb.kv.kvnepo.VfSlot;
+import com.bykv.vk.openvk.TTFullVideoObject;
+import com.bykv.vk.openvk.TTVfConstant;
+import com.bykv.vk.openvk.TTVfManager;
+import com.bykv.vk.openvk.TTVfNative;
+import com.bykv.vk.openvk.TTVfSdk;
+import com.bykv.vk.openvk.VfSlot;
 
 public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     private InterstitialSetting advanceInterstitial;
@@ -33,6 +33,15 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     @Override
     public void show() {
         try {
+//            if (AdvanceUtil.isDev()) {//todo 测试逻辑，正式上线需移除
+//                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "测试渲染异常");
+//                    }
+//                }, 1000);
+//                return;
+//            }
             String nullTip = TAG + "请先加载广告或者广告已经展示过";
             if (newVersionAd != null) {
                 newVersionAd.showFullVideoVs(activity, TTVfConstant.RitScenes.GAME_GIFT_BONUS, null);
@@ -174,5 +183,15 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     protected void adReady() {
         //新版本调用的是全屏视频的方法
 
+    }
+
+
+    @Override
+    public boolean isValid() {
+        //        return  false;
+        if (newVersionAd != null && newVersionAd.getMediationManager() != null) {
+            return newVersionAd.getMediationManager().isReady();
+        }
+        return super.isValid();
     }
 }

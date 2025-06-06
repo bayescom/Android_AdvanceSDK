@@ -47,6 +47,15 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
 //            setting.adapterDidSucceed(sdkSupplier);
 //        }
     }
+//
+//
+//    @Override
+//    public boolean isValid() {
+//        if (mInterAd != null) {
+//            return mInterAd.isReady();
+//        }
+//        return super.isValid();
+//    }
 
     @Override
     public void show() {

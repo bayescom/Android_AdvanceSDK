@@ -8,12 +8,12 @@ import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
-import com.vkyb.kv.kvnepo.TTFullVideoObject;
-import com.vkyb.kv.kvnepo.TTVfConstant;
-import com.vkyb.kv.kvnepo.TTVfManager;
-import com.vkyb.kv.kvnepo.TTVfNative;
-import com.vkyb.kv.kvnepo.TTVfSdk;
-import com.vkyb.kv.kvnepo.VfSlot;
+import com.bykv.vk.openvk.TTFullVideoObject;
+import com.bykv.vk.openvk.TTVfConstant;
+import com.bykv.vk.openvk.TTVfManager;
+import com.bykv.vk.openvk.TTVfNative;
+import com.bykv.vk.openvk.TTVfSdk;
+import com.bykv.vk.openvk.VfSlot;
 
 public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements TTVfNative.FullScreenVideoAdListener, TTFullVideoObject.FullVideoVsInteractionListener {
     private FullScreenVideoSetting advanceFullScreenVideo;
@@ -206,5 +206,13 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
         if (advanceFullScreenVideo != null)
             advanceFullScreenVideo.adapterVideoSkipped();
 
+    }
+
+    @Override
+    public boolean isValid() {
+        if (ttFullScreenVideoAd != null && ttFullScreenVideoAd.getMediationManager() != null) {
+            return ttFullScreenVideoAd.getMediationManager().isReady();
+        }
+        return super.isValid();
     }
 }

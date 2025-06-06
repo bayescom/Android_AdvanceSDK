@@ -5,7 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.advance.AdvanceConfig;
+import com.advance.AdvanceSetting;
 import com.advance.BannerSetting;
+import com.advance.BaseParallelAdapter;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
@@ -222,5 +224,13 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
             e.printStackTrace();
             doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
         }
+    }
+
+    @Override
+    public boolean isValid() {
+        if (ad != null && ad.getMediationManager() != null) {
+            return ad.getMediationManager().isReady();
+        }
+        return super.isValid();
     }
 }

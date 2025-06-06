@@ -183,4 +183,12 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         //新版本调用的是全屏视频的方法
 
     }
+
+    @Override
+    public boolean isValid() {
+        if (newVersionAd != null && newVersionAd.getMediationManager() != null) {
+            return newVersionAd.getMediationManager().isReady();
+        }
+        return super.isValid();
+    }
 }

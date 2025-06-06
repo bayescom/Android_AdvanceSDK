@@ -218,4 +218,12 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
         }
     }
+
+    @Override
+    public boolean isValid() {
+        if (adView != null) {
+            return adView.isValid();
+        }
+        return super.isValid();
+    }
 }

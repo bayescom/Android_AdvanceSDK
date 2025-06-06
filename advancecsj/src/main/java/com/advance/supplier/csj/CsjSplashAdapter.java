@@ -376,4 +376,12 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
         }
     }
 
+
+    @Override
+    public boolean isValid() {
+        if (newSplashAd != null && newSplashAd.getMediationManager() != null) {
+            return newSplashAd.getMediationManager().isReady();
+        }
+        return super.isValid();
+    }
 }

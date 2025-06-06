@@ -4,9 +4,10 @@ import android.app.Activity;
 
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceFullScreenItem;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
+import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.FullScreenVideoAd;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 
 @Deprecated

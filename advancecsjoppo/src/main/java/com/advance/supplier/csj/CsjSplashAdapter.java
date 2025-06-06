@@ -14,13 +14,13 @@ import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.util.BYUtil;
-import com.vkyb.kv.kvnepo.CSJAdError;
-import com.vkyb.kv.kvnepo.CSJSplashAd;
-import com.vkyb.kv.kvnepo.CSJSplashCloseType;
-import com.vkyb.kv.kvnepo.TTVfManager;
-import com.vkyb.kv.kvnepo.TTVfNative;
-import com.vkyb.kv.kvnepo.TTVfSdk;
-import com.vkyb.kv.kvnepo.VfSlot;
+import com.bykv.vk.openvk.CSJAdError;
+import com.bykv.vk.openvk.CSJSplashAd;
+import com.bykv.vk.openvk.CSJSplashCloseType;
+import com.bykv.vk.openvk.TTVfManager;
+import com.bykv.vk.openvk.TTVfNative;
+import com.bykv.vk.openvk.TTVfSdk;
+import com.bykv.vk.openvk.VfSlot;
 
 import java.lang.ref.SoftReference;
 
@@ -365,4 +365,12 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
         }
     }
 
+    @Override
+    public boolean isValid() {
+//        return  false;
+        if (newSplashAd != null && newSplashAd.getMediationManager() != null) {
+            return newSplashAd.getMediationManager().isReady();
+        }
+        return super.isValid();
+    }
 }

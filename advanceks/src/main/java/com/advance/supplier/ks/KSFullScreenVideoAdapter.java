@@ -1,7 +1,6 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
-import androidx.annotation.Nullable;
 
 import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
@@ -17,6 +16,8 @@ import com.kwad.sdk.api.KsScene;
 import java.util.List;
 
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
+
+import androidx.annotation.Nullable;
 
 public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements KsFullScreenVideoAd.FullScreenVideoAdInteractionListener {
 
@@ -182,5 +183,17 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
         }
+    }
+
+    @Override
+    public boolean isValid() {
+        try {
+            if (ad != null) {
+                return ad.isAdEnable();
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return super.isValid();
     }
 }

@@ -174,4 +174,12 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
             doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
         }
     }
+
+    @Override
+    public boolean isValid() {
+        if (mercuryBanner != null) {
+            return mercuryBanner.isValid();
+        }
+        return super.isValid();
+    }
 }
