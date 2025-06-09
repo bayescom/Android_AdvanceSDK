@@ -30,18 +30,9 @@ public class AdvanceConfig {
     public static final String AdvanceSdkVersion = AdvanceSDK.getVersion();
     public static final String AdvanceSdkRequestUrl = "http://cruiser.bayescom.cn/eleven";
     public static final String AdvanceSdkRequestUrlHttps = "https://cruiser.bayescom.cn/eleven";
-    //    public static final String AdvanceSdkRequestUrl = "http://82.156.240.27:8897/cruiser";
     public static final String SDK_ERR_REPORT_URL = "http://cruiser.bayescom.cn/sdkevent";
     public static final String SDK_ERR_REPORT_URL_HTTPS = "https://cruiser.bayescom.cn/sdkevent";
-//    public static final String SDK_ERR_REPORT_URL = "http://49.232.64.234/sdkevent"; //cruiser指定机器上
 
-
-    //各SDK的最佳兼容版本
-    public static final String SDK_MIN_VERSION_MERCURY = "3.8.1";
-    public static final String SDK_MIN_VERSION_CSJ = "5.3.0.5";
-    public static final String SDK_MIN_VERSION_GDT = "4.530";
-    public static final String SDK_MIN_VERSION_BD = "9.3";
-    public static final String SDK_MIN_VERSION_KS = "3.3.44";
 
 
     private static AdvanceConfig instance;

@@ -106,35 +106,7 @@ public class AdvanceSecurityCore {
 
     //test
     public static void main(String[] args) throws Exception {
-        // 需要加密的字串
-//        String cSrc = "123";
-//        String decodeRes = "Ntm1eTfB9TZa16p3CvcPgtT6fIoZWjBmP02Z1fKxA6cY5aXGe-voFyZ1v-p7KaXLeFjfDFY60pj5Pijti1DjWEy7qezQVlUgZDZreIrn4R75HC3IAttWv4eXb9dEvL9PGhuZnxFWk0lunhS6HrviwfunS5UpNAPVLROwM-qv8-bjwI_xqmOBH2_MvPi6q5cHpqYDZAbmmgNZQrlpbuXL02wkGYfW65syyA8ntazmfpxsGT6wEiO1Yu6CYbYqM78SFTjnwzLIqq2-U4zRQSnBFm7cpl9aRmyIB9VVIUh4avzwX-iIjras6qMgXdjw_hFRlDQ_kflVSPBf88cPkDOQo2Ua6Xs1RvoNh8_kUnRJU9TUUuMrRuv0tjtjQ2JnJTpHNG3shUd3-XWPHmadSCTDPsg1pa1EM4E_5s7O5zQ-x4QFLbL5OSP-M2O87Rfr_6KUZmt7iEgExjvDIBM4EK0dcWcXZYKqPPgmkKEqYj3DXkJAYhcpF_LucqdpymAq6TOsZrK1578PDNas6n4CQNOC8XbrCeiGpLGb9vCN67NFMjjNZHdz65KBwqVgO4TZT78d";
-//        String decodeRes = "Ntm1eTfB9TZa16p3CvcPgtT6fIoZWjBmP02Z1fKxA6csxqjYLdrT9Op6GcfVF-Axt8bV7VW23TH0qoJWbIXskAfTTlGcwWhAW9-pn4YUPKZYiKi6ZRBNdUIqXY8BtxwC-RwtyALbVr-Hl2_XRLy_TxobmZ8RVpNJbp4Uuh674sH7p0uVKTQD1S0TsDPqr_PmvrIQJwhn9HnlPXv5Q_R8qWTui_3oqZBmiUe6P0RLd2TuK4arvOSNkGqLgzA9YbtkkH67jTkNcrddUYufqx5Y3ULXJJmjdT4in6ynz_vPfv9JpGOY19rZG_XxxJMyTbN9XVFmyJCSLPziYfZ1AxCEmJkDLxMiIl-5fmVsHjMaOXbrh0ueWgPQt0MFEbcBhbW6-IIh7rNSwr9cPcb9h-tfte-FlNC_ccBpz1cfyz97bkCzJ3cSZ0MROK8UVHXY6Luo5NIo4ojGSSoEzRWyLPl4XedPuPKZTscAa906A2oZq_-qOQDu-MRhGybl-i3dObjojfq5k5dA62CBFUobpR-PWiqpqF2xYphFlCwNDCSYxLE62RXSfnZt92IxGE180a1kjufkCY8Mfk9TVY1Mj_UjVnnVK_gxAggpd-SZrtiMse4=";
-//        String jsString = BYSecurityCore.getInstance().decrypt(decodeRes);
-//        System.out.println("解密后的字串是：" + jsString);
-//
-//        String json = "{\"ua\":\"Mozilla\\/5.0 (Linux; Android 11; MI 9 Transparent Edition Build\\/RKQ1.200826.002; wv) AppleWebKit\\/537.36 (KHTML, like Gecko) Version\\/4.0 Chrome\\/109.0.5414.117 Mobile Safari\\/537.36\",\"network\":1,\"os\":2,\"osv\":\"11.0\",\"devicetype\":1,\"sw\":1080,\"sh\":2221,\"ppi\":440,\"imei\":\"\",\"mac\":\"60:AB:67:F2:91:9B\",\"oaid\":\"616d570ad76f1563\",\"andr  rier\":\"46007\",\"make\":\"Xiaomi\",\"model\":\"MI 9 Transparent Edition\",\"update_mark\":\"102116.279999990\",\"boot_m";
-//        System.out.println("加密前的json：" + json);
-//        String enString1 = BYSecurityCore.getInstance().encrypt(json);
-//        System.out.println("加密后的json字串是：" + enString1);
-//
-//
-//        // 加密
-//        long lStart = System.currentTimeMillis();
-//        String enString = BYSecurityCore.getInstance().encrypt(cSrc);
-//        System.out.println("加密后的字串是：" + enString);
-//
-//        long lUseTime = System.currentTimeMillis() - lStart;
-//        System.out.println("加密耗时：" + lUseTime + "毫秒");
-//        // 解密
-//        lStart = System.currentTimeMillis();
-//        String DeString = BYSecurityCore.getInstance().decrypt(enString);
-//        System.out.println("解密后的字串是：" + DeString);
-//        lUseTime = System.currentTimeMillis() - lStart;
-//        System.out.println("解密耗时：" + lUseTime + "毫秒");
-//        lStart = System.currentTimeMillis();
-//        lUseTime = System.currentTimeMillis() - lStart;
-//        System.out.println("解密耗时：" + lUseTime + "毫秒");
+
     }
 
     // 加密

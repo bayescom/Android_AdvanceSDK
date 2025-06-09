@@ -17,6 +17,7 @@ import com.advance.model.GMParams;
 import com.advance.model.SdkSupplier;
 import com.advance.model.ServerRewardModel;
 import com.advance.model.SupplierSettingModel;
+import com.advance.utils.AdvanceSecurityCore;
 import com.advance.utils.LogUtil;
 import com.advance.utils.SupplierBridgeUtil;
 import com.bayes.sdk.basic.device.BYDevice;
@@ -26,7 +27,6 @@ import com.bayes.sdk.basic.net.BYReqCallBack;
 import com.bayes.sdk.basic.net.BYReqModel;
 import com.bayes.sdk.basic.util.BYCacheUtil;
 import com.bayes.sdk.basic.util.BYSPUtil;
-import com.bayes.sdk.basic.util.BYSecurityCore;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 
@@ -170,7 +170,8 @@ public class AdvanceNetManger {
 
 
                 LogUtil.devDebug("secretObject.toString() = " + secretObject.toString());
-                String device_encinfo = BYSecurityCore.getInstance().encrypt(secretObject.toString());
+                String device_encinfo = AdvanceSecurityCore.getInstance().encrypt(secretObject.toString());
+
                 jsonObject.putOpt("device_encinfo", device_encinfo);
 
             } catch (Throwable e) {
