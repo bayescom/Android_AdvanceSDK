@@ -15,6 +15,7 @@ import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 import com.qq.e.ads.splash.SplashAD;
+import com.qq.e.ads.splash.SplashADListener;
 import com.qq.e.ads.splash.SplashADZoomOutListener;
 import com.qq.e.comm.util.AdError;
 
@@ -128,24 +129,25 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
         int timeout = sdkSupplier.timeout <= 0 ? 5000 : sdkSupplier.timeout;
 
 
-        SplashADZoomOutListener listener = new SplashADZoomOutListener() {
-            @Override
-            public void onZoomOut() {
-                LogUtil.simple(TAG + "onZoomOut ");
-                zoomOut();
-            }
-
-            @Override
-            public void onZoomOutPlayFinish() {
-                LogUtil.simple(TAG + "onZoomOutPlayFinish ");
-
-            }
-
-            @Override
-            public boolean isSupportZoomOut() {
-                LogUtil.simple(TAG + "isSupportZoomOut ");
-                return true;
-            }
+        SplashADListener listener = new SplashADListener() {
+//            SplashADZoomOutListener listener = new SplashADZoomOutListener() {
+//            @Override
+//            public void onZoomOut() {
+//                LogUtil.simple(TAG + "onZoomOut ");
+//                zoomOut();
+//            }
+//
+//            @Override
+//            public void onZoomOutPlayFinish() {
+//                LogUtil.simple(TAG + "onZoomOutPlayFinish ");
+//
+//            }
+//
+//            @Override
+//            public boolean isSupportZoomOut() {
+//                LogUtil.simple(TAG + "isSupportZoomOut ");
+//                return true;
+//            }
 
             @Override
             public void onADDismissed() {

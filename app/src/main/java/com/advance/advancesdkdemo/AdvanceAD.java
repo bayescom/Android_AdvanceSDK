@@ -283,6 +283,7 @@ public class AdvanceAD {
 
         });
         advanceBanner.loadStrategy();
+        logAndToast(mActivity, "banner广告请求中");
     }
 
 
@@ -576,6 +577,8 @@ public class AdvanceAD {
         });
         //必须
         advanceNativeExpress.loadStrategy();
+        logAndToast(mActivity, "模板信息流广告请求中");
+
     }
 
 

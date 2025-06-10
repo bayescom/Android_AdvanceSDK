@@ -26,13 +26,13 @@ public class DemoIds {
                 result.draw = "";
                 break;
             case "穿山甲":
-                result.banner = "10007795";
-                result.splash = "10007771";
-                result.reward = "10007797";
-                result.interstitial = "10007796";
-                result.nativeExpress = "10007794";
+                result.banner = "10003091";
+                result.splash = "10003083";
+                result.reward = "10003100";
+                result.interstitial = "10003097";
+                result.nativeExpress = "10003094";
                 result.nativeCustom = "10003120";
-                result.fullscreen = "10007825";
+                result.fullscreen = "10012468";
                 result.draw = "10005123";
                 break;
             case "广点通":
