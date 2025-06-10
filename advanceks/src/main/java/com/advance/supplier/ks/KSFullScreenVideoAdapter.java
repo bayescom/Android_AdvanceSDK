@@ -65,19 +65,8 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
                 }
 
                 @Override
-                public void onFullScreenVideoResult(@Nullable List<KsFullScreenVideoAd> list) {
+                public void onFullScreenVideoResult(@Nullable List<KsFullScreenVideoAd> adList) {
                     LogUtil.simple(TAG + "onFullScreenVideoResult, ");
-
-                }
-
-//                @Override
-//                public void onRequestResult(int adNumber) {
-//                    LogUtil.simple(TAG + "onRequestResult, 广告填充数量：" + adNumber);
-//                }
-
-                @Override
-                public void onFullScreenVideoAdLoad(@Nullable List<KsFullScreenVideoAd> adList) {
-                    LogUtil.simple(TAG + " onFullScreenVideoAdLoad");
                     try {
                         list = adList;
                         if (list == null || list.size() == 0 || list.get(0) == null) {
@@ -97,6 +86,17 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
                         e.printStackTrace();
                         handleFailed(AdvanceError.ERROR_EXCEPTION_LOAD, "");
                     }
+                }
+
+//                @Override
+//                public void onRequestResult(int adNumber) {
+//                    LogUtil.simple(TAG + "onRequestResult, 广告填充数量：" + adNumber);
+//                }
+
+                @Override
+                public void onFullScreenVideoAdLoad(@Nullable List<KsFullScreenVideoAd> adList) {
+                    LogUtil.simple(TAG + " onFullScreenVideoAdLoad");
+
                 }
             });
         }

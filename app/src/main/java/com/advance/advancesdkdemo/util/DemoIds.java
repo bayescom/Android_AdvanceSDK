@@ -46,7 +46,7 @@ public class DemoIds {
                 result.draw = "";
                 break;
             case "百度":
-                result.banner = "10007822";
+                result.banner = "";
                 result.splash = "10007774";
                 result.reward = "10007824";
                 result.interstitial = "10007823";
