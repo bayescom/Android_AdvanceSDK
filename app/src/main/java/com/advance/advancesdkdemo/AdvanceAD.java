@@ -175,8 +175,8 @@ public class AdvanceAD {
         baseAD = advanceSplash;
         //注意！！：如果开屏页是fragment或者dialog实现，这里需要置为true。不设置时默认值为false，代表开屏和首页为两个不同的activity
 //        advanceSplash.setShowInSingleActivity(true);
-//        建议：设置底部logo布局及高度值（单位px）
-        advanceSplash.setLogoLayout(R.layout.splash_logo_layout, mActivity.getResources().getDimensionPixelSize(R.dimen.logo_layout_height));
+//        按需：设置底部logo布局及高度值（单位px）
+//        advanceSplash.setLogoLayout(R.layout.splash_logo_layout, mActivity.getResources().getDimensionPixelSize(R.dimen.logo_layout_height));
         //必须：设置开屏核心回调事件的监听器。
         advanceSplash.setAdListener(new AdvanceSplashListener() {
             /**
