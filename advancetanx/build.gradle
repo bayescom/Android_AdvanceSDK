@@ -1,5 +1,10 @@
 apply plugin: 'com.android.library'
 
+// JitPack Maven
+apply plugin: 'com.github.dcendents.android-maven'
+// Your Group
+group = 'com.github.bayescom'
+
 def pomName = "advance-tanx"
 
 def advanceVersionName = "${rootProject.ext.advance_version}_3710"
