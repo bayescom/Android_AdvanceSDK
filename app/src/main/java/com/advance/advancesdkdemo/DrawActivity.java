@@ -25,6 +25,7 @@ import android.widget.VideoView;
 import com.advance.advancesdkdemo.draw.FullScreenVideoView;
 import com.advance.advancesdkdemo.draw.OnViewPagerListener;
 import com.advance.advancesdkdemo.draw.ViewPagerLayoutManager;
+import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.advancesdkdemo.util.UIUtils;
 
 import java.util.ArrayList;
@@ -268,7 +269,7 @@ public class DrawActivity extends Activity {
 
                 } else if (item.type == TYPE_AD_ITEM && item.ad != null) {
                     //请求并展示draw信息流广告
-                    item.ad.loadDraw(Constants.TestIds.drawAdspotId, holder.videoLayout);
+                    item.ad.loadDraw(DemoManger.getInstance().currentDemoIds.draw, holder.videoLayout);
                 }
             }
 

@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.advance.advancesdkdemo.util.DemoManger;
+
 
 public class NativeExpressActivity extends AppCompatActivity {
     private FrameLayout container;
@@ -26,7 +28,7 @@ public class NativeExpressActivity extends AppCompatActivity {
         //每次加载要新建广告处理实例
         ad = new AdvanceAD(this);
         adSucc = false;
-        ad.loadNativeExpressOnly(Constants.TestIds.nativeExpressAdspotId, new AdvanceAD.LoadCallBack() {
+        ad.loadNativeExpressOnly(DemoManger.getInstance().currentDemoIds.nativeExpress, new AdvanceAD.LoadCallBack() {
             @Override
             public void adSuccess() {
                 adSucc = true;

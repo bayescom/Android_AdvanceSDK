@@ -7,18 +7,26 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.advance.AdvanceConfig;
 import com.advance.advancesdkdemo.custom.SelfRenderActivity;
 import com.advance.advancesdkdemo.util.BaseCallBack;
+import com.advance.advancesdkdemo.util.DemoIds;
+import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.advancesdkdemo.util.UserPrivacyDialog;
 import com.alimm.tanx.core.SdkConstant;
 import com.baidu.mobads.sdk.api.AdSettings;
+import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
+import com.heytap.msp.mobad.api.MobAdManager;
 import com.kwad.sdk.api.KsAdSDK;
 import com.mercury.sdk.core.config.MercuryAD;
 import com.qq.e.comm.managers.status.SDKStatus;
@@ -29,15 +37,95 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button fullVideo;
+    Button fullVideo, banner, splash, interstitial, reward, nativeExpress, nativeExpressRV, nativeCustom, draw;
+    Spinner sdKSNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        //获取按钮
         fullVideo = findViewById(R.id.fullvideo_button);
+        splash = findViewById(R.id.splash_button);
+        banner = findViewById(R.id.banner_button);
+        interstitial = findViewById(R.id.interstitial_button);
+        reward = findViewById(R.id.rewardvideo_button);
+        nativeExpress = findViewById(R.id.native_express_button);
+        nativeExpressRV = findViewById(R.id.native_express_recycler_view_button);
+        nativeExpress = findViewById(R.id.native_express_button);
+        nativeCustom = findViewById(R.id.btn_rf);
+        draw = findViewById(R.id.btn_draw);
+//         = findViewById(R.id.);
+//         = findViewById(R.id.);
+
+
+        String date = "「" + BuildConfig.BUILD_DATA + "」";
+        TextView da = findViewById(R.id.tv_run_inf);
+        da.setText(date);
+
+        sdKSNew = findViewById(R.id.sp_sdk);
+        sdKSNew.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                String sdkName = (String) sdKSNew.getItemAtPosition(position);
+                updateIDInf(sdkName);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+        updateIDInf(sdKSNew.getSelectedItem().toString());
+
+
+        printVersion();
+
+        checkPermiss();
+
+    }
+
+    private void updateIDInf(String sdkName) {
+        //存储id信息
+        DemoIds ids = DemoIds.getDemoIds(sdkName);
+
+        DemoManger.getInstance().currentDemoIds = ids;
+//        显式展示出来
+        updateButtonAct(banner, ids.banner);
+        updateButtonAct(splash, ids.splash);
+        updateButtonAct(reward, ids.reward);
+        updateButtonAct(nativeExpress, ids.nativeExpress);
+        updateButtonAct(nativeExpressRV, ids.nativeExpress);
+        updateButtonAct(nativeCustom, ids.nativeCustom);
+        updateButtonAct(fullVideo, ids.fullscreen);
+        updateButtonAct(interstitial, ids.interstitial);
+        updateButtonAct(draw, ids.draw);
+
+    }
+
+    //判断该类型广告位是否可用，不可用需要将按钮禁用，可用将添加广告位id在描述后面
+    private boolean updateButtonAct(Button targetV, String id) {
+        boolean result = BYStringUtil.isNotEmpty(id);
+        String txt = targetV.getText().toString();
+        int index = txt.indexOf("(");
+        if (result) {
+            if (index <= 0) {
+                targetV.setText(txt + "(" + id + ")");
+            } else {
+                String typeTxt = txt.substring(0, index);
+                targetV.setText(typeTxt + "(" + id + ")");
+            }
+        } else {
+            if (index > 0) {
+                String typeTxt = txt.substring(0, index);
+                targetV.setText(typeTxt);
+            }
+        }
+        targetV.setEnabled(result);
+        return result;
+    }
+
+    private void printVersion() {
 
         String csjV = TTAdSdk.getAdManager().getSDKVersion();
 //        String csjop = TTVfSdk.getVfManager().getSDKVersion();
@@ -57,9 +145,13 @@ public class MainActivity extends AppCompatActivity {
                         "快手 SDK 版本号： " + ksV + "\n" +
                         "tanx SDK 版本号：" + SdkConstant.getSdkVersion() + "\n" +
                         "Sigmob SDK 版本号：" + WindAds.getVersion() + "\n" +
+                        "oppo SDK 版本号：" + MobAdManager.getInstance().getSdkVerName() + "\n" +
                         "TapTap SDK 版本号： " + com.tapsdk.tapad.BuildConfig.VERSION_NAME + "\n"
         );
+    }
 
+
+    private void checkPermiss() {
         boolean hasPri = getSharedPreferences(Constants.SP_NAME, Context.MODE_PRIVATE).getBoolean(Constants.SP_AGREE_PRIVACY, false);
         /**
          * 注意！：由于工信部对设备权限等隐私权限要求愈加严格，强烈推荐APP提前申请好权限，且用户同意隐私政策后再加载广告
@@ -77,11 +169,12 @@ public class MainActivity extends AppCompatActivity {
             };
             dialog.show();
         }
-
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     private void checkAndRequestPermission() {
+
+
         List<String> lackedPermission = new ArrayList<String>();
         if (!(checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)) {
             lackedPermission.add(Manifest.permission.READ_PHONE_STATE);
@@ -114,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onRewardVideo(View view) {
-        new AdvanceAD(this).loadReward(Constants.TestIds.rewardAdspotId);
+        new AdvanceAD(this).loadReward(DemoManger.getInstance().currentDemoIds.reward);
     }
 
     public void onNativeExpressRecyclerView(View view) {
@@ -122,11 +215,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onInterstitial(View view) {
-        new AdvanceAD(this).loadInterstitial(Constants.TestIds.interstitialAdspotId);
+        new AdvanceAD(this).loadInterstitial(DemoManger.getInstance().currentDemoIds.interstitial);
     }
 
     public void onFullVideo(View view) {
-        new AdvanceAD(this).loadFullVideo(Constants.TestIds.fullScreenVideoAdspotId);
+        new AdvanceAD(this).loadFullVideo(DemoManger.getInstance().currentDemoIds.fullscreen);
     }
 
 

@@ -28,6 +28,7 @@ import com.advance.AdvanceSDK;
 import com.advance.AdvanceSplash;
 import com.advance.AdvanceSplashListener;
 import com.advance.RewardServerCallBackInf;
+import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.advancesdkdemo.util.UIUtils;
 import com.advance.custom.AdvanceBaseCustomAdapter;
 import com.advance.itf.AdvancePrivacyController;
@@ -520,7 +521,7 @@ public class AdvanceAD {
         }
 
         //初始化
-        final AdvanceNativeExpress advanceNativeExpress = new AdvanceNativeExpress(mActivity, Constants.TestIds.nativeExpressAdspotId);
+        final AdvanceNativeExpress advanceNativeExpress = new AdvanceNativeExpress(mActivity, DemoManger.getInstance().currentDemoIds.nativeExpress);
         baseAD = advanceNativeExpress;
         //必须：设置广告父布局
         advanceNativeExpress.setAdContainer(adContainer);

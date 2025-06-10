@@ -7,6 +7,8 @@ import android.view.KeyEvent;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.advance.advancesdkdemo.util.DemoManger;
+
 
 public class SplashActivity extends Activity {
     TextView skipView;
@@ -27,7 +29,7 @@ public class SplashActivity extends Activity {
          */
         ad = new AdvanceAD(this);
         //建议传递logo信息给SDK，使展示效果更美观
-        ad.loadSplash(Constants.TestIds.splashAdspotId, adContainer, new AdvanceAD.SplashCallBack() {
+        ad.loadSplash(DemoManger.getInstance().currentDemoIds.splash, adContainer, new AdvanceAD.SplashCallBack() {
             @Override
             public void jumpMain() {
                 goToMainActivity();

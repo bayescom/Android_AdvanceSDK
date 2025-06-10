@@ -4,12 +4,12 @@ import java.time.format.DateTimeFormatter
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.advance.advancesdkdemo"
 
-        minSdkVersion 17
-        targetSdkVersion 28
+        minSdkVersion 21
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -72,7 +72,8 @@ android {
 
 
 private static String getBuildTime() {
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("EEEE MM-dd HH:mm")
+//    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("EEEE MM-dd HH:mm")
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM-dd HH:mm")
 //    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yy-MM月dd日-HH时mm分")
     LocalDateTime now = LocalDateTime.now()
     String dateTime = dtf.format(now)
@@ -97,8 +98,6 @@ dependencies {
 //        debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
 
     //引入Advance SDK --------start--------
-//    compileOnly project(path: ':advancelib')
-
     //必须，Advance聚合SDK核心引入，包含了mercury变现SDK。如果gradle引入异常，请参考根目录gradle配置（确保maven依赖在最前面）然后重试
     implementation project(path: ':advancelib')
     implementation project(path: ':advancemry')
@@ -110,6 +109,12 @@ dependencies {
     implementation project(path: ':advancebd')  //新版本百度必须要在AndroidX环境下
     implementation project(path: ':advanceks')
     implementation project(path: ':advancesigmob')
+
+//    oppo
+    implementation project(path: ':advanceoppo')
+// oppo 依赖的引入库，必须
+            implementation 'androidx.palette:palette:1.0.0'//490版本新增
+
 
     //注意：接入快手需要同时引入以下support库，请确保添加
     implementation 'androidx.appcompat:appcompat:1.0.0'
