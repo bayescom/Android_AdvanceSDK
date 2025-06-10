@@ -6,7 +6,9 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 30
     defaultConfig {
-        applicationId "com.advance.advancesdkdemo"
+//        applicationId "com.advance.advancesdkdemo"
+//        applicationId "com.opos.mobaddemo" //oppo测试包名，oppo广告需要指定包名才可以
+        applicationId "com.example.pptv" //人人视频
 
         minSdkVersion 21
         targetSdkVersion 30

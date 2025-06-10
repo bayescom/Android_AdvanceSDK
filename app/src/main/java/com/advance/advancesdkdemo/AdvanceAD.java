@@ -33,6 +33,7 @@ import com.advance.advancesdkdemo.util.UIUtils;
 import com.advance.custom.AdvanceBaseCustomAdapter;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.model.AdvanceError;
+import com.advance.supplier.tanx.TanxGlobalConfig;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.BYBasicSDK;
 
@@ -353,6 +354,9 @@ public class AdvanceAD {
         //初始化，注意需要时再初始化，不要复用。
         final AdvanceRewardVideo advanceRewardVideo = new AdvanceRewardVideo(id);
         baseAD = advanceRewardVideo;
+
+        //若集成
+        TanxGlobalConfig.setMediaUID("tanxMUID");
 
         //服务端验证相关信息填写---start
         advanceRewardVideo.setUserId("用户唯一标识，服务端验证必须");

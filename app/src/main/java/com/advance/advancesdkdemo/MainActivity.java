@@ -59,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
 //         = findViewById(R.id.);
 //         = findViewById(R.id.);
 
-
+        TextView title = findViewById(R.id.tv_title);
+        title.setText("advanceDemo(" + getPackageName() + ")");
         String date = "「" + BuildConfig.BUILD_DATA + "」";
         TextView da = findViewById(R.id.tv_run_inf);
         da.setText(date);
