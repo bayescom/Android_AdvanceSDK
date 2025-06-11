@@ -98,6 +98,7 @@ repositories {
 dependencies {
 // debugImplementation because LeakCanary should only run in debug builds.
 //        debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+//    implementation 'com.github.bayescom:Android_AdvanceSDK:unify_advance-e67d90f122-1'
 
     //引入Advance SDK --------start--------
     //必须，Advance聚合SDK核心引入，包含了mercury变现SDK。如果gradle引入异常，请参考根目录gradle配置（确保maven依赖在最前面）然后重试

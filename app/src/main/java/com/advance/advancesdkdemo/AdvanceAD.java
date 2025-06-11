@@ -225,6 +225,8 @@ public class AdvanceAD {
             }
 
         });
+        //自定义adn必须添加，未支持得sdkID具体值需联系我们获取，不得和现有sdkID重复
+//        advanceSplash.addCustomSupplier("自定义得sdkID，请联系我们获取","com.advance.supplier.custom.CustomADNYLHSplashAdapter");
         //必须：请求广告
         advanceSplash.loadOnly();
 
