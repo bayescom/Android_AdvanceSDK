@@ -663,9 +663,9 @@ public class AdvanceAD {
             }
 
         });
-//        如果对展现尺寸不满意，可以通过设置此处的值来调整
-        int width = (int) UIUtils.getScreenWidthDp(mActivity);
-        advanceNativeExpress.setExpressViewAcceptedSize(width, 0);
+//        如果对展现尺寸不满意，可以通过设置此处的值来调整，注意不可设置超过广告容器或屏幕大小得尺寸
+//        int width = (int) UIUtils.getScreenWidthDp(mActivity);
+//        advanceNativeExpress.setExpressViewAcceptedSize(width, 0);
         //必须
         advanceNativeExpress.loadStrategy();
 

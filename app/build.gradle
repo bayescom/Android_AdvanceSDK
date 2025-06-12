@@ -111,8 +111,8 @@ dependencies {
 //    implementation "io.github.bayescom:mercury-sdk:4.5.1"
 //
 ////1.2  可选引入部分，引入各个广告ADN得aar
-//    //穿山甲、百度、快手、oppo、taptap、sigmob
-//    implementation fileTree(dir: 'libs', include: ["Baidu_MobAds_SDK_9391.aar","kssdk-ad-3376.aar","TapAD_3.16.3.45.aar","wind-common-1.7.9.aar","wind-sdk-4.22.2.aar","oppo_ad_700.aar","open_ad_sdk_6840.aar"])
+//    //依次引入分别是：穿山甲、百度、快手、oppo、taptap、sigmob
+//    implementation fileTree(dir: 'libs', include: ["open_ad_sdk_6840.aar","Baidu_MobAds_SDK_9391.aar","kssdk-ad-3376.aar","oppo_ad_700.aar","TapAD_3.16.3.45.aar","wind-common-1.7.9.aar","wind-sdk-4.22.2.aar"])
 //    //优量汇 sdk
 //    implementation "com.qq.e.union:union:4.640.1510"
 //    //    tanxSDK

@@ -29,7 +29,8 @@
         android:id="@+id/native_express_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="5dp"
+        android:padding="5dp"
         android:background="@color/white" />
 
 
