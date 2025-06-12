@@ -102,7 +102,7 @@ dependencies {
 
 //----------------引入方式1：在线依赖，适合直接使用得开发者
 //1.1  必须引入部分： 首先引入聚合库，排除不需要的adapter库，此部分引入不包含广告aar文件，aar需单独引入。
-//    implementation('com.github.bayescom:Android_AdvanceSDK:test01') {
+//    implementation('com.github.bayescom:Android_AdvanceSDK:5.2.0') {
 ////        穿山甲有两个版本的SDK。对应了两个adapter，注意只能使用一个，通过下方exclude方法移除掉不需要的版本
 ////        exclude module : 'advancecsj'
 //        exclude module: 'advancecsjoppo'
