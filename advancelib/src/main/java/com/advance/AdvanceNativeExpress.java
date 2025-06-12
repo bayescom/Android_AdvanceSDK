@@ -66,15 +66,14 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
                             LogUtil.devDebug("用户设置了具体宽高，不再自动检查布局的宽高了 2 ");
                             return;
                         }
-                        //   todo 宽高度需考虑含padding自适应布局方式。
-
+                        //     宽高度需考虑含padding自适应布局方式。
                         int paddingH = adContainer.getPaddingBottom() + adContainer.getPaddingTop();
                         int paddingW = adContainer.getPaddingLeft() + adContainer.getPaddingRight();
                         LogUtil.devDebug("paddingW = " + paddingW + " , paddingH = " + paddingH);
 
 
                         int showW = adContainer.getWidth() - paddingW;
-                        int showH = adContainer.getHeight()- paddingH;
+                        int showH = adContainer.getHeight() - paddingH;
                         if (showW > 0) {
                             expressViewWidth = BYDisplay.px2dp(showW);
                             LogUtil.devDebug("set expressViewWidth as adContainer Width= " + expressViewWidth);
