@@ -15,6 +15,7 @@ import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 import com.qq.e.ads.splash.SplashAD;
+import com.qq.e.ads.splash.SplashADListener;
 import com.qq.e.ads.splash.SplashADZoomOutListener;
 import com.qq.e.comm.util.AdError;
 
@@ -35,6 +36,16 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
     @Override
     public void show() {
         LogUtil.devDebug(TAG + " show");
+//        if (AdvanceUtil.isDev()) {//todo 测试逻辑，正式上线需移除
+//            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "测试渲染异常");
+//                }
+//            },1000);
+////            handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "测试渲染异常");
+//            return;
+//        }
         try {
             if (splashAD == null) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, "splashAd null"));
@@ -118,24 +129,25 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
         int timeout = sdkSupplier.timeout <= 0 ? 5000 : sdkSupplier.timeout;
 
 
-        SplashADZoomOutListener listener = new SplashADZoomOutListener() {
-            @Override
-            public void onZoomOut() {
-                LogUtil.simple(TAG + "onZoomOut ");
-                zoomOut();
-            }
-
-            @Override
-            public void onZoomOutPlayFinish() {
-                LogUtil.simple(TAG + "onZoomOutPlayFinish ");
-
-            }
-
-            @Override
-            public boolean isSupportZoomOut() {
-                LogUtil.simple(TAG + "isSupportZoomOut ");
-                return true;
-            }
+        SplashADListener listener = new SplashADListener() {
+//            SplashADZoomOutListener listener = new SplashADZoomOutListener() {
+//            @Override
+//            public void onZoomOut() {
+//                LogUtil.simple(TAG + "onZoomOut ");
+//                zoomOut();
+//            }
+//
+//            @Override
+//            public void onZoomOutPlayFinish() {
+//                LogUtil.simple(TAG + "onZoomOutPlayFinish ");
+//
+//            }
+//
+//            @Override
+//            public boolean isSupportZoomOut() {
+//                LogUtil.simple(TAG + "isSupportZoomOut ");
+//                return true;
+//            }
 
             @Override
             public void onADDismissed() {
@@ -292,5 +304,13 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean isValid() {
+        if (splashAD != null) {
+            return splashAD.isValid();
+        }
+        return super.isValid();
     }
 }

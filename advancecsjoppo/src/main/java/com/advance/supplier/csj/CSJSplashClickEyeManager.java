@@ -11,7 +11,7 @@ import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.advance.utils.SplashZoomOutLayout;
 import com.bayes.sdk.basic.device.BYDisplay;
-import com.vkyb.kv.kvnepo.CSJSplashAd;
+import com.bykv.vk.openvk.CSJSplashAd;
 
 import java.lang.ref.SoftReference;
 

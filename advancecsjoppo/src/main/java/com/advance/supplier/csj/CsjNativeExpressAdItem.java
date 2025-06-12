@@ -8,11 +8,11 @@ import com.advance.AdvanceNativeExpressAdItem;
 import com.advance.model.AdvanceError;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
-import com.vkyb.kv.kvnepo.FilterWord;
-import com.vkyb.kv.kvnepo.TTAppDownloadListener;
-import com.vkyb.kv.kvnepo.TTDislikeDialogAbstract;
-import com.vkyb.kv.kvnepo.TTNtExpressObject;
-import com.vkyb.kv.kvnepo.TTVfDislike;
+import com.bykv.vk.openvk.FilterWord;
+import com.bykv.vk.openvk.TTAppDownloadListener;
+import com.bykv.vk.openvk.TTDislikeDialogAbstract;
+import com.bykv.vk.openvk.TTNtExpressObject;
+import com.bykv.vk.openvk.TTVfDislike;
 
 import java.util.List;
 

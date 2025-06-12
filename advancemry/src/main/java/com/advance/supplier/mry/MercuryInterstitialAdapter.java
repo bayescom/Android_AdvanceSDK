@@ -148,4 +148,13 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
     protected void adReady() {
 
     }
+
+
+    @Override
+    public boolean isValid() {
+        if (interstitialAD != null) {
+            return interstitialAD.isValid();
+        }
+        return super.isValid();
+    }
 }

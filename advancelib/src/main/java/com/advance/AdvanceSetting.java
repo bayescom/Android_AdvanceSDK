@@ -19,7 +19,8 @@ public class AdvanceSetting {
 
     public String logTag = "AdvanceSDK";
 
-    public boolean isADTrack = true;
+//    todo 改为存储在sp中
+public boolean isADTrack = true;
     public HashMap<String, String> customData = null;
 
     //标记各平台是否初始化过

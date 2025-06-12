@@ -81,7 +81,7 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return adData != null;
+        return super.isValid();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
                         handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, " onVideoError");
                     }
 
-                    //                            //视频播放完成后，奖励验证回调，rewardVerify：是否有效，code：错误码，msg：错误信息
+                    //视频播放完成后，奖励验证回调，rewardVerify：是否有效，code：错误码，msg：错误信息
                     @Override
                     public void onRewardVerify(boolean rewardVerify, int rewardAmount, String rewardName, int code, String msg) {
                         try {

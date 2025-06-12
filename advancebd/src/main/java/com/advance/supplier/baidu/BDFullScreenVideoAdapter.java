@@ -143,6 +143,14 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
         handleSucceed();
     }
 
+//    @Override
+//    public boolean isValid() {
+//        if (mFullScreenVideoAd != null) {
+//            return mFullScreenVideoAd.isReady();
+//        }
+//        return super.isValid();
+//    }
+
     @Override
     public void show() {
         try {

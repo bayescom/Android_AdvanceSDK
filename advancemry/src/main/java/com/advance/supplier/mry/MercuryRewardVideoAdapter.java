@@ -205,12 +205,19 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
         }
     }
 
-
     @Override
     public boolean isValid() {
-        if (rewardVideoAD == null) {
-            return false;
+        if (rewardVideoAD != null) {
+            return rewardVideoAD.isValid();
         }
-        return rewardVideoAD.isValid();
+        return super.isValid();
     }
+
+//    @Override
+//    public boolean isValid() {
+//        if (rewardVideoAD == null) {
+//            return false;
+//        }
+//        return rewardVideoAD.isValid();
+//    }
 }

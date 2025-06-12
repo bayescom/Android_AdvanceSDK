@@ -10,12 +10,12 @@ import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.util.BYLog;
-import com.vkyb.kv.kvnepo.TTNtExpressObject;
-import com.vkyb.kv.kvnepo.TTVfDislike;
-import com.vkyb.kv.kvnepo.TTVfManager;
-import com.vkyb.kv.kvnepo.TTVfNative;
-import com.vkyb.kv.kvnepo.TTVfSdk;
-import com.vkyb.kv.kvnepo.VfSlot;
+import com.bykv.vk.openvk.TTNtExpressObject;
+import com.bykv.vk.openvk.TTVfDislike;
+import com.bykv.vk.openvk.TTVfManager;
+import com.bykv.vk.openvk.TTVfNative;
+import com.bykv.vk.openvk.TTVfSdk;
+import com.bykv.vk.openvk.VfSlot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -234,5 +234,14 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
         }
 
+    }
+
+
+    @Override
+    public boolean isValid() {
+        if (ttNativeExpressAd != null && ttNativeExpressAd.getMediationManager() != null) {
+            return ttNativeExpressAd.getMediationManager().isReady();
+        }
+        return super.isValid();
     }
 }

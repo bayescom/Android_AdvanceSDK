@@ -78,6 +78,13 @@ public class MercuryRenderDataConverter implements AdvanceRFADData {
 
     @Override
     public String getSourceText() {
+        try {
+            if (mMryData != null) {
+                return mMryData.getADSource();
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
         return "";
     }
 

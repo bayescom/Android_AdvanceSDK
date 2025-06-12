@@ -21,6 +21,7 @@ import com.bayes.sdk.basic.util.BYUtil;
 import java.lang.ref.SoftReference;
 import java.util.List;
 
+//根据tanx文档，开屏SDK内部有有效期逻辑，非品牌广告1天，品牌广告多天。每7天清理一次本地缓存。暂无对外有效性判断方法
 public class TanxSplashAdapter extends BaseSplashAdapter {
     ITanxAdLoader iTanxAdLoader;
     ITanxSplashExpressAd iTanxSplashExpressAd;

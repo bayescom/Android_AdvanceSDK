@@ -17,6 +17,7 @@ import com.alimm.tanx.core.request.TanxAdSlot;
 import com.alimm.tanx.core.request.TanxError;
 import com.alimm.tanx.core.request.TanxPlayerError;
 import com.alimm.tanx.ui.TanxSdk;
+import com.bayes.sdk.basic.util.BYStringUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -195,12 +196,21 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     private void startLoadAD() {
+        //获取用户id，首先检查tanx通用配置
+        String uid = AdvanceTanxSetting.getInstance().mediaUID;
+        //为空则获取广告位上配置的uid
+        if (BYStringUtil.isEmpty(uid)){
+            uid = setting.getUserId();
+        }
+        if (BYStringUtil.isEmpty(uid)){
+            LogUtil.e(TAG+"tanx激励需要配置用户id信息，否则可能拉取不到广告。");
+        }
         TanxAdSlot adSlot = new TanxAdSlot.Builder()
                 .adCount(sdkSupplier.adCount)
                 .pid(sdkSupplier.adspotid)
-                .setMediaUid(AdvanceTanxSetting.getInstance().mediaUID)
+                .setMediaUid(uid)
                 .setRewardParam(AdvanceTanxSetting.getInstance().rewardParam)
-                .setUserId(setting.getUserId())
+                .setUserId(uid)
                 .build();
         int timeout = sdkSupplier.timeout <= 0 ? 5000 : sdkSupplier.timeout;
 
@@ -265,6 +275,7 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return iTanxRewardVideoExpressAd != null;
+//        return iTanxRewardVideoExpressAd != null;
+        return super.isValid();
     }
 }

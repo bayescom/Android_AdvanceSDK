@@ -173,7 +173,7 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 //            if (rootParent != null)
 //                rootParent.addView(adContainer);
 
-//            -----------方案B copy全部子布局
+//            -----------方案B copy全部子布局，复制子控件至新布局，并将新布局添加至旧父布局中
             AdvanceRFUtil.copyChild(rootView, adContainer);
 //            int childSize = rootView.getChildCount();
 //            LogUtil.devDebug(TAG + "  childSize = " + childSize);
@@ -417,5 +417,13 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             }
         });
 
+    }
+
+    @Override
+    public boolean isValid() {
+        if (nativeAD != null) {
+            return nativeAD.isValid();
+        }
+        return super.isValid();
     }
 }

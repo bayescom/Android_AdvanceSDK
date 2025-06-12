@@ -17,7 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.advance.AdvanceRenderFeed;
+import com.advance.advancesdkdemo.AdvanceAD;
+import com.advance.advancesdkdemo.Constants;
 import com.advance.advancesdkdemo.R;
+import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.advancesdkdemo.util.DemoUtil;
 import com.advance.core.srender.AdvanceRFADData;
 import com.advance.core.srender.AdvanceRFConstant;
@@ -32,11 +35,14 @@ import com.advance.core.srender.widget.AdvRFLogoView;
 import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.model.AdvanceError;
+import com.advance.supplier.oppo.AdvanceRFADDataOppo;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bumptech.glide.Glide;
+import com.heytap.msp.mobad.api.params.INativeComplianceListener;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SelfRenderActivity extends Activity {
@@ -113,13 +119,8 @@ public class SelfRenderActivity extends Activity {
 
     private void loadAD() {
 
-        String csjID = "10003120";
-        String ylhID = "10003121";
-        String mryID = "10003122";
-        String sigmobID = "10011941";
-
         //广告初始化，传入聚合广告位id
-        advanceRenderFeed = new AdvanceRenderFeed(this, sigmobID);
+        advanceRenderFeed = new AdvanceRenderFeed(this, DemoManger.getInstance().currentDemoIds.nativeCustom);
         //设置期望图片大小，单位px，主要是设置给穿山甲使用，不设置将使用默认值 640*320
         advanceRenderFeed.setCsjImgSize(1080, 720);
         //设置广告请求回调
@@ -156,24 +157,24 @@ public class SelfRenderActivity extends Activity {
         advanceRenderFeed.setRenderEventListener(new AdvanceRFEventListener() {
             @Override
             public void onAdShow(AdvanceRFADData adData) {
-                logAndToast(TAG + "onAdShow");
+                AdvanceAD.logAndToast(SelfRenderActivity.this, "onAdShow");
 
             }
 
             @Override
             public void onAdClicked(AdvanceRFADData adData) {
-                logAndToast(TAG + "onAdClicked");
+                AdvanceAD.logAndToast(SelfRenderActivity.this, "onAdClicked");
             }
 
             @Override
             public void onAdClose(AdvanceRFADData adData) {
-                logAndToast(TAG + "onAdClose");
+                AdvanceAD.logAndToast(SelfRenderActivity.this, "onAdClose");
 
             }
 
             @Override
             public void onAdErr(AdvanceRFADData adData, AdvanceError advanceError) {
-                logAndToast(TAG + "onAdErr" + " ,advanceError = " + advanceError);
+                AdvanceAD.logAndToast(SelfRenderActivity.this, "onAdErr" + " ,advanceError = " + advanceError);
 
             }
         });
@@ -190,8 +191,11 @@ public class SelfRenderActivity extends Activity {
         materialProvider.clickViews.add(mImagePoster);
         materialProvider.clickViews.add(mTitle);
         materialProvider.clickViews.add(mIcon);
+
         //必须，关闭按钮
         materialProvider.disLikeView = mDislike;
+        //可选，创意按钮指定
+        materialProvider.creativeViews.add(mCreativeButton);
         //可选，设置下载监听，仅穿山甲支持
         materialProvider.downloadListener = new AdvanceRFDownloadListener() {
             @Override
@@ -226,7 +230,7 @@ public class SelfRenderActivity extends Activity {
         };
 
         if (adData.isVideo()) {
-            //可选，设置视频播放选项，仅对优量汇、mercury生效
+            //可选，设置视频播放选项，对优量汇、mercury、百度 生效
             AdvanceRFVideoOption videoOption = new AdvanceRFVideoOption();
             videoOption.isMute = true;
             videoOption.autoPlayNetStatus = AdvanceRFConstant.VIDEO_AUTO_PLAY_ALWAYS;
@@ -236,45 +240,44 @@ public class SelfRenderActivity extends Activity {
             materialProvider.videoEventListener = new AdvanceRFVideoEventListener() {
                 @Override
                 public void onReady(AdvanceRFADData data) {
-                    logAndToast(TAG + "onReady");
+                    AdvanceAD.logAndToast(SelfRenderActivity.this, "onReady");
 
 
                 }
 
                 @Override
                 public void onPlayStart(AdvanceRFADData data) {
-                    logAndToast(TAG + "onPlayStart");
+                    AdvanceAD.logAndToast(SelfRenderActivity.this, "onPlayStart");
 
                 }
 
                 @Override
                 public void onPlaying(AdvanceRFADData data, long current, long duration) {
-//                    logAndToast(TAG + "onPlaying");
-                    Log.d(TAG, "onPlaying ,current = " + current + ",  duration = " + duration);
+                    AdvanceAD.logAndToast(SelfRenderActivity.this, "onPlaying");
 
                 }
 
                 @Override
                 public void onPause(AdvanceRFADData data) {
-                    logAndToast(TAG + "onPause");
+                    AdvanceAD.logAndToast(SelfRenderActivity.this, "onPause");
 
                 }
 
                 @Override
                 public void onResume(AdvanceRFADData data) {
-                    logAndToast(TAG + "onResume");
+                    AdvanceAD.logAndToast(SelfRenderActivity.this, "onResume");
 
                 }
 
                 @Override
                 public void onComplete(AdvanceRFADData data) {
-                    logAndToast(TAG + "onComplete");
+                    AdvanceAD.logAndToast(SelfRenderActivity.this, "onComplete");
 
                 }
 
                 @Override
                 public void onError(AdvanceRFADData data, AdvanceError error) {
-                    logAndToast(TAG + "onError ,err = " + error);
+                    AdvanceAD.logAndToast(SelfRenderActivity.this, "onError ,err = " + error);
 
                 }
             };
@@ -333,6 +336,8 @@ public class SelfRenderActivity extends Activity {
         }
 
         if (adData.isDownloadAD()) {
+            //oppo自渲染2.0 仅支持通过bind方式进行连接类处理
+
             mCreativeButton.setText("立即下载");
             // 六要素 相关内容
             AdvanceRFDownloadElement downloadElement = adData.getDownloadElement();
@@ -343,69 +348,125 @@ public class SelfRenderActivity extends Activity {
                 mAppVersion.setText("版本号：" + downloadElement.getAppVersion());
                 mAppDeveloper.setText("开发者：" + downloadElement.getAppDeveloper());
 
-                String privacy = downloadElement.getPrivacyUrl();
-                if (TextUtils.isEmpty(privacy)) {
-                    mAppPrivacy.setVisibility(View.GONE);
-                } else {
-                    mAppPrivacy.setOnClickListener(new View.OnClickListener() {
+                boolean isOppo = adData instanceof AdvanceRFADDataOppo;
+                if (isOppo) {
+                    AdvanceRFADDataOppo oppoData = (AdvanceRFADDataOppo) adData;
+                    oppoData.bindToComplianceView(new LinkedList<View>() {
+                        {
+                            /*
+                             * 添加隐私声明交互view
+                             * */
+                            add(mAppPrivacy);
+                        }
+                    }, new INativeComplianceListener() {
                         @Override
                         public void onClick(View view) {
-                            DemoUtil.openInWeb(privacy, "", null);
+                            Log.d(Constants.DEMO_TAG, "privacy onclick = " + view);
+                        }
+
+                        @Override
+                        public void onClose() {
+                            Log.d(Constants.DEMO_TAG, "privacy onClose ");
+                        }
+                    }, new LinkedList<View>() {
+                        {
+                            /*
+                             * 添加权限声明交互view
+                             * */
+                            add(mAppPermission);
+                        }
+                    }, new INativeComplianceListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d(Constants.DEMO_TAG, "permission onclick = " + view);
+                        }
+
+                        @Override
+                        public void onClose() {
+                            Log.d(Constants.DEMO_TAG, "permission onClose ");
+                        }
+                    }, new LinkedList<View>() {
+                        {
+                            /*
+                             * 添加应用介绍交互view
+                             * */
+                            add(mAppFunction);
+                        }
+                    }, new INativeComplianceListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d(Constants.DEMO_TAG, "desc onclick = " + view);
+                        }
+
+                        @Override
+                        public void onClose() {
+                            Log.d(Constants.DEMO_TAG, "desc onClose ");
                         }
                     });
-                }
-
-
-                String pUrl = downloadElement.getPermissionUrl();
-                // 因为部分adn为异步返回信息，需要在回调里进行
-                downloadElement.getPermissionList(new BYAbsCallBack<ArrayList<AdvanceRFDownloadElement.AdvDownloadPermissionModel>>() {
-                    @Override
-                    public void invoke(ArrayList<AdvanceRFDownloadElement.AdvDownloadPermissionModel> pList) {
-                        //都为空的话不展示，权限信息
-                        if (TextUtils.isEmpty(pUrl) && pList.size() == 0) {
-                            mAppPermission.setVisibility(View.GONE);
-                        } else {
-                            mAppPermission.setVisibility(View.VISIBLE);
-                            mAppPermission.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    //优先看是否为url，然后再看是否有权限列表信息
-                                    if (!TextUtils.isEmpty(pUrl)) {
-                                        DemoUtil.openInWeb(pUrl, "", null);
-                                    } else if (pList.size() > 0) {
-                                        DemoUtil.openInWeb("", "", pList);
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-
-
-                String fUrl = downloadElement.getFunctionDescUrl();
-                String fText = downloadElement.getFunctionDescText();
-                //都为空的话不展示，介绍说明
-                if (TextUtils.isEmpty(fUrl) && TextUtils.isEmpty(fText)) {
-                    mAppFunction.setVisibility(View.GONE);
                 } else {
-                    mAppFunction.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+                    String privacy = downloadElement.getPrivacyUrl();
+                    if (TextUtils.isEmpty(privacy)) {
+                        mAppPrivacy.setVisibility(View.GONE);
+                    } else {
+                        mAppPrivacy.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                DemoUtil.openInWeb(privacy, "", null);
+                            }
+                        });
+                    }
 
-                            if (!TextUtils.isEmpty(fUrl)) {
-                                DemoUtil.openInWeb(fUrl, "", null);
-                            } else if (!TextUtils.isEmpty(fText)) {
-                                DemoUtil.openInWeb("", fText, null);
+
+                    String pUrl = downloadElement.getPermissionUrl();
+                    // 因为部分adn为异步返回信息，需要在回调里进行
+                    downloadElement.getPermissionList(new BYAbsCallBack<ArrayList<AdvanceRFDownloadElement.AdvDownloadPermissionModel>>() {
+                        @Override
+                        public void invoke(ArrayList<AdvanceRFDownloadElement.AdvDownloadPermissionModel> pList) {
+                            //都为空的话不展示，权限信息
+                            if (TextUtils.isEmpty(pUrl) && pList.size() == 0) {
+                                mAppPermission.setVisibility(View.GONE);
+                            } else {
+                                mAppPermission.setVisibility(View.VISIBLE);
+                                mAppPermission.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        //优先看是否为url，然后再看是否有权限列表信息
+                                        if (!TextUtils.isEmpty(pUrl)) {
+                                            DemoUtil.openInWeb(pUrl, "", null);
+                                        } else if (pList.size() > 0) {
+                                            DemoUtil.openInWeb("", "", pList);
+                                        }
+                                    }
+                                });
                             }
                         }
                     });
-                }
 
+
+                    String fUrl = downloadElement.getFunctionDescUrl();
+                    String fText = downloadElement.getFunctionDescText();
+                    //都为空的话不展示，介绍说明
+                    if (TextUtils.isEmpty(fUrl) && TextUtils.isEmpty(fText)) {
+                        mAppFunction.setVisibility(View.GONE);
+                    } else {
+                        mAppFunction.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                if (!TextUtils.isEmpty(fUrl)) {
+                                    DemoUtil.openInWeb(fUrl, "", null);
+                                } else if (!TextUtils.isEmpty(fText)) {
+                                    DemoUtil.openInWeb("", fText, null);
+                                }
+                            }
+                        });
+                    }
+
+                }
             }
         } else {
             mCreativeButton.setText("查看详情");
         }
     }
-
 
 }

@@ -34,6 +34,7 @@ public class AdvanceConfig {
     public static final String SDK_ERR_REPORT_URL_HTTPS = "https://cruiser.bayescom.cn/sdkevent";
 
 
+
     private static AdvanceConfig instance;
     public static final int DEFAULT_AD_COUNT = 1;
     @Deprecated
@@ -53,6 +54,7 @@ public class AdvanceConfig {
     public static final String SDK_ID_KS = "5";
     public static final String SDK_ID_TANX = "7";
     public static final String SDK_ID_TAP = "10";
+    public static final String SDK_ID_OPPO = "9";
     public static final String SDK_ID_SIG = "11";
 
 
@@ -95,6 +97,7 @@ public class AdvanceConfig {
         return instance;
     }
 
+    //todo 整理优化此处初始化调用，合并倍业SDK后，将不再多次初始化基础库SDK，也无需关心版本适配问题
     public AdvanceConfig initSDKs(final Context context) {
         try {
             //初始化基础库SDK

@@ -1,10 +1,15 @@
 apply plugin: 'com.android.library'
 
-def pomName = "advance-core"
+// JitPack Maven
+apply plugin: 'com.github.dcendents.android-maven'
+// Your Group
+group = 'com.github.bayescom'
+
+def pomName = "advance-mry"
 
 //定义mercury版本号
-def meryVersion = '4.5.0'
-def advanceVersionName = "${rootProject.ext.advance_version}_450"
+def meryVersion = '4.5.1'
+def advanceVersionName = "${rootProject.ext.advance_version}_451"
 def advanceVersionCode = 1
 
 

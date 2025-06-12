@@ -3,4 +3,5 @@ include ':app', ':advancelib', ':advancebd', ':advanceks', ':advancemry', ':adva
 include ':advancecsjoppo'
 include ':advance'
 include ':advancetap'
+include ':advanceoppo'
 include ':advancesigmob'

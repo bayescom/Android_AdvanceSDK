@@ -1,0 +1,90 @@
+apply plugin: 'com.android.library'
+
+// JitPack Maven
+apply plugin: 'com.github.dcendents.android-maven'
+// Your Group
+group = 'com.github.bayescom'
+
+def pomName = "advance-oppo"
+
+def libVersionName = "700"
+def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
+
+def advanceVersionCode = 1
+
+def outputName = pomName + "_" + advanceVersionName + ".aar"
+
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode advanceVersionCode
+        versionName advanceVersionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    configurations {
+    }
+
+
+    lintOptions {
+        abortOnError false
+    }
+    println "advanceVersionName = " + advanceVersionName
+}
+
+
+android.libraryVariants.all { variant ->
+    variant.outputs.all {
+        outputFileName = outputName
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+
+
+dependencies {
+    api 'androidx.appcompat:appcompat:1.0.0'
+//    api 'androidx.recyclerview:recyclerview:1.0.0'
+//    implementation 'com.android.support:appcompat-v7:28.0.0'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+//    testImplementation 'junit:junit:4.13.2'
+//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    //离线aar包引入方式
+    def name = "oppo_ad_${libVersionName}.aar"
+//    if (rootProject.ext.buildWithOutAAR) {
+        api fileTree(dir: 'libs', include: [name])
+//    } else {
+//        embed(name: "oppo_ad_${libVersionName}", ext: 'aar')
+//    }
+//主要是基础库方法+ 自渲染的 MercuryTool
+    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
+    compileOnly project(path: ':advancelib')
+}

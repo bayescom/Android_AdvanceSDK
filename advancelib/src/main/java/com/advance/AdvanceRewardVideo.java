@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.text.TextUtils;
 
 import com.advance.custom.AdvanceRewardCustomAdapter;
-import com.advance.itf.AdvanceRewardExtInterface;
 import com.advance.model.ServerRewardModel;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.RewardGMCallBack;
@@ -20,7 +19,7 @@ import com.bayes.sdk.basic.util.BYThreadUtil;
 
 import org.json.JSONObject;
 
-public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideoSetting, AdvanceRewardExtInterface {
+public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideoSetting {
     private AdvanceRewardVideoListener listener;
     private int orientation = ORIENTATION_VERTICAL;
     private int csjImageAcceptedSizeWidth = 1080;
@@ -231,8 +230,8 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
             initAdapter(AdvanceConfig.SDK_ID_KS, "ks.KSRewardAdapter");
             initAdapter(AdvanceConfig.SDK_ID_TANX, "tanx.TanxRewardAdapter");
             initAdapter(AdvanceConfig.SDK_ID_TAP, "tap.TapRewardAdapter");
-//            initAdapter(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoRewardAdapter");
-
+            initAdapter(AdvanceConfig.SDK_ID_SIG, "sigmob.SigmobRewardAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoRewardAdapter");
 
         } catch (Throwable e) {
             e.printStackTrace();

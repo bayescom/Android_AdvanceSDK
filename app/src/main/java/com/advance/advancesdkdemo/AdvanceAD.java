@@ -28,10 +28,12 @@ import com.advance.AdvanceSDK;
 import com.advance.AdvanceSplash;
 import com.advance.AdvanceSplashListener;
 import com.advance.RewardServerCallBackInf;
+import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.advancesdkdemo.util.UIUtils;
 import com.advance.custom.AdvanceBaseCustomAdapter;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.model.AdvanceError;
+import com.advance.supplier.tanx.TanxGlobalConfig;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.BYBasicSDK;
 
@@ -173,8 +175,8 @@ public class AdvanceAD {
         baseAD = advanceSplash;
         //注意！！：如果开屏页是fragment或者dialog实现，这里需要置为true。不设置时默认值为false，代表开屏和首页为两个不同的activity
 //        advanceSplash.setShowInSingleActivity(true);
-//        建议：设置底部logo布局及高度值（单位px）
-        advanceSplash.setLogoLayout(R.layout.splash_logo_layout, mActivity.getResources().getDimensionPixelSize(R.dimen.logo_layout_height));
+//        按需：设置底部logo布局及高度值（单位px）
+//        advanceSplash.setLogoLayout(R.layout.splash_logo_layout, mActivity.getResources().getDimensionPixelSize(R.dimen.logo_layout_height));
         //必须：设置开屏核心回调事件的监听器。
         advanceSplash.setAdListener(new AdvanceSplashListener() {
             /**
@@ -223,6 +225,8 @@ public class AdvanceAD {
             }
 
         });
+        //自定义adn必须添加，未支持得sdkID具体值需联系我们获取，不得和现有sdkID重复
+//        advanceSplash.addCustomSupplier("自定义得sdkID，请联系我们获取","com.advance.supplier.custom.CustomADNYLHSplashAdapter");
         //必须：请求广告
         advanceSplash.loadOnly();
 
@@ -282,6 +286,7 @@ public class AdvanceAD {
 
         });
         advanceBanner.loadStrategy();
+        logAndToast(mActivity, "banner广告请求中");
     }
 
 
@@ -339,6 +344,7 @@ public class AdvanceAD {
 
     }
 
+    boolean hasRewardShow = false;
     /**
      * 加载并展示激励视频广告。
      * 也可以选择性先提前加载，然后在合适的时机再调用展示方法
@@ -350,6 +356,9 @@ public class AdvanceAD {
         //初始化，注意需要时再初始化，不要复用。
         final AdvanceRewardVideo advanceRewardVideo = new AdvanceRewardVideo(id);
         baseAD = advanceRewardVideo;
+
+        //若集成
+        TanxGlobalConfig.setMediaUID("tanxMUID");
 
         //服务端验证相关信息填写---start
         advanceRewardVideo.setUserId("用户唯一标识，服务端验证必须");
@@ -363,6 +372,9 @@ public class AdvanceAD {
             @Override
             public void onAdLoaded(AdvanceRewardVideoItem advanceRewardVideoItem) {
                 logAndToast(mActivity, "广告加载成功");
+                if (hasRewardShow){
+                    return;
+                }
                 // 如果有业务需求，可以提前加载广告，在需要的时候调用show进行展示
                 // 为了方便理解，这里在收到广告后直接调用广告展示，有可能会出现一段时间的缓冲状态。
                 if (advanceRewardVideo != null && advanceRewardVideo.isValid()) {
@@ -375,6 +387,7 @@ public class AdvanceAD {
             @Override
             public void onAdShow() {
                 logAndToast(mActivity, "广告展示");
+                hasRewardShow = true;
             }
 
             @Override
@@ -515,7 +528,7 @@ public class AdvanceAD {
         }
 
         //初始化
-        final AdvanceNativeExpress advanceNativeExpress = new AdvanceNativeExpress(mActivity, Constants.TestIds.nativeExpressAdspotId);
+        final AdvanceNativeExpress advanceNativeExpress = new AdvanceNativeExpress(mActivity, DemoManger.getInstance().currentDemoIds.nativeExpress);
         baseAD = advanceNativeExpress;
         //必须：设置广告父布局
         advanceNativeExpress.setAdContainer(adContainer);
@@ -570,6 +583,8 @@ public class AdvanceAD {
         });
         //必须
         advanceNativeExpress.loadStrategy();
+        logAndToast(mActivity, "模板信息流广告请求中");
+
     }
 
 
@@ -648,9 +663,9 @@ public class AdvanceAD {
             }
 
         });
-//        如果对展现尺寸不满意，可以通过设置此处的值来调整
-        int width = (int) UIUtils.getScreenWidthDp(mActivity);
-        advanceNativeExpress.setExpressViewAcceptedSize(width, 0);
+//        如果对展现尺寸不满意，可以通过设置此处的值来调整，注意不可设置超过广告容器或屏幕大小得尺寸
+//        int width = (int) UIUtils.getScreenWidthDp(mActivity);
+//        advanceNativeExpress.setExpressViewAcceptedSize(width, 0);
         //必须
         advanceNativeExpress.loadStrategy();
 

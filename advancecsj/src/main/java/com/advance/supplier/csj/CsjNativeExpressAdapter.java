@@ -234,4 +234,12 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
         }
 
     }
+
+    @Override
+    public boolean isValid() {
+        if (ttNativeExpressAd != null && ttNativeExpressAd.getMediationManager() != null) {
+            return ttNativeExpressAd.getMediationManager().isReady();
+        }
+        return super.isValid();
+    }
 }

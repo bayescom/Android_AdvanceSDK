@@ -2,8 +2,8 @@ package com.advance.supplier.csj;
 
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.itf.AdvanceSupplierBridge;
-import com.vkyb.kv.kvnepo.TTVfConfig;
-import com.vkyb.kv.kvnepo.TTVfSdk;
+import com.bykv.vk.openvk.TTVfConfig;
+import com.bykv.vk.openvk.TTVfSdk;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

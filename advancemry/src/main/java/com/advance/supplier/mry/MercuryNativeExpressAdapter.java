@@ -26,7 +26,7 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
     private NativeExpressSetting advanceNativeExpress;
     String TAG = "[MercuryNativeExpressAdapter] ";
     NativeExpressADView adView;
-
+    NativeExpressAD nativeExpressAd;
 
     public MercuryNativeExpressAdapter(Activity activity, NativeExpressSetting advanceNativeExpress) {
         super(activity, advanceNativeExpress);
@@ -50,10 +50,11 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
         }
         ADSize adSize = new ADSize(width, height);
 //        LogUtil.devDebug("paraLoadAd init");
-        NativeExpressAD nativeExpressAd = new NativeExpressAD(activity, sdkSupplier.adspotid, adSize, this); // 这里的Context必须为Activity
+        nativeExpressAd = new NativeExpressAD(activity, sdkSupplier.adspotid, adSize, this); // 这里的Context必须为Activity
         //设置播放属性
         nativeExpressAd.setVideoOption(new VideoOption.Builder().setAutoPlayMuted(advanceNativeExpress.isVideoMute()).build());
 //        LogUtil.devDebug("paraLoadAd loadAD");
+//        nativeExpressAd.setWidthBlankDP();
 
         nativeExpressAd.loadAD(sdkSupplier.adCount);
 //        LogUtil.devDebug("paraLoadAd finish");
@@ -177,5 +178,14 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
         }
+    }
+
+
+    @Override
+    public boolean isValid() {
+        if (nativeExpressAd != null) {
+            return nativeExpressAd.isValid();
+        }
+        return super.isValid();
     }
 }

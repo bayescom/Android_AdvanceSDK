@@ -342,20 +342,27 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         }
     }
 
-
     @Override
     public boolean isValid() {
-        try {
-            if (ttRewardVideoAd == null) {
-                return false;
-            }
-            long expirationTime = ttRewardVideoAd.getExpirationTimestamp();
-            long currentTime = System.currentTimeMillis();
-            LogUtil.devDebug(TAG + "isReady check:expirationTime = " + expirationTime + ", currentTime = " + currentTime);
-            return expirationTime > currentTime;
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return false;
+        if (ttRewardVideoAd != null && ttRewardVideoAd.getMediationManager() != null) {
+            return ttRewardVideoAd.getMediationManager().isReady();
         }
+        return super.isValid();
     }
+
+//    @Override
+//    public boolean isValid() {
+//        try {
+//            if (ttRewardVideoAd == null) {
+//                return false;
+//            }
+//            long expirationTime = ttRewardVideoAd.getExpirationTimestamp();
+//            long currentTime = System.currentTimeMillis();
+//            LogUtil.devDebug(TAG + "isReady check:expirationTime = " + expirationTime + ", currentTime = " + currentTime);
+//            return expirationTime > currentTime;
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 }

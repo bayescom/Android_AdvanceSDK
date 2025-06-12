@@ -1,10 +1,15 @@
 apply plugin: 'com.android.library'
 
+// JitPack Maven
+apply plugin: 'com.github.dcendents.android-maven'
+// Your Group
+group = 'com.github.bayescom'
+
 //maven依赖的项目名称
 def pomName = "advance-gdt"
 def extVersionName = ""
-def libVersionName = "4.630.1500"
-def advanceVersionName = "${rootProject.ext.advance_version}_4630"
+def libVersionName = "4.640.1510"
+def advanceVersionName = "${rootProject.ext.advance_version}_4640"
 def advanceVersionCode = 1
 
 advanceVersionName = advanceVersionName + extVersionName

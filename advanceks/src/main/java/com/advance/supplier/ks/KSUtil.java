@@ -41,7 +41,7 @@ public class KSUtil implements AdvanceSplashPlusManager.ZoomCall {
 
             SdkSupplier supplier = adapter.sdkSupplier;
             if (supplier == null) {
-                eMsg = tag + "initAD failed supplier null";
+                eMsg = tag + "initAD failed BaseParallelAdapter null";
 
                 LogUtil.e(eMsg);
                 if (initResult != null) {

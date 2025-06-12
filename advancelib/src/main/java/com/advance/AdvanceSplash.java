@@ -52,7 +52,7 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
 
     public boolean canJump = false;
     public boolean hasJump = false;
-    public boolean immediatelyJump = false;
+    public boolean immediatelyJump = false; //todo 对于点击了广告，返回开屏页面时，部分adn（穿山甲、倍业、百度、快手）可能还在倒计时状态。此时是否需要直接执行跳转首页
     private boolean showInSingleActivity = false;
     private SplashGMCallBack splashGMCallBack;
     private ImageView gdtHolderView;
@@ -78,7 +78,7 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
 
     /**
      * 分离模式优化，可以不强依赖activity信息，先进行初始化以及策略请求
-     *
+     *  todo 测试各个SDK，在application中子线程下进行广告load是否有问题
      */
 
     public AdvanceSplash(String adspotId) {
@@ -311,6 +311,7 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
             initAdapter(AdvanceConfig.SDK_ID_KS, "ks.KSSplashAdapter");
             initAdapter(AdvanceConfig.SDK_ID_TANX, "tanx.TanxSplashAdapter");
             initAdapter(AdvanceConfig.SDK_ID_TAP, "tap.TapSplashAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoSplashAdapter");
             initAdapter(AdvanceConfig.SDK_ID_SIG, "sigmob.SigmobSplashAdapter");
         } catch (Throwable e) {
 //            e.printStackTrace();

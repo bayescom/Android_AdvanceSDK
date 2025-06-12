@@ -152,4 +152,12 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
             }
         }
     }
+
+    @Override
+    public boolean isValid() {
+        if (interstitialAD != null) {
+            return interstitialAD.isValid();
+        }
+        return super.isValid();
+    }
 }

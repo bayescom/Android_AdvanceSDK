@@ -1,7 +1,8 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
-
+import android.os.Handler;
+import android.os.Looper;
 import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.util.BYUtil;
 import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsScene;
@@ -247,5 +249,17 @@ public class KSSplashAdapter extends BaseSplashAdapter implements KsSplashScreen
     public void onDownloadTipsDialogCancel() {
         LogUtil.simple(TAG + "onDownloadTipsDialogCancel");
 
+    }
+
+    @Override
+    public boolean isValid() {
+        try {
+            if (splashAd != null) {
+                return splashAd.isAdEnable();
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return super.isValid();
     }
 }

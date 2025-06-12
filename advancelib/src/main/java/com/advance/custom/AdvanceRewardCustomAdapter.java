@@ -3,9 +3,8 @@ package com.advance.custom;
 import android.app.Activity;
 
 import com.advance.RewardVideoSetting;
-import com.advance.itf.AdvanceRewardExtInterface;
 
-public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapter implements AdvanceRewardExtInterface {
+public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapter {
     public RewardVideoSetting setting;
 
     public AdvanceRewardCustomAdapter(Activity activity, RewardVideoSetting setting) {
@@ -28,6 +27,7 @@ public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapte
             e.printStackTrace();
         }
     }
+
 
     public void handleClose(){
         try {

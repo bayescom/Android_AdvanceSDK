@@ -8,8 +8,8 @@ import com.advance.AdvanceRewardVideoItem;
 import com.advance.model.AdvanceError;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
-import com.vkyb.kv.kvnepo.TTAppDownloadListener;
-import com.vkyb.kv.kvnepo.TTRdVideoObject;
+import com.bykv.vk.openvk.TTAppDownloadListener;
+import com.bykv.vk.openvk.TTRdVideoObject;
 
 @Deprecated
 public class CsjRewardVideoAdItem implements AdvanceRewardVideoItem {
@@ -210,7 +210,7 @@ public class CsjRewardVideoAdItem implements AdvanceRewardVideoItem {
     public void setShowDownLoadBar(boolean isShow) {
         try {
 
-            ttRewardVideoAd.setShowDownLoadBar(isShow);
+//            ttRewardVideoAd.setShowDownLoadBar(isShow);
         } catch (Throwable e) {
             e.printStackTrace();
         }

@@ -146,6 +146,15 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
         }
     }
 
+
+    @Override
+    public boolean isValid() {
+        if (nativeResponse != null) {
+            return nativeResponse.isReady(getRealContext());
+        }
+        return super.isValid();
+    }
+
     @Override
     public void show() {
         try {

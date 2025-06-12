@@ -36,6 +36,16 @@ public class MercurySplashAdapter extends BaseSplashAdapter {
 
     @Override
     public void show() {
+//        if (BYUtil.isDev()) {//todo 测试逻辑，正式上线需移除
+//            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "测试mry渲染异常");
+//                }
+//            },200);
+////            handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "测试渲染异常");
+//            return;
+//        }
         try {
             if (mercurySplash == null) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "splashAd null"));
@@ -166,6 +176,9 @@ public class MercurySplashAdapter extends BaseSplashAdapter {
                 //旧版本SDK中不包含价格返回方法，catch住
                 try {
                     int cpm = mercurySplash.getEcpm();
+//                    if (AdvanceUtil.isDev()) {//todo 测试逻辑，正式上线需移除
+//                        cpm = 600;
+//                    }
                     updateBidding(cpm);
                 } catch (Throwable e) {
                     e.printStackTrace();
@@ -191,6 +204,74 @@ public class MercurySplashAdapter extends BaseSplashAdapter {
                 handleFailed(code, msg);
             }
         });
+//        mercurySplash = new SplashAD(getRealActivity(setting.getAdContainer()), sdkSupplier.adspotid, skipView, timeout, new SplashADListener() {
+//            @Override
+//            public void onADDismissed() {
+//                LogUtil.simple(TAG + "onADDismissed ");
+//
+//                if (null != setting) {
+//                    if (remainTime < 1000) {
+//                        setting.adapterDidTimeOver();
+//                    } else {
+//                        setting.adapterDidSkip();
+//                    }
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onADPresent() {
+//                LogUtil.simple(TAG + "onADPresent ");
+//
+//                //旧版本SDK中不包含价格返回方法，catch住
+//                try {
+//                    int cpm = mercurySplash.getEcpm();
+////                    if (AdvanceUtil.isDev()) {//todo 测试逻辑，正式上线需移除
+////                        cpm = 600;
+////                    }
+//                    updateBidding(cpm);
+//                } catch (Throwable e) {
+//                    e.printStackTrace();
+//                }
+//                handleSucceed();
+//            }
+//
+//            @Override
+//            public void onADTick(long l) {
+//                LogUtil.simple(TAG + "onADTick :" + l);
+//                remainTime = l;
+//                if (null != skipView) {
+//                    skipView.setText(String.format(skipText, Math.round(l / 1000f)));
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onADExposure() {
+//                LogUtil.simple(TAG + "onADExposure ");
+//
+//                handleShow();
+//            }
+//
+//            @Override
+//            public void onADClicked() {
+//                LogUtil.simple(TAG + "onADClicked ");
+//
+//                handleClick();
+//            }
+//
+//            @Override
+//            public void onNoAD(ADError adError) {
+//                int code = -1;
+//                String msg = "default onNoAD";
+//                if (adError != null) {
+//                    code = adError.code;
+//                    msg = adError.msg;
+//                }
+//                LogUtil.simple(TAG + "onNoAD");
+//                handleFailed(code, msg);
+//            }
+//        });
         if (mercurySplash != null) {
             mercurySplash.setRequestTimeout(timeout);
             if (null != setting) {
@@ -203,7 +284,19 @@ public class MercurySplashAdapter extends BaseSplashAdapter {
                 }
             }
         }
+        //跳过载体要可见状态，不然如果载体设置了默认隐藏按钮会无法展示
+//        if (null != setting && setting.getGdtSkipContainer() != null) {
+//            setting.getGdtSkipContainer().setVisibility(View.VISIBLE);
+//        }
     }
 
+
+    @Override
+    public boolean isValid() {
+        if (mercurySplash != null) {
+            return mercurySplash.isValid();
+        }
+        return super.isValid();
+    }
 
 }

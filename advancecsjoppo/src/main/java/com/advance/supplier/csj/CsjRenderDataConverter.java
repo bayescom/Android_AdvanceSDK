@@ -7,9 +7,9 @@ import com.advance.model.SdkSupplier;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
-import com.vkyb.kv.kvnepo.TTImage;
-import com.vkyb.kv.kvnepo.TTVfConstant;
-import com.vkyb.kv.kvnepo.TTVfObject;
+import com.bykv.vk.openvk.TTImage;
+import com.bykv.vk.openvk.TTVfConstant;
+import com.bykv.vk.openvk.TTVfObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -244,6 +244,12 @@ public class CsjRenderDataConverter implements AdvanceRFADData {
 
         @Override
         public String getFunctionDescUrl() {
+//            当前版本还未支持返回 todo 更新版本后需要加上该内容
+//            try {
+//                return mCsjData.getComplianceInfo().get();
+//            } catch (Throwable e) {
+//                e.printStackTrace();
+//            }
             return "";
         }
 

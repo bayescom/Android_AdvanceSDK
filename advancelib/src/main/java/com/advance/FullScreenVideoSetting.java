@@ -5,7 +5,7 @@ import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialMediaListener;
 
 public interface FullScreenVideoSetting extends BaseSetting {
-    void adapterAdDidLoaded(AdvanceFullScreenItem item,SdkSupplier supplier);
+    void adapterAdDidLoaded(AdvanceFullScreenItem item, SdkSupplier supplier);
 
     void adapterVideoCached();
 

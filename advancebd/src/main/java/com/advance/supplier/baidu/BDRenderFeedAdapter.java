@@ -20,6 +20,7 @@ import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.BaiduNativeManager;
+import com.baidu.mobads.sdk.api.ExpressResponse;
 import com.baidu.mobads.sdk.api.INativeVideoListener;
 import com.baidu.mobads.sdk.api.NativeResponse;
 import com.baidu.mobads.sdk.api.RequestParameters;
@@ -158,6 +159,15 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     public void doDestroy() {
+    }
+
+
+    @Override
+    public boolean isValid() {
+        if (nativeResponseAD != null) {
+            return nativeResponseAD.isReady(getRealContext());
+        }
+        return super.isValid();
     }
 
     @Override

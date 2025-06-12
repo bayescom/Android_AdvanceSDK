@@ -5,7 +5,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.advance.BannerSetting;
-import com.advance.BaseParallelAdapter;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
@@ -157,4 +156,14 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
             doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
         }
     }
+
+    @Override
+    public boolean isValid() {
+        if (bv != null) {
+            return bv.isValid();
+        }
+        return super.isValid();
+    }
+
+
 }

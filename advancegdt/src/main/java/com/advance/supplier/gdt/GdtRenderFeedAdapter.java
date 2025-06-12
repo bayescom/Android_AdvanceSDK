@@ -401,4 +401,12 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 
     }
+
+    @Override
+    public boolean isValid() {
+        if (mRenderAD != null) {
+            return mRenderAD.isValid();
+        }
+        return super.isValid();
+    }
 }

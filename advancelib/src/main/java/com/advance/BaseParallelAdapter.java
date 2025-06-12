@@ -10,7 +10,7 @@ import com.advance.core.srender.AdvanceRFADData;
 import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.net.AdvanceReport;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
-import com.advance.itf.ShowListener;
+import com.advance.itf.RenderEvent;
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
 import com.advance.model.SdkSupplier;
@@ -24,7 +24,7 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAdapterListener, DestroyListener, ShowListener {
+public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAdapterListener, DestroyListener, RenderEvent {
     public String TAG = "[" + this.getClass().getSimpleName() + "] ";
 
     protected Activity activity;
@@ -44,6 +44,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
     //是否支持并行请求，默认true；部分SDK的广告位、部分版本SDK可能无法支持并行的方式分步加载广告，统一通过这里需要标记支持情况。
     public boolean supportPara = true;
     public int cacheStatus = AdvanceConstant.STATUS_UNCACHED;
+    public boolean isSuccess = false; //广告返回标记
     public boolean isDestroy = false;
     public boolean refreshing = false;
 
@@ -318,6 +319,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         }
     }
 
+    // TODO: 2022/7/18 超时问题待验证及确定解决思路，问题1：并行组执行超时后，回调事件依然在进行，可能会影响下一组执行  问题2：此处的判断会不会受下一组数据影响
     private boolean isTimeOut(String event) {
 //        if (baseSetting!=null && baseSetting.isCurrentGroupTimeOut()){
 //            LogUtil.e("已超时，不再处理后续事件："+event);
@@ -729,6 +731,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
 
     public void handleSucceed() {
         try {
+            isSuccess = true;
             if (baseSetting == null) {
                 return;
             }
@@ -820,6 +823,13 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+
+    //大部分adn可能并不支持所有广告位可用性检查api，所以默认广告成功后即有效
+    @Override
+    public boolean isValid() {
+        return isSuccess;
     }
 
     /**

@@ -8,11 +8,11 @@ import com.advance.AdvanceDrawSetting;
 import com.advance.custom.AdvanceDrawCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
-import com.vkyb.kv.kvnepo.TTNtExpressObject;
-import com.vkyb.kv.kvnepo.TTVfManager;
-import com.vkyb.kv.kvnepo.TTVfNative;
-import com.vkyb.kv.kvnepo.TTVfSdk;
-import com.vkyb.kv.kvnepo.VfSlot;
+import com.bykv.vk.openvk.TTNtExpressObject;
+import com.bykv.vk.openvk.TTVfManager;
+import com.bykv.vk.openvk.TTVfNative;
+import com.bykv.vk.openvk.TTVfSdk;
+import com.bykv.vk.openvk.VfSlot;
 
 import java.util.List;
 
@@ -164,5 +164,13 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTVfNati
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public boolean isValid() {
+        if (ad != null && ad.getMediationManager() != null) {
+            return ad.getMediationManager().isReady();
+        }
+        return super.isValid();
     }
 }

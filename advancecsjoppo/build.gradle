@@ -1,9 +1,14 @@
 apply plugin: 'com.android.library'
 
+// JitPack Maven
+apply plugin: 'com.github.dcendents.android-maven'
+// Your Group
+group = 'com.github.bayescom'
+
 
 def pomName = "advance-csj-oppo"
 
-def libVersionName = "6428"
+def libVersionName = "6843"
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName + ""
 
 def advanceVersionCode = 1

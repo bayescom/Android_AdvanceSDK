@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.advance.BaseSplashAdapter;
 import com.advance.SplashSetting;
@@ -14,6 +15,7 @@ import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.tapsdk.tapad.AdRequest;
+import com.tapsdk.tapad.TapAdManager;
 import com.tapsdk.tapad.TapAdNative;
 import com.tapsdk.tapad.TapSplashAd;
 
