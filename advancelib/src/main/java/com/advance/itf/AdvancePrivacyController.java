@@ -141,7 +141,7 @@ public abstract class AdvancePrivacyController extends BYPrivacyController {
     /**
      * 开发者可以传入已安装app包列表，应用于快手、GM SDK配置项
      *
-     * @return true可以使用，false禁止使用。默认为true
+     * @return 包名列表
      */
     public List<String> getInstalledPackages() {
         return null;

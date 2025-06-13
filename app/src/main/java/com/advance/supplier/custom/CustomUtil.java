@@ -52,7 +52,7 @@ public class CustomUtil {
             }
 
             //使用新初始化方法
-            String appID = adapter.sdkSupplier.mediaid;
+            String appID = adapter.getAppID();
             GDTAdSdk.initWithoutStart(adapter.getRealContext(), appID); // 该接口不会采集用户信息
 // 调用initWithoutStart后请尽快调用start，否则可能影响广告填充，造成收入下降
             GDTAdSdk.start(new GDTAdSdk.OnStartListener() {

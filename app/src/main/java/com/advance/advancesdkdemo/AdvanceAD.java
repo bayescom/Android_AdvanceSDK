@@ -152,6 +152,11 @@ public class AdvanceAD {
             public List<String> getInstalledPackages() {
                 return super.getInstalledPackages();
             }
+
+            @Override
+            public String getSimOperator() {
+                return super.getSimOperator();
+            }
         });
 
         //必要配置：初始化聚合SDK，三个参数依次为context上下文，appId媒体id，isDebug调试模式开关

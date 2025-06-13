@@ -67,6 +67,9 @@ public class CustomADNYLHSplashAdapter extends AdvanceSplashCustomAdapter {
     //  广告有效性，如果adn支持广告有效性获取，建议复写此方法返回广告是否有效
     @Override
     public boolean isValid() {
+        if (splashAD!=null){
+           return splashAD.isValid();
+        }
         return super.isValid();
     }
 
@@ -151,7 +154,7 @@ public class CustomADNYLHSplashAdapter extends AdvanceSplashCustomAdapter {
 
             }
         };
-        splashAD = new SplashAD(getRealContext(), sdkSupplier.adspotid, listener, timeout);
+        splashAD = new SplashAD(getRealContext(), getPosID(), listener, timeout);
         splashAD.fetchAdOnly();
     }
 
