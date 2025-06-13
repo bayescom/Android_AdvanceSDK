@@ -151,7 +151,7 @@ public class CustomADNYLHSplashAdapter extends AdvanceSplashCustomAdapter {
 
             }
         };
-        splashAD = new SplashAD(getRealContext(), sdkSupplier.adspotid, listener, timeout);
+        splashAD = new SplashAD(getRealContext(), getPosID(), listener, timeout);
         splashAD.fetchAdOnly();
     }
 
