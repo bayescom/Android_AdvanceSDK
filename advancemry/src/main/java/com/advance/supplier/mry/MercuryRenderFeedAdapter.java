@@ -42,6 +42,7 @@ import com.mercury.sdk.core.widget.NativeAdContainer;
 import com.mercury.sdk.util.ADError;
 import com.mercury.sdk.util.MercuryTool;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
@@ -202,6 +203,12 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 
             mRenderAD.bindAdToView(activity, adContainer, rfMaterialProvider.clickViews);
+
+            //新增创意按钮绑定方法
+            ArrayList<View> creativeViews = rfMaterialProvider.creativeViews;
+            if (creativeViews != null && creativeViews.size() > 0) {
+                mRenderAD.bindCreativeView(creativeViews);
+            }
 
 
 //添加广告logo标识
