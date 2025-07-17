@@ -8,7 +8,7 @@ group = 'com.github.bayescom'
 //maven依赖的项目名称
 def pomName = "advance-ks"
 def extVersionName = ""
-def libVersionName = "3376"
+def libVersionName = "46301"
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
 
 def advanceVersionCode = 1

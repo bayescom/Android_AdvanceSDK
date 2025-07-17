@@ -270,111 +270,24 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
 
 
 
-    NewSplashClickEyeListener mSplashClickEyeListener;
+//    NewSplashClickEyeListener mSplashClickEyeListener;
 
     private void initNewSplashClickEyeData(CSJSplashAd splashAd, View splashView) {
         try {
-            if (splashAd == null || splashView == null) {
-                return;
-            }
-            Activity adAct = getRealActivity(setting.getAdContainer());
-            mSplashClickEyeListener = new NewSplashClickEyeListener(adAct, splashAd, setting.getAdContainer(), splashView);
-
-            splashAd.setSplashClickEyeListener(mSplashClickEyeListener);
-            CSJSplashClickEyeManager.getInstance().init(adAct);
-            CSJSplashClickEyeManager.getInstance().setCSJSplashInfo(splashAd, splashView, adAct.getWindow().getDecorView());
+//            if (splashAd == null || splashView == null) {
+//                return;
+//            }
+//            Activity adAct = getRealActivity(setting.getAdContainer());
+//            mSplashClickEyeListener = new NewSplashClickEyeListener(adAct, splashAd, setting.getAdContainer(), splashView);
+//
+//            splashAd.setSplashClickEyeListener(mSplashClickEyeListener);
+//            CSJSplashClickEyeManager.getInstance().init(adAct);
+//            CSJSplashClickEyeManager.getInstance().setCSJSplashInfo(splashAd, splashView, adAct.getWindow().getDecorView());
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
-    public static class NewSplashClickEyeListener implements CSJSplashAd.SplashClickEyeListener {
-        private SoftReference<Activity> mActivity;
-
-        private CSJSplashAd mSplashAd;
-        private ViewGroup mSplashContainer;
-        private boolean mIsFromSplashClickEye = true;
-        private View mSplashView;
-
-        public NewSplashClickEyeListener(Activity activity, CSJSplashAd splashAd, ViewGroup splashContainer, View splashView) {
-            mActivity = new SoftReference<>(activity);
-            mSplashAd = splashAd;
-            mSplashContainer = splashContainer;
-            mSplashView = splashView;
-        }
-
-        private void finishActivity() {
-            try {
-                if (mActivity.get() == null) {
-                    return;
-                }
-                mActivity.get().finish();
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void startSplashAnimationStart(final CSJSplashAd bean) {
-            try {
-                if (mActivity.get() == null || bean == null || mSplashContainer == null) {
-                    return;
-                }
-
-                if (!mIsFromSplashClickEye) {
-                    return;
-                }
-                CSJSplashClickEyeManager splashClickEyeManager = CSJSplashClickEyeManager.getInstance();
-                ViewGroup content = mActivity.get().findViewById(android.R.id.content);
-                splashClickEyeManager.startSplashClickEyeAnimation(mSplashView, content, mSplashContainer, new CSJSplashClickEyeManager.AnimationCallBack() {
-                    @Override
-                    public void animationStart(int animationTime) {
-                    }
-
-                    @Override
-                    public void animationEnd() {
-                        bean.showSplashClickEyeView(mSplashContainer);
-                        CSJSplashClickEyeManager.getInstance().clearSplashStaticData();
-                    }
-                });
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onSplashClickEyeReadyToShow(CSJSplashAd bean) {
-            try {
-                Log.d("CSJSplashActivity", "onSplashClickEyeCanShow ");
-                CSJSplashClickEyeManager splashClickEyeManager = CSJSplashClickEyeManager.getInstance();
-                splashClickEyeManager.setSupportSplashClickEye(true);
-                //开始执行开屏点睛动画
-                startSplashAnimationStart(bean);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onSplashClickEyeClick() {
-            Log.d("CSJSplashActivity", "onSplashClickEyeClick 点睛点击");
-        }
-
-        @Override
-        public void onSplashClickEyeClose() {
-            try {
-                Log.d("CSJSplashActivity", "onSplashClickEyeClose");
-                //sdk关闭了了点睛悬浮窗
-                CSJSplashClickEyeManager splashClickEyeManager = CSJSplashClickEyeManager.getInstance();
-                boolean isSupport = splashClickEyeManager.isSupportSplashClickEye();
-                if (mIsFromSplashClickEye && isSupport) {
-                    finishActivity();
-                }
-                splashClickEyeManager.clearSplashStaticData();
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
 
     @Override
