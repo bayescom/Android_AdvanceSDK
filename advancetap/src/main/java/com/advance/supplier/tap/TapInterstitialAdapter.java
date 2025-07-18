@@ -133,7 +133,7 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
                             @Override
                             public void onAdClick() {
-                                LogUtil.simple(TAG + " onAdValidShow");
+                                LogUtil.simple(TAG + " onAdClick");
 
                                 handleClick();
                             }
