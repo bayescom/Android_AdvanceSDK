@@ -135,6 +135,7 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                             public void onAdClick() {
                                 LogUtil.simple(TAG + " onAdClick");
 
+
                                 handleClick();
                             }
                         });
