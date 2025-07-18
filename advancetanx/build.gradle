@@ -7,7 +7,7 @@ group = 'com.github.bayescom'
 
 def pomName = "advance-tanx"
 
-def advanceVersionName = "${rootProject.ext.advance_version}_3710"
+def advanceVersionName = "${rootProject.ext.advance_version}_3721"
 def advanceVersionCode = 1
 
 
@@ -105,7 +105,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    def versionCode = "3.7.10"
+    def versionCode = "3.7.21"
     api(group: 'com.tanx', name: 'TanxCoreSDK', version: versionCode) {
         exclude group: 'com.github.bumptech.glide'
         exclude group: 'com.squareup.okhttp3'

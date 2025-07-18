@@ -8,7 +8,7 @@ group = 'com.github.bayescom'
 //maven依赖的项目名称
 def pomName = "advance-sigm"
 def extVersionName = ""
-def libVersionName = "4222"
+def libVersionName = "4240"
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
 
 def advanceVersionCode = 1
@@ -65,8 +65,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    api fileTree(dir: 'libs', include: ['wind-common-1.7.9.aar'])
-    api fileTree(dir: 'libs', include: ['wind-sdk-4.22.2.aar'])
+    api fileTree(dir: 'libs', include: ['wind-common-1.8.3.aar'])
+    api fileTree(dir: 'libs', include: ['wind-sdk-4.24.0.aar'])
 
     compileOnly project(path: ':advancelib')
     compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
