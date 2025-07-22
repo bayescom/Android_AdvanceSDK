@@ -17,8 +17,8 @@ public class AdvanceBanner extends AdvanceBaseAdspot implements BannerSetting {
     private int refreshInterval = 0;
     private AdvanceBannerListener listener;
 
-    private int csjExpressViewAcceptedWidth = 640;
-    private int csjExpressViewAcceptedHeight = 0;
+    private int csjExpressViewAcceptedWidth = 360;
+    private int csjExpressViewAcceptedHeight = 100;
 
     /**
      * 推荐使用新的构造方式
