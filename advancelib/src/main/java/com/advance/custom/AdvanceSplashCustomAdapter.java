@@ -10,8 +10,8 @@ import java.lang.ref.SoftReference;
 
 public abstract class AdvanceSplashCustomAdapter extends AdvanceBaseCustomAdapter {
     public SplashSetting splashSetting;
-    public ViewGroup adContainer;
-    public TextView skipView;
+//    public ViewGroup adContainer;
+//    public TextView skipView;
     public String skipText = "跳过 %d";
 
     public AdvanceSplashCustomAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting splashSetting) {
@@ -20,8 +20,8 @@ public abstract class AdvanceSplashCustomAdapter extends AdvanceBaseCustomAdapte
 
         try {
             if (splashSetting != null) {
-                skipView = splashSetting.getSkipView();
-                adContainer = splashSetting.getAdContainer();
+//                skipView = splashSetting.getSkipView();
+//                adContainer = splashSetting.getAdContainer();
                 String st = splashSetting.getSkipText();
                 if (st != null && !"".equals(st)) {
                     this.skipText = st;
