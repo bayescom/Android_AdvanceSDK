@@ -232,6 +232,7 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
             initAdapter(AdvanceConfig.SDK_ID_TAP, "tap.TapRewardAdapter");
             initAdapter(AdvanceConfig.SDK_ID_SIG, "sigmob.SigmobRewardAdapter");
             initAdapter(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoRewardAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_HW, "huawei.HWRewardAdapter");
 
         } catch (Throwable e) {
             e.printStackTrace();

@@ -1,8 +1,10 @@
 package com.advance.custom;
 
 import android.content.Context;
+import android.view.ViewGroup;
 
 import com.advance.core.srender.AdvanceRFBridge;
+import com.advance.utils.LogUtil;
 
 public abstract class AdvanceSelfRenderCustomAdapter extends AdvanceBaseCustomAdapter {
 
@@ -15,11 +17,7 @@ public abstract class AdvanceSelfRenderCustomAdapter extends AdvanceBaseCustomAd
 
     public void handleClose() {
         try {
-            try {
-                mAdvanceRFBridge.getMaterialProvider().rootView.removeAllViews();
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+            removeADView();
 
             if (mAdvanceRFBridge != null) {
                 mAdvanceRFBridge.adapterDidClose(sdkSupplier);
@@ -30,5 +28,19 @@ public abstract class AdvanceSelfRenderCustomAdapter extends AdvanceBaseCustomAd
     }
 
 
+    public void removeADView() {
+        try {
+            ViewGroup adContainer = mAdvanceRFBridge.getMaterialProvider().rootView;
+            if (adContainer == null) {
+                LogUtil.e("adContainer 不存在");
+                return;
+            }
+            LogUtil.max("remove adContainer = " + adContainer.toString());
+
+            adContainer.removeAllViews();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 //    public void handleADSuccess
 }

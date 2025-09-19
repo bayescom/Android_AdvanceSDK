@@ -74,6 +74,7 @@ public class AdvanceInterstitial extends AdvanceBaseAdspot implements Interstiti
             initAdapter(AdvanceConfig.SDK_ID_TAP, "tap.TapInterstitialAdapter");
             initAdapter(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoInterstitialAdapter");
             initAdapter(AdvanceConfig.SDK_ID_SIG, "sigmob.SigmobInterstitialAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_HW, "huawei.HWInterstitialAdapter");
 
         } catch (Throwable e) {
             e.printStackTrace();

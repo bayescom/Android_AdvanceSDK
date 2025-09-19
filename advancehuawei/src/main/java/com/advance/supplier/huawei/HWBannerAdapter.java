@@ -1,6 +1,7 @@
 package com.advance.supplier.huawei;
 
 import android.app.Activity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -9,6 +10,7 @@ import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.widget.BYViewUtil;
 import com.huawei.hms.ads.AdListener;
 import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.BannerAdSize;
@@ -60,9 +62,21 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
                 doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
                 return;
             }
+
 //            if (bannerView != null) {
 //                bannerView.showAD();
 //            }
+
+            //监听布局可见性，因为华为未回调曝光事件，所以需要在此检查view展示有效性。todo 测试自动刷新，以及不刷新时执行情况
+            new BYViewUtil().onVisibilityChange(bannerView, new BYViewUtil.VisChangeListener() {
+                @Override
+                public void onChange(View view, boolean isVisible) {
+                    if (isVisible && !hasShown) {
+                        handleShow();
+                        hasShown = true;
+                    }
+                }
+            });
         } catch (Throwable e) {
             e.printStackTrace();
             doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
@@ -120,13 +134,14 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
                 // Called when an ad is opened.
                 LogUtil.simple(TAG + String.format("Ad opened "));
 
-                handleShow();
+//                handleShow();
             }
 
             @Override
             public void onAdClicked() {
                 // Called when a user taps an ad.
                 LogUtil.simple(TAG + "Ad clicked");
+
                 handleClick();
             }
 
@@ -144,10 +159,10 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
                 handleClose();
             }
         });
-        AdParam adParam = AdvanceHWManager.getInstance().globalAdParam;
+        AdParam.Builder adParam = AdvanceHWManager.getInstance().globalAdParamBuilder;
         if (adParam == null) {
-            adParam = new AdParam.Builder().build();
+            adParam = new AdParam.Builder();
         }
-        bannerView.loadAd(adParam);
+        bannerView.loadAd(adParam.build());
     }
 }

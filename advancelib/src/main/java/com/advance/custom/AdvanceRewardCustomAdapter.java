@@ -2,6 +2,7 @@ package com.advance.custom;
 
 import android.app.Activity;
 
+import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
 
 public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapter {
@@ -29,7 +30,7 @@ public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapte
     }
 
 
-    public void handleClose(){
+    public void handleClose() {
         try {
             if (null != setting) {
                 setting.adapterAdClose();
@@ -39,7 +40,7 @@ public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapte
         }
     }
 
-    public void handleComplete(){
+    public void handleComplete() {
         try {
             if (null != setting) {
                 setting.adapterVideoComplete();
@@ -48,10 +49,34 @@ public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapte
             e.printStackTrace();
         }
     }
-    public void handleSkip(){
+
+    public void handleSkip() {
         try {
             if (null != setting) {
                 setting.adapterVideoSkipped();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleReward() {
+        try {
+            if (null != setting) {
+                setting.adapterAdReward();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleRewardInf(RewardServerCallBackInf serverCallBackInf) {
+        try {
+            if (null != setting) {
+                if (sdkSupplier != null && serverCallBackInf != null) {
+                    serverCallBackInf.supId = sdkSupplier.id;
+                }
+                setting.postRewardServerInf(serverCallBackInf);
             }
         } catch (Exception e) {
             e.printStackTrace();

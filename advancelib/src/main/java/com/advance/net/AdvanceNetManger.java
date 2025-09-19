@@ -183,7 +183,7 @@ public class AdvanceNetManger {
                 //3.3.4新增 是否允许个性化广告开关 0: (默认)允许1: 禁止。。
                 jsonObject.put("donottrack", 1);
             }
-            //3.3.4新增 包名 字段传递，预传后台未校验
+            //3.3.4新增 包名 字段传递，预传后台未校验， 4.1.0中移除
 //            jsonObject.put("bundle", getPackageName());
             //3.3.4新增 支持自定义额外请求参数
             HashMap<String, String> customData = AdvanceSetting.getInstance().customData;

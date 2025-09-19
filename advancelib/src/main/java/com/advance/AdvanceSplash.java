@@ -313,6 +313,8 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
             initAdapter(AdvanceConfig.SDK_ID_TAP, "tap.TapSplashAdapter");
             initAdapter(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoSplashAdapter");
             initAdapter(AdvanceConfig.SDK_ID_SIG, "sigmob.SigmobSplashAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_HW, "huawei.HWSplashAdapter");
+
         } catch (Throwable e) {
 //            e.printStackTrace();
         }

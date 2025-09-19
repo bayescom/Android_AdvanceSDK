@@ -105,6 +105,17 @@ public class DemoIds {
                 result.fullscreen = "";
                 result.draw = "";
                 break;
+
+            case "华为lite":
+                result.banner = "10013213";
+                result.splash = "10013211";
+                result.reward = "10013215";
+                result.interstitial = "10013214";
+                result.nativeExpress = "10013212";
+                result.nativeCustom = "10013219";
+                result.fullscreen = "";
+                result.draw = "";
+                break;
         }
         return result;
     }

@@ -31,6 +31,8 @@ public class SupplierBridgeUtil {
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_TAP, "tap.TapGlobalConfig"));
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_SIG, "sigmob.SigmobGlobalConfig"));
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoGlobalConfig"));
+            supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_HW, "huawei.HWGlobalConfig"));
+            supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_XIAOMI, "mi.XMGlobalConfig"));
 
             AdvanceConfig.getInstance().availableAdapterConfigMap = new HashMap<>();
             for (AdvanceSupConfigModel supConfigModel : supportSupList) {

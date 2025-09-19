@@ -49,6 +49,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
     public boolean refreshing = false;
 
     public boolean hasFailed = false;
+    public boolean hasShown = false;
     public int lastFailedPri = -1;
 
     //回调所需参数

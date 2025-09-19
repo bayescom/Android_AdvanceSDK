@@ -88,9 +88,9 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
         //先执行SDK初始化
         HWUtil.initAD(this);
 
-        AdParam adParam = AdvanceHWManager.getInstance().globalAdParam;
+        AdParam.Builder adParam = AdvanceHWManager.getInstance().globalAdParamBuilder;
         if (adParam == null) {
-            adParam = new AdParam.Builder().build();
+            adParam = new AdParam.Builder();
         }
 
         SplashView.SplashAdLoadListener splashAdLoadListener = new SplashView.SplashAdLoadListener() {
@@ -132,7 +132,7 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
         // 设置视频类开屏广告的音频焦点类型
         splashView.setAudioFocusType(AudioFocusType.NOT_GAIN_AUDIO_FOCUS_WHEN_MUTE);
         // 加载广告
-        splashView.load(slotId, orientation, adParam, splashAdLoadListener);
+        splashView.load(slotId, orientation, adParam.build(), splashAdLoadListener);
     }
 
     private int getScreenOrientation() {

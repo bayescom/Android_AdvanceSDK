@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
+import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.huawei.hms.ads.AdListener;
 import com.huawei.hms.ads.AdParam;
@@ -31,7 +32,12 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     @Override
     public void doDestroy() {
-
+        try {
+//            if (interstitialAd != null) {
+//                interstitialAd.();
+//            }
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -41,11 +47,17 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     @Override
     public void show() {
-        // Display an interstitial ad.
-        if (interstitialAd != null && interstitialAd.isLoaded()) {
-            interstitialAd.show(getRealActivity(null));
-        } else {
-            LogUtil.simple(TAG + "Ad did not load");
+        try {
+            // Display an interstitial ad.
+            if (interstitialAd != null && interstitialAd.isLoaded()) {
+                interstitialAd.show(getRealActivity(null));
+            } else {
+//                LogUtil.simple(TAG + "Ad did not load");
+                runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "未获取到插屏广告"));
+            }
+        } catch (Throwable e) {
+            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
+            e.printStackTrace();
         }
     }
 
@@ -72,6 +84,8 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             public void onAdFailed(int errorCode) {
                 // Called when an ad fails to be loaded.
                 LogUtil.simple(TAG + String.format(Locale.ROOT, "Ad failed to load with error code %d.", errorCode));
+
+                handleFailed(errorCode, " onAdFailed");
             }
 
             @Override
@@ -104,14 +118,14 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             }
         });
 
-        AdParam adParam = AdvanceHWManager.getInstance().globalAdParam;
+        AdParam.Builder adParam = AdvanceHWManager.getInstance().globalAdParamBuilder;
         if (adParam == null) {
-            adParam = new AdParam.Builder().build();
+            adParam = new AdParam.Builder();
         }
-        VideoConfiguration configuration = AdvanceHWManager.getInstance().globalVideoConfig;
+        VideoConfiguration.Builder configuration = AdvanceHWManager.getInstance().globalVideoConfigBuilder;
         if (configuration != null) {
-            interstitialAd.setVideoConfiguration(configuration);
+            interstitialAd.setVideoConfiguration(configuration.build());
         }
-        interstitialAd.loadAd(adParam);
+        interstitialAd.loadAd(adParam.build());
     }
 }

@@ -150,6 +150,7 @@ dependencies {
     implementation project(path: ':advancetanx') //阿里tanx-sdk
     implementation project(path: ':advanceoppo') //  oppo 纯净版sdk
     implementation project(path: ':advancetap') // TapTap广告SDK
+    implementation project(path: ':advancehuawei') // 华为广告SDK
 //----------------引入方式2 end ----------------------------------------------------------------
 
 

@@ -84,6 +84,7 @@ public class AdvanceRenderFeed extends AdvanceBaseAdspot implements AdvanceRFBri
             initAdapter(AdvanceConfig.SDK_ID_TANX, "tanx.TanxRenderFeedAdapter");
             initAdapter(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoRenderFeedAdapter");
             initAdapter(AdvanceConfig.SDK_ID_SIG, "sigmob.SigmobRenderFeedAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_HW, "huawei.HWRenderFeedAdapter");
 
         } catch (Throwable e) {
             e.printStackTrace();

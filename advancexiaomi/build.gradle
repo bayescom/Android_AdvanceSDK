@@ -7,9 +7,9 @@ group = 'com.github.bayescom'
 
 
 //maven依赖的项目名称
-def pomName = "advance-hw"
+def pomName = "advance-xm"
 def extVersionName = ""
-def libVersionName = "3.4.80.301"
+def libVersionName = "537"
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
 
 def advanceVersionCode = 1
@@ -53,11 +53,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    api "com.huawei.hms:ads-lite:1${libVersionName}"
-    api "com.huawei.hms:ads-consent:${libVersionName}"
 
-
-    compileOnly project(':advancelib')
-    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
 
 }

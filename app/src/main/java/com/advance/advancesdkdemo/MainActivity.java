@@ -22,10 +22,10 @@ import com.advance.advancesdkdemo.util.BaseCallBack;
 import com.advance.advancesdkdemo.util.DemoIds;
 import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.advancesdkdemo.util.UserPrivacyDialog;
+import com.advance.utils.SupplierBridgeUtil;
 import com.alimm.tanx.core.SdkConstant;
 import com.baidu.mobads.sdk.api.AdSettings;
 import com.bayes.sdk.basic.util.BYStringUtil;
-import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.heytap.msp.mobad.api.MobAdManager;
 import com.kwad.sdk.api.KsAdSDK;
 import com.mercury.sdk.core.config.MercuryAD;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 //         = findViewById(R.id.);
 
         TextView title = findViewById(R.id.tv_title);
-        title.setText("advanceDemo(" + getPackageName() + ")");
+        title.setText("聚合demo(" + getPackageName() + ")");
         String date = "「" + BuildConfig.BUILD_DATA + "」";
         TextView da = findViewById(R.id.tv_run_inf);
         da.setText(date);
@@ -128,8 +128,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void printVersion() {
 
-        String csjV = TTAdSdk.getAdManager().getSDKVersion();
-//        String csjop = TTVfSdk.getVfManager().getSDKVersion();
         String merV = MercuryAD.getVersion();
         String gdtV = SDKStatus.getSDKVersion();
         String bdV = AdSettings.getSDKVersion() + "";
@@ -138,16 +136,19 @@ public class MainActivity extends AppCompatActivity {
 
         TextView tv = findViewById(R.id.tv_version);
         tv.setText("Advance聚合 SDK 版本号： " + av + "\n" + "\n" +
-                        "Mercury SDK 版本号： " + merV + "\n" +
-                        "穿山甲 SDK 版本号： " + csjV + "\n" +
-//                "穿山甲-op SDK 版本号： " + csjop + "\n" +
-                        "广点通 SDK 版本号： " + gdtV + "\n" +
-                        "百度 SDK 版本号： " + bdV + "\n" +
-                        "快手 SDK 版本号： " + ksV + "\n" +
-                        "tanx SDK 版本号：" + SdkConstant.getSdkVersion() + "\n" +
-                        "Sigmob SDK 版本号：" + WindAds.getVersion() + "\n" +
-                        "oppo SDK 版本号：" + MobAdManager.getInstance().getSdkVerName() + "\n" +
-                        "TapTap SDK 版本号： " + com.tapsdk.tapad.BuildConfig.VERSION_NAME + "\n"
+                "Mercury SDK 版本号： " + merV + "\n" +
+                "穿山甲 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_CSJ) + "\n" +
+                "广点通 SDK 版本号： " + gdtV + "\n" +
+                "百度 SDK 版本号： " + bdV + "\n" +
+                "快手 SDK 版本号： " + ksV + "\n" +
+                "tanx SDK 版本号：" + SdkConstant.getSdkVersion() + "\n" +
+                "Sigmob SDK 版本号：" + WindAds.getVersion() + "\n" +
+                "oppo SDK 版本号：" + MobAdManager.getInstance().getSdkVerName() + "\n" +
+                "华为 SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HW) + "\n" +
+                "小米 SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_XIAOMI) + "\n" +
+                "vivo SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_VIVO) + "\n" +
+                "荣耀 SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HONOR) + "\n" +
+                "TapTap SDK 版本号： " + com.tapsdk.tapad.BuildConfig.VERSION_NAME + "\n"
         );
     }
 
