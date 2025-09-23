@@ -2,8 +2,9 @@ package com.advance.supplier.sigmob;
 
 import android.app.Activity;
 
-import com.advance.BaseSplashAdapter;
+
 import com.advance.SplashSetting;
+import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
@@ -17,7 +18,7 @@ import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SigmobSplashAdapter extends BaseSplashAdapter {
+public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
     private WindSplashAD splashAd;
 
     private boolean isSkip = false;
@@ -100,11 +101,11 @@ public class SigmobSplashAdapter extends BaseSplashAdapter {
                 @Override
                 public void onSplashAdClose(String placementId) {
                     LogUtil.simple(TAG + "onSplashAdClose");
-                    if (setting != null) {
+                    if (splashSetting != null) {
                         if (isSkip) {
-                            setting.adapterDidSkip();
+                            splashSetting.adapterDidSkip();
                         } else {
-                            setting.adapterDidTimeOver();
+                            splashSetting.adapterDidTimeOver();
                         }
                     }
                 }
@@ -146,7 +147,7 @@ public class SigmobSplashAdapter extends BaseSplashAdapter {
     public void show() {
         try {
             if (splashAd != null) {
-                splashAd.show(setting.getAdContainer());
+                splashAd.show(splashSetting.getAdContainer());
             }
         } catch (Exception e) {
             e.printStackTrace();

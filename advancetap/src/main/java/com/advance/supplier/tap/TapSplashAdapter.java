@@ -6,22 +6,21 @@ import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.advance.BaseSplashAdapter;
+
 import com.advance.SplashSetting;
+import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.tapsdk.tapad.AdRequest;
-import com.tapsdk.tapad.TapAdManager;
 import com.tapsdk.tapad.TapAdNative;
 import com.tapsdk.tapad.TapSplashAd;
 
 import java.lang.ref.SoftReference;
 
-public class TapSplashAdapter extends BaseSplashAdapter {
+public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
     TapAdNative tapAdNative;
     TapSplashAd adData;
 
@@ -76,7 +75,7 @@ public class TapSplashAdapter extends BaseSplashAdapter {
             }
 
 
-            Activity activity = getRealActivity(setting.getAdContainer());
+            Activity activity = getRealActivity(splashSetting.getAdContainer());
             //获取SplashView
             View view = adData.getSplashView(activity);
             //渲染之前判断activity生命周期状态
@@ -90,13 +89,13 @@ public class TapSplashAdapter extends BaseSplashAdapter {
                     ViewGroup.LayoutParams.MATCH_PARENT));
             //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕宽
 
-            boolean add = AdvanceUtil.addADView(setting.getAdContainer(), view);
+            boolean add = AdvanceUtil.addADView(splashSetting.getAdContainer(), view);
             if (!add) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
             }
 
 
-            TextView skipView = setting.getSkipView();
+            TextView skipView = splashSetting.getSkipView();
             if (null != skipView) {
                 skipView.setVisibility(View.INVISIBLE);
             }
@@ -124,8 +123,8 @@ public class TapSplashAdapter extends BaseSplashAdapter {
             //  case4: 填入了用户设置的宽高信息setCsjAcceptedSize（正常非分离场景，不会出现，分离场景表现：默认场景：）
             //  case5：用户分离模式调用开屏，且未在load时传入container信息，重复 case 1-4 测试
 
-            int viewWidth = setting.getCsjAcceptedSizeWidth();
-            int viewHeight = setting.getCsjAcceptedSizeHeight();
+            int viewWidth = splashSetting.getCsjAcceptedSizeWidth();
+            int viewHeight = splashSetting.getCsjAcceptedSizeHeight();
             LogUtil.high(TAG + " adview Accepted size :w = " + viewWidth + ", h = " + viewHeight);
 
             int spaceId = TapUtil.getPlaceId(getPosID());
@@ -155,8 +154,8 @@ public class TapSplashAdapter extends BaseSplashAdapter {
                             @Override
                             public void onAdSkip() {
                                 LogUtil.simple(TAG + "onAdSkip");
-                                if (setting != null) {
-                                    setting.adapterDidSkip();
+                                if (splashSetting != null) {
+                                    splashSetting.adapterDidSkip();
                                 }
 
                                 destroy();
@@ -166,8 +165,8 @@ public class TapSplashAdapter extends BaseSplashAdapter {
                             public void onAdTimeOver() {
                                 LogUtil.simple(TAG + "onAdTimeOver");
 
-                                if (setting != null) {
-                                    setting.adapterDidTimeOver();
+                                if (splashSetting != null) {
+                                    splashSetting.adapterDidTimeOver();
                                 }
                                 destroy();
                             }

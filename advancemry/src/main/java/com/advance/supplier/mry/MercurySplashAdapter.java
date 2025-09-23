@@ -1,31 +1,27 @@
 package com.advance.supplier.mry;
 
 import android.app.Activity;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
 
-import com.advance.AdvanceSetting;
-import com.advance.BaseSplashAdapter;
+
 import com.advance.SplashSetting;
+import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.util.BYUtil;
 import com.mercury.sdk.core.model.ADClickJumpInf;
 import com.mercury.sdk.core.splash.MercurySplashData;
 import com.mercury.sdk.core.splash.MercurySplashRenderListener;
 import com.mercury.sdk.core.splash.MercurySplashRequestListener;
 import com.mercury.sdk.core.splash.SplashAD;
-import com.mercury.sdk.core.splash.SplashADListener;
 import com.mercury.sdk.util.ADError;
 
 import java.lang.ref.SoftReference;
 
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 
-public class MercurySplashAdapter extends BaseSplashAdapter {
+public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
     private long remainTime = 5000;
     private SplashAD mercurySplash;
     private String TAG = "[MercurySplashAdapter] ";
@@ -51,16 +47,16 @@ public class MercurySplashAdapter extends BaseSplashAdapter {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "splashAd null"));
                 return;
             }
-            if ((null != setting)) {
-                mercurySplash.setAdContainer(setting.getAdContainer());
+            if ((null != splashSetting)) {
+                mercurySplash.setAdContainer(splashSetting.getAdContainer());
 //                if (setting.getLogoLayoutRes() != 0) {
 //                    mercurySplash.setLogoLayout(setting.getLogoLayoutRes(), setting.getLogoLayoutHeight());
 //                }
-                if (setting.getHolderImage() != null) {
-                    mercurySplash.setSplashHolderImage(setting.getHolderImage());
+                if (splashSetting.getHolderImage() != null) {
+                    mercurySplash.setSplashHolderImage(splashSetting.getHolderImage());
                 }
-                mercurySplash.setCustomSkipView(setting.getSkipView());
-                TextView skipView = setting.getSkipView();
+                mercurySplash.setCustomSkipView(splashSetting.getSkipView());
+                TextView skipView = splashSetting.getSkipView();
                 if (null != skipView) {
                     skipView.setVisibility(View.VISIBLE);
                 }
@@ -70,8 +66,8 @@ public class MercurySplashAdapter extends BaseSplashAdapter {
                 @Override
                 public void onSkip() {
                     LogUtil.simple(TAG + "onSkip ");
-                    if (setting != null) {
-                        setting.adapterDidSkip();
+                    if (splashSetting != null) {
+                        splashSetting.adapterDidSkip();
                     }
                 }
 
@@ -79,8 +75,8 @@ public class MercurySplashAdapter extends BaseSplashAdapter {
                 public void onCountDown() {
                     LogUtil.simple(TAG + "onCountDown ");
 
-                    if (setting != null) {
-                        setting.adapterDidTimeOver();
+                    if (splashSetting != null) {
+                        splashSetting.adapterDidTimeOver();
                     }
                 }
 
@@ -114,7 +110,7 @@ public class MercurySplashAdapter extends BaseSplashAdapter {
                 }
             });
 
-            mercurySplash.showAd(getRealActivity(setting.getAdContainer()), setting.getAdContainer());
+            mercurySplash.showAd(getRealActivity(splashSetting.getAdContainer()), splashSetting.getAdContainer());
 
         } catch (Throwable e) {
             e.printStackTrace();
@@ -274,13 +270,13 @@ public class MercurySplashAdapter extends BaseSplashAdapter {
 //        });
         if (mercurySplash != null) {
             mercurySplash.setRequestTimeout(timeout);
-            if (null != setting) {
-                mercurySplash.setAdContainer(setting.getAdContainer());
+            if (null != splashSetting) {
+                mercurySplash.setAdContainer(splashSetting.getAdContainer());
 //                if (setting.getLogoLayoutRes() != 0) {
 //                    mercurySplash.setLogoLayout(setting.getLogoLayoutRes(), setting.getLogoLayoutHeight());
 //                }
-                if (setting.getHolderImage() != null) {
-                    mercurySplash.setSplashHolderImage(setting.getHolderImage());
+                if (splashSetting.getHolderImage() != null) {
+                    mercurySplash.setSplashHolderImage(splashSetting.getHolderImage());
                 }
             }
         }

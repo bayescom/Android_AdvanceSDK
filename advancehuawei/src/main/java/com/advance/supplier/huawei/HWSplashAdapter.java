@@ -4,8 +4,7 @@ package com.advance.supplier.huawei;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.util.Log;
-import android.view.ViewGroup;
+import android.os.Handler;
 
 import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
@@ -14,7 +13,6 @@ import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.AudioFocusType;
-import com.huawei.hms.ads.BiddingInfo;
 import com.huawei.hms.ads.splash.SplashAdDisplayListener;
 import com.huawei.hms.ads.splash.SplashView;
 
@@ -62,6 +60,13 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
                     // Call this method when an ad is displayed.
                     LogUtil.simple(TAG + "SplashAdDisplayListener onAdShowed.");
                     handleShow();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            isCountingEnd = true;
+                        }
+                    }, 4800);
                 }
 
                 @Override
@@ -69,6 +74,18 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
                     // Call this method when an ad is clicked.
                     LogUtil.simple(TAG + "SplashAdDisplayListener onAdClick.");
                     handleClick();
+
+
+                    //必须要点击后回调跳过，否则不会有结束回调，且要延迟一定时间，否则就会出现落地页先打开，接着进入首页逻辑，导致落地页无法栈顶展示。
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (splashSetting != null) {
+                                splashSetting.adapterDidSkip();
+                            }
+                        }
+                    }, 300);
+
                 }
             });
 //            设置宽高
@@ -118,8 +135,14 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
             public void onAdDismissed() {
                 // 广告展示完毕时调用, 跳转至App主界面
                 LogUtil.simple(TAG + "SplashAdLoadListener onAdDismissed");
+
+
                 if (splashSetting != null) {
-                    splashSetting.adapterDidTimeOver();
+                    if (isCountingEnd) {
+                        splashSetting.adapterDidTimeOver();
+                    } else {
+                        splashSetting.adapterDidSkip();
+                    }
                 }
             }
         };

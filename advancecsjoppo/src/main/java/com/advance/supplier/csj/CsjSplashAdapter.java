@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.advance.AdvanceConfig;
-import com.advance.AdvanceSetting;
-import com.advance.BaseSplashAdapter;
+
 import com.advance.SplashSetting;
+import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
@@ -24,7 +24,7 @@ import com.bykv.vk.openvk.VfSlot;
 
 import java.lang.ref.SoftReference;
 
-public class CsjSplashAdapter extends BaseSplashAdapter {
+public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
     private CSJSplashAd newSplashAd;
     private String TAG = "[CsjSplashAdapter] ";
 
@@ -72,17 +72,17 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
             view = newSplashAd.getSplashView();
             initNewSplashClickEyeData(newSplashAd, view);
 //            }
-            boolean isDestroy = AdvanceUtil.isActivityDestroyed(getRealActivity(setting.getAdContainer()));
+            boolean isDestroy = AdvanceUtil.isActivityDestroyed(getRealActivity(splashSetting.getAdContainer()));
             if (isDestroy) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "ActivityDestroyed"));
                 return;
             }
             //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕宽
-            boolean add = AdvanceUtil.addADView(setting.getAdContainer(), view);
+            boolean add = AdvanceUtil.addADView(splashSetting.getAdContainer(), view);
             if (!add) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
             }
-            TextView skipView = setting.getSkipView();
+            TextView skipView = splashSetting.getSkipView();
             if (null != skipView) {
                 skipView.setVisibility(View.INVISIBLE);
             }
@@ -148,12 +148,12 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
         LogUtil.devDebug(TAG + " startLoad sdkSupplier.adspotid = " + sdkSupplier.adspotid);
         VfSlot adSlot;
         //穿山甲后台暂时不支持开屏模板广告，代码先加上相关判断，不影响现有展示。
-        if (setting.getCsjShowAsExpress()) {
+        if (splashSetting.getCsjShowAsExpress()) {
             adSlot = new VfSlot.Builder()
                     .setCodeId(sdkSupplier.adspotid)
                     .setSupportDeepLink(true)
-                    .setExpressViewAcceptedSize(setting.getCsjExpressViewWidth(), setting.getCsjExpressViewHeight())
-                    .setImageAcceptedSize(setting.getCsjAcceptedSizeWidth(), setting.getCsjAcceptedSizeHeight())
+                    .setExpressViewAcceptedSize(splashSetting.getCsjExpressViewWidth(), splashSetting.getCsjExpressViewHeight())
+                    .setImageAcceptedSize(splashSetting.getCsjAcceptedSizeWidth(), splashSetting.getCsjAcceptedSizeHeight())
 //                    .setSplashButtonType(AdvanceSetting.getInstance().csj_splashButtonType)
 //                    .setDownloadType(AdvanceSetting.getInstance().csj_downloadType)
                     .build();
@@ -161,7 +161,7 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
             adSlot = new VfSlot.Builder()
                     .setCodeId(sdkSupplier.adspotid)
                     .setSupportDeepLink(true)
-                    .setImageAcceptedSize(setting.getCsjAcceptedSizeWidth(), setting.getCsjAcceptedSizeHeight())
+                    .setImageAcceptedSize(splashSetting.getCsjAcceptedSizeWidth(), splashSetting.getCsjAcceptedSizeHeight())
 //                    .setSplashButtonType(AdvanceSetting.getInstance().csj_splashButtonType)
 //                    .setDownloadType(AdvanceSetting.getInstance().csj_downloadType)
                     .build();
@@ -214,13 +214,13 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
                     @Override
                     public void onSplashAdClose(CSJSplashAd csjSplashAd, int closeType) {
                         LogUtil.simple(TAG + "onSplashAdClose , closeType = " + closeType);
-                        if (setting != null) {
+                        if (splashSetting != null) {
                             if (closeType == CSJSplashCloseType.CLICK_SKIP) {
-                                setting.adapterDidSkip();
+                                splashSetting.adapterDidSkip();
                             } else if (closeType == CSJSplashCloseType.COUNT_DOWN_OVER) {
-                                setting.adapterDidTimeOver();
+                                splashSetting.adapterDidTimeOver();
                             } else {
-                                setting.adapterDidSkip();
+                                splashSetting.adapterDidSkip();
                             }
                         }
                     }
@@ -265,9 +265,9 @@ public class CsjSplashAdapter extends BaseSplashAdapter {
             if (splashAd == null || splashView == null) {
                 return;
             }
-            Activity adAct = getRealActivity(setting.getAdContainer());
+            Activity adAct = getRealActivity(splashSetting.getAdContainer());
 
-            mSplashClickEyeListener = new NewSplashClickEyeListener(adAct, splashAd, setting.getAdContainer(), splashView);
+            mSplashClickEyeListener = new NewSplashClickEyeListener(adAct, splashAd, splashSetting.getAdContainer(), splashView);
 
             splashAd.setSplashClickEyeListener(mSplashClickEyeListener);
             CSJSplashClickEyeManager.getInstance().init(adAct);

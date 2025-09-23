@@ -1,20 +1,17 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
-import android.os.Handler;
-import android.os.Looper;
-import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.advance.BaseSplashAdapter;
+
 import com.advance.SplashSetting;
+import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.util.BYUtil;
 import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsScene;
@@ -24,7 +21,7 @@ import java.lang.ref.SoftReference;
 
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 
-public class KSSplashAdapter extends BaseSplashAdapter implements KsSplashScreenAd.SplashScreenAdInteractionListener {
+public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSplashScreenAd.SplashScreenAdInteractionListener {
     private String TAG = "[KSSplashAdapter] ";
     private KsSplashScreenAd splashAd;
 
@@ -51,12 +48,12 @@ public class KSSplashAdapter extends BaseSplashAdapter implements KsSplashScreen
         }
 
         try {
-            Activity adAct = getRealActivity(setting.getAdContainer());
+            Activity adAct = getRealActivity(splashSetting.getAdContainer());
 
             //获取SplashView
             View view = splashAd.getView(adAct, this);
             //渲染之前判断activity生命周期状态
-            boolean isDestroy = AdvanceUtil.isActivityDestroyed(getRealActivity(setting.getAdContainer()));
+            boolean isDestroy = AdvanceUtil.isActivityDestroyed(getRealActivity(splashSetting.getAdContainer()));
             if (isDestroy) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "ActivityDestroyed"));
                 return;
@@ -66,7 +63,7 @@ public class KSSplashAdapter extends BaseSplashAdapter implements KsSplashScreen
                     ViewGroup.LayoutParams.MATCH_PARENT));
             //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕宽
 
-            boolean add = AdvanceUtil.addADView(setting.getAdContainer(), view);
+            boolean add = AdvanceUtil.addADView(splashSetting.getAdContainer(), view);
             if (!add) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
             }
@@ -74,7 +71,7 @@ public class KSSplashAdapter extends BaseSplashAdapter implements KsSplashScreen
 //                if (skipView != null) {
 //                    skipView.setVisibility(View.INVISIBLE);
 //                }
-            TextView skipView = setting.getSkipView();
+            TextView skipView = splashSetting.getSkipView();
             if (null != skipView) {
                 skipView.setVisibility(View.INVISIBLE);
             }
@@ -213,8 +210,8 @@ public class KSSplashAdapter extends BaseSplashAdapter implements KsSplashScreen
     public void onAdShowEnd() {
         LogUtil.simple(TAG + "onAdShowEnd");
 
-        if (setting != null) {
-            setting.adapterDidTimeOver();
+        if (splashSetting != null) {
+            splashSetting.adapterDidTimeOver();
         }
     }
 
@@ -228,8 +225,8 @@ public class KSSplashAdapter extends BaseSplashAdapter implements KsSplashScreen
     @Override
     public void onSkippedAd() {
         LogUtil.simple(TAG + "onSkippedAd");
-        if (setting != null) {
-            setting.adapterDidSkip();
+        if (splashSetting != null) {
+            splashSetting.adapterDidSkip();
         }
     }
 

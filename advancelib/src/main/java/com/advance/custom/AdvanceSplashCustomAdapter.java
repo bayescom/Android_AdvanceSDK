@@ -13,6 +13,7 @@ public abstract class AdvanceSplashCustomAdapter extends AdvanceBaseCustomAdapte
 //    public ViewGroup adContainer;
 //    public TextView skipView;
     public String skipText = "跳过 %d";
+    public boolean isCountingEnd = false;//用来判断是否倒计时走到了最后，false 回调dismiss的话代表是跳过，否则倒计时结束
 
     public AdvanceSplashCustomAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting splashSetting) {
         super(softReferenceActivity, splashSetting);
@@ -32,7 +33,7 @@ public abstract class AdvanceSplashCustomAdapter extends AdvanceBaseCustomAdapte
         }
     }
 
-//    @Override
+    //    @Override
 //    public void show() {
 //
 //    }

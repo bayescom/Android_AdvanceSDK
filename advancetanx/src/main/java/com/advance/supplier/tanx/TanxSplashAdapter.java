@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.advance.BaseSplashAdapter;
+
 import com.advance.SplashSetting;
+import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
@@ -22,7 +23,7 @@ import java.lang.ref.SoftReference;
 import java.util.List;
 
 //根据tanx文档，开屏SDK内部有有效期逻辑，非品牌广告1天，品牌广告多天。每7天清理一次本地缓存。暂无对外有效性判断方法
-public class TanxSplashAdapter extends BaseSplashAdapter {
+public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
     ITanxAdLoader iTanxAdLoader;
     ITanxSplashExpressAd iTanxSplashExpressAd;
 
@@ -179,8 +180,8 @@ public class TanxSplashAdapter extends BaseSplashAdapter {
                 public void onAdClosed() {
                     LogUtil.simple(TAG + "onAdClosed");
 
-                    if (setting != null) {
-                        setting.adapterDidSkip();
+                    if (splashSetting != null) {
+                        splashSetting.adapterDidSkip();
                     }
                 }
 
@@ -188,8 +189,8 @@ public class TanxSplashAdapter extends BaseSplashAdapter {
                 public void onAdFinish() {
                     LogUtil.simple(TAG + "onAdFinish");
 
-                    if (setting != null) {
-                        setting.adapterDidTimeOver();
+                    if (splashSetting != null) {
+                        splashSetting.adapterDidTimeOver();
                     }
                 }
 
@@ -205,17 +206,17 @@ public class TanxSplashAdapter extends BaseSplashAdapter {
             });
             // TODO: 2024/7/1 优化此处和信息流广告位得activity信息采集来源，优先使用承载view中获取的activity，其次使用初始化时传递得，最次使用当前展示的activity（待实现补充）；如果都没有则不使用带activity的getAdView方法
             //获取SplashView
-            View view = iTanxSplashExpressAd.getAdView(BYUtil.getActivityFromView(setting.getAdContainer()));
+            View view = iTanxSplashExpressAd.getAdView(BYUtil.getActivityFromView(splashSetting.getAdContainer()));
             //渲染之前判断activity生命周期状态
 //            if (!AdvanceUtil.isActivityDestroyed(softReferenceActivity)) {
 //                adContainer.removeAllViews();
 //                //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕宽
 //                adContainer.addView(view);
-            boolean add = AdvanceUtil.addADView(setting.getAdContainer(), view);
+            boolean add = AdvanceUtil.addADView(splashSetting.getAdContainer(), view);
             if (!add) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
             }
-            TextView skipView = setting.getSkipView();
+            TextView skipView = splashSetting.getSkipView();
             if (null != skipView) {
                 skipView.setVisibility(View.INVISIBLE);
             }

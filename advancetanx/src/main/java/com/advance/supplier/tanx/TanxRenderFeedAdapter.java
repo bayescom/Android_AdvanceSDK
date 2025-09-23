@@ -1,5 +1,6 @@
 package com.advance.supplier.tanx;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -81,7 +82,7 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 return;
             }
             final AdvanceRFMaterialProvider rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
-            activity = getRealActivity(rfMaterialProvider.rootView);
+            Activity activity = getRealActivity(rfMaterialProvider.rootView);
 
             TanxAdView tanxAdView;
             if (activity == null) {
@@ -321,10 +322,7 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private void bindVideo(AdvanceRFMaterialProvider rfMaterialProvider) {
         try {
             if (dataConverter.isVideo()) {
-                Context context = activity;
-                if (context == null) {
-                    context = getRealContext();
-                }
+                Context context = getRealContext();;
                 ITanxFeedVideoPlayer iTanxVideoView = nativeAD.getITanxVideoView(context);
 
                 final AdvanceRFVideoEventListener videoEventListener = rfMaterialProvider.videoEventListener;

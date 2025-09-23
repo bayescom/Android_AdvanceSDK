@@ -7,6 +7,7 @@ import com.advance.advancelib.BuildConfig;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.itf.AdvanceSupplierBridge;
 import com.advance.model.AdvanceLogLevel;
+import com.advance.utils.ActivityTracker;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.advance.utils.SupplierBridgeUtil;
@@ -74,15 +75,22 @@ public class AdvanceSDK {
 
     //3.5.2新增，不包含debug属性的初始化方法
     public static void initSDK(Context context, String appId) {
-        if (TextUtils.isEmpty(appId)) {
-            LogUtil.w("appId 不可为空，请检查SDK初始化方法中的appId值设置");
-        } else {
-            AdvanceConfig.getInstance().setMercuryMediaId(appId);
-        }
-        //初始化引入的渠道配置
-        SupplierBridgeUtil.initSup();
+        try {
+            if (TextUtils.isEmpty(appId)) {
+                LogUtil.w("appId 不可为空，请检查SDK初始化方法中的appId值设置");
+            } else {
+                AdvanceConfig.getInstance().setMercuryMediaId(appId);
+            }
+            //初始化引入的渠道配置
+            SupplierBridgeUtil.initSup();
 
-        AdvanceConfig.getInstance().initSDKs(context);
+            AdvanceConfig.getInstance().initSDKs(context);
+
+            //跟踪activity信息
+            ActivityTracker.getInstance().initialize(context);
+        } catch (Throwable e) {
+
+        }
     }
 
     //3.5.2新增，设置debug状态

@@ -1,5 +1,7 @@
 package com.advance;
 
+import android.app.Activity;
+
 import com.advance.itf.AdvancePrivacyController;
 
 import java.util.HashMap;
@@ -66,6 +68,9 @@ public boolean isADTrack = true;
 
     public boolean canMock = false;
     public String mockUrl = "";
+
+    //用来标记当前展示的activity，方便开发者未传递时，直接使用
+    public Activity currentActivity;
 
 
     //    advance得广告实例，key 为广告位id

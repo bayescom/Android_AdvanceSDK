@@ -1,7 +1,6 @@
 package com.advance.supplier.huawei;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
@@ -16,6 +15,7 @@ import com.huawei.hms.ads.nativead.NativeAd;
 import com.huawei.hms.ads.nativead.NativeAdConfiguration;
 import com.huawei.hms.ads.nativead.NativeAdLoader;
 import com.huawei.hms.ads.nativead.NativeView;
+import com.huawei.hms.ads.utils.NativeListener;
 
 public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     private NativeAd mNativeAd;
@@ -56,7 +56,19 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             if (mNativeAd == null) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "未获取到广告信息"));
             }
+            mNativeAd.setNativeListener(new NativeListener(){
+                @Override
+                public void onAdClicked() {
+                    LogUtil.simple(TAG +"点击回调");
+                    handleClick();
+                }
 
+                @Override
+                public void onAdImpression() {
+                    LogUtil.simple(TAG +"曝光回调");
+                    handleShow();
+                }
+            });
             NativeView nativeView = new NativeView(getRealContext());
             nativeView.setNativeAd(mNativeAd);
             nativeView.setAdFeedbackListener(new AdFeedbackListener() {
@@ -84,7 +96,11 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
                 public void onCloseBtnClick() {
                     LogUtil.simple(TAG + "AdCloseBtnClickListener, onCloseBtnClick");
 
-                    mSetting.adapterDidClosed(nativeView);
+                    if (mSetting!=null) {
+                        mSetting.adapterDidClosed(nativeView);
+                    }
+
+                    removeADView();
                 }
             });
             addADView(nativeView);
@@ -101,6 +117,7 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
 
         String adId = sdkSupplier.adspotid;
+//        adId = "testb65czjivt9"; // 原生小图广告
         NativeAdLoader.Builder builder = new NativeAdLoader.Builder(getRealContext(), adId);
         builder.setNativeAdLoadedListener(new NativeAd.NativeAdLoadedListener() {
             @Override

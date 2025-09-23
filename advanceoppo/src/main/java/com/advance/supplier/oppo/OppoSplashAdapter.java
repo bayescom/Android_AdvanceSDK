@@ -3,8 +3,9 @@ package com.advance.supplier.oppo;
 import android.app.Activity;
 import android.os.Handler;
 
-import com.advance.BaseSplashAdapter;
+
 import com.advance.SplashSetting;
+import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.heytap.msp.mobad.api.ad.HotSplashAd;
@@ -13,10 +14,9 @@ import com.heytap.msp.mobad.api.params.SplashAdParams;
 
 import java.lang.ref.SoftReference;
 
-public class OppoSplashAdapter extends BaseSplashAdapter {
+public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
     private final String TAG = "[OppoSplashAdapter] ";
     private HotSplashAd splashAd;
-    private boolean isCountingEnd = false;//用来判断是否倒计时走到了最后，false 回调dismiss的话代表是跳过，否则倒计时结束
 
     public OppoSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting baseSetting) {
         super(softReferenceActivity, baseSetting);
@@ -58,7 +58,7 @@ public class OppoSplashAdapter extends BaseSplashAdapter {
             }
 
 
-            splashAd.showAd(getRealActivity(setting.getAdContainer()));
+            splashAd.showAd(getRealActivity(splashSetting.getAdContainer()));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -72,8 +72,8 @@ public class OppoSplashAdapter extends BaseSplashAdapter {
                     .setFetchTimeout(sdkSupplier.timeout);
 
             //如果请求时未赋值，将无法展示自定义跳过view
-            if (setting.getSkipView() != null) {
-                builder.setBottomArea(setting.getSkipView());
+            if (splashSetting.getSkipView() != null) {
+                builder.setBottomArea(splashSetting.getSkipView());
             }
 
             splashAd = new HotSplashAd(getRealContext(), sdkSupplier.adspotid, "", new IHotSplashListener() {
@@ -90,11 +90,11 @@ public class OppoSplashAdapter extends BaseSplashAdapter {
                 public void onAdDismissed() {
                     LogUtil.simple(TAG + " onAdDismissed ");
 
-                    if (setting != null) {
+                    if (splashSetting != null) {
                         if (isCountingEnd) {
-                            setting.adapterDidTimeOver();
+                            splashSetting.adapterDidTimeOver();
                         } else {
-                            setting.adapterDidSkip();
+                            splashSetting.adapterDidSkip();
                         }
                     }
                 }

@@ -22,6 +22,11 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
 
     BannerView bannerView;
 
+    //记录点击触发的时间，用来辅助判断是否点击了关闭按钮才回调Ad Leave
+    long clickTime = 0;
+    long openTime = 0;
+    boolean isLandingPage = false;
+
     public HWBannerAdapter(Activity activity, BannerSetting setting) {
         super(activity, setting);
     }
@@ -134,6 +139,7 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
                 // Called when an ad is opened.
                 LogUtil.simple(TAG + String.format("Ad opened "));
 
+                openTime = System.currentTimeMillis();
 //                handleShow();
             }
 
@@ -143,12 +149,15 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
                 LogUtil.simple(TAG + "Ad clicked");
 
                 handleClick();
+                clickTime = System.currentTimeMillis();
             }
 
             @Override
             public void onAdLeave() {
                 // Called when a user has left the app.
                 LogUtil.simple(TAG + "Ad Leave");
+
+                isLandingPage = true;
             }
 
             @Override
@@ -156,6 +165,12 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
                 // Called when an ad is closed.
                 LogUtil.simple(TAG + "Ad closed");
 
+                if (isLandingPage && clickTime > 0) {
+                    isLandingPage = false;
+                    clickTime = 0;
+                    LogUtil.simple(TAG + " 判定为点击后导致的广告关闭事件，不对外回调处理");
+                    return;
+                }
                 handleClose();
             }
         });

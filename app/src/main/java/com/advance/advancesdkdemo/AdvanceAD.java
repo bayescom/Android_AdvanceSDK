@@ -3,6 +3,8 @@ package com.advance.advancesdkdemo;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +31,6 @@ import com.advance.AdvanceSplash;
 import com.advance.AdvanceSplashListener;
 import com.advance.RewardServerCallBackInf;
 import com.advance.advancesdkdemo.util.DemoManger;
-import com.advance.advancesdkdemo.util.UIUtils;
 import com.advance.custom.AdvanceBaseCustomAdapter;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.model.AdvanceError;
@@ -350,6 +351,7 @@ public class AdvanceAD {
     }
 
     boolean hasRewardShow = false;
+
     /**
      * 加载并展示激励视频广告。
      * 也可以选择性先提前加载，然后在合适的时机再调用展示方法
@@ -377,7 +379,7 @@ public class AdvanceAD {
             @Override
             public void onAdLoaded(AdvanceRewardVideoItem advanceRewardVideoItem) {
                 logAndToast(mActivity, "广告加载成功");
-                if (hasRewardShow){
+                if (hasRewardShow) {
                     return;
                 }
                 // 如果有业务需求，可以提前加载广告，在需要的时候调用show进行展示
@@ -439,7 +441,12 @@ public class AdvanceAD {
             @Override
             public void onRewardServerInf(RewardServerCallBackInf inf) {
                 //广点通和穿山甲支持回调服务端激励验证信息，详见RewardServerCallBackInf中字段信息
-                logAndToast(mActivity, "onRewardServerInf" + inf);
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        logAndToast(mActivity, "onRewardServerInf" + inf);
+                    }
+                }, 1200);
             }
         });
         advanceRewardVideo.loadStrategy();

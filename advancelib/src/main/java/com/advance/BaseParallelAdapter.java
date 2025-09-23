@@ -9,6 +9,7 @@ import android.view.View;
 import com.advance.core.srender.AdvanceRFADData;
 import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.net.AdvanceReport;
+import com.advance.utils.ActivityTracker;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.RenderEvent;
 import com.advance.model.AdvanceError;
@@ -75,7 +76,15 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
             return activity;
         }
         if (mContext != null) {
-            return AdvanceUtil.getActivityFromCtx(mContext);
+            Activity ctxAct = AdvanceUtil.getActivityFromCtx(mContext);
+            if (ctxAct != null) {
+                return ctxAct;
+            }
+        }
+        //兜底返回当前页面
+        activity = ActivityTracker.getInstance().getCurrentActivity();
+        if (activity != null) {
+            return activity;
         }
         return null;
     }

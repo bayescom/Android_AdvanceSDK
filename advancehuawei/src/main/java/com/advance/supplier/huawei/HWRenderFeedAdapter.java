@@ -1,18 +1,32 @@
 package com.advance.supplier.huawei;
 
+import android.app.Activity;
 import android.content.Context;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.advance.core.srender.AdvanceRFBridge;
+import com.advance.core.srender.AdvanceRFUtil;
+import com.advance.core.srender.widget.AdvRFRootView;
+import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
+import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
+import com.huawei.hms.ads.AdCloseBtnClickListener;
+import com.huawei.hms.ads.AdFeedbackListener;
 import com.huawei.hms.ads.AdListener;
 import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.VideoConfiguration;
+import com.huawei.hms.ads.nativead.MediaView;
 import com.huawei.hms.ads.nativead.NativeAd;
 import com.huawei.hms.ads.nativead.NativeAdConfiguration;
 import com.huawei.hms.ads.nativead.NativeAdLoader;
+import com.huawei.hms.ads.nativead.NativeView;
+import com.huawei.hms.ads.utils.NativeListener;
 
-public class HWRenderFeedAdapter  extends AdvanceSelfRenderCustomAdapter {
+import java.util.ArrayList;
+
+public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private NativeAd mNativeAd;
 
     public HWRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
@@ -32,7 +46,7 @@ public class HWRenderFeedAdapter  extends AdvanceSelfRenderCustomAdapter {
     @Override
     public void doDestroy() {
         try {
-            if (mNativeAd!=null){
+            if (mNativeAd != null) {
                 mNativeAd.destroy();
             }
             removeADView();
@@ -47,12 +61,87 @@ public class HWRenderFeedAdapter  extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     public void show() {
+        try {
+            if (mNativeAd == null) {
+                runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "未获取到广告信息"));
+            }
+            mNativeAd.setNativeListener(new NativeListener() {
+                @Override
+                public void onAdClicked() {
+                    LogUtil.simple(TAG + "点击回调");
+                    handleClick();
+                }
 
+                @Override
+                public void onAdImpression() {
+                    LogUtil.simple(TAG + "曝光回调");
+                    handleShow();
+                }
+            });
+            NativeView nativeView = new NativeView(getRealContext());
+            nativeView.setNativeAd(mNativeAd);
+            nativeView.setAdFeedbackListener(new AdFeedbackListener() {
+                @Override
+                public void onAdFeedbackShowFailed() {
+                    LogUtil.simple(TAG + "AdFeedbackListener, showFeedbackFailed");
+                    // ***feedback view弹出失败，可选择自行弹窗负反馈界面
+                    //   ***若需要上报负反馈事件，调用NativeView.onClose()接口上报
 
+                    // 也可选择直接移除广告画面
+                    //                    mSetting.adapterDidClosed(nativeView);
+                }
+
+                @Override
+                public void onAdLiked() {
+                    LogUtil.simple(TAG + "AdFeedbackListener, onAdLiked");
+                }
+
+                @Override
+                public void onAdDisliked() {
+                    LogUtil.simple(TAG + "AdFeedbackListener, onAdDisliked");
+
+                }
+            });
+            nativeView.setAdCloseBtnClickListener(new AdCloseBtnClickListener() {
+                @Override
+                public void onCloseBtnClick() {
+                    LogUtil.simple(TAG + "AdCloseBtnClickListener, onCloseBtnClick");
+
+                    handleClose();
+                }
+            });
+//        addADView(nativeView);
+
+//            需要先拿到根布局信息
+            AdvRFRootView rootView = mAdvanceRFBridge.getMaterialProvider().rootView;
+            Activity activity = getRealActivity(rootView);
+//            -----------方案B copy全部子布局，复制子控件至新布局，并将新布局添加至旧父布局中
+            AdvanceRFUtil.copyChild(rootView, nativeView);
+
+            //添加action交互按钮绑定
+            ArrayList<View> creativeViews = mAdvanceRFBridge.getMaterialProvider().creativeViews;
+            if (!creativeViews.isEmpty()) {
+                nativeView.setCallToActionView(creativeViews.get(0));
+            }
+
+            //绑定素材、视频信息
+            AdvRFVideoView videoView = mAdvanceRFBridge.getMaterialProvider().videoView;
+            if (videoView != null) {
+
+                MediaView mediaView = new MediaView(getRealContext());
+                videoView.addView(mediaView);
+                nativeView.setMediaView(mediaView);
+                nativeView.getMediaView().setMediaContent(mNativeAd.getMediaContent());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
+
+        }
 
     }
 
-    private void loadAd(){
+    private void loadAd() {
         //先执行SDK初始化
         HWUtil.initAD(this);
 
@@ -77,7 +166,6 @@ public class HWRenderFeedAdapter  extends AdvanceSelfRenderCustomAdapter {
                 dataConverter = new HWRenderDataConverter(nativeAd, HWRenderFeedAdapter.this);
 
                 handleSucceed();
-
 
             }
         }).setAdListener(new AdListener() {

@@ -8,20 +8,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.advance.AdvanceSetting;
-import com.advance.BaseSplashAdapter;
+
 import com.advance.SplashSetting;
+import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.util.BYUtil;
 import com.qq.e.ads.splash.SplashAD;
 import com.qq.e.ads.splash.SplashADListener;
-import com.qq.e.ads.splash.SplashADZoomOutListener;
 import com.qq.e.comm.util.AdError;
 
 import java.lang.ref.SoftReference;
 
-public class GdtSplashAdapter extends BaseSplashAdapter {
+public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
 
     private long remainTime = 5000;
     private boolean isClicked = false;
@@ -52,10 +50,10 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
                 return;
             }
             if (isParallel) {
-                splashAD.showAd(setting.getAdContainer());
+                splashAD.showAd(splashSetting.getAdContainer());
             }
 
-            TextView skipView = setting.getSkipView();
+            TextView skipView = splashSetting.getSkipView();
             if (null != skipView) {
                 skipView.setVisibility(View.INVISIBLE);
             }
@@ -103,7 +101,7 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
     private void initVis() {
         //特殊处理布局展示效果
         try {
-            if (setting != null) {
+            if (splashSetting != null) {
 //                if (skipView != null) {
 //                    skipView.setVisibility(View.GONE);
 //                    if (setting.isGdtCustomSkipHide()) {
@@ -152,8 +150,8 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
             @Override
             public void onADDismissed() {
                 LogUtil.simple(TAG + "onADDismissed ");
-                if (null != setting) {
-                    boolean clickSkip = setting.isGdtClickAsSkip();
+                if (null != splashSetting) {
+                    boolean clickSkip = splashSetting.isGdtClickAsSkip();
                     //如果开启广点通点击广告等于跳过设置，isClicked手动置为未点击状态，保证点击了也是走跳过回调
                     if (clickSkip) {
                         isClicked = false;
@@ -161,9 +159,9 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
                     checkAndReview();
                     //剩余时长在600ms以上，且未点击才按照跳过
                     if (remainTime >= 600 && !isClicked) {
-                        setting.adapterDidSkip();
+                        splashSetting.adapterDidSkip();
                     } else {
-                        setting.adapterDidTimeOver();
+                        splashSetting.adapterDidTimeOver();
                     }
                 }
             }
@@ -257,18 +255,18 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
 
     private void zoomOut() {
         try {
-            if (setting == null) {
+            if (splashSetting == null) {
                 return;
             }
-            Activity adAct = getRealActivity(setting.getAdContainer());
+            Activity adAct = getRealActivity(splashSetting.getAdContainer());
 
             SplashZoomOutManager zoomOutManager = SplashZoomOutManager.getInstance();
             zoomOutManager.initSize(adAct);
-            zoomOutManager.setSplashInfo(splashAD, setting.getAdContainer().getChildAt(0),
+            zoomOutManager.setSplashInfo(splashAD, splashSetting.getAdContainer().getChildAt(0),
                     adAct.getWindow().getDecorView());
 
             checkAndReview();
-            if (setting.isShowInSingleActivity()) {
+            if (splashSetting.isShowInSingleActivity()) {
                 new GdtUtil().zoomOut(adAct);
             } else {
                 AdvanceSetting.getInstance().isSplashSupportZoomOut = true;
@@ -281,7 +279,7 @@ public class GdtSplashAdapter extends BaseSplashAdapter {
     //检查是否需要对holder进行遮罩图层赋值
     private void checkAndReview() {
         try {
-            ImageView splashHolder = setting.getGDTHolderView();
+            ImageView splashHolder = splashSetting.getGDTHolderView();
             if (splashHolder != null) {
                 //防止移除view后显示底图导致屏幕闪烁
                 Bitmap b = splashAD.getZoomOutBitmap();

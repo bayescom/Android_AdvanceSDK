@@ -7,8 +7,9 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
-import com.advance.BaseSplashAdapter;
+
 import com.advance.SplashSetting;
+import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.RequestParameters;
@@ -18,10 +19,9 @@ import com.bayes.sdk.basic.util.BYUtil;
 
 import java.lang.ref.SoftReference;
 
-public class BDSplashAdapter extends BaseSplashAdapter implements SplashInteractionListener {
+public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements SplashInteractionListener {
     private SplashAd splashAd;
     private final RequestParameters parameters;
-    private boolean isCountingEnd = false;//用来判断是否倒计时走到了最后，false 回调dismiss的话代表是跳过，否则倒计时结束
 
     private final String TAG = "[BDSplashAdapter] ";
 
@@ -77,7 +77,7 @@ public class BDSplashAdapter extends BaseSplashAdapter implements SplashInteract
     public void orderLoadAd() {
         try {
             initSplash();
-            splashAd.loadAndShow(setting.getAdContainer());
+            splashAd.loadAndShow(splashSetting.getAdContainer());
         } catch (Throwable e) {
             e.printStackTrace();
             String tag = TAG + "Throwable ";
@@ -177,11 +177,11 @@ public class BDSplashAdapter extends BaseSplashAdapter implements SplashInteract
     public void onAdDismissed() {
         LogUtil.simple(TAG + "onAdDismissed");
 
-        if (setting != null) {
+        if (splashSetting != null) {
             if (isCountingEnd) {
-                setting.adapterDidTimeOver();
+                splashSetting.adapterDidTimeOver();
             } else {
-                setting.adapterDidSkip();
+                splashSetting.adapterDidSkip();
             }
         }
 
@@ -193,8 +193,8 @@ public class BDSplashAdapter extends BaseSplashAdapter implements SplashInteract
     public void onAdSkip() {
         LogUtil.simple(TAG + "onAdSkip");
 
-        if (setting != null)
-            setting.adapterDidSkip();
+        if (splashSetting != null)
+            splashSetting.adapterDidSkip();
     }
 
     @Override
@@ -218,9 +218,9 @@ public class BDSplashAdapter extends BaseSplashAdapter implements SplashInteract
         try {
             //并行时需要单独进行show
             if (isParallel) {
-                splashAd.show(setting.getAdContainer());
+                splashAd.show(splashSetting.getAdContainer());
             }
-            TextView skipView = setting.getSkipView();
+            TextView skipView = splashSetting.getSkipView();
             if (null != skipView) {
                 skipView.setVisibility(View.INVISIBLE);
             }

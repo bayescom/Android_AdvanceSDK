@@ -125,7 +125,7 @@ public class HWRenderDataConverter implements AdvanceRFADData {
     public String getIconUrl() {
         try {
             if (mData != null) {
-                return HWUtil.getFilePath(baseParallelAdapter.getRealContext(), mData.getIcon().getUri());
+                return HWUtil.getMaterialPath(baseParallelAdapter.getRealContext(), mData.getIcon().getUri());
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -165,7 +165,7 @@ public class HWRenderDataConverter implements AdvanceRFADData {
                 List<Image> ksImages = mData.getImages();
                 if (ksImages != null) {
                     for (Image ksImage : ksImages) {
-                        String imageUrl = HWUtil.getFilePath(baseParallelAdapter.getRealContext(), ksImage.getUri());
+                        String imageUrl = HWUtil.getMaterialPath(baseParallelAdapter.getRealContext(), ksImage.getUri());
                         if (!BYStringUtil.isEmpty(imageUrl)) {
                             result.add(imageUrl);
                         }
@@ -278,12 +278,15 @@ public class HWRenderDataConverter implements AdvanceRFADData {
                 ArrayList<AdvDownloadPermissionModel> result = new ArrayList<>();
                 if (mData != null) {
                     List<AppPermision> permissionInfo = mData.getAppInfo().getAppPermissions();
-                    //  查看列表信息，转换方式
-                    for (AppPermision permission : permissionInfo) {
-                        AdvDownloadPermissionModel permissionModel = new AdvDownloadPermissionModel();
-                        permissionModel.permTitle = permission.getName();
-                        result.add(permissionModel);
+                    if (permissionInfo != null) {
+                        //  查看列表信息，转换方式
+                        for (AppPermision permission : permissionInfo) {
+                            AdvDownloadPermissionModel permissionModel = new AdvDownloadPermissionModel();
+                            permissionModel.permTitle = permission.getName();
+                            result.add(permissionModel);
+                        }
                     }
+
                 }
 
                 if (callBack != null) {

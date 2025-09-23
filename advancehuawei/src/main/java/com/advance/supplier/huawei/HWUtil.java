@@ -65,7 +65,8 @@ public class HWUtil {
     }
 
 
-    public static String getFilePath(Context context, Uri uri) {
+    //获取素材链接，可能是本地路径、或者https地址
+    public static String getMaterialPath(Context context, Uri uri) {
         try {
             if (uri == null) return null;
 
@@ -101,7 +102,7 @@ public class HWUtil {
                         return null;
                     }
                 default:
-                    return null; // 不支持的其他scheme
+                    return uri.toString(); // 不支持的其他scheme
             }
         } catch (Exception e) {
             return null;
