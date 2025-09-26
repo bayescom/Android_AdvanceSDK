@@ -54,5 +54,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
 
+    def libName = "mimo-ad-sdk-" + libVersionName
+    api fileTree(dir: 'libs', include: [libName + '.aar'])
 
+    compileOnly project(path: ':advancelib')
+    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
 }

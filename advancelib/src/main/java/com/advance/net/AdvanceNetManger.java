@@ -214,6 +214,10 @@ public class AdvanceNetManger {
                     extJsonObj.putOpt("tap_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TAP));
                     extJsonObj.putOpt("oppo_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_OPPO));
                     extJsonObj.putOpt("sig_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_SIG));
+                    extJsonObj.putOpt("hw_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HW));
+                    extJsonObj.putOpt("xm_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_XIAOMI));
+                    extJsonObj.putOpt("vivo_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_VIVO));
+                    extJsonObj.putOpt("honor_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HONOR));
 
                     //todo 如何增加自定义渠道方式得版本号采集
                 } catch (Throwable e) {

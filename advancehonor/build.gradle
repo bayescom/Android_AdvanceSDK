@@ -1,0 +1,60 @@
+apply plugin: 'com.android.library'
+
+// JitPack Maven
+apply plugin: 'com.github.dcendents.android-maven'
+// Your Group
+group = 'com.github.bayescom'
+
+
+//maven依赖的项目名称
+def pomName = "advance-honor"
+def extVersionName = ""
+def libVersionName = "111"
+def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
+
+def advanceVersionCode = 1
+
+
+advanceVersionName = advanceVersionName + extVersionName
+
+def outputName = pomName + "_" + advanceVersionName + ".aar"
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+
+    defaultConfig {
+        minSdkVersion 18
+        targetSdkVersion 29
+        versionCode advanceVersionCode
+        versionName advanceVersionName
+
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    println "advanceVersionName = " + advanceVersionName
+
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+
+
+
+    compileOnly project(path: ':advancelib')
+    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
+}

@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         da.setText(date);
 
         sdKSNew = findViewById(R.id.sp_sdk);
-        sdKSNew.setSelection(9);
+        sdKSNew.setSelection(10);
         sdKSNew.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {

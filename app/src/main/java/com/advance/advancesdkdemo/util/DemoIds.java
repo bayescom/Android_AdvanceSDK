@@ -116,6 +116,16 @@ public class DemoIds {
                 result.fullscreen = "";
                 result.draw = "";
                 break;
+            case "小米":
+                result.banner = "10013287";
+                result.splash = "10013285";
+                result.reward = "10013289";
+                result.interstitial = "10013288";
+                result.nativeExpress = "10013286";
+                result.nativeCustom = "";
+                result.fullscreen = "";
+                result.draw = "";
+                break;
         }
         return result;
     }

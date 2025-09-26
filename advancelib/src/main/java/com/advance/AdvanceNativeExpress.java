@@ -180,6 +180,7 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
             initAdapter(AdvanceConfig.SDK_ID_TANX, "tanx.TanxNativeExpressAdapter");
             initAdapter(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoNativeExpressAdapter");
             initAdapter(AdvanceConfig.SDK_ID_HW, "huawei.HWNativeExpressAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_XIAOMI, "mi.XMNativeExpressAdapter");
 
         } catch (Throwable e) {
             e.printStackTrace();

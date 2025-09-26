@@ -20,8 +20,8 @@ public abstract class AdvanceNativeExpressCustomAdapter extends AdvanceBaseCusto
     public void addADView(View adView) {
         try {
             ViewGroup adContainer = mSetting.getAdContainer();
-           boolean add = AdvanceUtil.addADView(adContainer, adView);
-            if (!add){
+            boolean add = AdvanceUtil.addADView(adContainer, adView);
+            if (!add) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
             }
         } catch (Throwable e) {
@@ -39,6 +39,18 @@ public abstract class AdvanceNativeExpressCustomAdapter extends AdvanceBaseCusto
             LogUtil.max("remove adContainer = " + adContainer.toString());
 
             adContainer.removeAllViews();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleClose() {
+        try {
+            if (mSetting != null) {
+                mSetting.adapterDidClosed(nativeExpressADView);
+            }
+
+            removeADView();
         } catch (Throwable e) {
             e.printStackTrace();
         }
