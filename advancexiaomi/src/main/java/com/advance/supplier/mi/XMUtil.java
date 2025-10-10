@@ -78,38 +78,42 @@ public class XMUtil {
 
     private static MimoCustomController generateMimoCustomController() {
         MimoCustomController result = null;
-        final AdvancePrivacyController advancePrivacyController = AdvanceSetting.getInstance().advPrivacyController;
+        try {
+            final AdvancePrivacyController advancePrivacyController = AdvanceSetting.getInstance().advPrivacyController;
 
-        if (advancePrivacyController != null) {
-            result = new MimoCustomController() {
+            if (advancePrivacyController != null) {
+                result = new MimoCustomController() {
 
-                @Override
-                public boolean isCanUseLocation() {
-                    return advancePrivacyController.isCanUseLocation();
-                }
-
-                @Override
-                public MimoLocation getMimoLocation() {
-                    if (advancePrivacyController.getLocation() != null) {
-                        MimoLocation la = new MimoLocation();
-                        la.setLatitude(advancePrivacyController.getLocation().getLatitude());
-                        la.setLongitude(advancePrivacyController.getLocation().getLongitude());
-                        return la;
-                    } else {
-                        return super.getMimoLocation();
+                    @Override
+                    public boolean isCanUseLocation() {
+                        return advancePrivacyController.isCanUseLocation();
                     }
-                }
 
-                @Override
-                public boolean isCanUseWifiState() {
-                    return advancePrivacyController.isCanUseWifiState();
-                }
+                    @Override
+                    public MimoLocation getMimoLocation() {
+                        if (advancePrivacyController.getLocation() != null) {
+                            MimoLocation la = new MimoLocation();
+                            la.setLatitude(advancePrivacyController.getLocation().getLatitude());
+                            la.setLongitude(advancePrivacyController.getLocation().getLongitude());
+                            return la;
+                        } else {
+                            return super.getMimoLocation();
+                        }
+                    }
 
-                @Override
-                public boolean alist() {
-                    return advancePrivacyController.alist();
-                }
-            };
+                    @Override
+                    public boolean isCanUseWifiState() {
+                        return advancePrivacyController.isCanUseWifiState();
+                    }
+
+                    @Override
+                    public boolean alist() {
+                        return advancePrivacyController.alist();
+                    }
+                };
+            }
+        } catch (Throwable e) {
+
         }
 
         return result;

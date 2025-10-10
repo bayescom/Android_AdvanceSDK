@@ -28,6 +28,10 @@ buildscript {
         // 配置HUAWEI Ads SDK的Maven仓地址
         maven { url 'https://developer.huawei.com/repo/' }
         maven { url "https://plugins.gradle.org/m2/" }
+        // 配置荣耀商推SDK的 Maven 仓地址，包含HA和荣耀identifier包
+        maven {
+            url 'https://developer.hihonor.com/repo/'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.3'
@@ -51,6 +55,10 @@ allprojects {
         }
         // 配置HUAWEI Ads SDK的Maven仓地址
         maven { url 'https://developer.huawei.com/repo/' }
+        // 配置荣耀商推SDK的 Maven 仓地址，包含HA和荣耀identifier包
+        maven {
+            url 'https://developer.hihonor.com/repo/'
+        }
         flatDir {
             dirs 'libs'
         }

@@ -199,4 +199,10 @@ public class AdvanceSDK {
         }
 
     }
+
+
+    //微信应用id，用于微信小程序唤起
+    public static void setWxOpenAppId(String wxAppId) {
+        AdvanceSetting.getInstance().wxAppId = wxAppId;
+    }
 }

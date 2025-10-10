@@ -58,6 +58,7 @@ public boolean isADTrack = true;
     public int csj_downloadType = -1;
     public boolean useHttps = false;
     public boolean userMD5 = false;
+    public String wxAppId = "";
 //    public ILoader iLoader;
 
     public AdvancePrivacyController advPrivacyController;
