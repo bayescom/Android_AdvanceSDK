@@ -145,7 +145,6 @@ public class HonorUtil {
                     if (ecpm > 0) {
                         result = ecpm;
                     }
-
                 }
             }
         } catch (Exception e) {
@@ -153,5 +152,20 @@ public class HonorUtil {
         }
 
         return result;
+    }
+
+    public static boolean isAdExpire(BaseExpressAd baseExpressAd) {
+        try {
+            //过期的时间戳。单位秒
+            long expireSec = baseExpressAd.getExpirationTime();
+
+            long currentSec = System.currentTimeMillis() / 1000;
+            return expireSec < currentSec;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+
+
     }
 }

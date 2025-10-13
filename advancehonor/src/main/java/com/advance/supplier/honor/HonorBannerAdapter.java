@@ -1,18 +1,22 @@
 package com.advance.supplier.honor;
 
 import android.app.Activity;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.hihonor.adsdk.banner.api.BannerAdLoad;
 import com.hihonor.adsdk.base.AdSlot;
-import com.hihonor.adsdk.base.api.splash.SplashAdLoadListener;
-import com.hihonor.adsdk.base.api.splash.SplashExpressAd;
+import com.hihonor.adsdk.base.api.banner.BannerAdLoadListener;
+import com.hihonor.adsdk.base.api.banner.BannerExpressAd;
 import com.hihonor.adsdk.base.callback.AdListener;
-import com.hihonor.adsdk.splash.SplashAdLoad;
 
 public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
+    BannerExpressAd mBannerExpressAd;
 
     public HonorBannerAdapter(Activity activity, BannerSetting setting) {
         super(activity, setting);
@@ -30,8 +34,8 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
 
     @Override
     public void doDestroy() {
-        if (mSplashExpressAd != null) {
-            mSplashExpressAd.release();
+        if (mBannerExpressAd != null) {
+            mBannerExpressAd.release();
         }
     }
 
@@ -41,16 +45,24 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
     }
 
     @Override
+    public boolean isValid() {
+        if (HonorUtil.isAdExpire(mBannerExpressAd)) {
+            return false;
+        }
+        return super.isValid();
+    }
+
+    @Override
     public void show() {
 
         try {
-            if (mSplashExpressAd != null) {
+            if (mBannerExpressAd != null) {
 
 
                 /**
                  * 广告事件监听器
                  */
-                mSplashExpressAd.setAdListener(new AdListener() {
+                mBannerExpressAd.setAdListener(new AdListener() {
                     /**
                      * 开屏广告点击跳过或倒计时结束时回调
                      *
@@ -59,16 +71,21 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
                     @Override
                     public void onAdSkip(int type) {
                         LogUtil.simple(TAG + "onAdSkip, type: " + type);
-                        // 可以跳转您的启动页或首页
-                        if (splashSetting!=null){
-                            if (type == 0){
-                                splashSetting.adapterDidSkip();
-                            }else {
-                                splashSetting.adapterDidTimeOver();
-                            }
-                        }
 
+//                        handleClose();
+//
                     }
+
+
+                    /**
+                     * 广告关闭时回调
+                     */
+                    @Override
+                    public void onAdClosed() {
+                        LogUtil.simple(TAG + "onAdClosed...");
+                        handleClose();
+                    }
+
 
                     /**
                      * 广告曝光时回调
@@ -91,7 +108,7 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
                         super.onAdImpressionFailed(errCode, msg);
                         LogUtil.simple(TAG + "onAdImpressionFailed, errCode: " + errCode + ", msg: " + msg);
 
-                        handleFailed(errCode,msg);
+                        handleFailed(errCode, msg);
                     }
 
                     /**
@@ -114,7 +131,25 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
                     }
                 });
 
+                int refreshValue = 0;
+                if (bannerSetting != null) {
+                    refreshValue = bannerSetting.getRefreshInterval();
+                }
+                // 设置轮播间隔时间
+//        间隔时间设置为0s，轮播不起效；
+//间隔时间支持范围为[30s,120s]，若您设置的值大于0s小于30s，则按照30s轮播，同理，设置的值大于120s，按照120s轮播；
+//当达到间隔时间且用户停留在广告所在页面时，会自动触发轮播。
+                mBannerExpressAd.setIntervalTime(refreshValue * 1000L);
 
+                ViewGroup adContainer = bannerSetting.getContainer();
+                RelativeLayout.LayoutParams rbl = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                rbl.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                boolean add = AdvanceUtil.addADView(adContainer, mBannerExpressAd.getExpressAdView(), rbl);
+                if (!add) {
+                    doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
+                    return;
+                }
+//                mBannerExpressAd.getExpressAdView().
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,18 +164,20 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
         AdSlot adSlot = new AdSlot.Builder()
                 .setSlotId(sdkSupplier.adspotid) // 必传,设置您的广告位ID。
 //                .setLoadType(-1) // 非必传，设置广告请求方式  -1：默认请求方式，不进行缓存  0：普通请求，优先去读缓存  1：预缓存请求，数据保存至缓存
+//                .setWidth(1200) // 设置宽度 单位像素
+//                .setHeight(240) // 设置高度 单位像素
                 .build();
 
         // 构建广告加载器，传入已创建好的广告请求参数对象与广告加载状态监听器。
-        SplashAdLoad load = new SplashAdLoad.Builder()
-                .setSplashAdLoadListener(new SplashAdLoadListener() {
+        BannerAdLoad load = new BannerAdLoad.Builder()
+                .setBannerAdLoadListener(new BannerAdLoadListener() {
                     @Override
-                    public void onLoadSuccess(SplashExpressAd splashExpressAd) {
+                    public void onLoadSuccess(BannerExpressAd bannerExpressAd) {
                         LogUtil.d(TAG + "onLoadSuccess");
 
-                        mSplashExpressAd = splashExpressAd;
+                        mBannerExpressAd = bannerExpressAd;
 
-                        updateBidding(HonorUtil.getECPM(mSplashExpressAd));
+                        updateBidding(HonorUtil.getECPM(mBannerExpressAd));
 
                         handleSucceed();
                     }

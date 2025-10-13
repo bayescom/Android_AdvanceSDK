@@ -7,13 +7,13 @@ import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.hihonor.adsdk.base.AdSlot;
-import com.hihonor.adsdk.base.api.splash.SplashAdLoadListener;
-import com.hihonor.adsdk.base.api.splash.SplashExpressAd;
+import com.hihonor.adsdk.base.api.interstitial.InterstitialAdLoadListener;
+import com.hihonor.adsdk.base.api.interstitial.InterstitialExpressAd;
 import com.hihonor.adsdk.base.callback.AdListener;
-import com.hihonor.adsdk.splash.SplashAdLoad;
+import com.hihonor.adsdk.interstitial.InterstitialAdLoad;
 
 public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
-
+    InterstitialExpressAd mInterstitialExpressAd;
     public HonorInterstitialAdapter(Activity activity, InterstitialSetting setting) {
         super(activity, setting);
     }
@@ -30,8 +30,8 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     @Override
     public void doDestroy() {
-        if (mSplashExpressAd != null) {
-            mSplashExpressAd.release();
+        if (mInterstitialExpressAd != null) {
+            mInterstitialExpressAd.release();
         }
     }
 
@@ -39,18 +39,24 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     public void orderLoadAd() {
         paraLoadAd();
     }
-
+    @Override
+    public boolean isValid() {
+        if (HonorUtil.isAdExpire(mInterstitialExpressAd)) {
+            return false;
+        }
+        return super.isValid();
+    }
     @Override
     public void show() {
 
         try {
-            if (mSplashExpressAd != null) {
+            if (mInterstitialExpressAd != null) {
 
 
                 /**
                  * 广告事件监听器
                  */
-                mSplashExpressAd.setAdListener(new AdListener() {
+                mInterstitialExpressAd.setAdListener(new AdListener() {
                     /**
                      * 开屏广告点击跳过或倒计时结束时回调
                      *
@@ -59,15 +65,17 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                     @Override
                     public void onAdSkip(int type) {
                         LogUtil.simple(TAG + "onAdSkip, type: " + type);
-                        // 可以跳转您的启动页或首页
-                        if (splashSetting!=null){
-                            if (type == 0){
-                                splashSetting.adapterDidSkip();
-                            }else {
-                                splashSetting.adapterDidTimeOver();
-                            }
-                        }
 
+                    }
+
+
+                    /**
+                     * 广告关闭时回调
+                     */
+                    @Override
+                    public void onAdClosed() {
+                        LogUtil.simple(TAG + "onAdClosed...");
+                        handleClose();
                     }
 
                     /**
@@ -114,7 +122,7 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                     }
                 });
 
-
+                mInterstitialExpressAd.show(getRealActivity(null));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,15 +140,15 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                 .build();
 
         // 构建广告加载器，传入已创建好的广告请求参数对象与广告加载状态监听器。
-        SplashAdLoad load = new SplashAdLoad.Builder()
-                .setSplashAdLoadListener(new SplashAdLoadListener() {
+        InterstitialAdLoad load = new InterstitialAdLoad.Builder()
+                .setInterstitialAdLoadListener(new InterstitialAdLoadListener() {
                     @Override
-                    public void onLoadSuccess(SplashExpressAd splashExpressAd) {
+                    public void onAdLoaded(InterstitialExpressAd interstitialAD) {
                         LogUtil.d(TAG + "onLoadSuccess");
 
-                        mSplashExpressAd = splashExpressAd;
+                        mInterstitialExpressAd = interstitialAD;
 
-                        updateBidding(HonorUtil.getECPM(mSplashExpressAd));
+                        updateBidding(HonorUtil.getECPM(mInterstitialExpressAd));
 
                         handleSucceed();
                     }

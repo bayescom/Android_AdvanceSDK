@@ -1,5 +1,7 @@
 package com.advance.advancesdkdemo;
 
+import static com.advance.advancesdkdemo.util.DemoUtil.TAG;
+
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
@@ -37,6 +39,9 @@ import com.advance.model.AdvanceError;
 import com.advance.supplier.tanx.TanxGlobalConfig;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.BYBasicSDK;
+import com.polygamma.ogm.OriginMobile;
+import com.polygamma.ogm.antifraud.AntiFraudModule;
+import com.polygamma.ogm.net.RemoteServiceModule;
 
 import java.util.List;
 
@@ -167,6 +172,21 @@ public class AdvanceAD {
 
 //        开发者模式打印日志更丰富
         BYBasicSDK.setDev(true);
+
+//        OriginMobile.initializer()
+//                .context(context)
+//                .addModule(
+//                        RemoteServiceModule.ofProvider()
+//                                .rootServiceHost("ogsvc.pgoriginad.com")
+//                )
+//                .addModule(AntiFraudModule.ofProvider())
+//                .initialize((sdk, err) -> {
+//                    if (err != null)
+//                        Log.e(TAG, "Origin SDK initialization failed", (Throwable) err);
+//                    else
+//                        Log.i(TAG, "Origin SDK initialized successfully");
+//                });
+
     }
 
     /**

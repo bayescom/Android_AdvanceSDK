@@ -43,7 +43,13 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
     public void orderLoadAd() {
         paraLoadAd();
     }
-
+    @Override
+    public boolean isValid() {
+        if (HonorUtil.isAdExpire(mSplashExpressAd)) {
+            return false;
+        }
+        return super.isValid();
+    }
     @Override
     public void show() {
 

@@ -1,24 +1,32 @@
 package com.advance.supplier.honor;
 
-import android.app.Activity;
+import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
 
-import com.advance.RewardServerCallBackInf;
-import com.advance.RewardVideoSetting;
-import com.advance.custom.AdvanceRewardCustomAdapter;
+import android.app.Activity;
+import android.content.Context;
+
+import com.advance.core.srender.AdvanceRFBridge;
+import com.advance.core.srender.AdvanceRFUtil;
+import com.advance.core.srender.widget.AdvRFRootView;
+import com.advance.core.srender.widget.AdvRFVideoView;
+import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.hihonor.adsdk.base.AdSlot;
-import com.hihonor.adsdk.base.api.reward.RewardAdLoadListener;
-import com.hihonor.adsdk.base.api.reward.RewardExpressAd;
-import com.hihonor.adsdk.base.api.reward.RewardItem;
+import com.hihonor.adsdk.base.api.AdVideo;
+import com.hihonor.adsdk.base.api.feed.PictureTextAdLoadListener;
+import com.hihonor.adsdk.base.api.feed.PictureTextExpressAd;
 import com.hihonor.adsdk.base.callback.AdListener;
-import com.hihonor.adsdk.reward.RewardAdLoad;
+import com.hihonor.adsdk.picturetextad.PictureTextAdLoad;
+import com.hihonor.adsdk.picturetextad.PictureTextAdRootView;
 
-public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
-    RewardExpressAd mRewardExpressAd;
+import java.util.List;
 
-    public HonorRewardAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
+public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
+    PictureTextExpressAd mExpressAd;
+
+    public HonorRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
+        super(context, mAdvanceRFBridge);
     }
 
     @Override
@@ -33,9 +41,17 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
 
     @Override
     public void doDestroy() {
-        if (mRewardExpressAd != null) {
-            mRewardExpressAd.release();
+        if (mExpressAd != null) {
+            mExpressAd.release();
         }
+    }
+
+    @Override
+    public boolean isValid() {
+        if (HonorUtil.isAdExpire(mExpressAd)) {
+            return false;
+        }
+        return super.isValid();
     }
 
     @Override
@@ -44,24 +60,16 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     @Override
-    public boolean isValid() {
-        if (HonorUtil.isAdExpire(mRewardExpressAd)) {
-            return false;
-        }
-        return super.isValid();
-    }
-
-    @Override
     public void show() {
 
         try {
-            if (mRewardExpressAd != null) {
+            if (mExpressAd != null) {
 
 
                 /**
                  * 广告事件监听器
                  */
-                mRewardExpressAd.setAdListener(new AdListener() {
+                mExpressAd.setAdListener(new AdListener() {
                     /**
                      * 开屏广告点击跳过或倒计时结束时回调
                      *
@@ -70,8 +78,17 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
                     @Override
                     public void onAdSkip(int type) {
                         LogUtil.simple(TAG + "onAdSkip, type: " + type);
-
                     }
+
+                    /**
+                     * 广告关闭时回调
+                     */
+                    @Override
+                    public void onAdClosed() {
+                        LogUtil.simple(TAG + "onAdClosed...");
+                        handleClose();
+                    }
+
 
                     /**
                      * 广告曝光时回调
@@ -116,61 +133,30 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
 
                     }
                 });
-// 必须调用show方法显示广告，否则广告无法显示
-                mRewardExpressAd.show(getRealActivity(null), new RewardExpressAd.RewardAdStatusListener() {
-
-                    /**
-                     * 激励广告关闭
-                     */
-                    @Override
-                    public void onRewardAdClosed(boolean isVideoEnd) {
-                        LogUtil.simple(TAG + "onRewardAdClosed");
-
-                        handleClose();
-                    }
-
-                    /**
-                     * 激励广告曝光失败
-                     *
-                     * @param errorCode 曝光失败错误码
-                     */
-                    @Override
-                    public void onVideoError(int errorCode) {
-                        LogUtil.simple(TAG + "onVideoError, errorCode: " + errorCode);
 
 
-                    }
+                PictureTextAdRootView nativeView = new PictureTextAdRootView(getRealContext());
 
-                    /**
-                     * 激励广告打开时
-                     */
-                    @Override
-                    public void onRewardAdOpened() {
-                        LogUtil.simple(TAG + "onRewardAdOpened");
-                    }
+                //赋值广告信息
+                nativeView.setAd(mExpressAd);
 
-                    /**
-                     * 获得奖励
-                     *
-                     * @param rewardItem 激励奖励类
-                     */
-                    @Override
-                    public void onRewarded(RewardItem rewardItem) {
-                        LogUtil.simple(TAG + "onRewarded , rewardItem = " + rewardItem);
+//            需要先拿到根布局信息
+                AdvRFRootView rootView = mAdvanceRFBridge.getMaterialProvider().rootView;
+                Activity activity = getRealActivity(rootView);
+//            -----------方案B copy全部子布局，复制子控件至新布局，并将新布局添加至旧父布局中
+                AdvanceRFUtil.copyChild(rootView, nativeView);
 
 
-                        RewardServerCallBackInf inf = new RewardServerCallBackInf();
-                        if (rewardItem != null) {
-                            inf.rewardVerify = true;
-                            inf.rewardAmount = (int) rewardItem.getAmount();
-                            inf.rewardName = rewardItem.getType();
-                        }
-                        handleRewardInf(inf);
+                //注册点击
+                nativeView.registerViewForInteraction(mAdvanceRFBridge.getMaterialProvider().clickViews);
 
-                        handleReward();
+                //渲染视频。
+                AdVideo video = mExpressAd.getAdVideo();
+                AdvRFVideoView videoView = mAdvanceRFBridge.getMaterialProvider().videoView;
+                if (videoView != null) {
+                    videoView.addView(video.getVideoView());
+                }
 
-                    }
-                });
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,17 +174,22 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
                 .build();
 
         // 构建广告加载器，传入已创建好的广告请求参数对象与广告加载状态监听器。
-        RewardAdLoad load = new RewardAdLoad.Builder()
-                .setRewardAdLoadListener(new RewardAdLoadListener() {
+        PictureTextAdLoad load = new PictureTextAdLoad.Builder()
+                .setPictureTextAdLoadListener(new PictureTextAdLoadListener() {
                     @Override
-                    public void onLoadSuccess(RewardExpressAd rewardExpressAd) {
+                    public void onAdLoaded(List<PictureTextExpressAd> list) {
                         LogUtil.d(TAG + "onLoadSuccess");
+                        if (list == null || list.isEmpty() || list.get(0) == null) {
+                            handleFailed(ERROR_DATA_NULL, "");
+                        } else {
+                            mExpressAd = list.get(0);
 
-                        mRewardExpressAd = rewardExpressAd;
+                            updateBidding(HonorUtil.getECPM(mExpressAd));
 
-                        updateBidding(HonorUtil.getECPM(mRewardExpressAd));
+                            dataConverter = new HonorRenderDataConverter(mExpressAd, HonorRenderFeedAdapter.this);
 
-                        handleSucceed();
+                            handleSucceed();
+                        }
                     }
 
                     @Override

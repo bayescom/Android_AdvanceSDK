@@ -4,14 +4,14 @@ import java.time.format.DateTimeFormatter
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     defaultConfig {
         applicationId "com.advance.demo"
 //        applicationId "com.opos.mobaddemo" //oppo测试包名，oppo广告需要指定包名才可以
 //        applicationId "com.example.pptv" //人人视频包名-用来验证测试tanx广告
 
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -64,6 +64,12 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+
+    aaptOptions {
+        cruncherEnabled = false
+//        additionalParameters = [ 'android:attr/lStar']
+
     }
 
     compileOptions {
@@ -180,7 +186,9 @@ dependencies {
     //建议使用此版本glide
 //    implementation "com.github.bumptech.glide:glide:4.9.0"
 //    implementation "com.android.support:appcompat-v7:28.0.0"
-    implementation 'androidx.annotation:annotation:1.0.0'
+    implementation 'androidx.annotation:annotation:1.7.0'
+    implementation 'androidx.annotation:annotation-jvm:1.9.1'
+
 //    implementation "com.android.support:support-v4:28.0.0"
 //    implementation 'com.android.support:recyclerview-v7:28.0.0'
 
@@ -204,5 +212,7 @@ dependencies {
 
     implementation(name: 'circleimageview-2.2.0', ext: 'aar')
     implementation 'com.github.pedrovgs:lynx:1.1.0' //显示logcat插件
+
+//    implementation("com.poly-gamma:pg-ogm-core:[0.4.5, 2.0.0[")
 
 }

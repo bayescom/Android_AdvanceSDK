@@ -1,5 +1,7 @@
 package com.advance.supplier.honor;
 
+import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
+
 import android.app.Activity;
 
 import com.advance.NativeExpressSetting;
@@ -7,12 +9,15 @@ import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.hihonor.adsdk.base.AdSlot;
-import com.hihonor.adsdk.base.api.splash.SplashAdLoadListener;
-import com.hihonor.adsdk.base.api.splash.SplashExpressAd;
+import com.hihonor.adsdk.base.api.feed.PictureTextAdLoadListener;
+import com.hihonor.adsdk.base.api.feed.PictureTextExpressAd;
 import com.hihonor.adsdk.base.callback.AdListener;
-import com.hihonor.adsdk.splash.SplashAdLoad;
+import com.hihonor.adsdk.picturetextad.PictureTextAdLoad;
+
+import java.util.List;
 
 public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
+    PictureTextExpressAd mExpressAd;
 
     public HonorNativeExpressAdapter(Activity activity, NativeExpressSetting baseSetting) {
         super(activity, baseSetting);
@@ -30,9 +35,17 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
 
     @Override
     public void doDestroy() {
-        if (mSplashExpressAd != null) {
-            mSplashExpressAd.release();
+        if (mExpressAd != null) {
+            mExpressAd.release();
         }
+    }
+
+    @Override
+    public boolean isValid() {
+        if (HonorUtil.isAdExpire(mExpressAd)) {
+            return false;
+        }
+        return super.isValid();
     }
 
     @Override
@@ -44,13 +57,13 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
     public void show() {
 
         try {
-            if (mSplashExpressAd != null) {
+            if (mExpressAd != null) {
 
 
                 /**
                  * 广告事件监听器
                  */
-                mSplashExpressAd.setAdListener(new AdListener() {
+                mExpressAd.setAdListener(new AdListener() {
                     /**
                      * 开屏广告点击跳过或倒计时结束时回调
                      *
@@ -59,16 +72,17 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
                     @Override
                     public void onAdSkip(int type) {
                         LogUtil.simple(TAG + "onAdSkip, type: " + type);
-                        // 可以跳转您的启动页或首页
-                        if (splashSetting!=null){
-                            if (type == 0){
-                                splashSetting.adapterDidSkip();
-                            }else {
-                                splashSetting.adapterDidTimeOver();
-                            }
-                        }
-
                     }
+
+                    /**
+                     * 广告关闭时回调
+                     */
+                    @Override
+                    public void onAdClosed() {
+                        LogUtil.simple(TAG + "onAdClosed...");
+                        handleClose();
+                    }
+
 
                     /**
                      * 广告曝光时回调
@@ -91,7 +105,7 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
                         super.onAdImpressionFailed(errCode, msg);
                         LogUtil.simple(TAG + "onAdImpressionFailed, errCode: " + errCode + ", msg: " + msg);
 
-                        handleFailed(errCode,msg);
+                        handleFailed(errCode, msg);
                     }
 
                     /**
@@ -114,7 +128,7 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
                     }
                 });
 
-
+                addADView(mExpressAd.getExpressAdView());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,17 +146,20 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
                 .build();
 
         // 构建广告加载器，传入已创建好的广告请求参数对象与广告加载状态监听器。
-        SplashAdLoad load = new SplashAdLoad.Builder()
-                .setSplashAdLoadListener(new SplashAdLoadListener() {
+        PictureTextAdLoad load = new PictureTextAdLoad.Builder()
+                .setPictureTextAdLoadListener(new PictureTextAdLoadListener() {
                     @Override
-                    public void onLoadSuccess(SplashExpressAd splashExpressAd) {
+                    public void onAdLoaded(List<PictureTextExpressAd> list) {
                         LogUtil.d(TAG + "onLoadSuccess");
+                        if (list == null || list.isEmpty() || list.get(0) == null) {
+                            handleFailed(ERROR_DATA_NULL, "");
+                        } else {
+                            mExpressAd = list.get(0);
 
-                        mSplashExpressAd = splashExpressAd;
+                            updateBidding(HonorUtil.getECPM(mExpressAd));
 
-                        updateBidding(HonorUtil.getECPM(mSplashExpressAd));
-
-                        handleSucceed();
+                            handleSucceed();
+                        }
                     }
 
                     @Override
