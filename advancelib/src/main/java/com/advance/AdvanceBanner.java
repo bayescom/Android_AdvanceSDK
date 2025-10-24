@@ -110,6 +110,8 @@ public class AdvanceBanner extends AdvanceBaseAdspot implements BannerSetting {
             initAdapter(AdvanceConfig.SDK_ID_OPPO, "oppo.OppoBannerAdapter");
             initAdapter(AdvanceConfig.SDK_ID_HW, "huawei.HWBannerAdapter");
             initAdapter(AdvanceConfig.SDK_ID_XIAOMI, "mi.XMBannerAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorBannerAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoBannerAdapter");
 
         } catch (Throwable e) {
             e.printStackTrace();

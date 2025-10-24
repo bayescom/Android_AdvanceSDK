@@ -13,5 +13,7 @@
         <item>sigmob</item>
         <item>华为lite</item>
         <item>小米</item>
+        <item>honor</item>
+        <item>vivo</item>
     </string-array>
 </resources>

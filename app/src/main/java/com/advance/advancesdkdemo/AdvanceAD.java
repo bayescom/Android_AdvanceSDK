@@ -39,9 +39,9 @@ import com.advance.model.AdvanceError;
 import com.advance.supplier.tanx.TanxGlobalConfig;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.BYBasicSDK;
-import com.polygamma.ogm.OriginMobile;
-import com.polygamma.ogm.antifraud.AntiFraudModule;
-import com.polygamma.ogm.net.RemoteServiceModule;
+//import com.polygamma.ogm.OriginMobile;
+//import com.polygamma.ogm.antifraud.AntiFraudModule;
+//import com.polygamma.ogm.net.RemoteServiceModule;
 
 import java.util.List;
 
@@ -564,6 +564,8 @@ public class AdvanceAD {
         baseAD = advanceNativeExpress;
         //必须：设置广告父布局
         advanceNativeExpress.setAdContainer(adContainer);
+        //设置模板尺寸，单位dp
+//        advanceNativeExpress.setExpressViewAcceptedSize(360,0);
         //推荐：核心事件监听回调
         advanceNativeExpress.setAdListener(new AdvanceNativeExpressListener() {
             @Override
@@ -645,6 +647,8 @@ public class AdvanceAD {
         //初始化
         advanceNativeExpress = new AdvanceNativeExpress(mActivity, id);
         baseAD = advanceNativeExpress;
+        //设置模板尺寸，单位dp
+        advanceNativeExpress.setExpressViewAcceptedSize(300,0);
         //推荐：核心事件监听回调
         advanceNativeExpress.setAdListener(new AdvanceNativeExpressListener() {
             @Override

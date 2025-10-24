@@ -77,6 +77,8 @@ public class AdvanceInterstitial extends AdvanceBaseAdspot implements Interstiti
             initAdapter(AdvanceConfig.SDK_ID_HW, "huawei.HWInterstitialAdapter");
             initAdapter(AdvanceConfig.SDK_ID_XIAOMI, "mi.XMInterstitialAdapter");
 
+            initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorInterstitialAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoInterstitialAdapter");
         } catch (Throwable e) {
             e.printStackTrace();
         }

@@ -316,6 +316,8 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
             initAdapter(AdvanceConfig.SDK_ID_HW, "huawei.HWSplashAdapter");
             initAdapter(AdvanceConfig.SDK_ID_XIAOMI, "mi.XMSplashAdapter");
 
+            initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorSplashAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoSplashAdapter");
         } catch (Throwable e) {
 //            e.printStackTrace();
         }

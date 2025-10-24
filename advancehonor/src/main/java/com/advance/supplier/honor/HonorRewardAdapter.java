@@ -53,11 +53,8 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
 
     @Override
     public void show() {
-
         try {
             if (mRewardExpressAd != null) {
-
-
                 /**
                  * 广告事件监听器
                  */
@@ -139,6 +136,7 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
                         LogUtil.simple(TAG + "onVideoError, errorCode: " + errorCode);
 
 
+//                        handleFailed(errorCode,"onVideoError");
                     }
 
                     /**

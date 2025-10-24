@@ -110,6 +110,7 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                     handleClose();
                 }
             });
+//            nativeView.set
 //        addADView(nativeView);
 
 //            需要先拿到根布局信息
@@ -132,6 +133,24 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 videoView.addView(mediaView);
                 nativeView.setMediaView(mediaView);
                 nativeView.getMediaView().setMediaContent(mNativeAd.getMediaContent());
+            }
+
+            //关闭广告事件绑定
+            View dislikeView = mAdvanceRFBridge.getMaterialProvider().disLikeView;
+            if (dislikeView != null) {
+                dislikeView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        LogUtil.simple(TAG + " dislikeView onClick");
+
+                        try {
+                            nativeView.removeAllViews();
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                        handleClose();
+                    }
+                });
             }
         } catch (Exception e) {
             e.printStackTrace();

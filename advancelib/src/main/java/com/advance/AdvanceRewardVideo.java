@@ -235,6 +235,8 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
             initAdapter(AdvanceConfig.SDK_ID_HW, "huawei.HWRewardAdapter");
             initAdapter(AdvanceConfig.SDK_ID_XIAOMI, "mi.XMRewardAdapter");
 
+            initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorRewardAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoRewardAdapter");
         } catch (Throwable e) {
             e.printStackTrace();
         }

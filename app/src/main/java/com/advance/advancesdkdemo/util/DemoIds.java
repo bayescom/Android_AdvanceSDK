@@ -126,6 +126,26 @@ public class DemoIds {
                 result.fullscreen = "";
                 result.draw = "";
                 break;
+            case "honor":
+                result.banner = "10013438";
+                result.splash = "10013435";
+                result.reward = "10013440";
+                result.interstitial = "10013439";
+                result.nativeExpress = "10013436";
+                result.nativeCustom = "10013437";
+                result.fullscreen = "";
+                result.draw = "";
+                break;
+            case "vivo":
+                result.banner = "10013444";
+                result.splash = "10013441";
+                result.reward = "10013446";
+                result.interstitial = "10013445";
+                result.nativeExpress = "10013442";
+                result.nativeCustom = "10013443";
+                result.fullscreen = "";
+                result.draw = "";
+                break;
         }
         return result;
     }

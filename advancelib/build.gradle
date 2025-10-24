@@ -28,6 +28,8 @@ android {
 
 //        混淆配置自动同步到接入方
         consumerProguardFiles 'proguard-rules.pro'
+
+        buildConfigField "String", "advanceVersion", "\"${advanceLibVersionName}\""
     }
 
     buildTypes {

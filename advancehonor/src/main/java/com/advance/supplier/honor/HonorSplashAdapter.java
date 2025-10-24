@@ -1,10 +1,12 @@
 package com.advance.supplier.honor;
 
 import android.app.Activity;
+import android.view.View;
 
 import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.hihonor.adsdk.base.AdSlot;
 import com.hihonor.adsdk.base.api.splash.SplashAdLoadListener;
@@ -24,7 +26,7 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
 
     @Override
     protected void paraLoadAd() {
-
+        loadAd();
     }
 
     @Override
@@ -43,6 +45,7 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
     public void orderLoadAd() {
         paraLoadAd();
     }
+
     @Override
     public boolean isValid() {
         if (HonorUtil.isAdExpire(mSplashExpressAd)) {
@@ -50,12 +53,11 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
         }
         return super.isValid();
     }
+
     @Override
     public void show() {
-
         try {
             if (mSplashExpressAd != null) {
-
 
                 /**
                  * 广告事件监听器
@@ -68,12 +70,12 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
                      */
                     @Override
                     public void onAdSkip(int type) {
-                       LogUtil.simple(TAG + "onAdSkip, type: " + type);
+                        LogUtil.simple(TAG + "onAdSkip, type: " + type);
                         // 可以跳转您的启动页或首页
-                        if (splashSetting!=null){
-                            if (type == 0){
+                        if (splashSetting != null) {
+                            if (type == 0) {
                                 splashSetting.adapterDidSkip();
-                            }else {
+                            } else {
                                 splashSetting.adapterDidTimeOver();
                             }
                         }
@@ -85,9 +87,9 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
                      */
                     @Override
                     public void onAdImpression() {
-                       LogUtil.simple(TAG + "onAdImpression...");
+                        LogUtil.simple(TAG + "onAdImpression...");
 
-                       handleShow();
+                        handleShow();
                     }
 
                     /**
@@ -99,9 +101,9 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
                     @Override
                     public void onAdImpressionFailed(int errCode, String msg) {
                         super.onAdImpressionFailed(errCode, msg);
-                       LogUtil.simple(TAG + "onAdImpressionFailed, errCode: " + errCode + ", msg: " + msg);
+                        LogUtil.simple(TAG + "onAdImpressionFailed, errCode: " + errCode + ", msg: " + msg);
 
-                       handleFailed(errCode,msg);
+                        handleFailed(errCode, msg);
                     }
 
                     /**
@@ -109,9 +111,9 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
                      */
                     @Override
                     public void onAdClicked() {
-                       LogUtil.simple(TAG + "onAdClicked...");
+                        LogUtil.simple(TAG + "onAdClicked...");
 
-                       handleClick();
+                        handleClick();
                     }
 
                     /**
@@ -119,12 +121,16 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
                      */
                     @Override
                     public void onMiniAppStarted() {
-                       LogUtil.simple(TAG + "onMiniAppStarted...");
+                        LogUtil.simple(TAG + "onMiniAppStarted...");
 
                     }
                 });
-
-
+                View view = mSplashExpressAd.getExpressAdView();
+                //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕宽
+                boolean add = AdvanceUtil.addADView(splashSetting.getAdContainer(), view);
+                if (!add) {
+                    runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

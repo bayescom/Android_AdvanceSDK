@@ -47,7 +47,7 @@ public class HonorUtil {
                 return;
             }
 
-
+// TODO: 2025/10/22 可能会出现未初始化情况？视情况，改为回调初始化结果方式
             //确保线程安全
             AdvanceInitManger.getInstance().initialize(new BYBaseCallBack() {
                 @Override

@@ -4,6 +4,7 @@ import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.View;
 
 import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFUtil;
@@ -157,6 +158,23 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                     videoView.addView(video.getVideoView());
                 }
 
+                //关闭广告事件绑定
+                View dislikeView = mAdvanceRFBridge.getMaterialProvider().disLikeView;
+                if (dislikeView != null) {
+                    dislikeView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            LogUtil.simple(TAG + " dislikeView onClick");
+
+                            try {
+                                nativeView.removeAllViews();
+                            } catch (Throwable e) {
+                                e.printStackTrace();
+                            }
+                            handleClose();
+                        }
+                    });
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

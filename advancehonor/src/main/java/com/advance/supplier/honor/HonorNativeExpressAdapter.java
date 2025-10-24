@@ -8,6 +8,7 @@ import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.device.BYDisplay;
 import com.hihonor.adsdk.base.AdSlot;
 import com.hihonor.adsdk.base.api.feed.PictureTextAdLoadListener;
 import com.hihonor.adsdk.base.api.feed.PictureTextExpressAd;
@@ -139,11 +140,28 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
     private void loadAd() {
         HonorUtil.initAD(this);
 
+        AdSlot.Builder builder = new AdSlot.Builder();
+        builder.setSlotId(sdkSupplier.adspotid);
+
+        //实际测试宽高设置无任何效果
+//        if (mSetting != null) {
+//            int widthDP = mSetting.getExpressViewWidth();
+//            int heightDP = mSetting.getExpressViewHeight();
+//            LogUtil.devDebug(TAG + "getExpressViewWidth = " + widthDP);
+//            LogUtil.devDebug(TAG + "getExpressViewHeight = " + heightDP);
+//            if (widthDP > 0) {
+//                builder.setWidth(widthDP);
+//            }
+//            if (heightDP > 0) {
+//                builder.setHeight((heightDP));
+//            }
+//        }
+
         // 创建广告请求参数对象（AdSlot）
-        AdSlot adSlot = new AdSlot.Builder()
-                .setSlotId(sdkSupplier.adspotid) // 必传,设置您的广告位ID。
+         // 必传,设置您的广告位ID。
 //                .setLoadType(-1) // 非必传，设置广告请求方式  -1：默认请求方式，不进行缓存  0：普通请求，优先去读缓存  1：预缓存请求，数据保存至缓存
-                .build();
+
+
 
         // 构建广告加载器，传入已创建好的广告请求参数对象与广告加载状态监听器。
         PictureTextAdLoad load = new PictureTextAdLoad.Builder()
@@ -169,7 +187,7 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
                         handleFailed(code, errorMsg);
                     }
                 }) // 必传，注册广告加载状态监听器。
-                .setAdSlot(adSlot) // 必传，设置广告请求参数。
+                .setAdSlot(builder.build()) // 必传，设置广告请求参数。
                 .build();
 // 加载广告
         load.loadAd();

@@ -48,7 +48,7 @@ public class AdvanceSDK {
 
     //3.4.3 新增,获取聚合SDK版本号
     public static String getVersion() {
-        return BuildConfig.VERSION_NAME;
+        return BuildConfig.advanceVersion;
     }
 
     //3.5.0 新增 初始化SDK
