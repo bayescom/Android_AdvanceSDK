@@ -82,8 +82,10 @@ public class HonorUtil {
                     } else {
                         context = BYUtil.getCtx();
                     }
+                    LogUtil.simple(tag+" 开始初始化");
                     HnAds.get().init(context, config);
                     AdvanceHonorManager.getInstance().hasInit = true;
+                    LogUtil.simple(tag+" 初始化完成");
 
                 }
             });

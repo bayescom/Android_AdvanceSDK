@@ -147,6 +147,9 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private void bindCloseView() {
         try {
             View disLikeView = rfMaterialProvider.disLikeView;
+
+            LogUtil.simple(TAG + "bindCloseView , disLikeView = " + disLikeView);
+
             if (disLikeView != null) {
                 disLikeView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -162,6 +165,8 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                         handleClose();
                     }
                 });
+
+//                adDataPro
             } else {
                 if (usePro) {
                     adDataPro.bindCloseView(closePosition);
@@ -294,92 +299,94 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         try {
             Context context = getRealContext();
             AdvRFLogoView logoView = rfMaterialProvider.logoView;
-            if (logoView == null) {
-                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                lp.gravity = Gravity.LEFT | Gravity.BOTTOM;
-                lp.setMarginEnd(BYDisplay.dp2px(10));
-                if (usePro) {
-                    adDataPro.bindLogoView(lp);
-                } else {
-                    adData.bindLogoView(lp);
-                }
-                return;
-            }
+            LogUtil.simple(TAG + "renderAdLogoAndTag , logoView = " + logoView);
 
-            LinearLayout logoLayout = new LinearLayout(context);
-            ImageView ivAdMarkLogo = new ImageView(context);
-            TextView tvAdMarkText = new TextView(context);
-
-            //父容器样式
-            logoLayout.setOrientation(LinearLayout.HORIZONTAL);
-            logoLayout.setGravity(Gravity.CENTER_VERTICAL);
-            //设置背景
-            GradientDrawable gd = new GradientDrawable();
-            gd.setColor(Color.GRAY);
-            gd.setCornerRadius(BYDisplay.dp2px(3));
-            gd.setAlpha(100);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                logoLayout.setBackground(gd);
-            } else {
-                logoLayout.setBackgroundDrawable(gd);
-            }
-            int lrPadding = BYDisplay.dp2px(3);
-            int tbPadding = BYDisplay.dp2px(2);
-            logoLayout.setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
-
-
-            Bitmap logoBit;
-            String logoUrl;
-            String logoMarkText;
-            String logoTagText;
+//            if (logoView == null) {
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.gravity = Gravity.LEFT | Gravity.BOTTOM;
+            lp.setMargins(BYDisplay.dp2px(10), 0, 0, BYDisplay.dp2px(10));
             if (usePro) {
-                logoBit = adDataPro.getAdLogo();
-                logoUrl = adDataPro.getAdMarkUrl();
-                logoMarkText = adDataPro.getAdMarkText();
-                logoTagText = adDataPro.getAdTag();
+                adDataPro.bindLogoView(lp);
             } else {
-                logoBit = adData.getAdLogo();
-                logoUrl = adData.getAdMarkUrl();
-                logoMarkText = adData.getAdMarkText();
-                logoTagText = adData.getAdTag();
+                adData.bindLogoView(lp);
             }
+            return;
+//            }
 
-            if (logoBit != null) {
-                ivAdMarkLogo.setVisibility(View.VISIBLE);
-                tvAdMarkText.setVisibility(View.GONE);
-                ivAdMarkLogo.setImageBitmap(logoBit);
-            } else if (!TextUtils.isEmpty(logoUrl)) {
-                ivAdMarkLogo.setVisibility(View.VISIBLE);
-                tvAdMarkText.setVisibility(View.GONE);
-                MercuryTool.renderNetImg(logoUrl, ivAdMarkLogo);
-
-
-            } else {
-                String adMark;
-                if (!TextUtils.isEmpty(logoMarkText)) {
-                    adMark = logoMarkText;
-                } else if (!TextUtils.isEmpty(logoTagText)) {
-                    adMark = logoTagText;
-                } else {
-                    adMark = "广告";
-                }
-
-                tvAdMarkText.setVisibility(View.VISIBLE);
-                ivAdMarkLogo.setVisibility(View.GONE);
-                tvAdMarkText.setText(adMark);
-                tvAdMarkText.setTextColor(Color.WHITE);
-                tvAdMarkText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8);
-            }
-
-            int maxW = BYDisplay.dp2px((25));
-            int h = BYDisplay.dp2px((12));
-            ivAdMarkLogo.setMaxWidth(maxW);
-            ivAdMarkLogo.setAdjustViewBounds(true);
-            LinearLayout.LayoutParams imgLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, h);
-            logoLayout.addView(ivAdMarkLogo, imgLp);
-
-            logoLayout.addView(tvAdMarkText);
-            logoView.addView(logoLayout);
+//            LinearLayout logoLayout = new LinearLayout(context);
+//            ImageView ivAdMarkLogo = new ImageView(context);
+//            TextView tvAdMarkText = new TextView(context);
+//
+//            //父容器样式
+//            logoLayout.setOrientation(LinearLayout.HORIZONTAL);
+//            logoLayout.setGravity(Gravity.CENTER_VERTICAL);
+//            //设置背景
+//            GradientDrawable gd = new GradientDrawable();
+//            gd.setColor(Color.GRAY);
+//            gd.setCornerRadius(BYDisplay.dp2px(3));
+//            gd.setAlpha(100);
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//                logoLayout.setBackground(gd);
+//            } else {
+//                logoLayout.setBackgroundDrawable(gd);
+//            }
+//            int lrPadding = BYDisplay.dp2px(3);
+//            int tbPadding = BYDisplay.dp2px(2);
+//            logoLayout.setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
+//
+//
+//            Bitmap logoBit;
+//            String logoUrl;
+//            String logoMarkText;
+//            String logoTagText;
+//            if (usePro) {
+//                logoBit = adDataPro.getAdLogo();
+//                logoUrl = adDataPro.getAdMarkUrl();
+//                logoMarkText = adDataPro.getAdMarkText();
+//                logoTagText = adDataPro.getAdTag();
+//            } else {
+//                logoBit = adData.getAdLogo();
+//                logoUrl = adData.getAdMarkUrl();
+//                logoMarkText = adData.getAdMarkText();
+//                logoTagText = adData.getAdTag();
+//            }
+//
+//            if (logoBit != null) {
+//                ivAdMarkLogo.setVisibility(View.VISIBLE);
+//                tvAdMarkText.setVisibility(View.GONE);
+//                ivAdMarkLogo.setImageBitmap(logoBit);
+//            } else if (!TextUtils.isEmpty(logoUrl)) {
+//                ivAdMarkLogo.setVisibility(View.VISIBLE);
+//                tvAdMarkText.setVisibility(View.GONE);
+//                MercuryTool.renderNetImg(logoUrl, ivAdMarkLogo);
+//
+//
+//            } else {
+//                String adMark;
+//                if (!TextUtils.isEmpty(logoMarkText)) {
+//                    adMark = logoMarkText;
+//                } else if (!TextUtils.isEmpty(logoTagText)) {
+//                    adMark = logoTagText;
+//                } else {
+//                    adMark = "广告";
+//                }
+//
+//                tvAdMarkText.setVisibility(View.VISIBLE);
+//                ivAdMarkLogo.setVisibility(View.GONE);
+//                tvAdMarkText.setText(adMark);
+//                tvAdMarkText.setTextColor(Color.WHITE);
+//                tvAdMarkText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8);
+//            }
+//
+//            int maxW = BYDisplay.dp2px((25));
+//            int h = BYDisplay.dp2px((12));
+//            ivAdMarkLogo.setMaxWidth(maxW);
+//            ivAdMarkLogo.setAdjustViewBounds(true);
+//            LinearLayout.LayoutParams imgLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, h);
+//            logoLayout.addView(ivAdMarkLogo, imgLp);
+//
+//            logoLayout.addView(tvAdMarkText);
+//            logoView.addView(logoLayout);
 
 //            if (usePro){
 //                adDataPro.bindLogoView(logoView);

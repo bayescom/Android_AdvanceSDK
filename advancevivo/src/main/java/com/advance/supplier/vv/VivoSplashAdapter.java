@@ -74,28 +74,37 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
                 splashPro.setSplashInteractionListener(new VSplashAd.AdInteractionListener() {
                     @Override
                     public void onAdShow() {
-                        LogUtil.simple(TAG + "onAdLoadSuccess...");
+                        LogUtil.simple(TAG + "onAdShow...");
 
+                        handleShow();
                     }
 
                     @Override
                     public void onAdClick() {
+                        LogUtil.simple(TAG + "onAdClick...");
 
+                        handleClick();
                     }
 
                     @Override
                     public void onAdSkip() {
+                        LogUtil.simple(TAG + "onAdSkip...");
 
+                        handleSkip();
                     }
 
                     @Override
                     public void onAdTimeOver() {
+                        LogUtil.simple(TAG + "onAdTimeOver...");
 
+                        handleTimeOver();
                     }
 
                     @Override
                     public void onAdFailed(VivoAdError vivoAdError) {
+                        LogUtil.simple(TAG + "onAdFailed...");
 
+                        VivoUtil.handleErr(VivoSplashAdapter.this, vivoAdError, AdvanceError.ERROR_RENDER_FAILED, "onAdFailed");
                     }
                 });
             }
