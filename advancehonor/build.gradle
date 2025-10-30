@@ -59,4 +59,8 @@ dependencies {
 
     compileOnly project(path: ':advancelib')
     compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
+    // 强制使用1.5.0版本，避免使用1.7.0（导致编译报错：android:attr/lStar not found）
+    implementation('androidx.core:core:1.5.0') {
+        force = true
+    }
 }

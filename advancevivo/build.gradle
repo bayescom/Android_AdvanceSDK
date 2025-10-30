@@ -20,8 +20,7 @@ advanceVersionName = advanceVersionName + extVersionName
 def outputName = pomName + "_" + advanceVersionName + ".aar"
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
 
 
     defaultConfig {
@@ -52,7 +51,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
-
+    //用于发布时部分编译报错兼容
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation('androidx.core:core:1.5.0') {
+        force = true
+    }
 
     api fileTree(dir: 'libs', include: ['open_ad_6.2.7.0_d8e6702aa_2g.aar'])
 
