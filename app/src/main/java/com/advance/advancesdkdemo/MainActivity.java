@@ -23,14 +23,7 @@ import com.advance.advancesdkdemo.util.DemoIds;
 import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.advancesdkdemo.util.UserPrivacyDialog;
 import com.advance.utils.SupplierBridgeUtil;
-import com.alimm.tanx.core.SdkConstant;
-import com.baidu.mobads.sdk.api.AdSettings;
 import com.bayes.sdk.basic.util.BYStringUtil;
-import com.heytap.msp.mobad.api.MobAdManager;
-import com.kwad.sdk.api.KsAdSDK;
-import com.mercury.sdk.core.config.MercuryAD;
-import com.qq.e.comm.managers.status.SDKStatus;
-import com.sigmob.windad.WindAds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,27 +122,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void printVersion() {
 
-        String merV = MercuryAD.getVersion();
-        String gdtV = SDKStatus.getSDKVersion();
-        String bdV = AdSettings.getSDKVersion() + "";
-        String ksV = KsAdSDK.getSDKVersion();
         String av = AdvanceConfig.AdvanceSdkVersion;
 
         TextView tv = findViewById(R.id.tv_version);
         tv.setText("Advance聚合 SDK 版本号： " + av + "\n" + "\n" +
-                "Mercury SDK 版本号： " + merV + "\n" +
+                "Mercury SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_MERCURY) + "\n" +
                 "穿山甲 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_CSJ) + "\n" +
-                "广点通 SDK 版本号： " + gdtV + "\n" +
-                "百度 SDK 版本号： " + bdV + "\n" +
-                "快手 SDK 版本号： " + ksV + "\n" +
-                "tanx SDK 版本号：" + SdkConstant.getSdkVersion() + "\n" +
-                "Sigmob SDK 版本号：" + WindAds.getVersion() + "\n" +
-                "oppo SDK 版本号：" + MobAdManager.getInstance().getSdkVerName() + "\n" +
+                "广点通 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_GDT) + "\n" +
+                "百度 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_BAIDU) + "\n" +
+                "快手 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_KS) + "\n" +
+                "tanx SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TANX) + "\n" +
+                "Sigmob SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_SIG)+ "\n" +
+                "oppo SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_OPPO) + "\n" +
                 "华为 SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HW) + "\n" +
                 "小米 SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_XIAOMI) + "\n" +
                 "vivo SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_VIVO) + "\n" +
                 "荣耀 SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HONOR) + "\n" +
-                "TapTap SDK 版本号： " + com.tapsdk.tapad.BuildConfig.VERSION_NAME + "\n"
+                "TapTap SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TAP) + "\n"
         );
 
         tv.setOnClickListener(new View.OnClickListener() {

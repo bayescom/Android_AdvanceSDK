@@ -111,7 +111,7 @@ repositories {
 dependencies {
 
 
-    //引入Advance SDK --------start--------
+//引入Advance SDK --------start--------
 
 //----------------引入方式1：在线依赖，适合直接使用得开发者，具体的SDK版本请参考advanceXXX库的gradle配置中引入得SDK版本号
 //1.1  必须引入部分： 首先引入聚合库，排除不需要的adapter库，此部分引入不包含广告aar文件，aar需单独引入。
@@ -124,25 +124,8 @@ dependencies {
 //    implementation "io.github.bayescom:mercury-sdk:XXX"
 //
 ////1.2  可选引入部分，引入各个广告ADN得aar
-//    //依次引入分别是：穿山甲、百度、快手、oppo、taptap、sigmob
-//    implementation fileTree(dir: 'libs', include: ["open_ad_sdk_xxx.aar","Baidu_MobAds_SDK_xxx.aar","kssdk-ad-xxx.aar","oppo_ad_xxx.aar","TapAD_xxx.aar","wind-common-xxx.aar","wind-sdk-xxx.aar"])
-//    //优量汇 sdk
-//    implementation "com.qq.e.union:union:XXX"
-//    //    tanxSDK
-//    def versionCode = "XXX"
-//    api(group: 'com.tanx', name: 'TanxCoreSDK', version: versionCode) {
-//        exclude group: 'com.github.bumptech.glide'
-//        exclude group: 'com.squareup.okhttp3'
-//        exclude group: 'com.alibaba'
-//        exclude group: 'com.umeng.umsdk'
-//    }
-//    api(group: 'com.tanx', name: 'TanxUISDK', version: versionCode) {
-//        //去掉tanx内的第三方引用，避免产生冲突，APP接入时请注意此处配置
-//        exclude group: 'com.github.bumptech.glide'
-//        exclude group: 'com.squareup.okhttp3'
-//        exclude group: 'com.alibaba'
-//        exclude group: 'com.umeng.umsdk'
-//    }
+//    //依次引入各家广告SDK：穿山甲、百度、快手、等等广告SDK
+//    implementation fileTree(dir: 'libs', include: ["open_ad_sdk_xxx.aar","Baidu_MobAds_SDK_xxx.aar","kssdk-ad-xxx.aar","等其他广告SDK"])
 //----------------引入方式1 end ----------------------------------------------------------------
 
 

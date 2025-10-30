@@ -2,6 +2,7 @@ package com.advance.supplier.mi;
 
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.itf.AdvanceSupplierBridge;
+import com.miui.zeus.mimo.sdk.BuildConfig;
 
 public class XMGlobalConfig implements AdvanceSupplierBridge {
     @Override
@@ -12,7 +13,7 @@ public class XMGlobalConfig implements AdvanceSupplierBridge {
     @Override
     public String getSDKVersion() {
 
-        return "";
+        return BuildConfig.VERSION_NAME;
     }
 
     @Override

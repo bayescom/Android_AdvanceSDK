@@ -304,7 +304,7 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 //            if (logoView == null) {
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             lp.gravity = Gravity.LEFT | Gravity.BOTTOM;
-            lp.setMargins(BYDisplay.dp2px(10), 0, 0, BYDisplay.dp2px(10));
+            lp.setMargins(BYDisplay.dp2px(8), 0, 0, BYDisplay.dp2px(5));
             if (usePro) {
                 adDataPro.bindLogoView(lp);
             } else {

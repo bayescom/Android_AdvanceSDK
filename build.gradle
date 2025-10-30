@@ -1,6 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-def version = '5.2.1'
+def version = '5.2.2'
 def versionExt = ''
 
 ext {

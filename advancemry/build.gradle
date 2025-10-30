@@ -8,8 +8,8 @@ group = 'com.github.bayescom'
 def pomName = "advance-mry"
 
 //定义mercury版本号
-def meryVersion = '4.5.4'
-def advanceVersionName = "${rootProject.ext.advance_version}_454"
+def meryVersion = '4.6.1'
+def advanceVersionName = "${rootProject.ext.advance_version}_461"
 def advanceVersionCode = 1
 
 
