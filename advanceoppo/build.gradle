@@ -85,6 +85,6 @@ dependencies {
 //        embed(name: "oppo_ad_${libVersionName}", ext: 'aar')
 //    }
 //主要是基础库方法+ 自渲染的 MercuryTool
-    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.6.4'
     compileOnly project(path: ':advancelib')
 }

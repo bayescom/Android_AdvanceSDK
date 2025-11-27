@@ -6,6 +6,7 @@ import static com.advance.net.AdvanceJson.convertJsonToGroup;
 import static com.advance.utils.AdvanceUtil.generateKey;
 
 import androidx.annotation.NonNull;
+
 import android.text.TextUtils;
 
 import com.advance.AdvanceConfig;
@@ -66,6 +67,12 @@ public class AdvanceNetManger {
             byReqModel.reqBody = deviceInfoObj;
             byReqModel.timeoutMs = AdvanceConstant.strategyTimeOutDur;
             byReqModel.forceTimeOut = reqModel.requestForceTimeout;
+            //尽可能避免基础库版本低找不到变量问题
+            try {
+                byReqModel.forceGzip = true;
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
             LogUtil.devDebug("请求url:" + byReqModel.reqUrl);
             BYNetRequest.post(byReqModel, new BYReqCallBack() {
                         @Override

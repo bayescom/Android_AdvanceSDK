@@ -8,7 +8,7 @@ group = 'com.github.bayescom'
 //maven依赖的项目名称
 def pomName = "advance-ks"
 def extVersionName = ""
-def libVersionName = "46301"
+def libVersionName = "4.11.20.1"
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
 
 def advanceVersionCode = 1
@@ -69,7 +69,7 @@ dependencies {
     api fileTree(dir: 'libs', include: [libName + '.aar'])
 
     compileOnly project(path: ':advancelib')
-    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.6.4'
 }
 
 

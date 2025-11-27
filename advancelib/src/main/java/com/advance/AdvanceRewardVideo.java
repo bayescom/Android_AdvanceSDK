@@ -392,6 +392,12 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
                         e.printStackTrace();
                     }
                     reqModel.reqBody = jsonObject;
+//                    //尽可能避免基础库版本低找不到变量问题
+//                    try {
+//                        reqModel.forceGzip = true;
+//                    } catch (Throwable e) {
+//                        e.printStackTrace();
+//                    }
                     BYNetRequest.post(reqModel, new BYReqCallBack() {
                         @Override
                         public void onSuccess(String ctx) {

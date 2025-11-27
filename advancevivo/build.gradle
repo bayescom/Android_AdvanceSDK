@@ -57,5 +57,5 @@ dependencies {
     api fileTree(dir: 'libs', include: ['open_ad_6.2.7.0_d8e6702aa_2g.aar'])
 
     compileOnly project(path: ':advancelib')
-    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.6.4'
 }

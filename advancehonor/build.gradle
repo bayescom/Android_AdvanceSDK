@@ -58,5 +58,5 @@ dependencies {
     api "com.hihonor.mcs:ads-tools:$honor_ad_sdk_version" // 如果您需要使用自测工具，可以引用该包
 
     compileOnly project(path: ':advancelib')
-    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.6.4'
 }

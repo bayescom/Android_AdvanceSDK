@@ -8,8 +8,8 @@ group = 'com.github.bayescom'
 //maven依赖的项目名称
 def pomName = "advance-gdt"
 def extVersionName = ""
-def libVersionName = "4.642.1512"
-def advanceVersionName = "${rootProject.ext.advance_version}_4642"
+def libVersionName = "4.662.1532"
+def advanceVersionName = "${rootProject.ext.advance_version}_4662"
 def advanceVersionCode = 1
 
 advanceVersionName = advanceVersionName + extVersionName
@@ -59,12 +59,12 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
 
-    def libName = "GDTSDK.unionNormal." + libVersionName
-    api fileTree(dir: 'libs', include: [libName + '.aar'])
+//    def libName = "GDTSDK.unionNormal." + libVersionName
+//    api fileTree(dir: 'libs', include: [libName + '.aar'])
 //    def version = '4.602.1472'
-//        api "com.qq.e.union:union:${libVersionName}"
+        api "com.qq.e.union:union:${libVersionName}"
 
-    compileOnly 'io.github.bayescom:mercury-sdk:4.5.0'
+    compileOnly 'io.github.bayescom:mercury-sdk:4.6.4'
 
     compileOnly project(path: ':advancelib')
 

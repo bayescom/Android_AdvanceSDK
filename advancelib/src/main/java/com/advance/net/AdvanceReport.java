@@ -141,6 +141,12 @@ public class AdvanceReport {
             }
             reqModel.timeoutMs = 10000;
             reqModel.reqBody = request;
+            //尽可能避免基础库版本低找不到变量问题
+//            try {
+//                reqModel.forceGzip = true;
+//            } catch (Throwable e) {
+//                e.printStackTrace();
+//            }
             BYNetRequest.post(reqModel, new BYReqCallBack() {
                 @Override
                 public void onSuccess(String s) {
