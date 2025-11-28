@@ -1,14 +1,14 @@
 package com.advance.advancesdkdemo;
 
+import android.app.Activity;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.advance.advancesdkdemo.util.DemoManger;
 
 
-public class NativeExpressActivity extends AppCompatActivity {
+public class NativeExpressActivity extends Activity {
     private FrameLayout container;
     AdvanceAD ad;
     boolean adSucc = false;

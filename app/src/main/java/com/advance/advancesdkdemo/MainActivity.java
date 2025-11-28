@@ -2,13 +2,13 @@ package com.advance.advancesdkdemo;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,7 +28,7 @@ import com.bayes.sdk.basic.util.BYStringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     Button fullVideo, banner, splash, interstitial, reward, nativeExpress, nativeExpressRV, nativeCustom, draw;
     Spinner sdKSNew;
