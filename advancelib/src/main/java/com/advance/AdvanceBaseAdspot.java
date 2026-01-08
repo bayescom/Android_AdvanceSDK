@@ -1183,6 +1183,12 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                     //更新执行结果
                     if (paraResult < 0 && sdkSupplier != null) {
                         sdkSupplier.resultStatus = AdvanceConstant.SDK_RESULT_CODE_FAILED;
+                        updateGroupResultInf(sdkSupplier);
+
+                        //如果无并发组，则进行全bidding逻辑校验
+                        if (isParaGroupEmpty()) {
+                            handleOnlyBidding();
+                        }
                     }
                 }
             });
@@ -1681,6 +1687,11 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                         }
                         //如果已经有结果返回，不执行强制返回
                         if (currentGroupInf.isGroupAllResult) {
+                            if (biddingGroup != null && biddingGroup.isTimeOut) {
+                                LogUtil.devDebug(BTAG + "并行超时检查：bid组超时，且已有返回结果，执行checkShow");
+                                checkShow();
+                                return;
+                            }
                             LogUtil.devDebug(BTAG + "超时检查：并行组已全部返回广告结果，跳过");
                             return;
                         }
@@ -2233,6 +2244,8 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
      */
     private void handleOnlyBidding() {
         try {
+            LogUtil.devDebug(BTAG + "handleOnlyBidding start ");
+
             if (isBiddingEmpty()) {
                 dispatchSupplierFailed(advanceSelectListener);
             } else {// 仅bidding组有渠道信息
