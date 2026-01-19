@@ -28,8 +28,8 @@ import java.util.HashMap;
 
 public class AdvanceConfig {
     public static final String AdvanceSdkVersion = AdvanceSDK.getVersion();
-//    public static final String AdvanceSdkRequestUrl = "http://cruiser.bayescom.cn/cruiser";
-    public static final String AdvanceSdkRequestUrl = "http://121.36.19.28:10086/cruiser";
+    public static final String AdvanceSdkRequestUrl = "http://cruiser.bayescom.cn/cruiser";
+//    public static final String AdvanceSdkRequestUrl = "http://121.36.19.28:10086/cruiser";
     public static final String AdvanceSdkRequestUrlHttps = "https://cruiser.bayescom.cn/cruiser";
     public static final String SDK_ERR_REPORT_URL = "http://cruiser.bayescom.cn/sdkevent";
     public static final String SDK_ERR_REPORT_URL_HTTPS = "https://cruiser.bayescom.cn/sdkevent";

@@ -10,8 +10,11 @@ import com.advance.AdvanceSetting;
 import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.model.AdvanceSDKCacheModel;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.CSJAdError;
@@ -61,6 +64,35 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "newSplashAd null"));
                 return;
             }
+            newSplashAd.setSplashAdListener(new CSJSplashAd.SplashAdListener() {
+                @Override
+                public void onSplashAdShow(CSJSplashAd csjSplashAd) {
+                    LogUtil.simple(TAG + "onSplashAdShow");
+
+                    handleShow();
+                }
+
+                @Override
+                public void onSplashAdClick(CSJSplashAd csjSplashAd) {
+                    LogUtil.simple(TAG + "onSplashAdClick");
+                    handleClick();
+                }
+
+                @Override
+                public void onSplashAdClose(CSJSplashAd csjSplashAd, int closeType) {
+                    LogUtil.simple(TAG + "onSplashAdClose , closeType = " + closeType);
+                    if (splashSetting != null) {
+                        if (closeType == CSJSplashCloseType.CLICK_SKIP) {
+                            splashSetting.adapterDidSkip();
+                        } else if (closeType == CSJSplashCloseType.COUNT_DOWN_OVER) {
+                            splashSetting.adapterDidTimeOver();
+                        } else {
+                            splashSetting.adapterDidSkip();
+                        }
+                    }
+                }
+            });
+
             view = newSplashAd.getSplashView();
             initNewSplashClickEyeData(newSplashAd, view);
             boolean isDestroy = AdvanceUtil.isActivityDestroyed(getRealActivity(splashSetting.getAdContainer()));
@@ -113,6 +145,8 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
+
+                reportStart();
             }
 
             @Override
@@ -123,14 +157,20 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     private void startLoad() {
-//        当后台下发 versionTag 为1时，使用旧版本api调用方法
 
-
-        if (BYUtil.isDev()) {
-//           客户端 bidding 测试广告位
-//            sdkSupplier.adspotid = "888483708";
-//            useOldApi = true;
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, CSJSplashAd.class, new BYAbsCallBack<CSJSplashAd>() {
+            @Override
+            public void invoke(CSJSplashAd csjSplashAd) {
+                newSplashAd = csjSplashAd;
+                updateBidding(CsjUtil.getEcpmValue(TAG, newSplashAd.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
         }
+
+
         final TTAdManager ttAdManager = TTAdSdk.getAdManager();
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
             ttAdManager.requestPermissionIfNecessary(getRealContext());
@@ -189,35 +229,7 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
                 newSplashAd = csjSplashAd;
 
                 updateBidding(CsjUtil.getEcpmValue(TAG, csjSplashAd.getMediaExtraInfo()));
-                handleSucceed();
-                newSplashAd.setSplashAdListener(new CSJSplashAd.SplashAdListener() {
-                    @Override
-                    public void onSplashAdShow(CSJSplashAd csjSplashAd) {
-                        LogUtil.simple(TAG + "onSplashAdShow");
-
-                        handleShow();
-                    }
-
-                    @Override
-                    public void onSplashAdClick(CSJSplashAd csjSplashAd) {
-                        LogUtil.simple(TAG + "onSplashAdClick");
-                        handleClick();
-                    }
-
-                    @Override
-                    public void onSplashAdClose(CSJSplashAd csjSplashAd, int closeType) {
-                        LogUtil.simple(TAG + "onSplashAdClose , closeType = " + closeType);
-                        if (splashSetting != null) {
-                            if (closeType == CSJSplashCloseType.CLICK_SKIP) {
-                                splashSetting.adapterDidSkip();
-                            } else if (closeType == CSJSplashCloseType.COUNT_DOWN_OVER) {
-                                splashSetting.adapterDidTimeOver();
-                            } else {
-                                splashSetting.adapterDidSkip();
-                            }
-                        }
-                    }
-                });
+                handleSucceed(csjSplashAd);
 
             }
 
@@ -266,9 +278,6 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
 
-
-
-
 //    NewSplashClickEyeListener mSplashClickEyeListener;
 
     private void initNewSplashClickEyeData(CSJSplashAd splashAd, View splashView) {
@@ -286,7 +295,6 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
             e.printStackTrace();
         }
     }
-
 
 
     @Override

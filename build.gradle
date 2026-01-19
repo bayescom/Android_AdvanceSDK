@@ -8,6 +8,7 @@ ext {
     advance_lib_version = version
     //上传到gradle的统一版本号，应用于全部渠道和core，可以附加补充标识用来测试集成
     advance_version = version + versionExt
+    mercury_version = '4.6.7'
 
 }
 

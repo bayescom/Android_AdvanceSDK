@@ -52,6 +52,8 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     protected void paraLoadAd() {
         OppoUtil.initAD(this);
         startLoad();
+
+                reportStart();
     }
 
     private void startLoad() {

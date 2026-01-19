@@ -21,7 +21,7 @@ public class NativeExpressActivity extends Activity {
 
 
         //加载模板信息流，传入承载布局，加载成功后直接展示。如需分步加载，请参考loadOnly 方法
-        new AdvanceAD(this).loadNativeExpressAndShow(container);
+//        new AdvanceAD(this).loadNativeExpressAndShow(container);
     }
 
     public void loadOnly(View view) {

@@ -5,13 +5,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.advance.AdvanceConfig;
-import com.advance.AdvanceSetting;
 import com.advance.BannerSetting;
-import com.advance.BaseParallelAdapter;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdDislike;
 import com.bytedance.sdk.openadsdk.TTAdManager;
@@ -67,7 +67,7 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
 
             updateBidding(CsjUtil.getEcpmValue(TAG, ad.getMediaExtraInfo()));
 
-            handleSucceed();
+            handleSucceed(ad);
         } catch (Throwable e) {
             e.printStackTrace();
             doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
@@ -175,6 +175,8 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
+
+                reportStart();
             }
 
             @Override
@@ -185,6 +187,18 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
     }
 
     private void startLoad() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTNativeExpressAd.class, new BYAbsCallBack<TTNativeExpressAd>() {
+            @Override
+            public void invoke(TTNativeExpressAd cacheAD) {
+                ad = cacheAD;
+                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         final TTAdManager ttAdManager = TTAdSdk.getAdManager();
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
             ttAdManager.requestPermissionIfNecessary(activity);

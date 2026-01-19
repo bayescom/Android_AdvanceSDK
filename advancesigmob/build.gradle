@@ -69,7 +69,8 @@ dependencies {
     api fileTree(dir: 'libs', include: ['wind-sdk-4.24.0.aar'])
 
     compileOnly project(path: ':advancelib')
-    compileOnly 'io.github.bayescom:mercury-sdk:4.6.4'
+    compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
+
 }
 
 

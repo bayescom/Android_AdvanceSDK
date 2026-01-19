@@ -13,7 +13,9 @@ import com.advance.core.srender.AdvanceRFMaterialProvider;
 import com.advance.core.srender.AdvanceRFVideoEventListener;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdDislike;
 import com.bytedance.sdk.openadsdk.TTAdManager;
@@ -74,6 +76,8 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
+
+                reportStart();
             }
 
             @Override
@@ -85,6 +89,21 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     private void startLoad() {
         try {
+            //检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTFeedAd.class, new BYAbsCallBack<TTFeedAd>() {
+                @Override
+                public void invoke(TTFeedAd cacheAD) {
+                     mRenderAD = cacheAD;
+                    //转换穿山甲返回广告model为聚合通用model
+                    dataConverter = new CsjRenderDataConverter(mRenderAD, sdkSupplier);
+
+                    updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+
             //step1:初始化sdk
             final TTAdManager ttAdManager = TTAdSdk.getAdManager();
             //step2:(可选，强烈建议在合适的时机调用):申请部分权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题。
@@ -126,7 +145,7 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                         //转换穿山甲返回广告model为聚合通用model
                         dataConverter = new CsjRenderDataConverter(mRenderAD, sdkSupplier);
                         //标记广告成功
-                        handleSucceed();
+                        handleSucceed(mRenderAD);
                         //通知广告成功
 //                        mAdvanceRFBridge.adapterDidLoaded(dataConverter);
                     } catch (Throwable e) {

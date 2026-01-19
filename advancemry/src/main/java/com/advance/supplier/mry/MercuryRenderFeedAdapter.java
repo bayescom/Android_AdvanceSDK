@@ -373,6 +373,14 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
                     }
 
+                    @Override
+                    public void onVideoResume() {
+                        LogUtil.simple(TAG + "onVideoResume: ");
+                        if (videoEventListener != null)
+                            videoEventListener.onResume(dataConverter);
+
+                    }
+
 
                     @Override
                     public void onVideoCompleted() {

@@ -152,6 +152,7 @@ public class AdvanceNetManger {
             jsonObject.put("appver", BYDevice.getAppVersionValue());
             String reqid = reqModel.reqId;
             if (!TextUtils.isEmpty(reqid)) {
+                //如果传递了reqid，服务端将返回使用客户端的reqid，如果未传递，服务端将自己生成
                 jsonObject.put("reqid", reqid);
             }
 
@@ -429,6 +430,7 @@ public class AdvanceNetManger {
                     ss.loadedtk = convertJsonArrayToArrayList(loadedJsonArray);
                     ss.wintk = convertJsonArrayToArrayList(job.optJSONArray("wintk"));
                     ss.ext = ext;
+                    ss.serverReqID = elevenModel.reqid;
                     al.add(ss);
                 }
             } else {

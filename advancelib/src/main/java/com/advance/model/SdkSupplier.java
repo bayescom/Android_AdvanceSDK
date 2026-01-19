@@ -32,6 +32,12 @@ public class SdkSupplier implements Comparable<SdkSupplier> {
     public ArrayList<String> wintk;
     public JSONArray ext;
     public String advanceAdspotId = "";
+    public long cacheMaxSec = 1800; //缓存秒数，根据配置下发，默认30分钟
+    public boolean enableCache = true; //是否启用缓存，根据配置下发
+    public String unitKey = "";
+    public String advanceReqID = "";
+    public String serverReqID = "";
+
     public int initOpt = 1; //初始化优化是否开启，1代表开启，开启后只进行一次初始化操作。当有可能填两个媒体id时，将该值置为false
     public boolean enableBidding = false; //是否开启bidding逻辑，前提是当前渠道支持bidding
     //    public int sortIndex = 1;//排序用的字段，正常情况下值和priority一样，当有bidding渠道时，会出现差异
@@ -44,6 +50,8 @@ public class SdkSupplier implements Comparable<SdkSupplier> {
 
     public int resultStatus = AdvanceConstant.SDK_RESULT_CODE_DEFAULT;//渠道执行结果标志，成功此值置为1，失败为2，仅支持串行为3
     public int groupID = -1; //当前渠道所在的组id
+
+    public boolean useCachedSDK = false;//标记当前是否使用缓存的广告
 
     //支持bidding的渠道，获取实时价格，只有部分渠道位置支持。支持的含义为此渠道会返回实时价格，且聚合内包含了相关处理和调度逻辑
     //

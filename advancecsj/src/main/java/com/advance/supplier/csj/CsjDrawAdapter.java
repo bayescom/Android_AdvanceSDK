@@ -2,21 +2,20 @@ package com.advance.supplier.csj;
 
 import android.app.Activity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceDrawSetting;
 import com.advance.custom.AdvanceDrawCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTDrawFeedAd;
-import com.bytedance.sdk.openadsdk.TTNativeAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.bytedance.sdk.openadsdk.mediation.ad.MediationExpressRenderListener;
 
@@ -50,6 +49,8 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
+
+                reportStart();
             }
 
             @Override
@@ -73,6 +74,41 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
     @Override
     public void show() {
         try {
+            ad.setExpressInteractionListener(new TTNativeExpressAd.ExpressAdInteractionListener() {
+                //广告点击的回调
+                @Override
+                public void onAdClicked(View view, int type) {
+                    LogUtil.simple(TAG + "onAdClicked, type = " + type);
+
+                    handleClick();
+                }
+
+                //广告展示回调
+                @Override
+                public void onAdShow(View view, int type) {
+                    LogUtil.simple(TAG + "onAdShow, type = " + type);
+
+                    handleShow();
+                }
+
+                //广告渲染失败
+                @Override
+                public void onRenderFail(View view, String msg, int code) {
+                    String log = "onRenderFail : code = " + code + ",msg =" + msg;
+                    LogUtil.simple(TAG + "onRenderFail, log = " + log);
+
+                    handleFailed(AdvanceError.ERROR_RENDER_FAILED, log);
+                }
+
+                //广告渲染成功
+                @Override
+                public void onRenderSuccess(View view, float width, float height) {
+                    LogUtil.simple(TAG + "onRenderSuccess, width = " + width + ",height = " + height);
+
+                }
+            });
+
+
             if (isADViewAdded(ad.getExpressAdView())) {
                 ad.render();
             }
@@ -88,6 +124,18 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
 
 
     private void startLoad() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTNativeExpressAd.class, new BYAbsCallBack<TTNativeExpressAd>() {
+            @Override
+            public void invoke(TTNativeExpressAd cacheAD) {
+                ad = cacheAD;
+                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         //step1:初始化sdk
         TTAdManager ttAdManager = TTAdSdk.getAdManager();
         //step2:(可选，强烈建议在合适的时机调用):申请部分权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题。
@@ -210,41 +258,8 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
             updateBidding(CsjUtil.getEcpmValue(TAG, ad.getMediaExtraInfo()));
 
 //            ad.setCanInterruptVideoPlay(false);
-            ad.setExpressInteractionListener(new TTNativeExpressAd.ExpressAdInteractionListener() {
-                //广告点击的回调
-                @Override
-                public void onAdClicked(View view, int type) {
-                    LogUtil.simple(TAG + "onAdClicked, type = " + type);
 
-                    handleClick();
-                }
-
-                //广告展示回调
-                @Override
-                public void onAdShow(View view, int type) {
-                    LogUtil.simple(TAG + "onAdShow, type = " + type);
-
-                    handleShow();
-                }
-
-                //广告渲染失败
-                @Override
-                public void onRenderFail(View view, String msg, int code) {
-                    String log = "onRenderFail : code = " + code + ",msg =" + msg;
-                    LogUtil.simple(TAG + "onRenderFail, log = " + log);
-
-                    handleFailed(AdvanceError.ERROR_RENDER_FAILED, log);
-                }
-
-                //广告渲染成功
-                @Override
-                public void onRenderSuccess(View view, float width, float height) {
-                    LogUtil.simple(TAG + "onRenderSuccess, width = " + width + ",height = " + height);
-
-                }
-            });
-
-            handleSucceed();
+            handleSucceed(ad);
 
         } catch (Throwable e) {
             e.printStackTrace();

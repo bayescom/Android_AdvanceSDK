@@ -6,7 +6,9 @@ import com.advance.AdvanceConfig;
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdConstant;
 import com.bytedance.sdk.openadsdk.TTAdManager;
@@ -42,6 +44,38 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 //                }, 1000);
 //                return;
 //            }
+            newVersionAd.setFullScreenVideoAdInteractionListener(new TTFullScreenVideoAd.FullScreenVideoAdInteractionListener() {
+                @Override
+                public void onAdShow() {
+                    LogUtil.simple(TAG + "newVersionAd onAdShow");
+                    handleShow();
+                }
+
+                @Override
+                public void onAdVideoBarClick() {
+                    LogUtil.simple(TAG + "newVersionAd onAdVideoBarClick");
+                    handleClick();
+                }
+
+                @Override
+                public void onAdClose() {
+                    LogUtil.simple(TAG + "newVersionAd onAdClose");
+
+                    if (advanceInterstitial != null)
+                        advanceInterstitial.adapterDidClosed();
+                }
+
+                @Override
+                public void onVideoComplete() {
+                    LogUtil.simple(TAG + "newVersionAd onVideoComplete");
+                }
+
+                @Override
+                public void onSkippedVideo() {
+                    LogUtil.simple(TAG + "newVersionAd onSkippedVideo");
+                }
+            });
+
             String nullTip = TAG + "请先加载广告或者广告已经展示过";
             if (newVersionAd != null) {
                 newVersionAd.showFullScreenVideoAd(activity, TTAdConstant.RitScenes.GAME_GIFT_BONUS, null);
@@ -75,6 +109,8 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
+
+                reportStart();
             }
 
             @Override
@@ -86,6 +122,17 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     private void startLoad() {
 
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTFullScreenVideoAd.class, new BYAbsCallBack<TTFullScreenVideoAd>() {
+            @Override
+            public void invoke(TTFullScreenVideoAd cacheAD) {
+                newVersionAd = cacheAD;
+                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
         final TTAdManager ttAdManager = TTAdSdk.getAdManager();
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
             ttAdManager.requestPermissionIfNecessary(activity);
@@ -117,38 +164,8 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
                     updateBidding(CsjUtil.getEcpmValue(TAG, newVersionAd.getMediaExtraInfo()));
 
-                    newVersionAd.setFullScreenVideoAdInteractionListener(new TTFullScreenVideoAd.FullScreenVideoAdInteractionListener() {
-                        @Override
-                        public void onAdShow() {
-                            LogUtil.simple(TAG + "newVersionAd onAdShow");
-                            handleShow();
-                        }
 
-                        @Override
-                        public void onAdVideoBarClick() {
-                            LogUtil.simple(TAG + "newVersionAd onAdVideoBarClick");
-                            handleClick();
-                        }
-
-                        @Override
-                        public void onAdClose() {
-                            LogUtil.simple(TAG + "newVersionAd onAdClose");
-
-                            if (advanceInterstitial != null)
-                                advanceInterstitial.adapterDidClosed();
-                        }
-
-                        @Override
-                        public void onVideoComplete() {
-                            LogUtil.simple(TAG + "newVersionAd onVideoComplete");
-                        }
-
-                        @Override
-                        public void onSkippedVideo() {
-                            LogUtil.simple(TAG + "newVersionAd onSkippedVideo");
-                        }
-                    });
-                    handleSucceed();
+                    handleSucceed(newVersionAd);
 
                 } catch (Throwable e) {
                     e.printStackTrace();

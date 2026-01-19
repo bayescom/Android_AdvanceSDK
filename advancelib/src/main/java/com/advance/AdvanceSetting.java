@@ -3,6 +3,7 @@ package com.advance;
 import android.app.Activity;
 
 import com.advance.itf.AdvancePrivacyController;
+import com.advance.model.AdvanceSDKCacheModel;
 
 import java.util.HashMap;
 
@@ -82,6 +83,9 @@ public boolean isADTrack = true;
     public HashMap<String, AdvanceNativeExpress> advanceNativeExpressInf;
     public HashMap<String, AdvanceInterstitial> advanceInterstitialInf;
     public HashMap<String, AdvanceDraw> advanceDrawInf;
+
+    //用来缓存广告对象，
+    public HashMap<String, AdvanceSDKCacheModel> cachedSDKs = new HashMap<>();
 
     public int getReportVersionInf(){
         return reportVersionInf;

@@ -26,6 +26,8 @@ public class OppoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     protected void paraLoadAd() {
         OppoUtil.initAD(this);
         startLoad();
+
+                reportStart();
     }
 
     private void startLoad() {

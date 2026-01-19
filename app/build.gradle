@@ -6,10 +6,10 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 33
     defaultConfig {
-//        applicationId "com.advance.demo"
+        applicationId "com.advance.demo"
 //        applicationId "com.opos.mobaddemo" //oppo测试包名，oppo广告需要指定包名才可以
 //        applicationId "com.example.pptv" // 验证测试tanx\honor广告
-        applicationId "com.vivo.adnet.demo.app" // vivo SDK验证，必须是这个包名
+//        applicationId "com.vivo.adnet.demo.app" // vivo SDK验证，必须是这个包名
 
         minSdkVersion 21
         targetSdkVersion 30

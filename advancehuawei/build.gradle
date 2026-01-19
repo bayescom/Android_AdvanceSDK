@@ -58,6 +58,7 @@ dependencies {
 
 
     compileOnly project(':advancelib')
-    compileOnly 'io.github.bayescom:mercury-sdk:4.6.4'
+    compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
+
 
 }

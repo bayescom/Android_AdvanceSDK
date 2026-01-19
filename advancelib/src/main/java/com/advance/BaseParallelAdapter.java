@@ -1,15 +1,19 @@
 package com.advance;
 
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
+import static com.advance.net.AdvanceReport.replaceParameter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.advance.core.srender.AdvanceRFADData;
 import com.advance.core.srender.AdvanceRFBridge;
+import com.advance.model.AdvanceSDKCacheModel;
 import com.advance.net.AdvanceReport;
 import com.advance.utils.ActivityTracker;
+import com.advance.utils.AdvanceCacheUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.RenderEvent;
 import com.advance.model.AdvanceError;
@@ -18,6 +22,7 @@ import com.advance.model.SdkSupplier;
 import com.advance.model.SupplierSettingModel;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 
@@ -66,6 +71,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
 //    public HashMap<Integer, ParaStatusModel> statusMap = new HashMap<>();
 
     protected int adNum = 0;//记录广告数量，每load一次+1.每失败一次-1.如果此值为负，那么可能为回调了多次的失败回调，需抛弃处理此次回调。
+    protected AdvanceSDKCacheModel cacheModel = null;
 
 
     private Activity getADActivity() {
@@ -263,9 +269,16 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
     void setSDKSupplier(SdkSupplier sdkSupplier) {
         try {
             this.sdkSupplier = sdkSupplier;
+
+
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    //初始化获取广告缓存model信息，在基类广告load之前进行
+    public void initCacheInf() {
+        cacheModel = AdvanceCacheUtil.getCachedSDKInf(sdkSupplier);
     }
 
     /**
@@ -290,6 +303,10 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    public AdvanceSDKCacheModel getCacheModel() {
+        return cacheModel;
     }
 
     public void startOrderLoad() {
@@ -387,10 +404,55 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
     private void reportLoaded() {
         try {
             if (sdkSupplier != null) {
+
+
                 String reqid = baseSetting == null ? "" : baseSetting.getAdvanceId();
                 long reqTime = baseSetting == null ? 0 : baseSetting.getRequestTime();
                 ArrayList<String> ltk = baseSetting == null ? AdvanceReport.getReplacedTime(sdkSupplier.loadedtk, reqid) : AdvanceReport.getReplacedLoaded(sdkSupplier.loadedtk, reqTime, reqid);
+                //todo 存在缓存时，额外增加埋点信息上报
+                if (cacheModel != null) {
+
+                }
                 switchReport(ltk);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    //SDK渠道执行完广告load以后，调用埋点starttk埋点上报
+    public void reportStart() {
+        try {
+            if (sdkSupplier != null) {
+                ArrayList<String> startTKS = sdkSupplier.starttk;
+
+                if (startTKS != null)
+                    for (String tk : startTKS) {
+                        if (BYStringUtil.isNotEmpty(tk)) {
+
+                            String reqid = baseSetting == null ? "" : baseSetting.getAdvanceId();
+                            long reqTime = baseSetting == null ? 0 : baseSetting.getRequestTime();
+                            long cost = System.currentTimeMillis() - reqTime;
+                            LogUtil.high("聚合启动到SDK start耗时：" + cost + "ms");
+                            tk = tk.replace("__TIME__", "" + System.currentTimeMillis());
+                            //添加时长
+                            if (tk.contains("track_time")) {
+                                tk = tk + "&t_msg=l_" + cost;
+                            }
+                            //todo 替换reqid是否必要？？？
+                            if (!TextUtils.isEmpty(reqid)) {
+                                tk = replaceParameter(tk, AdvanceConstant.URL_REQID_TAG, reqid);
+                            }
+                            //todo 存在缓存时，额外增加埋点信息上报
+                            if (cacheModel != null) {
+
+                            }
+
+                            AdvanceReport.startReport(tk);
+                        }
+                    }
+
+
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -491,8 +553,8 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
                 if (null != baseSetting) {
                     baseSetting.paraEvent(AdvanceConstant.EVENT_TYPE_ORDER, null, sdkSupplier);
                 }
-                reportLoaded();
                 orderLoadAd();
+                reportLoaded();
                 hasOrderRun = true;
                 return;
             }
@@ -680,6 +742,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         return posID;
     }
 
+
     /**
      * --------- 以下是公共处理核心回调事件方法  ----------
      */
@@ -711,6 +774,9 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
 
     public void handleShow() {
         try {
+            //曝光后统一进行缓存移除操作了
+            AdvanceCacheUtil.removeCache(sdkSupplier);
+
             if (baseSetting == null) {
                 return;
             }
@@ -738,6 +804,16 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         }
     }
 
+
+    //统一处理广告成功，并传入实时获取到的广告对象，用来进行缓存
+    public void handleSucceed(Object realtimeAD) {
+        if (realtimeAD != null) {
+            //执行缓存
+            AdvanceCacheUtil.cacheSDK(this, realtimeAD);
+        }
+
+        handleSucceed();
+    }
 
     public void handleSucceed() {
         try {

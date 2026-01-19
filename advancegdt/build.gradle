@@ -64,7 +64,8 @@ dependencies {
 //    def version = '4.602.1472'
         api "com.qq.e.union:union:${libVersionName}"
 
-    compileOnly 'io.github.bayescom:mercury-sdk:4.6.4'
+    compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
+
 
     compileOnly project(path: ':advancelib')
 

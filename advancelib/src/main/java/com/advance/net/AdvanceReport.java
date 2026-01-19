@@ -324,8 +324,10 @@ public class AdvanceReport {
      */
     public static String replaceParameter(String url, String key, String value) {
         try {
+            LogUtil.devDebug("replaceParameter start : key = "+ key + " , value = "+ value + " , url = "+url);
             if (!TextUtils.isEmpty(url) && !TextUtils.isEmpty(key)) {
                 url = url.replaceAll("(" + key + "=[^&]*)", key + "=" + value);
+                LogUtil.devDebug("replaceParameter finish : url = "+ url );
             }
         } catch (Throwable e) {
             e.printStackTrace();

@@ -8,14 +8,16 @@ import com.advance.AdvanceNativeExpressAdItem;
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYLog;
 import com.bytedance.sdk.openadsdk.AdSlot;
+import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.bytedance.sdk.openadsdk.TTAdDislike;
 import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
-import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,8 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
+
+                reportStart();
             }
 
             @Override
@@ -51,6 +55,20 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
     }
 
     private void startLoad() {
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTNativeExpressAd.class, new BYAbsCallBack<TTNativeExpressAd>() {
+            @Override
+            public void invoke(TTNativeExpressAd cacheAD) {
+                ttNativeExpressAd = cacheAD;
+                updateBidding(CsjUtil.getEcpmValue(TAG, ttNativeExpressAd.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
+
         final TTAdManager ttAdManager = TTAdSdk.getAdManager();
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
             ttAdManager.requestPermissionIfNecessary(activity);
@@ -111,7 +129,7 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
                 }
                 updateBidding(CsjUtil.getEcpmValue(TAG, ttNativeExpressAd.getMediaExtraInfo()));
 
-                handleSucceed();
+                handleSucceed(ttNativeExpressAd);
 
 
             }

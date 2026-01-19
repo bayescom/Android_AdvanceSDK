@@ -2028,7 +2028,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
             }
             updateFirstPri(paraSupplier);
             parallelAdapter.setSDKSupplier(paraSupplier);
-
+            parallelAdapter.initCacheInf();
             LogUtil.devDebugAuto(paraSupplier.name, "并行启动, this is :" + parallelAdapter);
             parallelAdapter.load();
             paraInitStatus.put(pri, true);

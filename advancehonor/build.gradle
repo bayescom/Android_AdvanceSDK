@@ -58,7 +58,8 @@ dependencies {
     api "com.hihonor.mcs:ads-tools:$honor_ad_sdk_version" // 如果您需要使用自测工具，可以引用该包
 
     compileOnly project(path: ':advancelib')
-    compileOnly 'io.github.bayescom:mercury-sdk:4.6.4'
+    compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
+
     // 强制使用1.5.0版本，避免使用1.7.0（导致编译报错：android:attr/lStar not found）
     implementation('androidx.core:core:1.5.0') {
         force = true
