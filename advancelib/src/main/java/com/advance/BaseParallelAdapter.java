@@ -1,11 +1,9 @@
 package com.advance;
 
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
-import static com.advance.net.AdvanceReport.replaceParameter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.advance.core.srender.AdvanceRFADData;
@@ -22,7 +20,6 @@ import com.advance.model.SdkSupplier;
 import com.advance.model.SupplierSettingModel;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 
@@ -404,16 +401,19 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
     private void reportLoaded() {
         try {
             if (sdkSupplier != null) {
+                ArrayList<String> tks = sdkSupplier.loadedtk;
 
+                if (tks != null) {
+                    for (String tk : tks) {
+                        String tag = "SDK 启动";
+                        tk = AdvanceReport.reportReplacedCommon(tk, this, tag);
+                        //todo 存在缓存时，额外增加埋点信息上报
+                        if (cacheModel != null) {
 
-                String reqid = baseSetting == null ? "" : baseSetting.getAdvanceId();
-                long reqTime = baseSetting == null ? 0 : baseSetting.getRequestTime();
-                ArrayList<String> ltk = baseSetting == null ? AdvanceReport.getReplacedTime(sdkSupplier.loadedtk, reqid) : AdvanceReport.getReplacedLoaded(sdkSupplier.loadedtk, reqTime, reqid);
-                //todo 存在缓存时，额外增加埋点信息上报
-                if (cacheModel != null) {
-
+                        }
+                        AdvanceReport.startReport(tk);
+                    }
                 }
-                switchReport(ltk);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -428,31 +428,15 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
 
                 if (startTKS != null)
                     for (String tk : startTKS) {
-                        if (BYStringUtil.isNotEmpty(tk)) {
+                        String tag = "SDK start";
+                        tk = AdvanceReport.reportReplacedCommon(tk, this, tag);
+                        //todo 存在缓存时，额外增加埋点信息上报
+                        if (cacheModel != null) {
 
-                            String reqid = baseSetting == null ? "" : baseSetting.getAdvanceId();
-                            long reqTime = baseSetting == null ? 0 : baseSetting.getRequestTime();
-                            long cost = System.currentTimeMillis() - reqTime;
-                            LogUtil.high("聚合启动到SDK start耗时：" + cost + "ms");
-                            tk = tk.replace("__TIME__", "" + System.currentTimeMillis());
-                            //添加时长
-                            if (tk.contains("track_time")) {
-                                tk = tk + "&t_msg=l_" + cost;
-                            }
-                            //todo 替换reqid是否必要？？？
-                            if (!TextUtils.isEmpty(reqid)) {
-                                tk = replaceParameter(tk, AdvanceConstant.URL_REQID_TAG, reqid);
-                            }
-                            //todo 存在缓存时，额外增加埋点信息上报
-                            if (cacheModel != null) {
-
-                            }
-
-                            AdvanceReport.startReport(tk);
                         }
+                        //发起上报
+                        AdvanceReport.startReport(tk);
                     }
-
-
             }
         } catch (Throwable e) {
             e.printStackTrace();

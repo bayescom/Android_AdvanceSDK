@@ -8,7 +8,9 @@ import com.advance.AdvanceNativeExpressAdItem;
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYLog;
 import com.bykv.vk.openvk.TTNtExpressObject;
 import com.bykv.vk.openvk.TTVfDislike;
@@ -53,6 +55,20 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
     }
 
     private void startLoad() {
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTNtExpressObject.class, new BYAbsCallBack<TTNtExpressObject>() {
+            @Override
+            public void invoke(TTNtExpressObject cacheAD) {
+                ttNativeExpressAd = cacheAD;
+                updateBidding(CsjUtil.getEcpmValue(TAG, ttNativeExpressAd.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
+        
         final TTVfManager ttAdManager = TTVfSdk.getVfManager();
 
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
@@ -115,7 +131,7 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
                 }
                 updateBidding(CsjUtil.getEcpmValue(TAG, ttNativeExpressAd.getMediaExtraInfo()));
 
-                handleSucceed();
+                handleSucceed(ttNativeExpressAd);
 
 
             }

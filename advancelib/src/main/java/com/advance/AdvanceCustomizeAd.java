@@ -64,6 +64,7 @@ public class AdvanceCustomizeAd extends AdvanceBaseAdspot implements BaseAdEvent
             suppliers = currentGroupInf.paraSupplierMembers;
             currentSdkSupplier = suppliers.get(0);
             suppliers.remove(0);
+            //单渠道加载时，此处会重复上报
             reportAdvanceLoaded();
             LogUtil.simple("selected sdk id:" + currentSdkSupplier.id);
             if (null != customizeSupplierListener) {

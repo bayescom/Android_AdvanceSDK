@@ -18,6 +18,7 @@ import com.advance.core.srender.AdvanceRFVideoOption;
 import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.BaiduNativeManager;
 import com.baidu.mobads.sdk.api.ExpressResponse;
@@ -27,6 +28,7 @@ import com.baidu.mobads.sdk.api.RequestParameters;
 import com.baidu.mobads.sdk.api.XAdNativeResponse;
 import com.baidu.mobads.sdk.api.XNativeView;
 import com.bayes.sdk.basic.device.BYDisplay;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.mercury.sdk.util.MercuryTool;
 
@@ -55,9 +57,26 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
+        BDUtil.initBDAccount(this);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDRenderFeedAdapter.class, new BYAbsCallBack<BDRenderFeedAdapter>() {
+            @Override
+            public void invoke(BDRenderFeedAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(BDUtil.getEcpmValue(cacheAdapter.nativeResponseAD.getECPMLevel()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
 
         if (sdkSupplier != null) {
-            BDUtil.initBDAccount(this);
 
             /**
              * Step 1. 创建BaiduNative对象，参数分别为： 上下文context，广告位ID
@@ -105,7 +124,7 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                                 e.printStackTrace();
                             }
 
-                            handleSucceed();
+                            handleSucceed(BDRenderFeedAdapter.this);
                         }
                     } catch (Throwable e) {
                         e.printStackTrace();

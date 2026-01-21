@@ -5,7 +5,9 @@ import android.app.Activity;
 import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialAD;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialADListener;
@@ -42,7 +44,7 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
             if (iad != null) {
                 updateBidding(iad.getECPM());
             }
-            handleSucceed();
+            handleSucceed(this);
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
@@ -140,7 +142,24 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
         GdtUtil.initAD(this);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtFullScreenVideoAdapter.class, new BYAbsCallBack<GdtFullScreenVideoAdapter>() {
+            @Override
+            public void invoke(GdtFullScreenVideoAdapter cacheAdapter) {
+                //更新缓存广告得价格
+                updateBidding(cacheAdapter.iad.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
 
         iad = new UnifiedInterstitialAD(activity, sdkSupplier.adspotid, this);
         //用来获取视频时长

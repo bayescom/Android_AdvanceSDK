@@ -8,8 +8,10 @@ import com.advance.AdvanceConfig;
 import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bykv.vk.openvk.TTNtExpressObject;
 import com.bykv.vk.openvk.TTVfDislike;
 import com.bykv.vk.openvk.TTVfManager;
@@ -65,7 +67,7 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTVf
 
             updateBidding(CsjUtil.getEcpmValue(TAG, ad.getMediaExtraInfo()));
 
-            handleSucceed();
+            handleSucceed(ad);
         } catch (Throwable e) {
             e.printStackTrace();
             doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
@@ -185,6 +187,17 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTVf
     }
 
     private void startLoad() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTNtExpressObject.class, new BYAbsCallBack<TTNtExpressObject>() {
+            @Override
+            public void invoke(TTNtExpressObject cacheAD) {
+                ad = cacheAD;
+                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
         final TTVfManager ttAdManager = TTVfSdk.getVfManager();
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
             ttAdManager.requestPermissionIfNecessary(activity);

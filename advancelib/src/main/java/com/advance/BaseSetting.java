@@ -34,4 +34,6 @@ public interface BaseSetting {
 
     boolean isLoadAsync();//是否异步线程中 load
 //    boolean isCurrentGroupTimeOut();
+
+    void replaceCacheAdapter(String key,BaseParallelAdapter adapter);
 }

@@ -7,7 +7,9 @@ import com.advance.AdvanceConfig;
 import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bykv.vk.openvk.TTFullVideoObject;
 import com.bykv.vk.openvk.TTVfConstant;
 import com.bykv.vk.openvk.TTVfManager;
@@ -53,6 +55,18 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     }
 
     private void startLoad() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTFullVideoObject.class, new BYAbsCallBack<TTFullVideoObject>() {
+            @Override
+            public void invoke(TTFullVideoObject cacheAD) {
+                ttFullScreenVideoAd = cacheAD;
+                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
         //step1:初始化sdk
         final TTVfManager ttAdManager = TTVfSdk.getVfManager();
 
@@ -121,7 +135,7 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
             }
             updateBidding(CsjUtil.getEcpmValue(TAG, ttFullScreenVideoAd.getMediaExtraInfo()));
 
-            handleSucceed();
+            handleSucceed(ttFullScreenVideoAd);
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));

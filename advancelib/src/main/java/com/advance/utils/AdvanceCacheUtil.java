@@ -128,7 +128,10 @@ public class AdvanceCacheUtil {
     }
 
 
-    //返回true代表load时，使用缓存的数据，false为不使用缓存数据
+    /**
+     * 缓存SDK广告实现类的方式
+     * 返回true代表load时，使用缓存的数据，false为不使用缓存数据
+     */
     public static <T> boolean loadWithCacheData(BaseParallelAdapter adapter, Class<T> tClass, BYAbsCallBack<T> callBack) {
         boolean result = false;
         try {
@@ -144,9 +147,65 @@ public class AdvanceCacheUtil {
 
                         adapter.sdkSupplier.useCachedSDK = true;
 
-                        //此处回调出去，用来进行bidding价格更新操作。
-                        if (callBack != null) {
-                            callBack.invoke(cacheData);
+                        try {
+                            //此处回调出去，用来进行bidding价格更新操作。
+                            if (callBack != null) {
+                                callBack.invoke(cacheData);
+                            }
+                        } catch (Exception e) {
+                        }
+                        adapter.handleSucceed(null);
+
+                        LogUtil.d(TAG + "loadWithCacheData 将使用缓存的广告");
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LogUtil.d(TAG + "loadWithCacheData 异常");
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+    /**
+     * 缓存adapter类的方式
+     * 返回true代表load时，使用缓存的数据，false为不使用缓存数据
+     */
+    public static <T extends BaseParallelAdapter> boolean loadWithCacheAdapter(BaseParallelAdapter adapter, Class<T> tClass, BYAbsCallBack<T> callBack) {
+        boolean result = false;
+        try {
+            if (adapter != null) {
+                AdvanceSDKCacheModel cacheModel = adapter.getCacheModel();
+                if (cacheModel != null) {
+                    Object cacheValue = cacheModel.cacheValue;
+
+                    //转换为具体广告data
+                    if (tClass.isInstance(cacheValue)) {
+                        T cacheData = tClass.cast(cacheValue);
+
+                        adapter.sdkSupplier.useCachedSDK = true;
+
+                        try {
+                            if (cacheData != null) {
+                                //此处回调出去，用来进行bidding价格更新操作。
+                                if (callBack != null) {
+                                    callBack.invoke(cacheData);
+                                }
+
+                                //替换缓存adapter得渠道参数信息为新的，这样在收到回调事件时上报时会使用新tk地址
+                                cacheData.sdkSupplier = adapter.sdkSupplier;
+
+                                //替换执行策略中得adapter
+                                if (adapter.baseSetting != null) {
+                                    //置换桥接类
+                                    cacheData.baseSetting = adapter.baseSetting;
+                                    //置换实现adapter
+                                    adapter.baseSetting.replaceCacheAdapter(adapter.sdkSupplier.priority + "", cacheData);
+                                }
+                            }
+                        } catch (Exception e) {
                         }
                         adapter.handleSucceed(null);
 

@@ -5,8 +5,10 @@ import android.app.Activity;
 import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.FullScreenVideoAd;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
 public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements FullScreenVideoAd.FullScreenVideoAdListener {
     private FullScreenVideoSetting advanceFullScreenVideo;
@@ -21,7 +23,24 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
         BDUtil.initBDAccount(this);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDFullScreenVideoAdapter.class, new BYAbsCallBack<BDFullScreenVideoAdapter>() {
+            @Override
+            public void invoke(BDFullScreenVideoAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(BDUtil.getEcpmValue(cacheAdapter.mFullScreenVideoAd.getECPMLevel()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
 
         // 全屏视频产品可以选择是否使用SurfaceView进行渲染视频
         mFullScreenVideoAd = new FullScreenVideoAd(activity, sdkSupplier.adspotid
@@ -140,7 +159,7 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        handleSucceed();
+        handleSucceed(this);
     }
 
 //    @Override

@@ -7,8 +7,10 @@ import android.widget.RelativeLayout;
 import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.qq.e.ads.banner2.UnifiedBannerADListener;
 import com.qq.e.ads.banner2.UnifiedBannerView;
 import com.qq.e.comm.util.AdError;
@@ -78,7 +80,7 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
             if (bv != null) {
                 updateBidding(bv.getECPM());
             }
-            handleSucceed();
+            handleSucceed(this);
         } catch (Throwable e) {
             e.printStackTrace();
 //            if (advanceBanner != null)
@@ -120,7 +122,24 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
         GdtUtil.initAD(this);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtBannerAdapter.class, new BYAbsCallBack<GdtBannerAdapter>() {
+            @Override
+            public void invoke(GdtBannerAdapter cacheAdapter) {
+                //更新缓存广告得价格
+                updateBidding(cacheAdapter.bv.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         bv = new UnifiedBannerView(activity, sdkSupplier.adspotid, this);
         if (advanceBanner != null) {
             int refreshValue = advanceBanner.getRefreshInterval();

@@ -8,13 +8,17 @@ import android.text.TextUtils;
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceConstant;
 import com.advance.AdvanceSetting;
+import com.advance.BaseParallelAdapter;
+import com.advance.BaseSetting;
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
+import com.advance.model.AdvanceSDKCacheModel;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDevice;
 import com.bayes.sdk.basic.net.BYNetRequest;
 import com.bayes.sdk.basic.net.BYReqCallBack;
 import com.bayes.sdk.basic.net.BYReqModel;
+import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 
 import org.json.JSONObject;
@@ -313,6 +317,37 @@ public class AdvanceReport {
         }
     }
 
+    public static String reportReplacedCommon(String tk, BaseParallelAdapter adapter, String tag) {
+        try {
+            if (BYStringUtil.isNotEmpty(tk) && adapter != null) {
+                BaseSetting baseSetting = adapter.baseSetting;
+                String reqid = baseSetting == null ? "" : baseSetting.getAdvanceId();
+                long reqTime = baseSetting == null ? 0 : baseSetting.getRequestTime();
+                long cost = System.currentTimeMillis() - reqTime;
+                LogUtil.high("聚合启动到" + tag + "耗时：" + cost + "ms");
+                tk = tk.replace("__TIME__", "" + System.currentTimeMillis());
+                //添加时长
+                if (tk.contains("track_time")) {
+                    tk = tk + "&t_msg=l_" + cost;
+                }
+                //替换reqid 后
+                if (!TextUtils.isEmpty(reqid)) {
+                    tk = replaceParameter(tk, AdvanceConstant.URL_REQID_TAG, reqid);
+                }
+                //todo 存在缓存时，额外增加埋点信息上报
+                AdvanceSDKCacheModel cacheModel = adapter.getCacheModel();
+                if (cacheModel != null) {
+
+                }
+                AdvanceReport.startReport(tk);
+                return tk;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return tk;
+    }
+
 
     /**
      * 替换链接中部分参数的值
@@ -324,10 +359,10 @@ public class AdvanceReport {
      */
     public static String replaceParameter(String url, String key, String value) {
         try {
-            LogUtil.devDebug("replaceParameter start : key = "+ key + " , value = "+ value + " , url = "+url);
+            LogUtil.devDebug("replaceParameter start : key = " + key + " , value = " + value + " , url = " + url);
             if (!TextUtils.isEmpty(url) && !TextUtils.isEmpty(key)) {
                 url = url.replaceAll("(" + key + "=[^&]*)", key + "=" + value);
-                LogUtil.devDebug("replaceParameter finish : url = "+ url );
+                LogUtil.devDebug("replaceParameter finish : url = " + url);
             }
         } catch (Throwable e) {
             e.printStackTrace();

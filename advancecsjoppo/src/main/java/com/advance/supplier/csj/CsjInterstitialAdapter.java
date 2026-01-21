@@ -6,7 +6,9 @@ import com.advance.AdvanceConfig;
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bykv.vk.openvk.TTFullVideoObject;
 import com.bykv.vk.openvk.TTVfConstant;
 import com.bykv.vk.openvk.TTVfManager;
@@ -42,6 +44,37 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 //                }, 1000);
 //                return;
 //            }
+            newVersionAd.setFullScreenVideoAdInteractionListener(new TTFullVideoObject.FullVideoVsInteractionListener() {
+                @Override
+                public void onShow() {
+                    LogUtil.simple(TAG + "newVersionAd onAdShow");
+                    handleShow();
+                }
+
+                @Override
+                public void onVideoBarClick() {
+                    LogUtil.simple(TAG + "newVersionAd onAdVideoBarClick");
+                    handleClick();
+                }
+
+                @Override
+                public void onClose() {
+                    LogUtil.simple(TAG + "newVersionAd onAdClose");
+
+                    if (advanceInterstitial != null)
+                        advanceInterstitial.adapterDidClosed();
+                }
+
+                @Override
+                public void onVideoComplete() {
+                    LogUtil.simple(TAG + "newVersionAd onVideoComplete");
+                }
+
+                @Override
+                public void onSkippedVideo() {
+                    LogUtil.simple(TAG + "newVersionAd onSkippedVideo");
+                }
+            });
             String nullTip = TAG + "请先加载广告或者广告已经展示过";
             if (newVersionAd != null) {
                 newVersionAd.showFullVideoVs(activity, TTVfConstant.RitScenes.GAME_GIFT_BONUS, null);
@@ -88,6 +121,17 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     private void startLoad() {
 
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTFullVideoObject.class, new BYAbsCallBack<TTFullVideoObject>() {
+            @Override
+            public void invoke(TTFullVideoObject cacheAD) {
+                newVersionAd = cacheAD;
+                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
         final TTVfManager ttAdManager = TTVfSdk.getVfManager();
 
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
@@ -120,38 +164,8 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
                     updateBidding(CsjUtil.getEcpmValue(TAG, newVersionAd.getMediaExtraInfo()));
 
-                    newVersionAd.setFullScreenVideoAdInteractionListener(new TTFullVideoObject.FullVideoVsInteractionListener() {
-                        @Override
-                        public void onShow() {
-                            LogUtil.simple(TAG + "newVersionAd onAdShow");
-                            handleShow();
-                        }
 
-                        @Override
-                        public void onVideoBarClick() {
-                            LogUtil.simple(TAG + "newVersionAd onAdVideoBarClick");
-                            handleClick();
-                        }
-
-                        @Override
-                        public void onClose() {
-                            LogUtil.simple(TAG + "newVersionAd onAdClose");
-
-                            if (advanceInterstitial != null)
-                                advanceInterstitial.adapterDidClosed();
-                        }
-
-                        @Override
-                        public void onVideoComplete() {
-                            LogUtil.simple(TAG + "newVersionAd onVideoComplete");
-                        }
-
-                        @Override
-                        public void onSkippedVideo() {
-                            LogUtil.simple(TAG + "newVersionAd onSkippedVideo");
-                        }
-                    });
-                    handleSucceed();
+                    handleSucceed(newVersionAd);
 
                 } catch (Throwable e) {
                     e.printStackTrace();

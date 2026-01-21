@@ -1,5 +1,7 @@
 package com.advance.advancesdkdemo;
 
+import static com.advance.advancesdkdemo.util.DemoUtil.logAndToast;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
@@ -10,7 +12,10 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.advance.AdvanceSplash;
+import com.advance.AdvanceSplashListener;
 import com.advance.advancesdkdemo.util.DemoManger;
+import com.advance.model.AdvanceError;
 
 import java.lang.reflect.Field;
 
@@ -19,27 +24,86 @@ public class SplashActivity extends Activity {
     TextView skipView;
     FrameLayout adContainer;
     private String TAG = "SplashActivity";
-    AdvanceAD ad;
+    AdvanceSplash advanceSplash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //oppo广告必须要全屏展示才行
-        fullScreenAndSetContent(this,R.layout.activity_splash_custom_logo,false);
+        fullScreenAndSetContent(this, R.layout.activity_splash_custom_logo, false);
         adContainer = findViewById(R.id.splash_container);
         skipView = findViewById(R.id.skip_view);
 
 
-        /**
-         * 加载并展示开屏广告
-         */
-        ad = new AdvanceAD(this);
-        ad.loadSplash(DemoManger.getInstance().currentDemoIds.splash, adContainer, new AdvanceAD.SplashCallBack() {
+        loadAD(null);
+    }
+
+    /**
+     * 展示开屏广告
+     */
+    public void showAD(View v) {
+
+        advanceSplash.show();
+    }
+
+    public void loadAD(View v) {
+
+        //开屏初始化；adspotId代表广告位id，adContainer为广告容器，skipView不需要自定义可以为null
+        advanceSplash = new AdvanceSplash(this, DemoManger.getInstance().currentDemoIds.splash, adContainer, null);
+        //注意！！：如果开屏页是fragment或者dialog实现，这里需要置为true。不设置时默认值为false，代表开屏和首页为两个不同的activity
+//        advanceSplash.setShowInSingleActivity(true);
+//        按需：设置底部logo布局及高度值（单位px）
+//        advanceSplash.setLogoLayout(R.layout.splash_logo_layout, mActivity.getResources().getDimensionPixelSize(R.dimen.logo_layout_height));
+        //必须：设置开屏核心回调事件的监听器。
+        advanceSplash.setAdListener(new AdvanceSplashListener() {
+            /**
+             * @param id 代表当前被选中的策略id，值为"1" 代表mercury策略 ，值为"2" 代表广点通策略， 值为"3" 代表穿山甲策略
+             */
             @Override
-            public void jumpMain() {
+            public void onSdkSelected(String id) {
+
+            }
+
+            @Override
+            public void onAdLoaded() {
+
+                logAndToast("广告加载成功");
+            }
+
+            @Override
+            public void jumpToMain() {
+//                1; //广告执行失败，对应onAdFailed回调
+//                2; //用户点击了广告跳过，对应旧onAdSkip回调
+//                3; //广告倒计时结束，对应旧onAdTimeOver回调
+                int jumpType = 0;
+                if (advanceSplash != null) {
+                    jumpType = advanceSplash.getJumpType();
+                }
+                logAndToast("跳转首页,jumpType = " + jumpType);
+
                 goToMainActivity();
             }
+
+            @Override
+            public void onAdShow() {
+                logAndToast("广告展示成功");
+            }
+
+            @Override
+            public void onAdFailed(AdvanceError advanceError) {
+                logAndToast("广告加载失败 code=" + advanceError.code + " msg=" + advanceError.msg);
+            }
+
+            @Override
+            public void onAdClicked() {
+                logAndToast("广告点击");
+            }
+
         });
+        //自定义adn必须添加，未支持得sdkID具体值需联系我们获取，不得和现有sdkID重复
+//        advanceSplash.addCustomSupplier("自定义得sdkID，请联系我们获取","com.advance.supplier.custom.CustomADNYLHSplashAdapter");
+        //必须：请求广告
+        advanceSplash.loadOnly();
     }
 
     /**

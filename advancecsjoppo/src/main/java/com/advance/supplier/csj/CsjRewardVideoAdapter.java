@@ -8,7 +8,9 @@ import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bykv.vk.openvk.TTRdVideoObject;
 import com.bykv.vk.openvk.TTVfManager;
 import com.bykv.vk.openvk.TTVfNative;
@@ -60,7 +62,7 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
 
             updateBidding(CsjUtil.getEcpmValue(TAG, ttRewardVideoAd.getMediaExtraInfo()));
 
-            handleSucceed();
+            handleSucceed(ttRewardVideoAd);
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
@@ -216,6 +218,19 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     }
 
     private void startLoad() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTRdVideoObject.class, new BYAbsCallBack<TTRdVideoObject>() {
+            @Override
+            public void invoke(TTRdVideoObject cacheAD) {
+                ttRewardVideoAd = cacheAD;
+
+                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
         final TTVfManager ttAdManager = TTVfSdk.getVfManager();
 
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {

@@ -178,7 +178,7 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
     private void reportCloseEvent() {
         try {
             if (adStatus == AdStatus.DEFAULT || adStatus == AdStatus.START) {//广告仍在请求中、页面被关闭属于强关？
-                String msg = "检测到app强关事件";
+                String msg = "检测到app强关事件 ，adStatus = "+ adStatus;
                 LogUtil.devDebug(TAG + msg);
                 AdvanceReportModel report = new AdvanceReportModel();
                 report.code = AdvanceConstant.TRACE_SPLASH_FORCE_CLOSE;

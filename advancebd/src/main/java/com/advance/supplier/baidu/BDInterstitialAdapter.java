@@ -8,9 +8,11 @@ import android.app.Activity;
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.ExpressInterstitialAd;
 import com.baidu.mobads.sdk.api.ExpressInterstitialListener;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
 public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter implements ExpressInterstitialListener {
     private final InterstitialSetting setting;
@@ -24,8 +26,26 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    
+    public void loadAd() {
+        BDUtil.initBDAccount(this);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDInterstitialAdapter.class, new BYAbsCallBack<BDInterstitialAdapter>() {
+            @Override
+            public void invoke(BDInterstitialAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(BDUtil.getEcpmValue(cacheAdapter.mInterAd.getECPMLevel()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
         if (sdkSupplier != null) {
-            BDUtil.initBDAccount(this);
 
             String adPlaceId = sdkSupplier.adspotid;
             mInterAd = new ExpressInterstitialAd(activity, adPlaceId);
@@ -97,7 +117,7 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        handleSucceed();
+        handleSucceed(this);
     }
 
     @Override

@@ -8,8 +8,10 @@ import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.RewardVideoAd;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
 
 public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements RewardVideoAd.RewardVideoAdListener {
@@ -24,7 +26,24 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
         BDUtil.initBDAccount(this);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDRewardAdapter.class, new BYAbsCallBack<BDRewardAdapter>() {
+            @Override
+            public void invoke(BDRewardAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(BDUtil.getEcpmValue(cacheAdapter.mRewardVideoAd.getECPMLevel()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
 
         mRewardVideoAd = new RewardVideoAd(getRealContext(), sdkSupplier.adspotid, this, AdvanceBDManager.getInstance().rewardUseSurfaceView);
         //服务端校验透传参数
@@ -165,7 +184,7 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        handleSucceed();
+        handleSucceed(this);
     }
 
     @Override

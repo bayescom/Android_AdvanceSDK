@@ -7,7 +7,9 @@ import com.advance.AdvanceNativeExpressAdItem;
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.qq.e.ads.cfg.DownAPPConfirmPolicy;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.nativ.ADSize;
@@ -38,7 +40,23 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
         GdtUtil.initAD(this);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtNativeExpressAdapter.class, new BYAbsCallBack<GdtNativeExpressAdapter>() {
+            @Override
+            public void invoke(GdtNativeExpressAdapter cacheAdapter) {
+                //更新缓存广告得价格
+                updateBidding(cacheAdapter.adView.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
 
         int width = advanceNativeExpress.getExpressViewWidth();
         int height = advanceNativeExpress.getExpressViewHeight();
@@ -148,7 +166,7 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         }
         updateBidding(adView.getECPM());
 
-        handleSucceed();
+        handleSucceed(this);
     }
 
 

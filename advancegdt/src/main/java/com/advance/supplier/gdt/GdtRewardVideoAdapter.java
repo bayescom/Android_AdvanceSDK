@@ -7,7 +7,9 @@ import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.qq.e.ads.rewardvideo.RewardVideoAD;
 import com.qq.e.ads.rewardvideo.RewardVideoADListener;
 import com.qq.e.ads.rewardvideo.ServerSideVerificationOptions;
@@ -45,7 +47,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
             if (rewardVideoAD != null) {
                 updateBidding(rewardVideoAD.getECPM());
             }
-            handleSucceed();
+            handleSucceed(this);
 
         } catch (Throwable e) {
             e.printStackTrace();
@@ -202,7 +204,24 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
 
     @Override
     public void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
         GdtUtil.initAD(this);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtRewardVideoAdapter.class, new BYAbsCallBack<GdtRewardVideoAdapter>() {
+            @Override
+            public void invoke(GdtRewardVideoAdapter cacheAdapter) {
+                //更新缓存广告得价格
+                updateBidding(cacheAdapter.rewardVideoAD.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
 
         boolean vo = false;
         String userId = "";

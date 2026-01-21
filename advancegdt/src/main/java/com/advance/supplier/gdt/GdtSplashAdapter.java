@@ -12,7 +12,9 @@ import com.advance.AdvanceSetting;
 import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.qq.e.ads.splash.SplashAD;
 import com.qq.e.ads.splash.SplashADListener;
 import com.qq.e.comm.util.AdError;
@@ -23,8 +25,8 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
 
     private long remainTime = 5000;
     private boolean isClicked = false;
-    private SplashAD splashAD;
-    private final String TAG = "[GdtSplashAdapter] ";
+    protected SplashAD splashAD;
+    private final String TAG = "[GdtSplashAdapter:" + this + "] ";
 
     public GdtSplashAdapter(SoftReference<Activity> activity, SplashSetting setting) {
         super(activity, setting);
@@ -78,11 +80,8 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
     @Override
     public void paraLoadAd() {
         initAD();
-        LogUtil.simple(TAG + "fetchAdOnly ");
 
-        if (splashAD != null) {
-            splashAD.fetchAdOnly();
-        }
+        reportStart();
     }
 
     //调用展示方法
@@ -120,9 +119,23 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     private void initAD() {
+        GdtUtil.initAD(this);
+
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtSplashAdapter.class, new BYAbsCallBack<GdtSplashAdapter>() {
+            @Override
+            public void invoke(GdtSplashAdapter cacheAdapter) {
+                //更新缓存广告得价格
+                updateBidding(cacheAdapter.splashAD.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         initVis();
 
-        GdtUtil.initAD(this);
 
         int timeout = sdkSupplier.timeout <= 0 ? 5000 : sdkSupplier.timeout;
 
@@ -237,7 +250,7 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
 //                        }
                     }
 
-                    handleSucceed();
+                    handleSucceed(GdtSplashAdapter.this);
                     long rt = SystemClock.elapsedRealtime();
                     long expire = expireTimestamp - rt;
                     LogUtil.high(TAG + "ad will expired in :" + expire + " ms");
@@ -251,6 +264,12 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
         };
 //        splashAD.setDownloadConfirmListener();
         splashAD = new SplashAD(getRealContext(), sdkSupplier.adspotid, listener, timeout);
+
+        LogUtil.simple(TAG + "fetchAdOnly ");
+
+        if (splashAD != null) {
+            splashAD.fetchAdOnly();
+        }
     }
 
     private void zoomOut() {

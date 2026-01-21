@@ -5,7 +5,9 @@ import android.app.Activity;
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialAD;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialADListener;
 import com.qq.e.comm.constants.AdPatternType;
@@ -59,7 +61,7 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
             if (interstitialAD != null) {
                 updateBidding(interstitialAD.getECPM());
             }
-            handleSucceed();
+            handleSucceed(this);
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
@@ -137,7 +139,23 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
         GdtUtil.initAD(this);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtInterstitialAdapter.class, new BYAbsCallBack<GdtInterstitialAdapter>() {
+            @Override
+            public void invoke(GdtInterstitialAdapter cacheAdapter) {
+                //更新缓存广告得价格
+                updateBidding(cacheAdapter.interstitialAD.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
 
         interstitialAD = new UnifiedInterstitialAD(activity, sdkSupplier.adspotid, this);
         interstitialAD.loadAD();

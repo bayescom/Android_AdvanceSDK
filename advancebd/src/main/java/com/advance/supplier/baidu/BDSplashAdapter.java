@@ -11,10 +11,12 @@ import android.widget.TextView;
 import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.RequestParameters;
 import com.baidu.mobads.sdk.api.SplashAd;
 import com.baidu.mobads.sdk.api.SplashInteractionListener;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 
 import java.lang.ref.SoftReference;
@@ -33,12 +35,26 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
 
     @Override
     protected void paraLoadAd() {
-        initSplash();
-        splashAd.load();
+        loadAd();
+        reportStart();
     }
-
-    private void initSplash() {
+    
+    public void loadAd() {
         BDUtil.initBDAccount(this);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDSplashAdapter.class, new BYAbsCallBack<BDSplashAdapter>() {
+            @Override
+            public void invoke(BDSplashAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(BDUtil.getEcpmValue(cacheAdapter.splashAd.getECPMLevel()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
 
         splashAd = new SplashAd(BYUtil.getCtx(), sdkSupplier.adspotid, parameters, this);
         //设置广告的底价，单位：分（仅支持bidding模式，需通过运营单独加白）
@@ -46,6 +62,7 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
         if (bidFloor > 0) {
             splashAd.setBidFloor(bidFloor);
         }
+        splashAd.load();
     }
 
     @Override
@@ -76,8 +93,8 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
     @Override
     public void orderLoadAd() {
         try {
-            initSplash();
-            splashAd.loadAndShow(splashSetting.getAdContainer());
+            paraLoadAd();
+             
         } catch (Throwable e) {
             e.printStackTrace();
             String tag = TAG + "Throwable ";
@@ -152,7 +169,7 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        handleSucceed();
+        handleSucceed(this);
     }
 
     @Override

@@ -97,7 +97,7 @@ package com.advance.supplier.baidu;//package com.advance.supplier.baidu;
 ////        if (setting!=null){
 ////            setting.getContainer().removeAllViews();
 ////        }
-//        handleSucceed();
+//        handleSucceed(this);
 //    }
 //
 //    @Override

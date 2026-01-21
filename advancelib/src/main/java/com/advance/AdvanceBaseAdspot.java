@@ -8,8 +8,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
 import android.view.View;
 
@@ -300,6 +302,18 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     @Override
     public boolean isLoadAsync() {
         return loadWithAsync;
+    }
+
+    @Override
+    public void replaceCacheAdapter(String key, BaseParallelAdapter adapter) {
+        if (supplierAdapters != null && !supplierAdapters.isEmpty()) {
+            if (supplierAdapters.containsKey(key)) {
+                BaseParallelAdapter oldAdapter = supplierAdapters.get(key);
+                supplierAdapters.put(key, adapter);
+                BaseParallelAdapter newAdapter = supplierAdapters.get(key);
+                LogUtil.devDebug(BTAG + "尝试替换执行adapter类为缓存类 , oldAdapter = " + oldAdapter + ", newAdapter = " + newAdapter);
+            }
+        }
     }
 
     @Override
@@ -1468,6 +1482,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     void reportAdShow(SdkSupplier supplier) {
         try {
             adStatus = AdStatus.SHOW;
+            LogUtil.devDebug(BTAG+"reportAdShow adStatus = "+ adStatus);
             if (supplier != null) {
                 ArrayList<String> imp;
                 //bidding渠道需要记录价格，上报至服务端

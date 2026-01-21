@@ -16,7 +16,9 @@ import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.nativ.MediaView;
 import com.qq.e.ads.nativ.NativeADEventListener;
@@ -38,12 +40,14 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     public void orderLoadAd() {
-        doStart();
+        paraLoadAd();
     }
 
     @Override
     protected void paraLoadAd() {
         doStart();
+
+        reportStart();
     }
 
     @Override
@@ -71,8 +75,23 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private void doStart() {
         try {
             LogUtil.simple(TAG + "call load start ");
-
             GdtUtil.initAD(this);
+
+
+            //检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtRenderFeedAdapter.class, new BYAbsCallBack<GdtRenderFeedAdapter>() {
+                @Override
+                public void invoke(GdtRenderFeedAdapter cacheAdapter) {
+
+                    //更新缓存广告得价格
+                    updateBidding(cacheAdapter.mRenderAD.getECPM());
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+
+
             NativeUnifiedAD mAdManager = new NativeUnifiedAD(getRealActivity(null), sdkSupplier.adspotid, new NativeADUnifiedListener() {
                 @Override
                 public void onADLoaded(List<NativeUnifiedADData> list) {
@@ -93,7 +112,7 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                         dataConverter = new GdtRenderDataConverter(mRenderAD, sdkSupplier);
 
                         //标记广告成功
-                        handleSucceed();
+                        handleSucceed(GdtRenderFeedAdapter.this);
                         //通知广告成功
 //                        mAdvanceRFBridge.adapterDidLoaded(dataConverter);
                     } catch (Throwable e) {
