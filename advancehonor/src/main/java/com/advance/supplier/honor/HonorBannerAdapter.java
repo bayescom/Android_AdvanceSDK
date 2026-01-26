@@ -7,8 +7,10 @@ import android.widget.RelativeLayout;
 import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.hihonor.adsdk.banner.api.BannerAdLoad;
 import com.hihonor.adsdk.base.AdSlot;
 import com.hihonor.adsdk.base.api.banner.BannerAdLoadListener;
@@ -25,6 +27,8 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
+        
+        reportStart();
     }
 
     @Override
@@ -160,6 +164,19 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
     private void loadAd() {
         HonorUtil.initAD(this);
 
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, BannerExpressAd.class, new BYAbsCallBack<BannerExpressAd>() {
+            @Override
+            public void invoke(BannerExpressAd cacheAD) {
+                mBannerExpressAd = cacheAD;
+
+                updateBidding(HonorUtil.getECPM(mBannerExpressAd));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()
                 .setSlotId(sdkSupplier.adspotid) // 必传,设置您的广告位ID。
@@ -179,7 +196,7 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
 
                         updateBidding(HonorUtil.getECPM(mBannerExpressAd));
 
-                        handleSucceed();
+                        handleSucceed(mBannerExpressAd);
                     }
 
                     @Override

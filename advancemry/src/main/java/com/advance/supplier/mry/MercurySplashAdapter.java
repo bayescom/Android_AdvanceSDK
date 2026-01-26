@@ -8,8 +8,10 @@ import android.widget.TextView;
 import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.mercury.sdk.core.model.ADClickJumpInf;
 import com.mercury.sdk.core.splash.MercurySplashData;
 import com.mercury.sdk.core.splash.MercurySplashRenderListener;
@@ -120,10 +122,8 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
 
     public void orderLoadAd() {
         try {
-            initAD();
-            if (mercurySplash != null) {
-                mercurySplash.fetchAdOnly();
-            }
+            paraLoadAd();
+
         } catch (Throwable e) {
             e.printStackTrace();
             String tag = "MercurySplashAdapter Throwable ";
@@ -136,12 +136,12 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
     @Override
     public void paraLoadAd() {
         initAD();
+
+        reportStart();
 //        if (null != skipView) {
 //            skipView.setVisibility(View.VISIBLE);
 //        }
-        if (mercurySplash != null) {
-            mercurySplash.fetchAdOnly();
-        }
+
     }
 
 
@@ -161,6 +161,22 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
 
     private void initAD() {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
+        
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SplashAD.class, new BYAbsCallBack<SplashAD>() {
+            @Override
+            public void invoke(SplashAD cacheAD) {
+                mercurySplash = cacheAD;
+                //自渲染需要转换返回广告model为聚合通用model
+//                dataConverter = new KSRenderDataConverter(cacheAD, sdkSupplier);
+
+                updateBidding(cacheAD.getEcpm());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         int timeout = sdkSupplier.timeout <= 0 ? 5000 : sdkSupplier.timeout;
 //  2023/9/5 替换为分离加载模式
         mercurySplash = new SplashAD(getRealContext(), sdkSupplier.adspotid);
@@ -179,7 +195,7 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
-                handleSucceed();
+                handleSucceed(mercurySplash);
             }
 
             @Override
@@ -279,6 +295,9 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
                     mercurySplash.setSplashHolderImage(splashSetting.getHolderImage());
                 }
             }
+        }
+        if (mercurySplash != null) {
+            mercurySplash.fetchAdOnly();
         }
         //跳过载体要可见状态，不然如果载体设置了默认隐藏按钮会无法展示
 //        if (null != setting && setting.getGdtSkipContainer() != null) {

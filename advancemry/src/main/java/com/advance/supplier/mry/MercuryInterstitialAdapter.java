@@ -5,8 +5,10 @@ import android.app.Activity;
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.mercury.sdk.core.interstitial.InterstitialAD;
 import com.mercury.sdk.core.interstitial.InterstitialADListener;
 import com.mercury.sdk.util.ADError;
@@ -62,7 +64,7 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            handleSucceed();
+            handleSucceed(this);
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
@@ -128,7 +130,25 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryInterstitialAdapter.class, new BYAbsCallBack<MercuryInterstitialAdapter>() {
+            @Override
+            public void invoke(MercuryInterstitialAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(cacheAdapter.interstitialAD.getEcpm());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         boolean useNewAPI = true;
         if (sdkSupplier.versionTag == 1) {
             useNewAPI = false;

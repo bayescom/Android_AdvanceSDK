@@ -8,8 +8,10 @@ import android.widget.RelativeLayout;
 import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.widget.BYViewUtil;
 import com.huawei.hms.ads.AdListener;
 import com.huawei.hms.ads.AdParam;
@@ -34,6 +36,8 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
+
+        reportStart();
     }
 
     @Override
@@ -53,7 +57,7 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
 
     @Override
     public void orderLoadAd() {
-        loadAd();
+        paraLoadAd();
     }
 
     @Override
@@ -92,6 +96,20 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
         //先执行SDK初始化
         HWUtil.initAD(this);
 
+
+//检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWBannerAdapter.class, new BYAbsCallBack<HWBannerAdapter>() {
+            @Override
+            public void invoke(HWBannerAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(HWUtil.getPrice(cacheAdapter.bannerView.getBiddingInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         // Call new BannerView(Context context) to create a BannerView class.
         bannerView = new BannerView(getRealContext());
         // Set an ad slot ID.
@@ -125,7 +143,7 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
                     updateBidding(HWUtil.getPrice(bannerView.getBiddingInfo()));
                 }
 
-                handleSucceed();
+                handleSucceed(HWBannerAdapter.this);
             }
 
             @Override

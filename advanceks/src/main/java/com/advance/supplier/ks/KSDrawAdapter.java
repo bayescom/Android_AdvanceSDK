@@ -1,14 +1,18 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
+
 import androidx.annotation.Nullable;
+
 import android.view.View;
 
 import com.advance.AdvanceDrawSetting;
 import com.advance.custom.AdvanceDrawCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsDrawAd;
 import com.kwad.sdk.api.KsLoadManager;
@@ -45,6 +49,18 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
     }
 
     private void startLoad() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsDrawAd.class, new BYAbsCallBack<KsDrawAd>() {
+            @Override
+            public void invoke(KsDrawAd cacheAD) {
+                drawAD = cacheAD;
+                updateBidding(cacheAD.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         //场景设置
         KsScene scene = new KsScene.Builder(KSUtil.getADID(sdkSupplier)).build();
         KsAdSDK.getLoadManager().loadDrawAd(scene, new KsLoadManager.DrawAdListener() {
@@ -64,11 +80,10 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
                         handleFailed(AdvanceError.ERROR_DATA_NULL, "");
                     } else {
                         drawAD = list.get(0);
-                        //回调监听
-                        drawAD.setAdInteractionListener(KSDrawAdapter.this);
+
                         updateBidding(drawAD.getECPM());
 
-                        handleSucceed();
+                        handleSucceed(drawAD);
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
@@ -101,6 +116,9 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
             return;
         }
         try {
+            //回调监听
+            drawAD.setAdInteractionListener(KSDrawAdapter.this);
+
             View drawVideoView = drawAD.getDrawView(activity);
             if (isADViewAdded(drawVideoView)) {
 

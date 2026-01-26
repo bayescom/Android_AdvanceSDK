@@ -6,7 +6,9 @@ import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsInterstitialAd;
@@ -33,6 +35,9 @@ public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
     @Override
     public void show() {
         try {
+            //回调监听
+            interstitialAD.setAdInteractionListener(KSInterstitialAdapter.this);
+
             interstitialAD.showInterstitialAd(activity, AdvanceKSManager.getInstance().interstitialVideoConfig);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -60,6 +65,18 @@ public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
     }
 
     private void startLoad() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsInterstitialAd.class, new BYAbsCallBack<KsInterstitialAd>() {
+            @Override
+            public void invoke(KsInterstitialAd cacheAD) {
+                interstitialAD = cacheAD;
+                updateBidding(cacheAD.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
         //场景设置
         long adid = KSUtil.getADID(sdkSupplier);
         if (BYUtil.isDev()) {
@@ -92,11 +109,9 @@ public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
                                     handleFailed(AdvanceError.ERROR_DATA_NULL, "");
                                 } else {
                                     interstitialAD = list.get(0);
-                                    //回调监听
-                                    interstitialAD.setAdInteractionListener(KSInterstitialAdapter.this);
-
+                                  
                                     updateBidding(interstitialAD.getECPM());
-                                    handleSucceed();
+                                    handleSucceed(interstitialAD);
                                 }
                             } catch (Throwable e) {
                                 e.printStackTrace();

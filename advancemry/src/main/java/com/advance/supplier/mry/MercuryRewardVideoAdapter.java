@@ -6,8 +6,10 @@ import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.mercury.sdk.core.rewardvideo.MercuryRewardOptions;
 import com.mercury.sdk.core.rewardvideo.MercuryRewardResult;
 import com.mercury.sdk.core.rewardvideo.RewardVideoAD;
@@ -49,7 +51,7 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
             e.printStackTrace();
         }
 
-        handleSucceed();
+        handleSucceed(this);
 
 
     }
@@ -171,7 +173,25 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryRewardVideoAdapter.class, new BYAbsCallBack<MercuryRewardVideoAdapter>() {
+            @Override
+            public void invoke(MercuryRewardVideoAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(cacheAdapter.rewardVideoAD.getEcpm());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         rewardVideoAD = new RewardVideoAD(getRealContext(), sdkSupplier.adspotid, this);
         // (可选) 激励相关参数配置
         rewardVideoAD.setRewardOptions(new MercuryRewardOptions.Builder()

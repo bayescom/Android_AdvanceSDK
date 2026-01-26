@@ -5,7 +5,9 @@ import android.app.Activity;
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.hihonor.adsdk.base.AdSlot;
 import com.hihonor.adsdk.base.api.interstitial.InterstitialAdLoadListener;
 import com.hihonor.adsdk.base.api.interstitial.InterstitialExpressAd;
@@ -21,6 +23,8 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
+        
+        reportStart();
     }
 
     @Override
@@ -133,6 +137,19 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     private void loadAd() {
         HonorUtil.initAD(this);
 
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, InterstitialExpressAd.class, new BYAbsCallBack<InterstitialExpressAd>() {
+            @Override
+            public void invoke(InterstitialExpressAd cacheAD) {
+                mInterstitialExpressAd = cacheAD;
+
+                updateBidding(HonorUtil.getECPM(mInterstitialExpressAd));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()
                 .setSlotId(sdkSupplier.adspotid) // 必传,设置您的广告位ID。
@@ -150,7 +167,7 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
                         updateBidding(HonorUtil.getECPM(mInterstitialExpressAd));
 
-                        handleSucceed();
+                        handleSucceed(mInterstitialExpressAd);
                     }
 
                     @Override

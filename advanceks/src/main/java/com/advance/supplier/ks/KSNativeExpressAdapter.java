@@ -7,8 +7,10 @@ import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsAdVideoPlayConfig;
 import com.kwad.sdk.api.KsFeedAd;
@@ -53,6 +55,18 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     }
 
     private void startLoad() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsFeedAd.class, new BYAbsCallBack<KsFeedAd>() {
+            @Override
+            public void invoke(KsFeedAd cacheAD) {
+                ad = cacheAD;
+                updateBidding(cacheAD.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
         int num = sdkSupplier != null ? sdkSupplier.adCount : 1;
         KsScene.Builder builder = new KsScene.Builder(KSUtil.getADID(sdkSupplier)).adNum(num);
         try {
@@ -108,67 +122,58 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
                                 continue;
                             }
 
-                            try {
-                                //设置静音
-                                KsAdVideoPlayConfig nativeExpressConfig = AdvanceKSManager.getInstance().nativeExpressConfig;
-                                if (nativeExpressConfig == null) {
-                                    nativeExpressConfig = new KsAdVideoPlayConfig.Builder().videoSoundEnable(setting.isVideoMute()).build();
-                                }
-                                ad.setVideoPlayConfig(nativeExpressConfig);
-                            } catch (Throwable e) {
-                                e.printStackTrace();
-                            }
+
                             final KSNativeExpressItem advanceNativeExpressAdItem = new KSNativeExpressItem(activity, KSNativeExpressAdapter.this, adItem);
                             nativeExpressAdItemList.add(advanceNativeExpressAdItem);
-
-//                    提前设置监听器
-                            try {
-                                final View adview = adItem.getFeedView(activity);
-                                adItem.setAdInteractionListener(new KsFeedAd.AdInteractionListener() {
-                                    @Override
-                                    public void onAdClicked() {
-                                        LogUtil.simple(TAG + " onAdClicked ");
-                                        handleClick();
-                                    }
-
-                                    @Override
-                                    public void onAdShow() {
-                                        LogUtil.simple(TAG + " onAdShow ");
-
-                                        nativeExpressADView = adview;
-                                        handleShow();
-                                    }
-
-                                    @Override
-                                    public void onDislikeClicked() {
-                                        LogUtil.simple(TAG + " onDislikeClicked ");
-
-                                        if (setting != null) {
-                                            setting.adapterDidClosed(adview);
-                                        }
-                                        removeADView();
-                                    }
-
-                                    @Override
-                                    public void onDownloadTipsDialogShow() {
-                                        LogUtil.simple(TAG + " onDownloadTipsDialogShow ");
-
-                                    }
-
-                                    @Override
-                                    public void onDownloadTipsDialogDismiss() {
-                                        LogUtil.simple(TAG + " onDownloadTipsDialogDismiss ");
-
-                                    }
-                                });
-                            } catch (Throwable e) {
-                                e.printStackTrace();
-                            }
+//
+////                    提前设置监听器
+//                            try {
+//                                final View adview = adItem.getFeedView(activity);
+//                                adItem.setAdInteractionListener(new KsFeedAd.AdInteractionListener() {
+//                                    @Override
+//                                    public void onAdClicked() {
+//                                        LogUtil.simple(TAG + " onAdClicked ");
+//                                        handleClick();
+//                                    }
+//
+//                                    @Override
+//                                    public void onAdShow() {
+//                                        LogUtil.simple(TAG + " onAdShow ");
+//
+//                                        nativeExpressADView = adview;
+//                                        handleShow();
+//                                    }
+//
+//                                    @Override
+//                                    public void onDislikeClicked() {
+//                                        LogUtil.simple(TAG + " onDislikeClicked ");
+//
+//                                        if (setting != null) {
+//                                            setting.adapterDidClosed(adview);
+//                                        }
+//                                        removeADView();
+//                                    }
+//
+//                                    @Override
+//                                    public void onDownloadTipsDialogShow() {
+//                                        LogUtil.simple(TAG + " onDownloadTipsDialogShow ");
+//
+//                                    }
+//
+//                                    @Override
+//                                    public void onDownloadTipsDialogDismiss() {
+//                                        LogUtil.simple(TAG + " onDownloadTipsDialogDismiss ");
+//
+//                                    }
+//                                });
+//                            } catch (Throwable e) {
+//                                e.printStackTrace();
+//                            }
 
                         }
                         if (nativeExpressAdItemList != null && nativeExpressAdItemList.size() > 0 && ad != null) {
                             updateBidding(ad.getECPM());
-                            handleSucceed();
+                            handleSucceed(ad);
                         } else {
                             handleFailed(AdvanceError.ERROR_DATA_NULL, "nativeExpressAdItemList empty");
                         }
@@ -209,6 +214,17 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         try {
             final View adv = ad.getFeedView(activity);
             addADView(adv);
+            try {
+                //设置静音
+                KsAdVideoPlayConfig nativeExpressConfig = AdvanceKSManager.getInstance().nativeExpressConfig;
+                if (nativeExpressConfig == null) {
+                    nativeExpressConfig = new KsAdVideoPlayConfig.Builder().videoSoundEnable(setting.isVideoMute()).build();
+                }
+                ad.setVideoPlayConfig(nativeExpressConfig);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
             ad.setAdInteractionListener(new KsFeedAd.AdInteractionListener() {
                 @Override
                 public void onAdClicked() {

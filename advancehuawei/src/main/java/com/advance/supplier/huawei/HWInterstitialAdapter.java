@@ -5,7 +5,9 @@ import android.app.Activity;
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.huawei.hms.ads.AdListener;
 import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.InterstitialAd;
@@ -23,6 +25,8 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
+
+        reportStart();
     }
 
     @Override
@@ -42,7 +46,7 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     @Override
     public void orderLoadAd() {
-        loadAd();
+        paraLoadAd();
     }
 
     @Override
@@ -65,6 +69,20 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         //先执行SDK初始化
         HWUtil.initAD(this);
 
+
+//检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWInterstitialAdapter.class, new BYAbsCallBack<HWInterstitialAdapter>() {
+            @Override
+            public void invoke(HWInterstitialAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(HWUtil.getPrice(cacheAdapter.interstitialAd.getBiddingInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         interstitialAd = new InterstitialAd(getRealContext());
         interstitialAd.setAdId(sdkSupplier.adspotid);
         interstitialAd.setAdListener(new AdListener() {
@@ -77,7 +95,7 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                     updateBidding(HWUtil.getPrice(interstitialAd.getBiddingInfo()));
                 }
 
-                handleSucceed();
+                handleSucceed(HWInterstitialAdapter.this);
             }
 
             @Override

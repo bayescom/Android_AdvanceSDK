@@ -429,6 +429,10 @@ public class AdvanceNetManger {
                     ss.failedtk = convertJsonArrayToArrayList(failedJsonArray);
                     ss.loadedtk = convertJsonArrayToArrayList(loadedJsonArray);
                     ss.wintk = convertJsonArrayToArrayList(job.optJSONArray("wintk"));
+                    ss.starttk= convertJsonArrayToArrayList(job.optJSONArray("loadendtk"));
+                    ss.unitKey = job.optString("sdk_id");
+                    ss.cacheMaxSec = job.optLong("cache_timeout",AdvanceConstant.SDK_DEFAULT_CACHE_TIME_SEC);
+                    ss.enableCache = job.optInt("enable_cache",0) == 1;
                     ss.ext = ext;
                     ss.serverReqID = elevenModel.reqid;
                     al.add(ss);

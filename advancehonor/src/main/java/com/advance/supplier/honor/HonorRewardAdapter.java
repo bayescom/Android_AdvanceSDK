@@ -6,7 +6,9 @@ import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.hihonor.adsdk.base.AdSlot;
 import com.hihonor.adsdk.base.api.reward.RewardAdLoadListener;
 import com.hihonor.adsdk.base.api.reward.RewardExpressAd;
@@ -24,6 +26,7 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
+        reportStart();
     }
 
     @Override
@@ -179,6 +182,18 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
     private void loadAd() {
         HonorUtil.initAD(this);
 
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, RewardExpressAd.class, new BYAbsCallBack<RewardExpressAd>() {
+            @Override
+            public void invoke(RewardExpressAd cacheAD) {
+                mRewardExpressAd = cacheAD;
+
+                updateBidding(HonorUtil.getECPM(mRewardExpressAd));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()
                 .setSlotId(sdkSupplier.adspotid) // 必传,设置您的广告位ID。
@@ -196,7 +211,7 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
 
                         updateBidding(HonorUtil.getECPM(mRewardExpressAd));
 
-                        handleSucceed();
+                        handleSucceed(mRewardExpressAd);
                     }
 
                     @Override

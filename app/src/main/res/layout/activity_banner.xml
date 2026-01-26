@@ -25,7 +25,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="loadBanner"
-        android:text="加载并展示banner" />
+        android:text="加载banner" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="showBanner"
+        android:text="展示banner" />
 
 
 

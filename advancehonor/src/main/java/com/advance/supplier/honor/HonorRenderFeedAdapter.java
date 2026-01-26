@@ -12,7 +12,9 @@ import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.hihonor.adsdk.base.AdSlot;
 import com.hihonor.adsdk.base.api.AdVideo;
 import com.hihonor.adsdk.base.api.feed.PictureTextAdLoadListener;
@@ -33,6 +35,8 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
+
+        reportStart();
     }
 
     @Override
@@ -185,6 +189,20 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private void loadAd() {
         HonorUtil.initAD(this);
 
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, PictureTextExpressAd.class, new BYAbsCallBack<PictureTextExpressAd>() {
+            @Override
+            public void invoke(PictureTextExpressAd cacheAD) {
+                mExpressAd = cacheAD;
+                dataConverter = new HonorRenderDataConverter(mExpressAd, HonorRenderFeedAdapter.this);
+
+                updateBidding(HonorUtil.getECPM(mExpressAd));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()
                 .setSlotId(sdkSupplier.adspotid) // 必传,设置您的广告位ID。
@@ -206,7 +224,7 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
                             dataConverter = new HonorRenderDataConverter(mExpressAd, HonorRenderFeedAdapter.this);
 
-                            handleSucceed();
+                            handleSucceed(mExpressAd);
                         }
                     }
 

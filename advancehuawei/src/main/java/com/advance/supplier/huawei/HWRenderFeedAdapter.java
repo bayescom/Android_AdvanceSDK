@@ -11,7 +11,9 @@ import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.huawei.hms.ads.AdCloseBtnClickListener;
 import com.huawei.hms.ads.AdFeedbackListener;
 import com.huawei.hms.ads.AdListener;
@@ -36,6 +38,8 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
+
+        reportStart();
     }
 
     @Override
@@ -56,7 +60,7 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     public void orderLoadAd() {
-        loadAd();
+        paraLoadAd();
     }
 
     @Override
@@ -164,6 +168,21 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         //先执行SDK初始化
         HWUtil.initAD(this);
 
+
+//检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWRenderFeedAdapter.class, new BYAbsCallBack<HWRenderFeedAdapter>() {
+            @Override
+            public void invoke(HWRenderFeedAdapter cacheAdapter) {
+                dataConverter = new HWRenderDataConverter(cacheAdapter.mNativeAd, HWRenderFeedAdapter.this);
+
+                //更新缓存广告得价格
+                updateBidding(HWUtil.getPrice(cacheAdapter.mNativeAd.getBiddingInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         String adId = sdkSupplier.adspotid;
         NativeAdLoader.Builder builder = new NativeAdLoader.Builder(getRealContext(), adId);
         builder.setNativeAdLoadedListener(new NativeAd.NativeAdLoadedListener() {
@@ -184,7 +203,7 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 //转换广告model为聚合通用model
                 dataConverter = new HWRenderDataConverter(nativeAd, HWRenderFeedAdapter.this);
 
-                handleSucceed();
+                handleSucceed(HWRenderFeedAdapter.this);
 
             }
         }).setAdListener(new AdListener() {

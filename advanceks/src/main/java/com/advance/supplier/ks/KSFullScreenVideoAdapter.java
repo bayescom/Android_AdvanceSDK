@@ -6,7 +6,9 @@ import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsFullScreenVideoAd;
@@ -53,6 +55,18 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
     }
 
     private void startLoad() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsFullScreenVideoAd.class, new BYAbsCallBack<KsFullScreenVideoAd>() {
+            @Override
+            public void invoke(KsFullScreenVideoAd cacheAD) {
+                ad = cacheAD;
+                updateBidding(cacheAD.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
         long adid = KSUtil.getADID(sdkSupplier);
         if (BYUtil.isDev()) {
 //                adid = 90009002;
@@ -76,13 +90,10 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
                         } else {
                             ad = list.get(0);
                             fullScreenItem = new KSFullScreenItem(activity, KSFullScreenVideoAdapter.this, ad);
-                            //回调监听
-                            if (ad.isAdEnable()) {
-                                ad.setFullScreenVideoAdInteractionListener(KSFullScreenVideoAdapter.this);
-                            }
+
                             updateBidding(ad.getECPM());
 
-                            handleSucceed();
+                            handleSucceed(ad);
                         }
                     } catch (Throwable e) {
                         e.printStackTrace();
@@ -180,6 +191,10 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
     @Override
     public void show() {
         try {
+            //回调监听
+            if (ad.isAdEnable()) {
+                ad.setFullScreenVideoAdInteractionListener(KSFullScreenVideoAdapter.this);
+            }
             ad.showFullScreenVideoAd(activity, AdvanceKSManager.getInstance().fullScreenVideoConfig);
         } catch (Throwable e) {
             e.printStackTrace();

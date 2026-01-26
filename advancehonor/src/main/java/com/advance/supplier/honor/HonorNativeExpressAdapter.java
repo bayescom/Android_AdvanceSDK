@@ -7,8 +7,9 @@ import android.app.Activity;
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.device.BYDisplay;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.hihonor.adsdk.base.AdSlot;
 import com.hihonor.adsdk.base.api.feed.PictureTextAdLoadListener;
 import com.hihonor.adsdk.base.api.feed.PictureTextExpressAd;
@@ -27,6 +28,8 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
     @Override
     protected void paraLoadAd() {
         loadAd();
+
+        reportStart();
     }
 
     @Override
@@ -140,6 +143,19 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
     private void loadAd() {
         HonorUtil.initAD(this);
 
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, PictureTextExpressAd.class, new BYAbsCallBack<PictureTextExpressAd>() {
+            @Override
+            public void invoke(PictureTextExpressAd cacheAD) {
+                mExpressAd = cacheAD;
+
+                updateBidding(HonorUtil.getECPM(mExpressAd));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         AdSlot.Builder builder = new AdSlot.Builder();
         builder.setSlotId(sdkSupplier.adspotid);
 
@@ -176,7 +192,7 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
 
                             updateBidding(HonorUtil.getECPM(mExpressAd));
 
-                            handleSucceed();
+                            handleSucceed(mExpressAd);
                         }
                     }
 

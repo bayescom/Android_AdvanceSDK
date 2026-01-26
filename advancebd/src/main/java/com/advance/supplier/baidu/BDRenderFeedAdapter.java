@@ -68,6 +68,8 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             @Override
             public void invoke(BDRenderFeedAdapter cacheAdapter) {
 
+                dataConverter = new BDRenderDataConverter(cacheAdapter.nativeResponseAD, sdkSupplier);
+
                 //更新缓存广告得价格
                 updateBidding(BDUtil.getEcpmValue(cacheAdapter.nativeResponseAD.getECPMLevel()));
             }

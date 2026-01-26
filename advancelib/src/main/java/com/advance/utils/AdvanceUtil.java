@@ -263,23 +263,26 @@ public class AdvanceUtil {
      * @param mediaKey 策略服务下发字段
      */
     public static void initMercuryAccount(String mediaId, String mediaKey) {
-        String resultAppID = mediaId;
-        String resultAppKey = mediaKey;
-        String configMediaId = AdvanceConfig.getInstance().getMercuryMediaId();
-        String configMediaKey = AdvanceConfig.getInstance().getMercuryMediaKey();
+        try {
+            String resultAppID = mediaId;
+            String resultAppKey = mediaKey;
+            String configMediaId = AdvanceConfig.getInstance().getMercuryMediaId();
+            String configMediaKey = AdvanceConfig.getInstance().getMercuryMediaKey();
 
-        if (AdvanceConfig.getInstance().forceUseLocalAppID && !TextUtils.isEmpty(configMediaId)) {
-            LogUtil.simple("强制使用本地配置的Mercury AppID");
-            resultAppID = configMediaId;
-        }
-        if (AdvanceConfig.getInstance().forceUseLocalAppID && !TextUtils.isEmpty(configMediaKey)) {
-            LogUtil.simple("强制使用本地配置的Mercury AppKey");
-            resultAppKey = configMediaKey;
-        }
-        LogUtil.high("[initMercuryAccount] Mercury AppID：" + resultAppID + "， Mercury AppKey：" + resultAppKey);
+            if (AdvanceConfig.getInstance().forceUseLocalAppID && !TextUtils.isEmpty(configMediaId)) {
+                LogUtil.simple("强制使用本地配置的Mercury AppID");
+                resultAppID = configMediaId;
+            }
+            if (AdvanceConfig.getInstance().forceUseLocalAppID && !TextUtils.isEmpty(configMediaKey)) {
+                LogUtil.simple("强制使用本地配置的Mercury AppKey");
+                resultAppKey = configMediaKey;
+            }
+            LogUtil.high("[initMercuryAccount] Mercury AppID：" + resultAppID + "， Mercury AppKey：" + resultAppKey);
 
-        AdConfigManager.getInstance().setMediaId(resultAppID);
-        AdConfigManager.getInstance().setMediaKey(resultAppKey);
+            AdConfigManager.getInstance().setMediaId(resultAppID);
+            AdConfigManager.getInstance().setMediaKey(resultAppKey);
+        } catch (Exception e) {
+        }
     }
 
 

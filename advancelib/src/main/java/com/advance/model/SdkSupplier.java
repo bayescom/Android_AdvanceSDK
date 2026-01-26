@@ -32,8 +32,8 @@ public class SdkSupplier implements Comparable<SdkSupplier> {
     public ArrayList<String> wintk;
     public JSONArray ext;
     public String advanceAdspotId = "";
-    public long cacheMaxSec = 1800; //缓存秒数，根据配置下发，默认30分钟
-    public boolean enableCache = true; //是否启用缓存，根据配置下发
+    public long cacheMaxSec = AdvanceConstant.SDK_DEFAULT_CACHE_TIME_SEC; //缓存秒数，根据配置下发，默认30分钟
+    public boolean enableCache = false; //是否启用缓存，根据配置下发
     public String unitKey = "";
     public String advanceReqID = "";
     public String serverReqID = "";

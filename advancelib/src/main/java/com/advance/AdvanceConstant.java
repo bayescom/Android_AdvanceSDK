@@ -80,4 +80,6 @@ public class AdvanceConstant {
     public static final int SDK_RESULT_CODE_SUCC = 1;
     public static final int SDK_RESULT_CODE_FAILED = 2;
     public static final int SDK_RESULT_CODE_TIMEOUT = 4;
+
+    public static final int SDK_DEFAULT_CACHE_TIME_SEC = 1800;
 }

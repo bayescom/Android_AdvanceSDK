@@ -5,7 +5,9 @@ import android.app.Activity;
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.huawei.hms.ads.AdCloseBtnClickListener;
 import com.huawei.hms.ads.AdFeedbackListener;
 import com.huawei.hms.ads.AdListener;
@@ -27,6 +29,7 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
+        reportStart();
     }
 
     @Override
@@ -116,6 +119,19 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         HWUtil.initAD(this);
 
 
+//检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWNativeExpressAdapter.class, new BYAbsCallBack<HWNativeExpressAdapter>() {
+            @Override
+            public void invoke(HWNativeExpressAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(HWUtil.getPrice(cacheAdapter.mNativeAd.getBiddingInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         String adId = sdkSupplier.adspotid;
 //        adId = "testb65czjivt9"; // 原生小图广告
         NativeAdLoader.Builder builder = new NativeAdLoader.Builder(getRealContext(), adId);
@@ -135,7 +151,7 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
                 }
 
 
-                handleSucceed();
+                handleSucceed(HWNativeExpressAdapter.this);
 
 
             }

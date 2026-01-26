@@ -7,8 +7,10 @@ import android.widget.RelativeLayout;
 import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.mercury.sdk.core.banner.BannerAD;
 import com.mercury.sdk.core.banner.BannerADListener;
 import com.mercury.sdk.util.ADError;
@@ -56,7 +58,7 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            handleSucceed();
+            handleSucceed(this);
         } catch (Throwable e) {
             e.printStackTrace();
             doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
@@ -123,7 +125,26 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
+
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryBannerAdapter.class, new BYAbsCallBack<MercuryBannerAdapter>() {
+            @Override
+            public void invoke(MercuryBannerAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(cacheAdapter.mercuryBanner.getEcpm());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
         if (mercuryBanner != null) {
             mercuryBanner.destroy();
         }

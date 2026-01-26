@@ -6,7 +6,9 @@ import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.reward.Reward;
 import com.huawei.hms.ads.reward.RewardAd;
@@ -23,6 +25,8 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadRewardAd();
+
+        reportStart();
 
     }
 
@@ -43,7 +47,7 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
 
     @Override
     public void orderLoadAd() {
-        loadRewardAd();
+        paraLoadAd();
     }
 
     @Override
@@ -103,6 +107,22 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
      * Load a rewarded ad.
      */
     private void loadRewardAd() {
+        //先执行SDK初始化
+        HWUtil.initAD(this);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, RewardAd.class, new BYAbsCallBack<RewardAd>() {
+            @Override
+            public void invoke(RewardAd cacheAD) {
+                rewardedAd = cacheAD;
+
+                updateBidding(HWUtil.getPrice(cacheAD.getBiddingInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         if (rewardedAd == null) {
             rewardedAd = new RewardAd(getRealContext(), sdkSupplier.adspotid);
         }
@@ -125,7 +145,7 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
                     updateBidding(HWUtil.getPrice(rewardedAd.getBiddingInfo()));
                 }
 
-                handleSucceed();
+                handleSucceed(rewardedAd);
             }
         };
         AdParam.Builder adParam = AdvanceHWManager.getInstance().globalAdParamBuilder;

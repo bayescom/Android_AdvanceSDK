@@ -23,10 +23,12 @@ import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDevice;
 import com.bayes.sdk.basic.device.BYDisplay;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYCacheUtil;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYUtil;
@@ -57,12 +59,14 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     public void orderLoadAd() {
-        doStart();
+        paraLoadAd();
     }
 
     @Override
     protected void paraLoadAd() {
         doStart();
+
+        reportStart();
     }
 
     @Override
@@ -93,7 +97,21 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     private void doStart() {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
+        
+//检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, NativeADData.class, new BYAbsCallBack<NativeADData>() {
+            @Override
+            public void invoke(NativeADData cacheAD) {
+                mRenderAD = cacheAD;
+                //自渲染需要转换返回广告model为聚合通用model
+                dataConverter = new MercuryRenderDataConverter(cacheAD, sdkSupplier);
 
+                updateBidding(cacheAD.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
         nativeAD = new NativeAD(getRealActivity(null), sdkSupplier.adspotid, new NativeADListener() {
             @Override
             public void onADLoaded(List<NativeADData> list) {
@@ -115,7 +133,7 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                     dataConverter = new MercuryRenderDataConverter(mRenderAD, sdkSupplier);
 
                     //标记广告成功
-                    handleSucceed();
+                    handleSucceed(mRenderAD);
                     //通知广告成功
 //                    mAdvanceRFBridge.adapterDidLoaded(mDataConverter);
                 } catch (Throwable e) {

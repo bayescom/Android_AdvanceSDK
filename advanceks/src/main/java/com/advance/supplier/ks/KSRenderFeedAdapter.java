@@ -28,18 +28,19 @@ import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsAdVideoPlayConfig;
 import com.kwad.sdk.api.KsApkDownloadListener;
-import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsNativeAd;
+import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsScene;
 import com.kwad.sdk.api.model.AdSourceLogoType;
 import com.kwad.sdk.api.model.KsNativeConvertType;
-import com.mercury.sdk.util.MercuryTool;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,6 +89,21 @@ public class KSRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     private void startLoad() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsNativeAd.class, new BYAbsCallBack<KsNativeAd>() {
+            @Override
+            public void invoke(KsNativeAd cacheAD) {
+                nativeAd = cacheAD;
+                //转换穿山甲返回广告model为聚合通用model
+                dataConverter = new KSRenderDataConverter(cacheAD, sdkSupplier);
+
+                updateBidding(cacheAD.getECPM());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
         //场景设置
         KsScene scene = new KsScene.Builder(KSUtil.getADID(sdkSupplier)).build(); // 此为测试posId，请联系快手平台申请正式posId
         KsAdSDK.getLoadManager().loadNativeAd(scene, new KsLoadManager.NativeAdListener() {
@@ -113,7 +129,7 @@ public class KSRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                     //转换广告model为聚合通用model
                     dataConverter = new KSRenderDataConverter(nativeAd, sdkSupplier);
 
-                    handleSucceed();
+                    handleSucceed(nativeAd);
 
                 } catch (Throwable e) {
                     e.printStackTrace();

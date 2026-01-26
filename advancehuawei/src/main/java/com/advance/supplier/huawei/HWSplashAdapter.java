@@ -9,8 +9,10 @@ import android.os.Handler;
 import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.AudioFocusType;
 import com.huawei.hms.ads.splash.SplashAdDisplayListener;
@@ -28,6 +30,8 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
+
+        reportStart();
     }
 
     @Override
@@ -105,6 +109,21 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
         //先执行SDK初始化
         HWUtil.initAD(this);
 
+
+//检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWSplashAdapter.class, new BYAbsCallBack<HWSplashAdapter>() {
+            @Override
+            public void invoke(HWSplashAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(HWUtil.getPrice(cacheAdapter.splashView.getBiddingInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
+
         AdParam.Builder adParam = AdvanceHWManager.getInstance().globalAdParamBuilder;
         if (adParam == null) {
             adParam = new AdParam.Builder();
@@ -120,7 +139,7 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
                     updateBidding(HWUtil.getPrice(splashView.getBiddingInfo()));
                 }
 
-                handleSucceed();
+                handleSucceed(HWSplashAdapter.this);
             }
 
             @Override

@@ -16,7 +16,6 @@ import com.kwad.sdk.api.model.MaterialType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class KSRenderDataConverter implements AdvanceRFADData {
     public static KsNativeAd mKsData;

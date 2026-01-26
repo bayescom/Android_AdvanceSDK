@@ -6,8 +6,10 @@ import com.advance.AdvanceNativeExpressAdItem;
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYLog;
 import com.mercury.sdk.core.config.ADSize;
 import com.mercury.sdk.core.config.VideoOption;
@@ -36,7 +38,26 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
 
     @Override
     protected void paraLoadAd() {
+        loadAd();
+        reportStart();
+    }
+    public void loadAd() {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
+
+
+//检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryNativeExpressAdapter.class, new BYAbsCallBack<MercuryNativeExpressAdapter>() {
+            @Override
+            public void invoke(MercuryNativeExpressAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(cacheAdapter.adView.getEcpm());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         BYLog.dev(TAG + "advanceNativeExpress.getExpressViewWidth() = " + advanceNativeExpress.getExpressViewWidth());
 
         int width = advanceNativeExpress.getExpressViewWidth();
@@ -97,7 +118,7 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            handleSucceed();
+            handleSucceed(this);
         }
     }
 
