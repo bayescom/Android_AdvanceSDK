@@ -131,7 +131,7 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
     @Override
     protected void paraLoadAd() {
         loadAd();
-        
+        reportStart();
     }
     public void loadAd() {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);

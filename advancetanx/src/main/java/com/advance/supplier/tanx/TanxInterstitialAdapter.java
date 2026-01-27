@@ -29,7 +29,7 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     @Override
     public void orderLoadAd() {
-        initAD();
+        paraLoadAd();
     }
 
     @Override
@@ -132,6 +132,8 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             @Override
             public void success() {
                 loadOnly();
+
+                reportStart();
             }
 
             @Override

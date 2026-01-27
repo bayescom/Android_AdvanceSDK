@@ -11,6 +11,7 @@ import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.banner2.UnifiedBannerADListener;
 import com.qq.e.ads.banner2.UnifiedBannerView;
 import com.qq.e.comm.util.AdError;
@@ -122,11 +123,16 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
 
     @Override
     protected void paraLoadAd() {
-        loadAd();
-        
+        GdtUtil.initAD(this, new BYBaseCallBack() {
+            @Override
+            public void call() {
+                loadAd();
+
+                reportStart();
+            }
+        });
     }
     public void loadAd() {
-        GdtUtil.initAD(this);
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtBannerAdapter.class, new BYAbsCallBack<GdtBannerAdapter>() {

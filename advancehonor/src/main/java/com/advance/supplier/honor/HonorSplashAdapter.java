@@ -29,8 +29,8 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
-        
-        
+
+        reportStart();
     }
 
     @Override

@@ -29,6 +29,7 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
             @Override
             public void success() {
                 loadAd();
+                reportStart();
             }
 
             @Override

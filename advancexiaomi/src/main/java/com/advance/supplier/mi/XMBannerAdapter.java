@@ -24,6 +24,7 @@ public class XMBannerAdapter extends AdvanceBannerCustomAdapter {
             @Override
             public void success() {
                 loadAd();
+                reportStart();
             }
 
             @Override

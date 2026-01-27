@@ -326,14 +326,12 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
 //            根据设置，选择不进入主线程load
             if (baseSetting != null && baseSetting.isLoadAsync()) {
                 paraLoadAd();
-                reportStart();
                 return;
             }
             BYThreadUtil.switchMainThread(new BYBaseCallBack() {
                 @Override
                 public void call() {
                     paraLoadAd();
-                    reportStart();
                 }
             });
         } catch (Throwable e) {
@@ -541,7 +539,6 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
                 }
                 reportLoaded();
                 orderLoadAd();
-                reportStart();
                 hasOrderRun = true;
                 return;
             }

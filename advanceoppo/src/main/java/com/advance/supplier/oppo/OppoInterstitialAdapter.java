@@ -29,7 +29,7 @@ public class OppoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         OppoUtil.initAD(this);
         startLoad();
 
-                
+        reportStart();
     }
 
     private void startLoad() {

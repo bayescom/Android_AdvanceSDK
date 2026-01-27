@@ -174,7 +174,7 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
     @Override
     protected void paraLoadAd() {
         loadAd();
-        
+        reportStart();
     }
     public void loadAd() {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);

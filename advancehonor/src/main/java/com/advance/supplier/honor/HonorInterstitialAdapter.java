@@ -23,8 +23,8 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
-        
-        
+
+        reportStart();
     }
 
     @Override

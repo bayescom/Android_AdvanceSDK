@@ -27,8 +27,8 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
-        
-        
+
+        reportStart();
     }
 
     @Override

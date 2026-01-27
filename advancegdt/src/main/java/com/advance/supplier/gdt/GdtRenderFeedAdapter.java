@@ -19,6 +19,7 @@ import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.nativ.MediaView;
 import com.qq.e.ads.nativ.NativeADEventListener;
@@ -45,9 +46,14 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     protected void paraLoadAd() {
-        doStart();
+        GdtUtil.initAD(this, new BYBaseCallBack() {
+            @Override
+            public void call() {
+                loadAd();
 
-        
+                reportStart();
+            }
+        });
     }
 
     @Override
@@ -72,11 +78,9 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         doShow();
     }
 
-    private void doStart() {
+    private void loadAd() {
         try {
             LogUtil.simple(TAG + "call load start ");
-            GdtUtil.initAD(this);
-
 
             //检查是否命中使用缓存逻辑
             boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtRenderFeedAdapter.class, new BYAbsCallBack<GdtRenderFeedAdapter>() {

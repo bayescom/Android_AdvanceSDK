@@ -40,7 +40,7 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
     @Override
     protected void paraLoadAd() {
         loadAd();
-        
+        reportStart();
     }
     public void loadAd() {
         BDUtil.initBDAccount(this);

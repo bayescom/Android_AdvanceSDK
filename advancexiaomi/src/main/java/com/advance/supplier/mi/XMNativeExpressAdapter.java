@@ -23,6 +23,7 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             @Override
             public void success() {
                 loadAd();
+                reportStart();
             }
 
             @Override

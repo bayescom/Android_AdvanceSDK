@@ -15,6 +15,7 @@ import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.splash.SplashAD;
 import com.qq.e.ads.splash.SplashADListener;
 import com.qq.e.comm.util.AdError;
@@ -79,9 +80,15 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
 
     @Override
     public void paraLoadAd() {
-        initAD();
+        GdtUtil.initAD(this, new BYBaseCallBack() {
+            @Override
+            public void call() {
+                loadAd();
 
-        
+                reportStart();
+            }
+        });
+
     }
 
     //调用展示方法
@@ -118,8 +125,7 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    private void initAD() {
-        GdtUtil.initAD(this);
+    private void loadAd() {
 
 
         //检查是否命中使用缓存逻辑

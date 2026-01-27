@@ -24,6 +24,7 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
             @Override
             public void success() {
                 loadAd();
+                reportStart();
             }
 
             @Override

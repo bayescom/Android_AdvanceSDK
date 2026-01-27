@@ -58,7 +58,7 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
-        
+        reportStart();
     }
     public void loadAd() {
         BDUtil.initBDAccount(this);

@@ -125,6 +125,7 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
             @Override
             public void success() {
                 startLoadAD();
+                reportStart();
             }
 
             @Override

@@ -29,6 +29,7 @@ public class VivoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             @Override
             public void success() {
                 loadAd();
+                reportStart();
             }
 
             @Override

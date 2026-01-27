@@ -23,6 +23,7 @@ public class XMInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             @Override
             public void success() {
                 loadAd();
+                reportStart();
             }
 
             @Override

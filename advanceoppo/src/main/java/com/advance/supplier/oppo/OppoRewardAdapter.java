@@ -29,6 +29,7 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
     protected void paraLoadAd() {
         OppoUtil.initAD(this);
         loadAd();
+        reportStart();
     }
 
     @Override

@@ -34,7 +34,7 @@ public class OppoBannerAdapter extends AdvanceBannerCustomAdapter {
         OppoUtil.initAD(this);
         startLoad();
 
-                
+        reportStart();
     }
 
     private void startLoad() {

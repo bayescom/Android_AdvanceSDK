@@ -25,13 +25,7 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
 
     @Override
     public void orderLoadAd() {
-        TapUtil.initAD(this, new BYBaseCallBack() {
-            @Override
-            public void call() {
-                loadAD();
-            }
-        });
-
+        paraLoadAd();
     }
 
     @Override
@@ -40,6 +34,8 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
             @Override
             public void call() {
                 loadAD();
+
+                reportStart();
             }
         });
 

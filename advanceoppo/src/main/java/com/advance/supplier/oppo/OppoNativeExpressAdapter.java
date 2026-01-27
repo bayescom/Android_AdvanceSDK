@@ -36,6 +36,7 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
     protected void paraLoadAd() {
         OppoUtil.initAD(this);
         loadAd();
+        reportStart();
     }
 
     void loadAd() {

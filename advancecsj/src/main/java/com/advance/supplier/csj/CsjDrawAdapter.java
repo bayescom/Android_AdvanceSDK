@@ -50,7 +50,7 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
 
-                
+                reportStart();
             }
 
             @Override

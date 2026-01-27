@@ -8,6 +8,7 @@ import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialAD;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialADListener;
@@ -142,11 +143,16 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
 
     @Override
     protected void paraLoadAd() {
-        loadAd();
-        
+        GdtUtil.initAD(this, new BYBaseCallBack() {
+            @Override
+            public void call() {
+                loadAd();
+
+                reportStart();
+            }
+        });
     }
     public void loadAd() {
-        GdtUtil.initAD(this);
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtFullScreenVideoAdapter.class, new BYAbsCallBack<GdtFullScreenVideoAdapter>() {

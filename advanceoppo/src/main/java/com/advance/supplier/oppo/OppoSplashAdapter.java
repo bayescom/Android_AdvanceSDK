@@ -33,7 +33,7 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
     protected void paraLoadAd() {
         OppoUtil.initAD(this);
         startLoad();
-
+        reportStart();
     }
 
     @Override

@@ -30,6 +30,7 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
             @Override
             public void success() {
                 loadAd();
+                reportStart();
             }
 
             @Override

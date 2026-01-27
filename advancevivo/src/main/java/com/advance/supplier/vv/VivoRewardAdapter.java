@@ -31,6 +31,7 @@ public class VivoRewardAdapter extends AdvanceRewardCustomAdapter {
             @Override
             public void success() {
                 loadAd();
+                reportStart();
             }
 
             @Override

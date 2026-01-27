@@ -186,6 +186,7 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
             @Override
             public void success() {
                 startLoadAD();
+                reportStart();
             }
 
             @Override

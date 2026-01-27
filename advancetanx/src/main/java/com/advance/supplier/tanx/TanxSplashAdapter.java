@@ -63,6 +63,7 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
             public void success() {
                 // TODO: 2023/9/5 测试开启线程池来加载广告请求方法
                 startLoadAD();
+                reportStart();
             }
 
             @Override

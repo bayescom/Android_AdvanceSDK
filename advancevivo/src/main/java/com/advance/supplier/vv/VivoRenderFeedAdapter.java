@@ -70,6 +70,7 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             @Override
             public void success() {
                 loadAd();
+                reportStart();
             }
 
             @Override

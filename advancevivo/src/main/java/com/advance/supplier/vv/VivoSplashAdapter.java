@@ -38,6 +38,7 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
             @Override
             public void success() {
                 loadAd();
+                reportStart();
             }
 
             @Override

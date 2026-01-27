@@ -26,7 +26,7 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
-        
+        reportStart();
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.cfg.DownAPPConfirmPolicy;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.nativ.ADSize;
@@ -40,11 +41,16 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
     @Override
     protected void paraLoadAd() {
-        loadAd();
-        
+        GdtUtil.initAD(this, new BYBaseCallBack() {
+            @Override
+            public void call() {
+                loadAd();
+
+                reportStart();
+            }
+        });
     }
     public void loadAd() {
-        GdtUtil.initAD(this);
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtNativeExpressAdapter.class, new BYAbsCallBack<GdtNativeExpressAdapter>() {

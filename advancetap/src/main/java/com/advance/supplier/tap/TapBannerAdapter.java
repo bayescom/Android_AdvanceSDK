@@ -27,13 +27,7 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
 
     @Override
     public void orderLoadAd() {
-        TapUtil.initAD(this, new BYBaseCallBack() {
-            @Override
-            public void call() {
-                loadAD();
-            }
-        });
-
+        paraLoadAd();
     }
 
     @Override
@@ -42,6 +36,8 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
             @Override
             public void call() {
                 loadAD();
+
+                reportStart();
             }
         });
 

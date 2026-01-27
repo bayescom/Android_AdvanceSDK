@@ -36,7 +36,7 @@ public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter 
                 //只有在成功初始化以后才能调用load方法
                 startLoad();
 
-                
+                reportStart();
             }
 
             @Override
@@ -59,6 +59,7 @@ public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter 
     private void startLoad() {
 
         try {
+
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
             options.put("user_id", userId);

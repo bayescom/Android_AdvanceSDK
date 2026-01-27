@@ -6,9 +6,11 @@ import android.view.ViewGroup;
 import com.advance.AdvanceSetting;
 import com.advance.BaseParallelAdapter;
 import com.advance.itf.AdvancePrivacyController;
+import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceSplashPlusManager;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 import com.qq.e.ads.splash.SplashAD;
 import com.qq.e.comm.managers.GDTAdSdk;
@@ -16,16 +18,23 @@ import com.qq.e.comm.managers.setting.GlobalSetting;
 
 public class GdtUtil implements AdvanceSplashPlusManager.ZoomCall {
 
-    public static synchronized void initAD(BaseParallelAdapter adapter) {
+//    public static synchronized void initAD(BaseParallelAdapter adapter) {
+//        initAD(adapter, null);
+//    }
+
+    public static synchronized void initAD(final BaseParallelAdapter adapter, final BYBaseCallBack callBack) {
         try {
             if (adapter == null) {
-                LogUtil.e("[GdtUtil] initAD failed BaseParallelAdapter null");
+                String eMsg = "[GdtUtil] initAD failed BaseParallelAdapter null";
+                LogUtil.e(eMsg);
                 return;
             }
             boolean hasInit = AdvanceSetting.getInstance().hasGDTInit;
 
             if (adapter.sdkSupplier == null) {
-                LogUtil.e("[GdtUtil] initAD failed adapter.sdkSupplier null");
+                String eMsg = "[GdtUtil] initAD failed adapter.sdkSupplier null";
+                LogUtil.e(eMsg);
+                adapter.handleFailed(AdvanceError.ERROR_INIT_DEFAULT + "", eMsg);
                 return;
             }
             String mid = adapter.sdkSupplier.mediaid;
@@ -35,6 +44,9 @@ public class GdtUtil implements AdvanceSplashPlusManager.ZoomCall {
             //只有当允许初始化优化时，且快手已经初始化成功过，并行初始化的id和当前id一致，才可以不再重复初始化。
             if (hasInit && adapter.canOptInit() && isSame) {
                 LogUtil.simple("[GdtUtil] initAD already init");
+                if (callBack != null) {
+                    callBack.call();
+                }
                 return;
             }
 
@@ -53,6 +65,9 @@ public class GdtUtil implements AdvanceSplashPlusManager.ZoomCall {
                 public void onStartSuccess() {
                     LogUtil.simple("[GdtUtil] onStartSuccess");
 
+                    if (callBack != null) {
+                        callBack.call();
+                    }
                     // 推荐开发者在onStartSuccess回调后开始拉广告
                     AdvanceSetting.getInstance().hasGDTInit = true;
                 }
@@ -61,6 +76,7 @@ public class GdtUtil implements AdvanceSplashPlusManager.ZoomCall {
                 public void onStartFailed(Exception e) {
                     LogUtil.e("[GdtUtil]  onStartFailed:" + e.toString());
                     AdvanceSetting.getInstance().hasGDTInit = false;
+                    adapter.handleFailed(AdvanceError.ERROR_INIT_DEFAULT + "", e.toString());
                 }
             });
             AdvanceSetting.getInstance().hasGDTInit = true;

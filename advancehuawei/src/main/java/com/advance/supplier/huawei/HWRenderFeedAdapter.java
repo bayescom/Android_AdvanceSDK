@@ -39,7 +39,7 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     protected void paraLoadAd() {
         loadAd();
 
-        
+        reportStart();
     }
 
     @Override

@@ -31,7 +31,7 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
     protected void paraLoadAd() {
         loadAd();
 
-        
+        reportStart();
     }
 
     @Override

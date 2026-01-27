@@ -180,6 +180,7 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             @Override
             public void success() {
                 startLoadAD();
+                reportStart();
             }
 
             @Override

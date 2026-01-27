@@ -24,7 +24,7 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
     @Override
     protected void paraLoadAd() {
         loadAd();
-        
+        reportStart();
     }
     public void loadAd() {
         BDUtil.initBDAccount(this);
