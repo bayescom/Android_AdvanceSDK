@@ -137,7 +137,7 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
     public void paraLoadAd() {
         initAD();
 
-        reportStart();
+        
 //        if (null != skipView) {
 //            skipView.setVisibility(View.VISIBLE);
 //        }

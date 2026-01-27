@@ -29,7 +29,7 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
     protected void paraLoadAd() {
         loadAd();
 
-        reportStart();
+        
     }
 
     @Override

@@ -27,7 +27,7 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
     @Override
     protected void paraLoadAd() {
         loadAd();
-        reportStart();
+        
     }
     public void loadAd() {
         BDUtil.initBDAccount(this);

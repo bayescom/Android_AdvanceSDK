@@ -7,7 +7,9 @@ import android.os.Handler;
 import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.heytap.msp.mobad.api.ad.HotSplashAd;
 import com.heytap.msp.mobad.api.listener.IHotSplashListener;
 import com.heytap.msp.mobad.api.params.SplashAdParams;
@@ -32,7 +34,6 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
         OppoUtil.initAD(this);
         startLoad();
 
-                reportStart();
     }
 
     @Override
@@ -69,6 +70,20 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
 
     private void startLoad() {
         try {
+
+//检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoSplashAdapter.class, new BYAbsCallBack<OppoSplashAdapter>() {
+                @Override
+                public void invoke(OppoSplashAdapter cacheAdapter) {
+
+                    //更新缓存广告得价格
+                    updateBidding(cacheAdapter.splashAd.getECPM());
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+            
             //可以自定义跳过按钮样式结束
             SplashAdParams.Builder builder = new SplashAdParams.Builder()
                     .setFetchTimeout(sdkSupplier.timeout);
@@ -85,7 +100,7 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
 
                     updateBidding(splashAd.getECPM());
 
-                    handleSucceed();
+                    handleSucceed(OppoSplashAdapter.this);
                 }
 
                 @Override

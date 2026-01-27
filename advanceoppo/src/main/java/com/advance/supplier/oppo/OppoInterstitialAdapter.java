@@ -4,7 +4,9 @@ import android.app.Activity;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.heytap.msp.mobad.api.ad.InterstitialAd;
 import com.heytap.msp.mobad.api.listener.IInterstitialAdListener;
 
@@ -27,11 +29,25 @@ public class OppoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         OppoUtil.initAD(this);
         startLoad();
 
-                reportStart();
+                
     }
 
     private void startLoad() {
         try {
+
+//检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoInterstitialAdapter.class, new BYAbsCallBack<OppoInterstitialAdapter>() {
+                @Override
+                public void invoke(OppoInterstitialAdapter cacheAdapter) {
+
+                    //更新缓存广告得价格
+                    updateBidding(cacheAdapter.mInterstitialAd.getECPM());
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+            
             /**
              * 构造 InterstitialAd.
              */
@@ -46,7 +62,7 @@ public class OppoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
                     updateBidding(mInterstitialAd.getECPM());
 
-                    handleSucceed();
+                    handleSucceed(OppoInterstitialAdapter.this);
                 }
 
                 @Override

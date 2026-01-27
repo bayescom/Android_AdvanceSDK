@@ -47,7 +47,7 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     protected void paraLoadAd() {
         doStart();
 
-        reportStart();
+        
     }
 
     @Override

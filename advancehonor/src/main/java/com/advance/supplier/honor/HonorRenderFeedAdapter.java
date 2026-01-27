@@ -36,7 +36,7 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     protected void paraLoadAd() {
         loadAd();
 
-        reportStart();
+        
     }
 
     @Override

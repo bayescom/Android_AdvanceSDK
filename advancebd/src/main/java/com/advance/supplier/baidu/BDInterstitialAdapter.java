@@ -27,7 +27,7 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
     @Override
     protected void paraLoadAd() {
         loadAd();
-        reportStart();
+        
     }
     
     public void loadAd() {

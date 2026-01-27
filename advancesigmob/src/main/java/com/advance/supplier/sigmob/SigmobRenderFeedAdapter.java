@@ -46,7 +46,7 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 //只有在成功初始化以后才能调用load方法
                 startLoad();
 
-                reportStart();
+                
             }
 
             @Override

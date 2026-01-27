@@ -66,7 +66,7 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     protected void paraLoadAd() {
         doStart();
 
-        reportStart();
+        
     }
 
     @Override

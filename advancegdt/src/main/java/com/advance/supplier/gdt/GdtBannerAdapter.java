@@ -123,7 +123,7 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
     @Override
     protected void paraLoadAd() {
         loadAd();
-        reportStart();
+        
     }
     public void loadAd() {
         GdtUtil.initAD(this);

@@ -26,7 +26,7 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
     protected void paraLoadAd() {
         loadRewardAd();
 
-        reportStart();
+        
 
     }
 

@@ -39,7 +39,7 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
     @Override
     protected void paraLoadAd() {
         loadAd();
-        reportStart();
+        
     }
     public void loadAd() {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);

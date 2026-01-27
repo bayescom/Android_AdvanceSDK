@@ -81,7 +81,7 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
     public void paraLoadAd() {
         initAD();
 
-        reportStart();
+        
     }
 
     //调用展示方法

@@ -36,7 +36,7 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
     @Override
     protected void paraLoadAd() {
         loadAd();
-        reportStart();
+        
     }
     
     public void loadAd() {

@@ -41,7 +41,7 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     @Override
     protected void paraLoadAd() {
         loadAd();
-        reportStart();
+        
     }
     public void loadAd() {
         GdtUtil.initAD(this);

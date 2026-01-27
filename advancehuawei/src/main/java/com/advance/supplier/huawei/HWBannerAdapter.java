@@ -37,7 +37,7 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
     protected void paraLoadAd() {
         loadAd();
 
-        reportStart();
+        
     }
 
     @Override

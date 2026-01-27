@@ -143,7 +143,7 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     @Override
     protected void paraLoadAd() {
         loadAd();
-        reportStart();
+        
     }
     public void loadAd() {
         GdtUtil.initAD(this);

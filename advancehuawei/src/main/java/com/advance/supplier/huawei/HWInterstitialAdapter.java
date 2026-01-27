@@ -26,7 +26,7 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     protected void paraLoadAd() {
         loadAd();
 
-        reportStart();
+        
     }
 
     @Override

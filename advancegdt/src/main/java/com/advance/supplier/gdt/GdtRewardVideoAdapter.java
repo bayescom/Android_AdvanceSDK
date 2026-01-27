@@ -205,7 +205,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     @Override
     public void paraLoadAd() {
         loadAd();
-        reportStart();
+        
     }
     public void loadAd() {
         GdtUtil.initAD(this);

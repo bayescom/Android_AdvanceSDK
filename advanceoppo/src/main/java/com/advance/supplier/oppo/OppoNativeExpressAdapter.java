@@ -7,7 +7,9 @@ import android.app.Activity;
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.heytap.msp.mobad.api.ad.NativeTempletAd;
 import com.heytap.msp.mobad.api.listener.INativeTempletAdListener;
 import com.heytap.msp.mobad.api.params.INativeTempletAdView;
@@ -45,6 +47,19 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
              * 也可以传入null，展示默认的大小
              */
 
+//检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoNativeExpressAdapter.class, new BYAbsCallBack<OppoNativeExpressAdapter>() {
+                @Override
+                public void invoke(OppoNativeExpressAdapter cacheAdapter) {
+                    //更新缓存广告得价格
+                    updateBidding(cacheAdapter.adView.getECPM());
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+
+
             //  2025/2/21 测试高度为0时表现？？？  测试看下来设置宽高信息，广告不会根据设置的值来渲染。。。。
             int width = mSetting.getExpressViewWidth();
             int height = mSetting.getExpressViewHeight();
@@ -67,7 +82,7 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
-                        handleSucceed();
+                        handleSucceed(OppoNativeExpressAdapter.this);
                     }
                 }
 

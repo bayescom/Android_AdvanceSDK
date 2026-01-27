@@ -140,7 +140,7 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
     @Override
     protected void paraLoadAd() {
         loadAd();
-        reportStart();
+        
     }
     public void loadAd() {
         GdtUtil.initAD(this);

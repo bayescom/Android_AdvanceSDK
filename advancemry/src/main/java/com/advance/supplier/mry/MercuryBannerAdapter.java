@@ -126,7 +126,7 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
     @Override
     protected void paraLoadAd() {
         loadAd();
-        reportStart();
+        
     }
     public void loadAd() {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);

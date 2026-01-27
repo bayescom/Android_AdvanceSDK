@@ -8,8 +8,10 @@ import android.widget.RelativeLayout;
 import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.heytap.msp.mobad.api.ad.BannerAd;
 import com.heytap.msp.mobad.api.listener.IBannerAdListener;
 
@@ -32,11 +34,26 @@ public class OppoBannerAdapter extends AdvanceBannerCustomAdapter {
         OppoUtil.initAD(this);
         startLoad();
 
-                reportStart();
+                
     }
 
     private void startLoad() {
         try {
+
+
+//检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoBannerAdapter.class, new BYAbsCallBack<OppoBannerAdapter>() {
+                @Override
+                public void invoke(OppoBannerAdapter cacheAdapter) {
+
+                    //更新缓存广告得价格
+                    updateBidding(cacheAdapter.mBannerAd.getECPM());
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+            
             mBannerAd = new BannerAd(getRealActivity(null), sdkSupplier.adspotid);
             /**
              * 设置Banner广告行为监听器
@@ -48,7 +65,7 @@ public class OppoBannerAdapter extends AdvanceBannerCustomAdapter {
 
                     updateBidding(mBannerAd.getECPM());
 
-                    handleSucceed();
+                    handleSucceed(OppoBannerAdapter.this);
                 }
 
                 @Override

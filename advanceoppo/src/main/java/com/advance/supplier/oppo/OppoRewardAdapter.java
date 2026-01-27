@@ -5,7 +5,9 @@ import android.app.Activity;
 import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.heytap.msp.mobad.api.ad.RewardVideoAd;
 import com.heytap.msp.mobad.api.listener.IRewardVideoAdListener;
 import com.heytap.msp.mobad.api.params.RewardVideoAdParams;
@@ -69,6 +71,21 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
 
     private void loadAd() {
         try {
+
+//检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoRewardAdapter.class, new BYAbsCallBack<OppoRewardAdapter>() {
+                @Override
+                public void invoke(OppoRewardAdapter cacheAdapter) {
+
+                    //更新缓存广告得价格
+                    updateBidding(cacheAdapter.mRewardVideoAd.getECPM());
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+
+            
             mRewardVideoAd = new RewardVideoAd(getRealContext(), sdkSupplier.adspotid, new IRewardVideoAdListener() {
                 @Override
                 public void onAdSuccess() {
@@ -76,7 +93,7 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
 
                     updateBidding(mRewardVideoAd.getECPM());
 
-                    handleSucceed();
+                    handleSucceed(OppoRewardAdapter.this);
                 }
 
                 @Override

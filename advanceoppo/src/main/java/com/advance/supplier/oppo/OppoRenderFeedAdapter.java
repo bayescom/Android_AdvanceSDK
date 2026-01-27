@@ -21,8 +21,10 @@ import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.heytap.msp.mobad.api.ad.NativeAdvanceAd;
 import com.heytap.msp.mobad.api.listener.INativeAdvanceInteractListener;
@@ -53,11 +55,26 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         OppoUtil.initAD(this);
         startLoad();
 
-                reportStart();
+                
     }
 
     private void startLoad() {
         try {
+//检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoRenderFeedAdapter.class, new BYAbsCallBack<OppoRenderFeedAdapter>() {
+                @Override
+                public void invoke(OppoRenderFeedAdapter cacheAdapter) {
+
+                    dataConverter = new OppoRenderDataConverter(getRealContext(), cacheAdapter.mRenderAD, sdkSupplier);
+
+                    //更新缓存广告得价格
+                    updateBidding(cacheAdapter.mRenderAD.getECPM());
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+            
             /**
              * 通过构造NativeAdSize对象，在NativeTempletAd初始化时传入、可以指定原生模板广告的大小，单位为dp
              * 也可以传入null，展示默认的大小
@@ -85,7 +102,7 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                         dataConverter = new OppoRenderDataConverter(getRealContext(), mRenderAD, sdkSupplier);
 
                         //标记广告成功
-                        handleSucceed();
+                        handleSucceed(OppoRenderFeedAdapter.this);
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
