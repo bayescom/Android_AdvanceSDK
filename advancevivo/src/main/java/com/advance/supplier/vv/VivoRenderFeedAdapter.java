@@ -503,7 +503,7 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 dataConverter = new VivoRenderDataConverter(usePro, VivoRenderFeedAdapter.this, null, adDataPro);
 
                 updateBidding(VivoUtil.getPrice(adDataPro));
-                handleSucceed();
+                handleSucceed(VivoRenderFeedAdapter.this);
             }
 
             @Override

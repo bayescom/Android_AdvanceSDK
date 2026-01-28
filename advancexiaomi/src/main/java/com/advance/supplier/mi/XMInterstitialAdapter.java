@@ -6,7 +6,9 @@ import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.miui.zeus.mimo.sdk.ADParams;
 import com.miui.zeus.mimo.sdk.InterstitialAd;
 
@@ -123,6 +125,18 @@ public class XMInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     private void loadAd() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, InterstitialAd.class, new BYAbsCallBack<InterstitialAd>() {
+            @Override
+            public void invoke(InterstitialAd cacheAD) {
+                interstitialAd = cacheAD;
+
+                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
 
         interstitialAd = new InterstitialAd();
         //(5.3.4新增接口) 请使用最新接口集成
@@ -136,7 +150,7 @@ public class XMInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
                 updateBidding(XMUtil.getPrice(interstitialAd.getMediaExtraInfo()));
 
-                handleSucceed();
+                handleSucceed(interstitialAd);
             }
 
             @Override

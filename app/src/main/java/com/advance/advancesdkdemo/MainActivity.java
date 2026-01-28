@@ -1,5 +1,7 @@
 package com.advance.advancesdkdemo;
 
+import static com.advance.advancesdkdemo.util.DemoUtil.logAndToast;
+
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -10,6 +12,8 @@ import android.os.Build;
 import android.os.Bundle;
 
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -17,11 +21,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.advance.AdvanceConfig;
+import com.advance.AdvanceRewardVideo;
+import com.advance.AdvanceRewardVideoItem;
+import com.advance.AdvanceRewardVideoListener;
+import com.advance.RewardServerCallBackInf;
 import com.advance.advancesdkdemo.custom.SelfRenderActivity;
 import com.advance.advancesdkdemo.util.BaseCallBack;
 import com.advance.advancesdkdemo.util.DemoIds;
 import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.advancesdkdemo.util.UserPrivacyDialog;
+import com.advance.model.AdvanceError;
+import com.advance.supplier.tanx.TanxGlobalConfig;
 import com.advance.utils.SupplierBridgeUtil;
 import com.bayes.sdk.basic.util.BYStringUtil;
 
@@ -132,7 +142,7 @@ public class MainActivity extends Activity {
                 "百度 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_BAIDU) + "\n" +
                 "快手 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_KS) + "\n" +
                 "tanx SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TANX) + "\n" +
-                "Sigmob SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_SIG)+ "\n" +
+                "Sigmob SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_SIG) + "\n" +
                 "oppo SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_OPPO) + "\n" +
                 "华为 SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HW) + "\n" +
                 "小米 SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_XIAOMI) + "\n" +
@@ -205,8 +215,102 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this, NativeExpressActivity.class));
     }
 
+    AdvanceRewardVideo advanceRewardVideo;
+    boolean hasRewardShow = false;
+
     public void onRewardVideo(View view) {
-        new AdvanceAD(this).loadReward(DemoManger.getInstance().currentDemoIds.reward);
+        advanceRewardVideo = new AdvanceRewardVideo(DemoManger.getInstance().currentDemoIds.reward);
+
+        //若集成
+        TanxGlobalConfig.setMediaUID("tanxMUID");
+
+        //todo 服务端验证相关信息填写---start
+//        advanceRewardVideo.setUserId("用户唯一标识，服务端验证必须");
+//        advanceRewardVideo.setRewardName("激励名称，非必填，透传给广告SDK、app服务器使用");
+//        advanceRewardVideo.setRewardCount(1); //激励数量，非必填，透传给广告SDK、app服务器使用
+//        advanceRewardVideo.setExtraInfo("补充信息，服务端验证时，透传给app服务端");
+        //服务端验证相关信息填写---end
+
+        //设置通用事件监听器
+        advanceRewardVideo.setAdListener(new AdvanceRewardVideoListener() {
+            @Override
+            public void onAdLoaded(AdvanceRewardVideoItem advanceRewardVideoItem) {
+                logAndToast("广告加载成功");
+
+            }
+
+
+            @Override
+            public void onAdShow() {
+                logAndToast("广告展示");
+                hasRewardShow = true;
+            }
+
+            @Override
+            public void onAdFailed(AdvanceError advanceError) {
+                logAndToast("广告加载失败 code=" + advanceError.code + " msg=" + advanceError.msg);
+            }
+
+            @Override
+            public void onSdkSelected(String id) {
+
+            }
+
+            @Override
+            public void onAdClicked() {
+                logAndToast("广告点击");
+            }
+
+
+            @Override
+            public void onVideoCached() {
+                logAndToast("广告缓存成功");
+            }
+
+            @Override
+            public void onVideoComplete() {
+                logAndToast("视频播放完毕");
+            }
+
+            @Override
+            public void onVideoSkip() {
+
+            }
+
+            @Override
+            public void onAdClose() {
+                logAndToast("广告关闭");
+            }
+
+            @Override
+            public void onAdReward() {
+                logAndToast("激励发放");
+            }
+
+            @Override
+            public void onRewardServerInf(RewardServerCallBackInf inf) {
+                //广点通和穿山甲支持回调服务端激励验证信息，详见RewardServerCallBackInf中字段信息
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        logAndToast("onRewardServerInf" + inf);
+                    }
+                }, 1200);
+            }
+        });
+        advanceRewardVideo.loadOnly();
+    }
+
+    public void onRewardShow(View view) {
+        if (hasRewardShow) {
+            return;
+        }
+        // 如果有业务需求，可以提前加载广告，在需要的时候调用show进行展示
+        // 为了方便理解，这里在收到广告后直接调用广告展示，有可能会出现一段时间的缓冲状态。
+        if (advanceRewardVideo != null && advanceRewardVideo.isValid()) {
+            //展示广告
+            advanceRewardVideo.show(this);
+        }
     }
 
     public void onNativeExpressRecyclerView(View view) {

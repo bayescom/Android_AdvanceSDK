@@ -7,7 +7,9 @@ import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.miui.zeus.mimo.sdk.ADParams;
 import com.miui.zeus.mimo.sdk.BannerAd;
 
@@ -106,6 +108,19 @@ public class XMBannerAdapter extends AdvanceBannerCustomAdapter {
     }
 
     private void loadAd() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, BannerAd.class, new BYAbsCallBack<BannerAd>() {
+            @Override
+            public void invoke(BannerAd cacheAD) {
+                bannerAd = cacheAD;
+
+                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
         bannerAd = new BannerAd();
         //(5.3.4新增接口) 请使用最新接口集成
         ADParams params = new ADParams.Builder().setUpId(sdkSupplier.adspotid).build();
@@ -117,7 +132,7 @@ public class XMBannerAdapter extends AdvanceBannerCustomAdapter {
 
                 updateBidding(XMUtil.getPrice(bannerAd.getMediaExtraInfo()));
 
-                handleSucceed();
+                handleSucceed(bannerAd);
             }
 
             //请求失败回调

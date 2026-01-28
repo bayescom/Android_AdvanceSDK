@@ -6,7 +6,9 @@ import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.miui.zeus.mimo.sdk.ADParams;
 import com.miui.zeus.mimo.sdk.TemplateAd;
 
@@ -92,6 +94,19 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     }
 
     private void loadAd() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TemplateAd.class, new BYAbsCallBack<TemplateAd>() {
+            @Override
+            public void invoke(TemplateAd cacheAD) {
+                templateAd = cacheAD;
+
+                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
         templateAd = new TemplateAd();
 
         int width = mSetting.getExpressViewWidth();
@@ -111,7 +126,7 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
                 updateBidding(XMUtil.getPrice(templateAd.getMediaExtraInfo()));
 
-                handleSucceed();
+                handleSucceed(templateAd);
             }
 
             @Override

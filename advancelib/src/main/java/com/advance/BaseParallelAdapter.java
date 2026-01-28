@@ -407,11 +407,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
                     for (String tk : tks) {
                         String tag = "SDK 启动";
                         tk = AdvanceReport.reportReplacedCommon(tk, this, tag);
-                        //todo 存在缓存时，额外增加埋点信息上报
-                        if (cacheModel != null) {
 
-                        }
-                        AdvanceReport.startReport(tk);
                     }
                 }
             }
@@ -430,12 +426,6 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
                     for (String tk : startTKS) {
                         String tag = "SDK start";
                         tk = AdvanceReport.reportReplacedCommon(tk, this, tag);
-                        //todo 存在缓存时，额外增加埋点信息上报
-                        if (cacheModel != null) {
-
-                        }
-                        //发起上报
-                        AdvanceReport.startReport(tk);
                     }
             }
         } catch (Throwable e) {

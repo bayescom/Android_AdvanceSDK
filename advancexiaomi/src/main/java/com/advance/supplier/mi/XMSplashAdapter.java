@@ -6,7 +6,9 @@ import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.miui.zeus.mimo.sdk.ADParams;
 import com.miui.zeus.mimo.sdk.SplashAd;
 
@@ -100,6 +102,20 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     private void loadAd() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SplashAd.class, new BYAbsCallBack<SplashAd>() {
+            @Override
+            public void invoke(SplashAd cacheAD) {
+                splashAd = cacheAD;
+
+                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
+        
         splashAd = new SplashAd();
         ADParams params = new ADParams.Builder().setUpId(sdkSupplier.adspotid).build();
         splashAd.loadAd(params, new SplashAd.SplashAdLoadListener() {
@@ -111,7 +127,7 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
 
                 updateBidding(XMUtil.getPrice(splashAd.getMediaExtraInfo()));
 
-                handleSucceed();
+                handleSucceed(splashAd);
             }
 
             @Override

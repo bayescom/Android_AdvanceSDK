@@ -91,12 +91,27 @@
             android:onClick="onNativeExpressRecyclerView"
             android:text="原生模板RecyclerView" />
 
-        <Button
-            android:id="@+id/rewardvideo_button"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="onRewardVideo"
-            android:text="激励视频" />
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/rewardvideo_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:onClick="onRewardVideo"
+                android:text="激励load" />
+
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onRewardShow"
+                android:text="show" />
+        </LinearLayout>
+
 
 
         <Button

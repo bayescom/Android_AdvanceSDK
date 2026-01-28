@@ -7,7 +7,9 @@ import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.miui.zeus.mimo.sdk.ADParams;
 import com.miui.zeus.mimo.sdk.RewardVideoAd;
 
@@ -142,6 +144,20 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     private void loadAd() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, RewardVideoAd.class, new BYAbsCallBack<RewardVideoAd>() {
+            @Override
+            public void invoke(RewardVideoAd cacheAD) {
+                rewardVideoAd = cacheAD;
+
+                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
+        
         rewardVideoAd = new RewardVideoAd();
 
         //(5.3.4新增接口) 请使用最新接口集成
@@ -155,7 +171,7 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
 
                 updateBidding(XMUtil.getPrice(rewardVideoAd.getMediaExtraInfo()));
 
-                handleSucceed();
+                handleSucceed(rewardVideoAd);
             }
 
             @Override

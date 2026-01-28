@@ -334,11 +334,7 @@ public class AdvanceReport {
                 if (!TextUtils.isEmpty(reqid)) {
                     tk = replaceParameter(tk, AdvanceConstant.URL_REQID_TAG, reqid);
                 }
-                //todo 存在缓存时，额外增加埋点信息上报
-                AdvanceSDKCacheModel cacheModel = adapter.getCacheModel();
-                if (cacheModel != null) {
-
-                }
+                tk = replaceCachedInf(tk, adapter.getCacheModel());
                 AdvanceReport.startReport(tk);
                 return tk;
             }
@@ -346,6 +342,15 @@ public class AdvanceReport {
             throw new RuntimeException(e);
         }
         return tk;
+    }
+
+    // 存在缓存时，额外增加埋点信息上报
+    public static String replaceCachedInf(String ori, AdvanceSDKCacheModel cacheModel) {
+        if (cacheModel != null) {
+            String cachedReqID = cacheModel.serverReqID;
+            ori = ori + "&is_cached=1&cached_reqid=" + cachedReqID;
+        }
+        return ori;
     }
 
 
