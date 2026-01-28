@@ -6,6 +6,7 @@ import android.view.View;
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ITanxAd;
 import com.alimm.tanx.core.ad.ad.template.rendering.feed.ITanxFeedExpressAd;
@@ -14,6 +15,7 @@ import com.alimm.tanx.core.ad.listener.ITanxAdLoader;
 import com.alimm.tanx.core.request.TanxAdSlot;
 import com.alimm.tanx.core.request.TanxError;
 import com.alimm.tanx.ui.TanxSdk;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 
 import java.util.List;
@@ -136,6 +138,18 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
     }
 
     private void startLoadAD() {
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxFeedExpressAd.class, new BYAbsCallBack<ITanxFeedExpressAd>() {
+            @Override
+            public void invoke(ITanxFeedExpressAd cacheAD) {
+                iTanxFeedExpressAd = cacheAD;
+                updateBidding(cacheAD.getBidInfo().getBidPrice());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
         TanxAdSlot adSlot = new TanxAdSlot.Builder()
                 .adCount(sdkSupplier.adCount)
                 .pid(sdkSupplier.adspotid)
@@ -176,7 +190,7 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
                     updateBidding(iTanxFeedExpressAd.getBidInfo().getBidPrice());
 
 //                    回调成功事件
-                    handleSucceed();
+                    handleSucceed(iTanxFeedExpressAd);
 
                 } catch (Throwable e) {
                     e.printStackTrace();

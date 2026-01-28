@@ -7,8 +7,9 @@ import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceUtil;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.vivo.mobilead.unified.base.AdParams;
 import com.vivo.mobilead.unified.base.VivoAdError;
 import com.vivo.mobilead.unified.nativead.UnifiedVivoNativeExpressAd;
@@ -73,6 +74,20 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
     }
 
     private void loadAd() {
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoNativeExpressAdapter.class, new BYAbsCallBack<VivoNativeExpressAdapter>() {
+            @Override
+            public void invoke(VivoNativeExpressAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(VivoUtil.getPrice(cacheAdapter.expressView));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
         AdParams adParams = null;
         AdParams.Builder builder = VivoUtil.getAdParamsBuilder(this);
 
@@ -103,7 +118,7 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
                 LogUtil.simple(TAG + "onAdReady...");
 
                 updateBidding(VivoUtil.getPrice(expressView));
-                handleSucceed();
+                handleSucceed(VivoNativeExpressAdapter.this);
             }
 
             @Override

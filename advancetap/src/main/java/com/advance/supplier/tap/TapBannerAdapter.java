@@ -7,8 +7,10 @@ import android.widget.RelativeLayout;
 import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.tapsdk.tapad.AdRequest;
 import com.tapsdk.tapad.TapAdNative;
@@ -64,6 +66,45 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
     @Override
     public void show() {
         try {
+            adData.setBannerInteractionListener(new TapBannerAd.BannerInteractionListener() {
+
+                @Override
+                public void onAdShow() {
+                    LogUtil.simple(TAG + " onAdShow");
+
+                    handleShow();
+                }
+
+                @Override
+                public void onAdClose() {
+                    LogUtil.simple(TAG + " onAdClose");
+                    if (setting != null) {
+                        setting.adapterDidDislike();
+                    }
+                }
+
+                @Override
+                public void onAdClick() {
+                    LogUtil.simple(TAG + " onAdClick");
+
+                    handleClick();
+                }
+
+                @Override
+                public void onDownloadClick() {
+                    LogUtil.simple(TAG + " onDownloadClick");
+
+                    handleClick();
+                }
+
+                @Override
+                public void onAdValidShow() {
+                    LogUtil.simple(TAG + " onAdValidShow");
+
+                }
+
+            });
+            
             ViewGroup adContainer = setting.getContainer();
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             boolean add = AdvanceUtil.addADView(adContainer, adData.getBannerView(), lp);
@@ -79,6 +120,22 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
 
     private void loadAD() {
         try {
+
+            
+
+            //检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TapBannerAd.class, new BYAbsCallBack<TapBannerAd>() {
+                @Override
+                public void invoke(TapBannerAd cacheAD) {
+                    adData = cacheAD;
+
+                    updateBidding(TapUtil.getBiddingPrice(cacheAD.getMediaExtraInfo()));
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+            
 //            tapAdNative = TapAdManager.get().createAdNative(getRealContext());
             tapAdNative = TapUtil.getTapADManger(getRealContext());
 
@@ -100,46 +157,7 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
 
                         updateBidding(TapUtil.getBiddingPrice(adData.getMediaExtraInfo()));
 
-                        handleSucceed();
-
-                        adData.setBannerInteractionListener(new TapBannerAd.BannerInteractionListener() {
-
-                            @Override
-                            public void onAdShow() {
-                                LogUtil.simple(TAG + " onAdShow");
-
-                                handleShow();
-                            }
-
-                            @Override
-                            public void onAdClose() {
-                                LogUtil.simple(TAG + " onAdClose");
-                                if (setting != null) {
-                                    setting.adapterDidDislike();
-                                }
-                            }
-
-                            @Override
-                            public void onAdClick() {
-                                LogUtil.simple(TAG + " onAdClick");
-
-                                handleClick();
-                            }
-
-                            @Override
-                            public void onDownloadClick() {
-                                LogUtil.simple(TAG + " onDownloadClick");
-
-                                handleClick();
-                            }
-
-                            @Override
-                            public void onAdValidShow() {
-                                LogUtil.simple(TAG + " onAdValidShow");
-
-                            }
-
-                        });
+                        handleSucceed(adData);
 
                     } catch (Throwable e) {
                         e.printStackTrace();

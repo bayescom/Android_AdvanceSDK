@@ -6,7 +6,9 @@ import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.sigmob.windad.WindAdError;
 import com.sigmob.windad.WindAds;
 import com.sigmob.windad.newInterstitial.WindNewInterstitialAd;
@@ -60,6 +62,19 @@ public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter 
 
         try {
 
+//检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, SigmobInterstitialAdapter.class, new BYAbsCallBack<SigmobInterstitialAdapter>() {
+                @Override
+                public void invoke(SigmobInterstitialAdapter cacheAdapter) {
+
+                    //更新缓存广告得价格
+                    updateBidding(SigmobUtil.getEcpmNumber(cacheAdapter.windNewInterstitialAd.getEcpm()));
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
             options.put("user_id", userId);
@@ -76,7 +91,7 @@ public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter 
                     if (windNewInterstitialAd != null)
                         updateBidding(SigmobUtil.getEcpmNumber(windNewInterstitialAd.getEcpm()));
 
-                    handleSucceed();
+                    handleSucceed(SigmobInterstitialAdapter.this);
                 }
 
                 @Override

@@ -11,8 +11,10 @@ import android.widget.TextView;
 import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.tapsdk.tapad.AdRequest;
 import com.tapsdk.tapad.TapAdNative;
@@ -71,6 +73,48 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
                 return;
             }
 
+            adData.setSplashInteractionListener(new TapSplashAd.AdInteractionListener() {
+                @Override
+                public void onAdSkip() {
+                    LogUtil.simple(TAG + "onAdSkip");
+                    if (splashSetting != null) {
+                        splashSetting.adapterDidSkip();
+                    }
+
+                    destroy();
+                }
+
+                @Override
+                public void onAdTimeOver() {
+                    LogUtil.simple(TAG + "onAdTimeOver");
+
+                    if (splashSetting != null) {
+                        splashSetting.adapterDidTimeOver();
+                    }
+                    destroy();
+                }
+
+                @Override
+                public void onAdClick() {
+                    LogUtil.simple(TAG + "onAdClick");
+
+                    handleClick();
+                }
+
+                @Override
+                public void onAdShow() {
+                    LogUtil.simple(TAG + "onAdShow");
+
+                    handleShow();
+
+                }
+
+                @Override
+                public void onAdValidShow() {
+                    LogUtil.simple(TAG + "onAdValidShow");
+
+                }
+            });
 
             Activity activity = getRealActivity(splashSetting.getAdContainer());
             //获取SplashView
@@ -106,6 +150,20 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
 
     private void loadAD() {
         try {
+
+            //检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TapSplashAd.class, new BYAbsCallBack<TapSplashAd>() {
+                @Override
+                public void invoke(TapSplashAd cacheAD) {
+                    adData = cacheAD;
+
+                    updateBidding(TapUtil.getBiddingPrice(cacheAD.getMediaExtraInfo()));
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+
 
             //不支持使用applicationContext属性，必须为activity实例，否则报错
             //tapAdNative = TapAdManager.get().createAdNative(getRealContext());
@@ -145,52 +203,7 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
 
                         updateBidding(TapUtil.getBiddingPrice(tapSplashAd.getMediaExtraInfo()));
 
-
-
-                        adData.setSplashInteractionListener(new TapSplashAd.AdInteractionListener() {
-                            @Override
-                            public void onAdSkip() {
-                                LogUtil.simple(TAG + "onAdSkip");
-                                if (splashSetting != null) {
-                                    splashSetting.adapterDidSkip();
-                                }
-
-                                destroy();
-                            }
-
-                            @Override
-                            public void onAdTimeOver() {
-                                LogUtil.simple(TAG + "onAdTimeOver");
-
-                                if (splashSetting != null) {
-                                    splashSetting.adapterDidTimeOver();
-                                }
-                                destroy();
-                            }
-
-                            @Override
-                            public void onAdClick() {
-                                LogUtil.simple(TAG + "onAdClick");
-
-                                handleClick();
-                            }
-
-                            @Override
-                            public void onAdShow() {
-                                LogUtil.simple(TAG + "onAdShow");
-
-                                handleShow();
-
-                            }
-
-                            @Override
-                            public void onAdValidShow() {
-                                LogUtil.simple(TAG + "onAdValidShow");
-
-                            }
-                        });
-
-                        handleSucceed();
+                        handleSucceed(adData);
                     } catch (Throwable e) {
                         e.printStackTrace();
                         runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));

@@ -13,7 +13,9 @@ import com.advance.core.srender.AdvanceRFVideoEventListener;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.sigmob.windad.WindAdError;
 import com.sigmob.windad.natives.NativeADEventListener;
 import com.sigmob.windad.natives.WindNativeAdData;
@@ -78,6 +80,21 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     private void startLoad() {
         try {
+
+//检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SigmobRenderFeedAdapter.class, new BYAbsCallBack<SigmobRenderFeedAdapter>() {
+                @Override
+                public void invoke(SigmobRenderFeedAdapter cacheAdapter) {
+                    dataConverter = new SigmobRenderDataConverter(cacheAdapter.mRenderAD, sdkSupplier);
+
+                    //更新缓存广告得价格
+                    updateBidding(SigmobUtil.getEcpmNumber(cacheAdapter.windNativeUnifiedAd.getEcpm()));
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+            
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
             options.put("user_id", userId);
@@ -112,7 +129,7 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                     dataConverter = new SigmobRenderDataConverter(mRenderAD, sdkSupplier);
 
                     //标记广告成功
-                    handleSucceed();
+                    handleSucceed(SigmobRenderFeedAdapter.this);
                 }
             });
             windNativeUnifiedAd.loadAd(1);

@@ -20,6 +20,7 @@ import com.advance.core.srender.AdvanceRFVideoEventListener;
 import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ad.feed.ITanxFeedAd;
 import com.alimm.tanx.core.ad.ad.feed.ITanxFeedInteractionListener;
@@ -34,6 +35,7 @@ import com.alimm.tanx.core.request.TanxPlayerError;
 import com.alimm.tanx.core.utils.LogUtils;
 import com.alimm.tanx.ui.TanxSdk;
 import com.bayes.sdk.basic.device.BYDisplay;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
 
 import java.util.List;
@@ -192,6 +194,20 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     private void startLoadAD() {
         try {
+            //检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxFeedAd.class, new BYAbsCallBack<ITanxFeedAd>() {
+                @Override
+                public void invoke(ITanxFeedAd cacheAD) {
+                    nativeAD = cacheAD;
+                    dataConverter = new TanxRenderDataConverter(nativeAD, sdkSupplier);
+
+                    updateBidding(cacheAD.getBidInfo().getBidPrice());
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+
 //            if (BYUtil.isDev()) {
 //                int a = 0 / 0;
 //            }
@@ -227,7 +243,7 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                         dataConverter = new TanxRenderDataConverter(nativeAD, sdkSupplier);
 
 //                    回调成功事件
-                        handleSucceed();
+                        handleSucceed(nativeAD);
 
                     } catch (Throwable e) {
                         e.printStackTrace();

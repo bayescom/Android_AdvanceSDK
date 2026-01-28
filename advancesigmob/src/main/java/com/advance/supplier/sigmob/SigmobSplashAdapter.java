@@ -7,7 +7,9 @@ import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.sigmob.windad.Splash.WindSplashAD;
 import com.sigmob.windad.Splash.WindSplashADListener;
 import com.sigmob.windad.Splash.WindSplashAdRequest;
@@ -52,6 +54,20 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
 
     private void startLoad() {
         try {
+
+//检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, SigmobSplashAdapter.class, new BYAbsCallBack<SigmobSplashAdapter>() {
+                @Override
+                public void invoke(SigmobSplashAdapter cacheAdapter) {
+
+                    //更新缓存广告得价格
+                    updateBidding(SigmobUtil.getEcpmNumber(cacheAdapter.splashAd.getEcpm()));
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+            
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
             options.put("user_id", userId);
@@ -74,7 +90,7 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
                     if (splashAd != null)
                         updateBidding(SigmobUtil.getEcpmNumber(splashAd.getEcpm()));
 
-                    handleSucceed();
+                    handleSucceed(SigmobSplashAdapter.this);
                 }
 
                 @Override

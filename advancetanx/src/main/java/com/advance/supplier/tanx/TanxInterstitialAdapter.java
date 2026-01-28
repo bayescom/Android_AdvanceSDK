@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ITanxAd;
 import com.alimm.tanx.core.ad.ad.template.rendering.table.screen.ITanxTableScreenExpressAd;
@@ -14,6 +15,7 @@ import com.alimm.tanx.core.ad.view.TanxAdView;
 import com.alimm.tanx.core.request.TanxAdSlot;
 import com.alimm.tanx.core.request.TanxError;
 import com.alimm.tanx.ui.TanxSdk;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
 import java.util.List;
 
@@ -146,6 +148,19 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     private void loadOnly() {
         try {
+            //检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxTableScreenExpressAd.class, new BYAbsCallBack<ITanxTableScreenExpressAd>() {
+                @Override
+                public void invoke(ITanxTableScreenExpressAd cacheAD) {
+                    interExpressAD = cacheAD;
+                    updateBidding(cacheAD.getBidInfo().getBidPrice());
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+
+
             iTanxAdLoader = TanxSdk.getSDKManager().createAdLoader(getRealContext());
 
             boolean clickClose = AdvanceTanxSetting.getInstance().interClickAdClose;
@@ -167,7 +182,7 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                             interExpressAD = adList.get(0);
                             updateBidding(interExpressAD.getBidInfo().getBidPrice());
 
-                            handleSucceed();
+                            handleSucceed(interExpressAD);
 
                         } catch (Throwable e) {
                             e.printStackTrace();

@@ -7,8 +7,10 @@ import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.vivo.mobilead.unified.banner.UnifiedVivoBannerAd;
 import com.vivo.mobilead.unified.banner.UnifiedVivoBannerAdListener;
 import com.vivo.mobilead.unified.base.AdParams;
@@ -78,6 +80,21 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
     }
 
     private void loadAd() {
+
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoBannerAdapter.class, new BYAbsCallBack<VivoBannerAdapter>() {
+            @Override
+            public void invoke(VivoBannerAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+//                updateBidding();
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+        
         //如果不在需要使用到banner广告，请及时销毁
         if (vivoBannerAd != null) {
             vivoBannerAd.destroy();
@@ -117,7 +134,7 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
                 adView = view;
 //             todo  不支持bidding？
 //                updateBidding(VivoUtil.getPrice(vivoBannerAd));
-                handleSucceed();
+                handleSucceed(VivoBannerAdapter.this);
             }
 
             @Override

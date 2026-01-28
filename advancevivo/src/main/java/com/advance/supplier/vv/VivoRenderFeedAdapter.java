@@ -2,19 +2,10 @@ package com.advance.supplier.vv;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
-import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.advance.AdvanceSetting;
 import com.advance.core.srender.AdvanceRFBridge;
@@ -27,10 +18,10 @@ import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
-import com.advance.model.SdkSupplier;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
-import com.mercury.sdk.util.MercuryTool;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.vivo.ad.model.AdError;
 import com.vivo.ad.nativead.ClosePosition;
 import com.vivo.ad.nativead.NativeAdListener;
@@ -398,10 +389,29 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     private void loadAd() {
+
         if (sdkSupplier.versionTag == 1) {
             usePro = false;
         }
         LogUtil.simple(TAG + "usePro = " + usePro);
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoRenderFeedAdapter.class, new BYAbsCallBack<VivoRenderFeedAdapter>() {
+            @Override
+            public void invoke(VivoRenderFeedAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                if (usePro) {
+                    updateBidding(VivoUtil.getPrice(cacheAdapter.adDataPro));
+                } else {
+                    updateBidding(VivoUtil.getPrice(cacheAdapter.adData));
+
+                }
+            }
+        });
+        if (hitCache) {
+            return;
+        }
 
 
         if (usePro) {
@@ -428,7 +438,7 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 dataConverter = new VivoRenderDataConverter(usePro, VivoRenderFeedAdapter.this, adData, null);
 
                 updateBidding(VivoUtil.getPrice(adData));
-                handleSucceed();
+                handleSucceed(VivoRenderFeedAdapter.this);
             }
 
             @Override

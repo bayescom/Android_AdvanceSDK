@@ -7,7 +7,9 @@ import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.sigmob.windad.WindAdError;
 import com.sigmob.windad.WindAds;
 import com.sigmob.windad.rewardVideo.WindRewardAdRequest;
@@ -61,6 +63,21 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
 
     private void startLoad() {
         try {
+
+//检查是否命中使用缓存逻辑
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, SigmobRewardAdapter.class, new BYAbsCallBack<SigmobRewardAdapter>() {
+                @Override
+                public void invoke(SigmobRewardAdapter cacheAdapter) {
+
+                    //更新缓存广告得价格
+                    updateBidding(SigmobUtil.getEcpmNumber(cacheAdapter.windRewardVideoAd.getEcpm()));
+                }
+            });
+            if (hitCache) {
+                return;
+            }
+
+            
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
             options.put("user_id", userId);
@@ -77,7 +94,7 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
                     if (windRewardVideoAd != null)
                         updateBidding(SigmobUtil.getEcpmNumber(windRewardVideoAd.getEcpm()));
 
-                    handleSucceed();
+                    handleSucceed(SigmobRewardAdapter.this);
                 }
 
                 @Override

@@ -1,22 +1,20 @@
 package com.advance.supplier.vv;
 
 import android.app.Activity;
-import android.view.View;
 
-import com.advance.AdvanceSetting;
 import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.vivo.mobilead.unified.base.AdParams;
 import com.vivo.mobilead.unified.base.VivoAdError;
 import com.vivo.mobilead.unified.base.callback.MediaListener;
 import com.vivo.mobilead.unified.reward.UnifiedVivoRewardVideoAd;
 import com.vivo.mobilead.unified.reward.UnifiedVivoRewardVideoAdListener;
-import com.vivo.mobilead.unified.splash.UnifiedVivoSplashAd;
-import com.vivo.mobilead.unified.splash.UnifiedVivoSplashAdListener;
 
 public class VivoRewardAdapter extends AdvanceRewardCustomAdapter {
     UnifiedVivoRewardVideoAd rewardVideoAd;
@@ -69,6 +67,21 @@ public class VivoRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     private void loadAd() {
+
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoRewardAdapter.class, new BYAbsCallBack<VivoRewardAdapter>() {
+            @Override
+            public void invoke(VivoRewardAdapter cacheAdapter) {
+
+                //更新缓存广告得价格
+                updateBidding(VivoUtil.getPrice(cacheAdapter.rewardVideoAd));
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
+
         AdParams adParams = null;
         AdParams.Builder builder = VivoUtil.getAdParamsBuilder(this);
         if (builder != null) {
@@ -80,7 +93,7 @@ public class VivoRewardAdapter extends AdvanceRewardCustomAdapter {
                 LogUtil.simple(TAG + "onAdReady...");
 
                 updateBidding(VivoUtil.getPrice(rewardVideoAd));
-                handleSucceed();
+                handleSucceed(VivoRewardAdapter.this);
             }
 
             @Override

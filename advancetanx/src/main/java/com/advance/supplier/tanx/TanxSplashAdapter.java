@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
+import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ITanxAd;
@@ -17,6 +18,7 @@ import com.alimm.tanx.core.ad.listener.ITanxAdLoader;
 import com.alimm.tanx.core.request.TanxAdSlot;
 import com.alimm.tanx.core.request.TanxError;
 import com.alimm.tanx.ui.TanxSdk;
+import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 
 import java.lang.ref.SoftReference;
@@ -75,6 +77,20 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
 
     private void startLoadAD() {
 
+        //检查是否命中使用缓存逻辑
+        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxSplashExpressAd.class, new BYAbsCallBack<ITanxSplashExpressAd>() {
+            @Override
+            public void invoke(ITanxSplashExpressAd cacheAD) {
+                iTanxSplashExpressAd = cacheAD;
+
+                updateBidding(cacheAD.getBidInfo().getBidPrice());
+            }
+        });
+        if (hitCache) {
+            return;
+        }
+
+        
         TanxAdSlot adSlot = new TanxAdSlot.Builder()
                 .adCount(sdkSupplier.adCount)
                 .pid(sdkSupplier.adspotid)
@@ -112,7 +128,7 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
                     LogUtil.simple(TAG + "onLoaded");
                     iTanxSplashExpressAd = adList.get(0);
                     updateBidding(iTanxSplashExpressAd.getBidInfo().getBidPrice());
-                    handleSucceed();
+                    handleSucceed(iTanxSplashExpressAd);
 
                 } catch (Throwable e) {
                     e.printStackTrace();
