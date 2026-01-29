@@ -65,9 +65,7 @@ public class GdtUtil implements AdvanceSplashPlusManager.ZoomCall {
                 public void onStartSuccess() {
                     LogUtil.simple("[GdtUtil] onStartSuccess");
 
-                    if (callBack != null) {
-                        callBack.call();
-                    }
+
                     // 推荐开发者在onStartSuccess回调后开始拉广告
                     AdvanceSetting.getInstance().hasGDTInit = true;
                 }
@@ -81,6 +79,9 @@ public class GdtUtil implements AdvanceSplashPlusManager.ZoomCall {
             });
             AdvanceSetting.getInstance().hasGDTInit = true;
             AdvanceSetting.getInstance().lastGDTAID = gdtMID;
+            if (callBack != null) {
+                callBack.call();
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }

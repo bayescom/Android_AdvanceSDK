@@ -311,7 +311,13 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                 BaseParallelAdapter oldAdapter = supplierAdapters.get(key);
                 supplierAdapters.put(key, adapter);
                 BaseParallelAdapter newAdapter = supplierAdapters.get(key);
+
                 LogUtil.devDebug(BTAG + "尝试替换执行adapter类为缓存类 , oldAdapter = " + oldAdapter + ", newAdapter = " + newAdapter);
+
+                //此处重新进行缓存信息赋值，用来在执行曝光、点击事件时，上报正确的缓存拼接内容
+                if (newAdapter != null) {
+                    newAdapter.initCacheInf();
+                }
             }
         }
     }
@@ -1410,7 +1416,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     }
 
 
-    //串行下的SDK启动成功上报
+    //串行下的SDK启动成功上报 （暂无使用场景，AdvanceCustomizeAd方式已废弃）
     void reportAdvanceLoaded() {
         try {
             if (currentSdkSupplier != null) {
@@ -1426,20 +1432,34 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     void reportAdSucceed(SdkSupplier supplier) {
         try {
             adStatus = AdStatus.SUCCESS;
-            if (supplier != null && !isSupportParallel(supplier)) {
+
+            if (supplierAdapters != null && supplier != null) {
+                int pri = supplier.priority;
+                BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                if (parallelAdapter != null && !parallelAdapter.supportPara) {
 
 //            标记结果状态
-                supplier.resultStatus = AdvanceConstant.SDK_RESULT_CODE_SUCC;
-                updateGroupResultInf(supplier);
+                    supplier.resultStatus = AdvanceConstant.SDK_RESULT_CODE_SUCC;
+                    updateGroupResultInf(supplier);
 
-                ArrayList<String> stk;
-                if (supplier.useBidding() && supplier.bidResultPrice > 0) {
-                    stk = AdvanceReport.getReplacedBidding(supplier.succeedtk, getAdvanceId(), supplier.bidResultPrice);
-                } else {
-                    stk = AdvanceReport.getReplacedTime(supplier.succeedtk, getAdvanceId());
+
+                    AdvanceReport.replaceReportSuccess(supplier, parallelAdapter);
                 }
-                switchReport(stk);
             }
+//            if (supplier != null && !isSupportParallel(supplier)) {
+//
+////            标记结果状态
+//                supplier.resultStatus = AdvanceConstant.SDK_RESULT_CODE_SUCC;
+//                updateGroupResultInf(supplier);
+//
+//                ArrayList<String> stk;
+//                if (supplier.useBidding() && supplier.bidResultPrice > 0) {
+//                    stk = AdvanceReport.getReplacedBidding(supplier.succeedtk, getAdvanceId(), supplier.bidResultPrice);
+//                } else {
+//                    stk = AdvanceReport.getReplacedTime(supplier.succeedtk, getAdvanceId());
+//                }
+//                switchReport(stk);
+//            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1449,14 +1469,23 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     void reportAdWin(SdkSupplier supplier) {
         try {
             LogUtil.devDebug(BTAG + "reportAdWin start");
-            if (supplier != null && supplier.wintk != null) {
-                ArrayList<String> stk;
-                if (supplier.useBidding() && supplier.bidResultPrice > 0) {
-                    stk = AdvanceReport.getReplacedBidding(supplier.wintk, getAdvanceId(), supplier.bidResultPrice);
-                } else {
-                    stk = AdvanceReport.getReplacedTime(supplier.wintk, getAdvanceId());
+//            if (supplier != null && supplier.wintk != null) {
+//                ArrayList<String> stk;
+//                if (supplier.useBidding() && supplier.bidResultPrice > 0) {
+//                    stk = AdvanceReport.getReplacedBidding(supplier.wintk, getAdvanceId(), supplier.bidResultPrice);
+//                } else {
+//                    stk = AdvanceReport.getReplacedTime(supplier.wintk, getAdvanceId());
+//                }
+//                switchReport(stk);
+//            }
+
+
+            if (supplierAdapters != null && supplier != null) {
+                int pri = supplier.priority;
+                BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                if (parallelAdapter != null) {
+                    AdvanceReport.replaceReportWin(supplier, parallelAdapter);
                 }
-                switchReport(stk);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -1482,16 +1511,23 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     void reportAdShow(SdkSupplier supplier) {
         try {
             adStatus = AdStatus.SHOW;
-            LogUtil.devDebug(BTAG+"reportAdShow adStatus = "+ adStatus);
-            if (supplier != null) {
-                ArrayList<String> imp;
-                //bidding渠道需要记录价格，上报至服务端
-                if (supplier.useBidding() && supplier.bidResultPrice > 0) {
-                    imp = AdvanceReport.getBidReplacedImp(supplier.imptk, requestTime, getAdvanceId(), supplier.bidResultPrice);
-                } else {
-                    imp = AdvanceReport.getReplacedImp(supplier.imptk, requestTime, getAdvanceId());
-                }
-                AdvanceReport.reportToUrls(imp);
+            LogUtil.devDebug(BTAG + "reportAdShow adStatus = " + adStatus);
+//            if (supplier != null) {
+//                ArrayList<String> imp;
+//                //bidding渠道需要记录价格，上报至服务端
+//                if (supplier.useBidding() && supplier.bidResultPrice > 0) {
+//                    imp = AdvanceReport.getBidReplacedImp(supplier.imptk, requestTime, getAdvanceId(), supplier.bidResultPrice);
+//                } else {
+//                    imp = AdvanceReport.getReplacedImp(supplier.imptk, requestTime, getAdvanceId());
+//                }
+//                AdvanceReport.reportToUrls(imp);
+//            }
+
+            if (supplierAdapters != null && supplier != null) {
+                int pri = supplier.priority;
+                BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                //发起曝光上报
+                AdvanceReport.replaceReportImp(supplier, parallelAdapter);
             }
             //展现上报发起后进行被延迟的部分上报
             startDelayReport();
@@ -1515,9 +1551,21 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
 
     void reportAdClicked(SdkSupplier supplier) {
         try {
+//            if (supplier != null) {
+//                ArrayList<String> ctk = AdvanceReport.getReplacedTime(supplier.clicktk, getAdvanceId());
+//                AdvanceReport.reportToUrls(ctk);
+//            }
+
             if (supplier != null) {
-                ArrayList<String> ctk = AdvanceReport.getReplacedTime(supplier.clicktk, getAdvanceId());
-                AdvanceReport.reportToUrls(ctk);
+                ArrayList<String> clicktk = supplier.clicktk;
+                if (clicktk != null && !clicktk.isEmpty() && supplierAdapters != null) {
+                    int pri = supplier.priority;
+                    BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                    for (String tk : clicktk) {
+                        //发起上报
+                        AdvanceReport.reportReplacedCommon(tk, parallelAdapter, "点击");
+                    }
+                }
             }
         } catch (Throwable e) {
             e.printStackTrace();

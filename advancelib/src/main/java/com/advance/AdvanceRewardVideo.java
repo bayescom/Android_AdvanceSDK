@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.text.TextUtils;
 
 import com.advance.custom.AdvanceRewardCustomAdapter;
+import com.advance.model.AdvanceSDKCacheModel;
 import com.advance.model.ServerRewardModel;
+import com.advance.net.AdvanceReport;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.RewardGMCallBack;
 import com.advance.model.AdvanceError;
@@ -388,6 +390,19 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
 
                         callBackInf.rewardAmount = getRewardCount();
                         callBackInf.rewardName = getRewardName();
+
+                        //如果当前播放得为缓存广告，需增加相关埋点信息通知
+                        if (supplierAdapters != null && currentSupplier != null) {
+                            int pri = currentSupplier.priority;
+                            BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                            if (parallelAdapter != null) {
+                                AdvanceSDKCacheModel cacheModel = parallelAdapter.getCacheModel();
+                                if (cacheModel != null) {
+                                    jsonObject.putOpt("is_cached", 1);
+                                    jsonObject.putOpt("cached_reqid", cacheModel.serverReqID);
+                                }
+                            }
+                        }
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }

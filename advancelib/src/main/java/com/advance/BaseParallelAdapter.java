@@ -184,15 +184,6 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
 
                     //并行上报广告加载成功
                     if (sdkSupplier != null) {
-                        String reqid = baseSetting == null ? "" : baseSetting.getAdvanceId();
-                        ArrayList<String> succTk;
-                        //有返回bid价格信息时，进行上报拼接
-                        if (isCurrentSupBidding() && sdkSupplier.bidResultPrice > 0) {
-                            succTk = AdvanceReport.getReplacedBidding(sdkSupplier.succeedtk, reqid, sdkSupplier.bidResultPrice);
-                        } else {
-                            succTk = AdvanceReport.getReplacedTime(sdkSupplier.succeedtk, reqid);
-                        }
-                        switchReport(succTk);
                     }
                 }
 

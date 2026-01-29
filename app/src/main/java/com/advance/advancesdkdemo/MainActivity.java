@@ -236,7 +236,7 @@ public class MainActivity extends Activity {
             @Override
             public void onAdLoaded(AdvanceRewardVideoItem advanceRewardVideoItem) {
                 logAndToast("广告加载成功");
-
+                hasRewardShow = false;
             }
 
 
@@ -303,6 +303,7 @@ public class MainActivity extends Activity {
 
     public void onRewardShow(View view) {
         if (hasRewardShow) {
+            logAndToast("激励已展示过");
             return;
         }
         // 如果有业务需求，可以提前加载广告，在需要的时候调用show进行展示
@@ -310,6 +311,8 @@ public class MainActivity extends Activity {
         if (advanceRewardVideo != null && advanceRewardVideo.isValid()) {
             //展示广告
             advanceRewardVideo.show(this);
+        } else {
+            logAndToast("激励广告不存在或者已失效");
         }
     }
 

@@ -13,6 +13,7 @@ import com.advance.BaseSetting;
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
 import com.advance.model.AdvanceSDKCacheModel;
+import com.advance.model.SdkSupplier;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDevice;
 import com.bayes.sdk.basic.net.BYNetRequest;
@@ -352,6 +353,58 @@ public class AdvanceReport {
         }
         return ori;
     }
+
+    public static void replaceReportSuccess(SdkSupplier supplier,BaseParallelAdapter adapter){
+        if (supplier!=null && adapter!=null){
+
+            ArrayList<String> stk = supplier.succeedtk;
+            if (stk!=null && !stk.isEmpty()){
+                for (String tk :stk ){
+                    //先尝试拼接价格，只有bidding位置且有价格返回，才会进行拼接
+                    if (supplier.useBidding() && supplier.bidResultPrice > 0) {
+                        tk = tk + "&bidResult=" + supplier.bidResultPrice;
+                    }
+                    AdvanceReport.reportReplacedCommon(tk,adapter,"成功返回");
+                }
+            }
+        }
+    }
+
+
+    public static void replaceReportImp(SdkSupplier supplier,BaseParallelAdapter adapter){
+        if (supplier!=null && adapter!=null){
+
+            ArrayList<String> stk = supplier.imptk;
+            if (stk!=null && !stk.isEmpty()){
+                for (String tk :stk ){
+                    //先尝试拼接价格，只有bidding位置且有价格返回，才会进行拼接
+                    if (supplier.useBidding() && supplier.bidResultPrice > 0) {
+                        tk = tk + "&bidResult=" + supplier.bidResultPrice;
+                    }
+                    AdvanceReport.reportReplacedCommon(tk,adapter,"展示");
+                }
+            }
+        }
+    }
+
+
+
+    public static void replaceReportWin(SdkSupplier supplier,BaseParallelAdapter adapter){
+        if (supplier!=null && adapter!=null){
+
+            ArrayList<String> stk = supplier.wintk;
+            if (stk!=null && !stk.isEmpty()){
+                for (String tk :stk ){
+                    //先尝试拼接价格，只有bidding位置且有价格返回，才会进行拼接
+                    if (supplier.useBidding() && supplier.bidResultPrice > 0) {
+                        tk = tk + "&bidResult=" + supplier.bidResultPrice;
+                    }
+                    AdvanceReport.reportReplacedCommon(tk,adapter,"竞胜");
+                }
+            }
+        }
+    }
+
 
 
     /**
