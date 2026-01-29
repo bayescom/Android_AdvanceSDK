@@ -279,7 +279,7 @@ public class KSUtil implements AdvanceSplashPlusManager.ZoomCall {
 
                 @Override
                 public void onFail(int i, String s) {
-                    String eMsg = "[KSUtil.initAD] InitCallback failed ; onFail";
+                    String eMsg = "[KSUtil.initAD] InitCallback failed ; onFail ： code = "+ i + ",msg = " + s;
                     AdvanceSetting.getInstance().hasKSInit = false;
                     //内部失败状态标记
                     AdvanceKSManager.getInstance().innerInitStatus = AdvanceKSManager.INIT_STATUS_FAILED;
@@ -310,7 +310,7 @@ public class KSUtil implements AdvanceSplashPlusManager.ZoomCall {
 
                 @Override
                 public void onFail(int i, String s) {
-                    String eMsg = "[KSUtil.initAD] StartCallback failed ; onFail";
+                    String eMsg = "[KSUtil.initAD] StartCallback failed ; onFail： code = "+ i + ",msg = " + s;
                     //内部失败状态标记
                     AdvanceKSManager.getInstance().innerInitStatus = AdvanceKSManager.INIT_STATUS_FAILED;
                     AdvanceKSManager.getInstance().innerInitErrCode = i;

@@ -16,7 +16,7 @@ def outputName = pomName + "_" + advanceVersionName + ".aar"
 
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 14

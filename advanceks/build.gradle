@@ -8,7 +8,7 @@ group = 'com.github.bayescom'
 //maven依赖的项目名称
 def pomName = "advance-ks"
 def extVersionName = ""
-def libVersionName = "4.11.20.1"
+def libVersionName = "4.12.20.1"
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
 
 def advanceVersionCode = 1
@@ -19,8 +19,7 @@ advanceVersionName = advanceVersionName + extVersionName
 def outputName = pomName + "_" + advanceVersionName + ".aar"
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 31
 
 
     defaultConfig {
@@ -59,8 +58,8 @@ repositories {
 
 dependencies {
 
-    api 'androidx.appcompat:appcompat:1.0.0'
-    api 'androidx.recyclerview:recyclerview:1.0.0'
+    compileOnly 'androidx.appcompat:appcompat:1.0.0'
+//    api 'androidx.recyclerview:recyclerview:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'

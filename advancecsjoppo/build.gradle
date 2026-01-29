@@ -17,8 +17,7 @@ def advanceVersionCode = 1
 def outputName = pomName + "_" + advanceVersionName + ".aar"
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 31
 
 
     defaultConfig {

@@ -177,3 +177,11 @@
 -keep class com.bun.miitmdid.** {*;}
 -keep class com.advance.supplier.** {*;}
 -keep class com.kwai.** {*;}
+
+
+# 保持 AndroidX activity 相关的类不被混淆
+-keep class androidx.activity.** { *; }
+-keep interface androidx.activity.** { *; }
+
+# 如果 SDK 用到了 FragmentActivity，通常也需要保持 Fragment
+-keep class androidx.fragment.app.** { *; }
