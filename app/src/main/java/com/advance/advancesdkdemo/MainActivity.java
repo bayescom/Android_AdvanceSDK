@@ -4,6 +4,7 @@ import static com.advance.advancesdkdemo.util.DemoUtil.logAndToast;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -39,7 +40,7 @@ import com.bayes.sdk.basic.util.BYStringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends Activity {
 
     Button fullVideo, banner, splash, interstitial, reward, nativeExpress, nativeExpressRV, nativeCustom, draw;
     Spinner sdKSNew;

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 
 import com.advance.AdvanceRenderFeed;
 import com.advance.advancesdkdemo.AdvanceAD;
-import com.advance.advancesdkdemo.Constants;
 import com.advance.advancesdkdemo.R;
 import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.advancesdkdemo.util.DemoUtil;
@@ -39,10 +37,8 @@ import com.advance.supplier.oppo.AdvanceRFADDataOppo;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bumptech.glide.Glide;
-import com.heytap.msp.mobad.api.params.INativeComplianceListener;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class SelfRenderActivity extends Activity {
@@ -351,58 +347,58 @@ public class SelfRenderActivity extends Activity {
                 boolean isOppo = adData instanceof AdvanceRFADDataOppo;
                 if (isOppo) {
                     AdvanceRFADDataOppo oppoData = (AdvanceRFADDataOppo) adData;
-                    oppoData.bindToComplianceView(new LinkedList<View>() {
-                        {
-                            /*
-                             * 添加隐私声明交互view
-                             * */
-                            add(mAppPrivacy);
-                        }
-                    }, new INativeComplianceListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Log.d(Constants.DEMO_TAG, "privacy onclick = " + view);
-                        }
-
-                        @Override
-                        public void onClose() {
-                            Log.d(Constants.DEMO_TAG, "privacy onClose ");
-                        }
-                    }, new LinkedList<View>() {
-                        {
-                            /*
-                             * 添加权限声明交互view
-                             * */
-                            add(mAppPermission);
-                        }
-                    }, new INativeComplianceListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Log.d(Constants.DEMO_TAG, "permission onclick = " + view);
-                        }
-
-                        @Override
-                        public void onClose() {
-                            Log.d(Constants.DEMO_TAG, "permission onClose ");
-                        }
-                    }, new LinkedList<View>() {
-                        {
-                            /*
-                             * 添加应用介绍交互view
-                             * */
-                            add(mAppFunction);
-                        }
-                    }, new INativeComplianceListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Log.d(Constants.DEMO_TAG, "desc onclick = " + view);
-                        }
-
-                        @Override
-                        public void onClose() {
-                            Log.d(Constants.DEMO_TAG, "desc onClose ");
-                        }
-                    });
+//                    oppoData.bindToComplianceView(new LinkedList<View>() {
+//                        {
+//                            /*
+//                             * 添加隐私声明交互view
+//                             * */
+//                            add(mAppPrivacy);
+//                        }
+//                    }, new INativeComplianceListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Log.d(Constants.DEMO_TAG, "privacy onclick = " + view);
+//                        }
+//
+//                        @Override
+//                        public void onClose() {
+//                            Log.d(Constants.DEMO_TAG, "privacy onClose ");
+//                        }
+//                    }, new LinkedList<View>() {
+//                        {
+//                            /*
+//                             * 添加权限声明交互view
+//                             * */
+//                            add(mAppPermission);
+//                        }
+//                    }, new INativeComplianceListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Log.d(Constants.DEMO_TAG, "permission onclick = " + view);
+//                        }
+//
+//                        @Override
+//                        public void onClose() {
+//                            Log.d(Constants.DEMO_TAG, "permission onClose ");
+//                        }
+//                    }, new LinkedList<View>() {
+//                        {
+//                            /*
+//                             * 添加应用介绍交互view
+//                             * */
+//                            add(mAppFunction);
+//                        }
+//                    }, new INativeComplianceListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Log.d(Constants.DEMO_TAG, "desc onclick = " + view);
+//                        }
+//
+//                        @Override
+//                        public void onClose() {
+//                            Log.d(Constants.DEMO_TAG, "desc onClose ");
+//                        }
+//                    });
                 } else {
                     String privacy = downloadElement.getPrivacyUrl();
                     if (TextUtils.isEmpty(privacy)) {

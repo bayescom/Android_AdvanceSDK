@@ -53,7 +53,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     //用于发布时部分编译报错兼容
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
     if (IS_PUBLISH.toBoolean()) {
         implementation('androidx.core:core:1.5.0') {
             force = true
