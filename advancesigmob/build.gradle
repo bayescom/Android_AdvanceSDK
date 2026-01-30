@@ -64,8 +64,15 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    api fileTree(dir: 'libs', include: ['wind-common-1.8.3.aar'])
-    api fileTree(dir: 'libs', include: ['wind-sdk-4.24.0.aar'])
+    def v1 = 'wind-common-1.8.3.aar'
+    def v2 = 'wind-sdk-4.24.0.aar'
+    if (IS_PUBLISH.toBoolean()) {
+        compileOnly fileTree(dir: 'libs', include: [v1])
+        compileOnly fileTree(dir: 'libs', include: [v2])
+    } else {
+        api fileTree(dir: 'libs', include: [v1])
+        api fileTree(dir: 'libs', include: [v2])
+    }
 
     compileOnly project(path: ':advancelib')
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"

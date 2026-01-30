@@ -73,8 +73,11 @@ dependencies {
 
 //    特殊版本 穿山甲
     def name = "open_ad_sdk_${libVersionName}.aar"
-    api fileTree(dir: 'libs', include: [name])
-
+    if (IS_PUBLISH.toBoolean()){
+        compileOnly fileTree(dir: 'libs', include: [name])
+    }else {
+        api fileTree(dir: 'libs', include: [name])
+    }
 
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
 

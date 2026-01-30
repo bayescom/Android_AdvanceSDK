@@ -72,7 +72,11 @@ dependencies {
 
     //离线aar包引入方式
     def name = "open_ad_sdk_${libVersionName}.aar"
-    api fileTree(dir: 'libs', include: [name])
+    if (IS_PUBLISH.toBoolean()){
+        compileOnly fileTree(dir: 'libs', include: [name])
+    }else {
+        api fileTree(dir: 'libs', include: [name])
+    }
 //
 
 

@@ -56,8 +56,11 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    api fileTree(dir: 'libs', include: ["Baidu_MobAds_SDK_${libVersionName}.aar"])
-
+    if (IS_PUBLISH.toBoolean()){
+        compileOnly files("libs/Baidu_MobAds_SDK_${libVersionName}.aar")
+    }else {
+        api fileTree(dir: 'libs', include: ["Baidu_MobAds_SDK_${libVersionName}.aar"])
+    }
 
     compileOnly project(path: ':advancelib')
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
@@ -70,7 +73,6 @@ android.libraryVariants.all { variant ->
         outputFileName = outputName
     }
 }
-
 
 
 afterEvaluate {

@@ -64,9 +64,12 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    def libName = "kssdk-ad-" + libVersionName
-    api fileTree(dir: 'libs', include: [libName + '.aar'])
-
+    def name = "kssdk-ad-" + libVersionName+ '.aar'
+    if (IS_PUBLISH.toBoolean()){
+        compileOnly fileTree(dir: 'libs', include: [name])
+    }else {
+        api fileTree(dir: 'libs', include: [name])
+    }
     compileOnly project(path: ':advancelib')
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
 

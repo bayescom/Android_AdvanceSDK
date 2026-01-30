@@ -78,11 +78,12 @@ dependencies {
 
     //离线aar包引入方式
     def name = "oppo_ad_${libVersionName}.aar"
-//    if (rootProject.ext.buildWithOutAAR) {
+    if (IS_PUBLISH.toBoolean()){
+        compileOnly fileTree(dir: 'libs', include: [name])
+    }else {
         api fileTree(dir: 'libs', include: [name])
-//    } else {
-//        embed(name: "oppo_ad_${libVersionName}", ext: 'aar')
-//    }
+    }
+
 //主要是基础库方法+ 自渲染的 MercuryTool
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
 
