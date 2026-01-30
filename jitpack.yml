@@ -1,2 +1,9 @@
 jdk:
   - openjdk11
+
+before_install:
+  - ls /usr/local/android-sdk/ndk/
+  # 1. 接受 license（防止安装时卡住）
+  - yes | sdkmanager --licenses
+  # 2. 安装特定版本的 NDK (以 25.1.8937393 为例)
+  - sdkmanager --install "ndk;22.1.7171670"

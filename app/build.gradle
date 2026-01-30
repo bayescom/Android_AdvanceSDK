@@ -5,6 +5,8 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 31
+    ndkVersion = "22.1.7171670"
+
     defaultConfig {
         applicationId "com.advance.demo"
 //        applicationId "com.opos.mobaddemo" //oppo测试包名，oppo广告需要指定包名才可以
