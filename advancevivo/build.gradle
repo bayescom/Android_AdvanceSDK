@@ -1,7 +1,8 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven-publish'
+//apply plugin: 'maven-publish'
+apply from: "../publish.gradle"
 // JitPack Maven
-apply plugin: 'com.github.dcendents.android-maven'
+//apply plugin: 'com.github.dcendents.android-maven'
 // Your Group
 group = 'com.github.bayescom'
 
@@ -73,24 +74,3 @@ dependencies {
 }
 
 
-afterEvaluate {
-    publishing {
-        publications {
-            // 创建一个发布任务，名字随意，比如 'release'
-            release(MavenPublication) {
-                // 1. 自动从 release版本 提取组件
-                from components.release
-
-                // 2. 自定义 ArtifactId (这就是用户引用时的名字)
-                // 如果不写，默认就是当前 module 的文件夹名
-                artifactId = pomName
-
-                // 3. GroupId 通常由 JitPack 自动覆盖，但建议写上
-                groupId = group
-
-                // 4. 版本号
-                version = "${rootProject.ext.advance_version}"
-            }
-        }
-    }
-}
