@@ -10,7 +10,7 @@ afterEvaluate {
 
                 // 这里是关键：ArtifactId 建议设置成模块名
                 // 最终坐标会是：com.github.用户名:仓库名:模块名:版本号
-                artifactId = project.name
+                artifactId = project.name.replace('advance','')
             }
         }
     }

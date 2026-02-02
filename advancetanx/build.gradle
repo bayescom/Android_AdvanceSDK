@@ -120,8 +120,8 @@ dependencies {
         exclude group: 'com.alibaba'
         exclude group: 'com.umeng.umsdk'
     }
+    compileOnly project(path: ':advancecore')
 
-    compileOnly project(path: ':advancelib')
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
 
 }

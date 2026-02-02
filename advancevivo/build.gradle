@@ -61,6 +61,7 @@ dependencies {
     }
 
     def name = "open_ad_6.2.7.0_d8e6702aa_2g.aar"
+    compileOnly project(path: ':advancecore')
     if (IS_PUBLISH.toBoolean()){
         compileOnly fileTree(dir: 'libs', include: [name])
     }else {
@@ -68,7 +69,6 @@ dependencies {
     }
 
 
-    compileOnly project(path: ':advancelib')
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
 
 }

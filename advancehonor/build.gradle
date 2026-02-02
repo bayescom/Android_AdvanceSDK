@@ -56,9 +56,9 @@ dependencies {
 
     def honor_ad_sdk_version = "1.0.32.300"
     api "com.hihonor.mcs:ads-lite:$honor_ad_sdk_version"
-    api "com.hihonor.mcs:ads-tools:$honor_ad_sdk_version" // 如果您需要使用自测工具，可以引用该包
+    api "com.hihonor.mcs:ads-tools:$honor_ad_sdk_version"
+    compileOnly project(path: ':advancecore') // 如果您需要使用自测工具，可以引用该包
 
-    compileOnly project(path: ':advancelib')
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
 
     if (IS_PUBLISH.toBoolean()) {

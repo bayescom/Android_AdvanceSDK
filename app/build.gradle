@@ -111,6 +111,7 @@ repositories {
     }
 }
 dependencies {
+    implementation project(path: ':advancecore')
 
 
 //引入Advance SDK --------start--------
@@ -133,7 +134,7 @@ dependencies {
 
 //----------------引入方式2：依赖代码工程（adn工程中包含了adapter及广告aar），适合可能有一些代码改动需求的用户
 //2.1 必须引入部分
-    implementation project(path: ':advancelib') //聚合核心
+    //聚合核心
     implementation project(path: ':advancemry') //倍业Mercury
 
 //2.2 可选引入部分

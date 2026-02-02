@@ -55,9 +55,9 @@ dependencies {
 
     api "com.huawei.hms:ads-lite:1${libVersionName}"
     api "com.huawei.hms:ads-consent:${libVersionName}"
+    compileOnly project(':advancecore')
 
 
-    compileOnly project(':advancelib')
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
 
 

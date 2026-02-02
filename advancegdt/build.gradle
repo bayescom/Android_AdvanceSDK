@@ -65,9 +65,8 @@ dependencies {
         api "com.qq.e.union:union:${libVersionName}"
 
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
+    compileOnly project(path: ':advancecore')
 
-
-    compileOnly project(path: ':advancelib')
 
 }
 

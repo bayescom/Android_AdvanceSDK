@@ -87,8 +87,8 @@ dependencies {
 
 //主要是基础库方法+ 自渲染的 MercuryTool
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
+    compileOnly project(path: ':advancecore')
 
-    compileOnly project(path: ':advancelib')
 }
 
 

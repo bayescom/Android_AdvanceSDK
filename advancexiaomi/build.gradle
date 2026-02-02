@@ -55,6 +55,7 @@ dependencies {
 
 
     def name = "mimo-ad-sdk-" + libVersionName+ '.aar'
+    compileOnly project(path: ':advancecore')
     if (IS_PUBLISH.toBoolean()){
         compileOnly fileTree(dir: 'libs', include: [name])
     }else {
@@ -62,7 +63,6 @@ dependencies {
     }
 
 
-    compileOnly project(path: ':advancelib')
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
 
 }

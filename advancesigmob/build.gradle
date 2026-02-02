@@ -67,6 +67,7 @@ dependencies {
 
     def v1 = 'wind-common-1.8.3.aar'
     def v2 = 'wind-sdk-4.24.0.aar'
+    compileOnly project(path: ':advancecore')
     if (IS_PUBLISH.toBoolean()) {
         compileOnly fileTree(dir: 'libs', include: [v1])
         compileOnly fileTree(dir: 'libs', include: [v2])
@@ -75,7 +76,6 @@ dependencies {
         api fileTree(dir: 'libs', include: [v2])
     }
 
-    compileOnly project(path: ':advancelib')
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
 
 }
