@@ -117,17 +117,28 @@ dependencies {
 //引入Advance SDK --------start--------
 
 //----------------引入方式1：在线依赖，适合直接使用得开发者
-//1.1  必须引入部分： 首先引入聚合库，排除不需要的adapter库，此部分引入不包含广告aar文件，aar需单独引入。
-//    implementation('com.github.bayescom:Android_AdvanceSDK:5.2.3') {
-////        穿山甲有两个版本的SDK。对应了两个adapter，注意只能使用一个，通过下方exclude方法移除掉不需要的版本
-////        exclude module : 'advancecsj'
-//        exclude module: 'advancecsjoppo'
-//    }
+//    def advanceVersion = '5.2.5'
+//1.1  必须引入部分： 首先引入聚合库及广告变现
+//    implementation "com.github.bayescom.Android_AdvanceSDK:core:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:mry:${advanceVersion}"
 //    // 必须，Mercury SDK aar，最新版本请前往：https://www.bayescom.com/docsify/docs/#/bayescom/sdk/Android
 //    implementation "io.github.bayescom:mercury-sdk:XXX"
 //
 ////1.2  可选引入部分，引入各个广告ADN得aar
-//    //依次引入各家广告SDK：穿山甲、百度、快手、等等广告SDK
+//    //依次引入各家广告SDK：穿山甲、百度、快手、等等广告SDK adapter
+//    implementation "com.github.bayescom.Android_AdvanceSDK:csj:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:bd:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:ks:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:gdt:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:tanx:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:sigmob:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:vivo:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:oppo:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:tap:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:huawei:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:xiaomi:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:honor:${advanceVersion}"
+//    //引入广告SDK
 //    implementation fileTree(dir: 'libs', include: ["open_ad_sdk_xxx.aar","Baidu_MobAds_SDK_xxx.aar","kssdk-ad-xxx.aar","等其他广告SDK"])
 //----------------引入方式1 end ----------------------------------------------------------------
 
