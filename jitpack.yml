@@ -7,3 +7,8 @@ before_install:
   - yes | sdkmanager --licenses
   # 2. 安装特定版本的 NDK (以 25.1.8937393 为例)
   - sdkmanager --install "ndk;22.1.7171670"
+
+
+#install:
+#  # 仅执行指定模块的发布任务，跳过其他模块的编译
+#  - ./gradlew :advancemry:publishToMavenLocal

@@ -4,7 +4,6 @@ import android.location.Location;
 
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.itf.AdvanceSupplierBridge;
-import com.mercury.sdk.core.config.AdConfigManager;
 import com.mercury.sdk.core.config.MercuryAD;
 import com.mercury.sdk.core.config.MercuryPrivacyController;
 
@@ -84,6 +83,12 @@ public class MercuryGlobalConfig implements AdvanceSupplierBridge {
                     public String getDevGaid() {
                         return controller.getDevGaid();
                     }
+
+                    @Override
+                    public boolean alist() {
+                        return controller.alist();
+                    }
+
                 });
             }
         } catch (Throwable e) {
