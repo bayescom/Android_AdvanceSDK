@@ -117,7 +117,7 @@ dependencies {
 //引入Advance SDK --------start--------
 
 //----------------引入方式1：在线依赖，适合直接使用得开发者
-//    def advanceVersion = '5.2.5'
+//    def advanceVersion = '5.2.5.1'
 //1.1  必须引入部分： 首先引入聚合库及广告变现
 //    implementation "com.github.bayescom.Android_AdvanceSDK:core:${advanceVersion}"
 //    implementation "com.github.bayescom.Android_AdvanceSDK:mry:${advanceVersion}"
