@@ -22,16 +22,12 @@ buildscript {
         maven { url 'https://s01.oss.sonatype.org/content/groups/public' }
         maven { url 'https://artifact.bytedance.com/repository/pangle' }
         //GroMore SDK依赖
-        maven {
-            url "https://artifact.bytedance.com/repository/pangle"
-        }
+        maven { url "https://artifact.bytedance.com/repository/pangle" }
         // 配置HUAWEI Ads SDK的Maven仓地址
         maven { url 'https://developer.huawei.com/repo/' }
         maven { url "https://plugins.gradle.org/m2/" }
         // 配置荣耀商推SDK的 Maven 仓地址，包含HA和荣耀identifier包
-        maven {
-            url 'https://developer.hihonor.com/repo/'
-        }
+        maven { url 'https://developer.hihonor.com/repo/' }
     }
     dependencies {
         if (IS_PUBLISH.toBoolean()) {
