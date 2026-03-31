@@ -12,4 +12,7 @@ public interface AdvanceSupplierBridge {
     //允许个性化广告推送开关
     void setPersonalRecommend(boolean allow);
 
+    //关闭摇一摇互动方式
+    void disableShake(boolean disableShake);
+
 }

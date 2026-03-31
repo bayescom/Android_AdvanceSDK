@@ -73,6 +73,6 @@ public class BannerActivity extends Activity {
         });
         advanceBanner.loadOnly();
 
-        logAndToast("banner广告请求中");
+//        logAndToast("banner广告请求中");
     }
 }

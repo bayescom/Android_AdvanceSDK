@@ -52,6 +52,7 @@ public class TanxUtil {
                     .imei(imei)
 //                    .imageLoader(iLoader)
                     .debug(BYUtil.isDebug())
+                    .setEnableSensor(!AdvanceSetting.getInstance().disableShake)
                     //                .dark(new SettingConfig().setNightConfig())
                     .build();
 

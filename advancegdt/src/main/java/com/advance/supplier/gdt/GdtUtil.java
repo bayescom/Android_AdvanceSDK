@@ -11,7 +11,6 @@ import com.advance.utils.AdvanceSplashPlusManager;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
-import com.bayes.sdk.basic.util.BYUtil;
 import com.qq.e.ads.splash.SplashAD;
 import com.qq.e.comm.managers.GDTAdSdk;
 import com.qq.e.comm.managers.setting.GlobalSetting;

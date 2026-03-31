@@ -181,12 +181,12 @@ public class SelfRenderActivity extends Activity {
         materialProvider.videoView = advRFVideoView;
         materialProvider.logoView = advRFLogoView;
         //必须，添加可响应点击事件的view
-        materialProvider.clickViews.add(advRFVideoView);
-        materialProvider.clickViews.add(mDescription);
+//        materialProvider.clickViews.add(advRFVideoView);
+//        materialProvider.clickViews.add(mDescription);
         materialProvider.clickViews.add(mCreativeButton);
-        materialProvider.clickViews.add(mImagePoster);
-        materialProvider.clickViews.add(mTitle);
-        materialProvider.clickViews.add(mIcon);
+//        materialProvider.clickViews.add(mImagePoster);
+//        materialProvider.clickViews.add(mTitle);
+//        materialProvider.clickViews.add(mIcon);
 
         //必须，关闭按钮
         materialProvider.disLikeView = mDislike;

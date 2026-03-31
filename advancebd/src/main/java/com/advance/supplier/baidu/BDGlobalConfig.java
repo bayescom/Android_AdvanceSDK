@@ -29,4 +29,11 @@ public class BDGlobalConfig implements AdvanceSupplierBridge {
             e.printStackTrace();
         }
     }
+
+
+    //    不支持设置
+    @Override
+    public void disableShake(boolean disableShake) {
+
+    }
 }

@@ -37,5 +37,11 @@ public class KSGlobalConfig implements AdvanceSupplierBridge {
     }
 
 
+    @Override
+    public void disableShake(boolean disableShake) {
+
+    }
+
+
 }
 

@@ -19,4 +19,10 @@ public class HonorGlobalConfig implements AdvanceSupplierBridge {
     public void setPersonalRecommend(boolean allow) {
 
     }
+
+    //    不支持设置
+    @Override
+    public void disableShake(boolean disableShake) {
+
+    }
 }

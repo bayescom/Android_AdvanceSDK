@@ -3,6 +3,7 @@ package com.advance.supplier.mi;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.itf.AdvanceSupplierBridge;
 import com.miui.zeus.mimo.sdk.BuildConfig;
+import com.miui.zeus.mimo.sdk.MimoSdk;
 
 public class XMGlobalConfig implements AdvanceSupplierBridge {
     @Override
@@ -18,6 +19,11 @@ public class XMGlobalConfig implements AdvanceSupplierBridge {
 
     @Override
     public void setPersonalRecommend(boolean allow) {
+        MimoSdk.setPersonalizedAdEnabled(allow);//true 开启，false 关闭
+    }
+
+    @Override
+    public void disableShake(boolean disableShake) {
 
     }
 }

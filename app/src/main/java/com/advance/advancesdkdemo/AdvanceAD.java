@@ -1,6 +1,5 @@
 package com.advance.advancesdkdemo;
 
-import static com.advance.advancesdkdemo.util.DemoUtil.TAG;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.advance.AdvanceBanner;
-import com.advance.AdvanceBannerListener;
 import com.advance.AdvanceBaseAdspot;
 import com.advance.AdvanceDraw;
 import com.advance.AdvanceDrawListener;
@@ -29,19 +26,14 @@ import com.advance.AdvanceRewardVideo;
 import com.advance.AdvanceRewardVideoItem;
 import com.advance.AdvanceRewardVideoListener;
 import com.advance.AdvanceSDK;
-import com.advance.AdvanceSplash;
-import com.advance.AdvanceSplashListener;
 import com.advance.RewardServerCallBackInf;
 import com.advance.advancesdkdemo.util.DemoManger;
-import com.advance.custom.AdvanceBaseCustomAdapter;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.model.AdvanceError;
 import com.advance.supplier.tanx.TanxGlobalConfig;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.BYBasicSDK;
-//import com.polygamma.ogm.OriginMobile;
-//import com.polygamma.ogm.antifraud.AntiFraudModule;
-//import com.polygamma.ogm.net.RemoteServiceModule;
+import com.mercury.sdk.core.config.MercuryAD;
 
 import java.util.List;
 
@@ -70,6 +62,8 @@ public class AdvanceAD {
      * @param context 上下文内容，一般是传入application的context
      */
     public static void initAD(Context context) {
+        MercuryAD.enableJNICall(false);
+
         //可选：根据自身需求控制隐私项
         AdvanceSDK.setPrivacyController(new AdvancePrivacyController() {
             @Override
@@ -154,27 +148,16 @@ public class AdvanceAD {
             }
         });
 
+
         //必要配置：初始化聚合SDK，三个参数依次为context上下文，appId媒体id，isDebug调试模式开关
         AdvanceSDK.initSDK(context, Constants.APP_ID, BuildConfig.DEBUG);
         //接入tanx配置项，当glide不兼容时必填
 //        TanxGlobalConfig.setImgLoader(new MyImageLoader());
 
+//        AdvanceSDK.disableShake(true);
 //        开发者模式打印日志更丰富
         BYBasicSDK.setDev(true);
 
-//        OriginMobile.initializer()
-//                .context(context)
-//                .addModule(
-//                        RemoteServiceModule.ofProvider()
-//                                .rootServiceHost("ogsvc.pgoriginad.com")
-//                )
-//                .addModule(AntiFraudModule.ofProvider())
-//                .initialize((sdk, err) -> {
-//                    if (err != null)
-//                        Log.e(TAG, "Origin SDK initialization failed", (Throwable) err);
-//                    else
-//                        Log.i(TAG, "Origin SDK initialized successfully");
-//                });
 
     }
 
@@ -323,7 +306,7 @@ public class AdvanceAD {
 
             @Override
             public void onRewardServerInf(RewardServerCallBackInf inf) {
-                //广点通和穿山甲支持回调服务端激励验证信息，详见RewardServerCallBackInf中字段信息
+                //优量汇和穿山甲支持回调服务端激励验证信息，详见RewardServerCallBackInf中字段信息
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {

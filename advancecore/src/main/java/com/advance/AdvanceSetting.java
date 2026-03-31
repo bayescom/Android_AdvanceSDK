@@ -63,6 +63,7 @@ public boolean isADTrack = true;
 //    public ILoader iLoader;
 
     public AdvancePrivacyController advPrivacyController;
+    public boolean disableShake = false;
 
     //存放请求时传输的版本信息，非加密
 //    public String osv = "";

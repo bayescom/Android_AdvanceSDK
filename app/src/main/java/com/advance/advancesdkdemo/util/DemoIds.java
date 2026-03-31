@@ -35,7 +35,7 @@ public class DemoIds {
                 result.fullscreen = "10012468";
                 result.draw = "10005123";
                 break;
-            case "广点通":
+            case "优量汇":
                 result.banner = "10003092";
                 result.splash = "10003079";
                 result.reward = "10003101";
@@ -75,16 +75,16 @@ public class DemoIds {
                 result.fullscreen = "";
                 result.draw = "";
                 break;
-            case "taptap":
-                result.banner = "10008664";
-                result.splash = "10008661";
-                result.reward = "10008662";
-                result.interstitial = "10008663";
-                result.nativeExpress = "";
-                result.nativeCustom = "";
-                result.fullscreen = "";
-                result.draw = "";
-                break;
+//            case "taptap":
+//                result.banner = "10008664";
+//                result.splash = "10008661";
+//                result.reward = "10008662";
+//                result.interstitial = "10008663";
+//                result.nativeExpress = "";
+//                result.nativeCustom = "";
+//                result.fullscreen = "";
+//                result.draw = "";
+//                break;
             case "oppo":
                 result.banner = "10011818";
                 result.splash = "10011814";

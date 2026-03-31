@@ -24,5 +24,10 @@ public class TapGlobalConfig implements AdvanceSupplierBridge {
     public void setPersonalRecommend(boolean allow) {
 
     }
+
+    @Override
+    public void disableShake(boolean disableShake) {
+
+    }
 }
 

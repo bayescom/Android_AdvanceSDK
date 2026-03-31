@@ -27,4 +27,10 @@ public class OppoGlobalConfig implements AdvanceSupplierBridge {
     }
 
 
+    @Override
+    public void disableShake(boolean disableShake) {
+
+    }
+
+
 }

@@ -25,23 +25,7 @@ public abstract class AdvancePrivacyController extends BYPrivacyController {
         return null;
     }
 
-    /**
-     * 是否允许SDK主动使用手机硬件参数，如：imei\androidid
-     *
-     * @return true可以使用，false禁止使用。默认为true
-     */
-//    public boolean isCanUsePhoneState() {
-//        return true;
-//    }
 
-    /**
-     * 当isCanUsePhoneState=false时，可传入imei信息，sdk使用您传入的imei信息
-     *
-     * @return imei信息
-     */
-//    public String getDevImei() {
-//        return null;
-//    }
 
     /**
      * 快手SDK需要
@@ -53,23 +37,7 @@ public abstract class AdvancePrivacyController extends BYPrivacyController {
         return null;
     }
 
-    /**
-     * 当isCanUsePhoneState=false时，可传入AndroidID信息，sdk使用您传入的imei信息
-     *
-     * @return imei信息
-     */
-//    public String getDevAndroidID() {
-//        return null;
-//    }
 
-    /**
-     * 当isCanUseWifiState=false时，可传入imei信息，sdk使用您传入的imei信息
-     *
-     * @return imei信息
-     */
-//    public String getDevMac() {
-//        return null;
-//    }
 
     /**
      * 是否允许SDK主动使用WRITE_EXTERNAL_STORAGE权限
@@ -80,14 +48,6 @@ public abstract class AdvancePrivacyController extends BYPrivacyController {
         return true;
     }
 
-    /**
-     * 是否允许SDK主动使用ACCESS_WIFI_STATE权限
-     *
-     * @return true可以使用，false禁止使用。默认为true
-     */
-//    public boolean isCanUseWifiState() {
-//        return true;
-//    }
 
     /**
      * 是否允许SDK主动获取oaid，应用于快手SDK配置项
@@ -99,7 +59,7 @@ public abstract class AdvancePrivacyController extends BYPrivacyController {
     }
 
     /**
-     * 是否允许SDK主动获取Mac，应用于快手SDK配置项
+     * 是否允许SDK主动获取Mac，应用于快手SDK、mercury配置项
      *
      * @return true可以使用，false禁止使用。默认为true
      */
@@ -116,18 +76,6 @@ public abstract class AdvancePrivacyController extends BYPrivacyController {
         return true;
     }
 
-    /**
-     * 开发者可以传入oaid
-     * 信通院OAID的相关采集——如何获取OAID：
-     * 1. 移动安全联盟官网http://www.msa-alliance.cn/
-     * 2. 信通院统一SDK下载http://msa-alliance.cn/col.jsp?id=120
-     *
-     * @return oaid
-     */
-//    public String getDevOaid() {
-//        return null;
-//    }
-
 
     /**
      * 是否允许SDK主动获取设备上应用安装列表的采集权限
@@ -139,7 +87,7 @@ public abstract class AdvancePrivacyController extends BYPrivacyController {
     }
 
     /**
-     * 开发者可以传入已安装app包列表，应用于快手、GM SDK配置项
+     * 开发者可以传入已安装app包列表，应用于快手、sigmobSDK配置项
      *
      * @return 包名列表
      */

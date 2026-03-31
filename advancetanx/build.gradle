@@ -106,7 +106,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    def versionCode = "3.7.21"
+    def versionCode = "3.7.31"
     api(group: 'com.tanx', name: 'TanxCoreSDK', version: versionCode) {
         exclude group: 'com.github.bumptech.glide'
         exclude group: 'com.squareup.okhttp3'

@@ -96,4 +96,13 @@ public class MercuryGlobalConfig implements AdvanceSupplierBridge {
         }
     }
 
+    @Override
+    public void disableShake(boolean disableShake) {
+        try {
+            MercuryAD.disableShake(disableShake);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
 }

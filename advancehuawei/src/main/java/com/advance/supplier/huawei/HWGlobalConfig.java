@@ -43,6 +43,10 @@ public class HWGlobalConfig implements AdvanceSupplierBridge {
         }
     }
 
+    @Override
+    public void disableShake(boolean disableShake) {
+
+    }
 
 }
 

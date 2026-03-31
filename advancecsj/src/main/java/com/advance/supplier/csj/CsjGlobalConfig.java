@@ -30,6 +30,12 @@ public class CsjGlobalConfig implements AdvanceSupplierBridge {
         personalRecommendChangeCSJ(allow);
     }
 
+//    不支持设置
+    @Override
+    public void disableShake(boolean disableShake) {
+
+    }
+
 
     //个性化广告推荐配置
     private void personalRecommendChangeCSJ(boolean allow) {

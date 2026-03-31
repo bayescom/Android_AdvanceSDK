@@ -32,6 +32,11 @@ public class TanxGlobalConfig implements AdvanceSupplierBridge {
 
     }
 
+    @Override
+    public void disableShake(boolean disableShake) {
+
+    }
+
     public static void setImgLoader(ILoader loader) {
         try {
             AdvanceTanxSetting.getInstance().iLoader = loader;

@@ -20,4 +20,9 @@ public class VivoGlobalConfig implements AdvanceSupplierBridge {
 
         AdvanceVivoManager.getInstance().allowPersonalRecommend = allow;
     }
+
+    @Override
+    public void disableShake(boolean disableShake) {
+
+    }
 }

@@ -14,7 +14,6 @@ AAndroid_AdvanceSDK
 ├── advancevivo             # aar引入 Vivo 适配库
 ├── advancexiaomi           # aar引入 小米 (Xiaomi) 适配库
 ├── advancesigmob           # aar引入 Sigmob 适配库
-├── advancetap              # aar引入 TapTap 适配库
 ├── advancecsjoppo          # aar引入 穿山甲-OPPO 特定渠道适配库
 ├── advancecsj              # 依赖引入 穿山甲 (CSJ) 适配库     
 ├── advancetanx             # 依赖引入 Tanx (阿里) 适配库

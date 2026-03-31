@@ -29,4 +29,15 @@ public class SigmobGlobalConfig implements AdvanceSupplierBridge {
          */
         WindAds.sharedAds().setPersonalizedAdvertisingOn(allow);
     }
+
+
+    @Override
+    public void disableShake(boolean disableShake) {
+
+        /*
+         * 是否允许使用传感器
+         * true 开启，false 关闭，默认值为 true
+         */
+        WindAds.sharedAds().setSensorStatus(!disableShake);
+    }
 }
