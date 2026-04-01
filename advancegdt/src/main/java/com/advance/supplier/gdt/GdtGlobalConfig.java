@@ -65,7 +65,17 @@ public class GdtGlobalConfig implements AdvanceSupplierBridge {
     //    不支持设置
     @Override
     public void disableShake(boolean disableShake) {
-
+        try {
+            String status = "1";
+            if (disableShake) {
+                status = "0";
+            }
+            Map<String, String> extraUserData = new HashMap<>();
+            extraUserData.put("shakable", status); // 屏蔽开屏摇一摇广告
+            GlobalSetting.setExtraUserData(extraUserData);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 }
 

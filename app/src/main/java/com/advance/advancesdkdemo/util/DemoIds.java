@@ -36,13 +36,13 @@ public class DemoIds {
                 result.draw = "10005123";
                 break;
             case "优量汇":
-                result.banner = "10003092";
-                result.splash = "10003079";
-                result.reward = "10003101";
-                result.interstitial = "10003098";
-                result.nativeExpress = "10003095";
-                result.nativeCustom = "10003121";
-                result.fullscreen = "10003104";
+                result.banner = "10014710";
+                result.splash = "10014707";
+                result.reward = "10014713";
+                result.interstitial = "10014711";
+                result.nativeExpress = "10014708";
+                result.nativeCustom = "10014709";
+                result.fullscreen = "10014712";
                 result.draw = "";
                 break;
             case "百度":
@@ -100,7 +100,7 @@ public class DemoIds {
                 result.splash = "10011940";
                 result.reward = "10011943";
                 result.interstitial = "10011942";
-                result.nativeExpress = "10007821";
+                result.nativeExpress = "";
                 result.nativeCustom = "10011941";
                 result.fullscreen = "";
                 result.draw = "";

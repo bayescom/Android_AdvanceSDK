@@ -206,7 +206,7 @@ public class AdvanceSDK {
         AdvanceSetting.getInstance().wxAppId = wxAppId;
     }
 
-    //    5.2.6.0 新增 传入true将不再展示摇一摇、扭一扭广告，默认false，支持该设置的SDK渠道：Mercury、sigmob、tanx
+    //    5.2.6.0 新增 传入true将不再展示摇一摇、扭一扭广告，默认false，支持该设置的SDK渠道：Mercury、sigmob、tanx、优量汇
     public static void disableShake(final boolean shakeDisabled) {
         try {
             AdvanceSetting.getInstance().disableShake = shakeDisabled;
