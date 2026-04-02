@@ -1,3 +1,0 @@
--keep class com.hihonor.adsdk.** {*;}
--keep class com.hihonor.ads.identifier.**{*;}
--keep class com.hihonor.cloudservice.oaid.**{*;}

@@ -8,10 +8,8 @@ android {
     ndkVersion = "22.1.7171670"
 
     defaultConfig {
-        applicationId "com.advance.demo"
-//        applicationId "com.opos.mobaddemo" //oppo测试包名，oppo广告需要指定包名才可以
-//        applicationId "com.example.pptv" // 验证测试tanx\honor
-//        applicationId "com.vivo.adnet.demo.app" // vivo SDK验证，必须是这个包名
+//        applicationId "com.advance.demo"
+        applicationId "com.bayescom.imgcompress" //优量汇广告需要指定包名才可以
 
         minSdkVersion 21
         targetSdkVersion 30
@@ -127,16 +125,7 @@ dependencies {
 ////1.2  可选引入部分，引入各个广告ADN得aar
 //    //依次引入各家广告SDK：穿山甲、百度、快手、等等广告SDK adapter
 //    implementation "com.github.bayescom.Android_AdvanceSDK:csj:${advanceVersion}"
-//    implementation "com.github.bayescom.Android_AdvanceSDK:bd:${advanceVersion}"
-//    implementation "com.github.bayescom.Android_AdvanceSDK:ks:${advanceVersion}"
 //    implementation "com.github.bayescom.Android_AdvanceSDK:gdt:${advanceVersion}"
-//    implementation "com.github.bayescom.Android_AdvanceSDK:tanx:${advanceVersion}"
-//    implementation "com.github.bayescom.Android_AdvanceSDK:sigmob:${advanceVersion}"
-//    implementation "com.github.bayescom.Android_AdvanceSDK:vivo:${advanceVersion}"
-//    implementation "com.github.bayescom.Android_AdvanceSDK:oppo:${advanceVersion}"
-//    implementation "com.github.bayescom.Android_AdvanceSDK:huawei:${advanceVersion}"
-//    implementation "com.github.bayescom.Android_AdvanceSDK:xiaomi:${advanceVersion}"
-//    implementation "com.github.bayescom.Android_AdvanceSDK:honor:${advanceVersion}"
 //    //引入广告SDK
 //    implementation fileTree(dir: 'libs', include: ["open_ad_sdk_xxx.aar","Baidu_MobAds_SDK_xxx.aar","kssdk-ad-xxx.aar","等其他广告SDK"])
 //----------------引入方式1 end ----------------------------------------------------------------
@@ -150,18 +139,7 @@ dependencies {
 //2.2 可选引入部分
 //   注意：穿山甲有两个版本的SDK。对应了两个adapter，注意只能使用一个
     implementation project(path: ':advancecsj') // 穿山甲线上正式版
-//   implementation project(path: ':advancecsjoppo') // 穿山甲oppo渠道改包名特殊版
-
     implementation project(path: ':advancegdt') // 优量汇
-    implementation project(path: ':advancebd') // 百度
-    implementation project(path: ':advancesigmob') //sigmob
-    implementation project(path: ':advanceks') //快手
-    implementation project(path: ':advancetanx') //阿里tanx-sdk
-    implementation project(path: ':advanceoppo') //  oppo 纯净版sdk
-    implementation project(path: ':advancehuawei') // 华为广告SDK
-    implementation project(path: ':advancexiaomi') // 小米广告SDK
-    implementation project(path: ':advancevivo') // vivo广告SDK
-    implementation project(path: ':advancehonor') // 荣耀广告SDK
 //----------------引入方式2 end ----------------------------------------------------------------
 
 

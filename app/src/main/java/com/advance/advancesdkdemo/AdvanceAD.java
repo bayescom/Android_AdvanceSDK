@@ -30,7 +30,6 @@ import com.advance.RewardServerCallBackInf;
 import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.model.AdvanceError;
-import com.advance.supplier.tanx.TanxGlobalConfig;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.BYBasicSDK;
 import com.mercury.sdk.core.config.MercuryAD;
@@ -151,8 +150,6 @@ public class AdvanceAD {
 
         //必要配置：初始化聚合SDK，三个参数依次为context上下文，appId媒体id，isDebug调试模式开关
         AdvanceSDK.initSDK(context, Constants.APP_ID, BuildConfig.DEBUG);
-        //接入tanx配置项，当glide不兼容时必填
-//        TanxGlobalConfig.setImgLoader(new MyImageLoader());
 
 //        AdvanceSDK.disableShake(true);
 //        开发者模式打印日志更丰富
@@ -229,9 +226,6 @@ public class AdvanceAD {
         //初始化，注意需要时再初始化，不要复用。
         final AdvanceRewardVideo advanceRewardVideo = new AdvanceRewardVideo(id);
         baseAD = advanceRewardVideo;
-
-        //若集成
-        TanxGlobalConfig.setMediaUID("tanxMUID");
 
         //todo 服务端验证相关信息填写---start
 //        advanceRewardVideo.setUserId("用户唯一标识，服务端验证必须");
