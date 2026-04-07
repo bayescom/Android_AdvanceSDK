@@ -405,7 +405,7 @@ public class AdvanceAD {
         //必须：设置广告父布局
         advanceNativeExpress.setAdContainer(adContainer);
         //设置模板尺寸，单位dp
-        advanceNativeExpress.setExpressViewAcceptedSize(360,0);
+//        advanceNativeExpress.setExpressViewAcceptedSize(360,0);
         //推荐：核心事件监听回调
         advanceNativeExpress.setAdListener(new AdvanceNativeExpressListener() {
             @Override
