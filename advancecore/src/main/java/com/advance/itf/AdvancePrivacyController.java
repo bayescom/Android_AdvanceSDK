@@ -48,7 +48,7 @@ public abstract class AdvancePrivacyController extends BYPrivacyController {
 
 
     /**
-     * 是否允许SDK主动获取oaid，应用于快手SDK配置项
+     * 是否允许SDK主动获取oaid，应用于快手、Mercury、sigmob SDK配置项
      *
      * @return true可以使用，false禁止使用。默认为true
      */
@@ -181,7 +181,7 @@ public abstract class AdvancePrivacyController extends BYPrivacyController {
 //}
 //
 ///**
-// * 是否允许SDK主动获取oaid，仅应用于快手SDK配置项
+// * 是否允许SDK主动获取oaid，仅应用于快手、sigmob、mercurySDK配置项
 // *
 // * @return true可以使用，false禁止使用。默认为true
 // */

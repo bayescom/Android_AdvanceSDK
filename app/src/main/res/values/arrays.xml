@@ -3,14 +3,14 @@
 
     <string-array name="sdk_platform">
         <item>Mercury</item>
-        <item>穿山甲</item>
-        <item>优量汇</item>
+<!--        <item>穿山甲</item>-->
+<!--        <item>优量汇</item>-->
 <!--        <item>百度</item>-->
 <!--        <item>快手</item>-->
 <!--        <item>tanx</item>-->
 <!--        <item>taptap</item>-->
 <!--        <item>oppo</item>-->
-<!--        <item>sigmob</item>-->
+        <item>sigmob</item>
 <!--        <item>华为lite</item>-->
 <!--        <item>小米</item>-->
 <!--        <item>honor</item>-->

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.advance.supplier.sigmob">
+
+    <application>
+
+        <!--   如果是support版本工程，一定要引入此provider     -->
+<!--        <provider-->
+<!--            android:name="com.sigmob.sdk.SigmobFileV4Provider"-->
+<!--            android:authorities="${applicationId}.sigprovider"-->
+<!--            android:exported="false"-->
+<!--            android:grantUriPermissions="true"-->
+<!--            android:initOrder="200">-->
+<!--            <meta-data-->
+<!--                android:name="android.support.FILE_PROVIDER_PATHS"-->
+<!--                android:resource="@xml/sigmob_provider_paths" />-->
+<!--        </provider>-->
+
+    </application>
+
+</manifest>

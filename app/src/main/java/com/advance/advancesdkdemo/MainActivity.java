@@ -135,13 +135,14 @@ public class MainActivity extends Activity {
         TextView tv = findViewById(R.id.tv_version);
         tv.setText("Advance聚合 SDK 版本号： " + av + "\n" + "\n" +
                 "Mercury SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_MERCURY) + "\n" +
-                "穿山甲 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_CSJ) + "\n" +
-                "优量汇 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_GDT) + "\n"
+//                "穿山甲 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_CSJ) + "\n" +
+//                "优量汇 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_GDT) + "\n"
 //                        +
 //                "百度 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_BAIDU) + "\n" +
 //                "快手 SDK 版本号： " + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_KS) + "\n" +
 //                "tanx SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TANX) + "\n" +
-//                "Sigmob SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_SIG) + "\n" +
+                "Sigmob SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_SIG) + "\n"
+//                        +
 //                "oppo SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_OPPO) + "\n" +
 //                "华为 SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HW) + "\n" +
 //                "小米 SDK 版本号：" + SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_XIAOMI) + "\n" +

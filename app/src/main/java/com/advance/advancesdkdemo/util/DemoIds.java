@@ -25,24 +25,14 @@ public class DemoIds {
                 result.fullscreen = "";
                 result.draw = "";
                 break;
-            case "穿山甲":
-                result.banner = "10003091";
-                result.splash = "10003083";
-                result.reward = "10003100";
-                result.interstitial = "10003097";
-                result.nativeExpress = "10003094";
-                result.nativeCustom = "10003120";
-                result.fullscreen = "10012468";
-                result.draw = "10005123";
-                break;
-            case "优量汇":
-                result.banner = "10014710";
-                result.splash = "10014707";
-                result.reward = "10014713";
-                result.interstitial = "10014711";
-                result.nativeExpress = "10014708";
-                result.nativeCustom = "10014709";
-                result.fullscreen = "10014712";
+            case "sigmob":
+                result.banner = "";
+                result.splash = "10011940";
+                result.reward = "10011943";
+                result.interstitial = "10011942";
+                result.nativeExpress = "";
+                result.nativeCustom = "10011941";
+                result.fullscreen = "";
                 result.draw = "";
                 break;
         }

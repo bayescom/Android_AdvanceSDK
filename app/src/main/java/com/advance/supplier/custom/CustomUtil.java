@@ -6,8 +6,6 @@ import com.advance.AdvanceSetting;
 import com.advance.BaseParallelAdapter;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.utils.LogUtil;
-import com.qq.e.comm.managers.GDTAdSdk;
-import com.qq.e.comm.managers.setting.GlobalSetting;
 
 public class CustomUtil {
     public boolean isYLHInited = false; //记录是否完成了初始化
@@ -44,33 +42,33 @@ public class CustomUtil {
             }
 
 
-//            隐私相关设置
-            final AdvancePrivacyController advancePrivacyController = AdvanceSetting.getInstance().advPrivacyController;
-            if (advancePrivacyController != null) {
-                // 建议在初始化 SDK 前进行此设置
-                GlobalSetting.setEnableCollectAppInstallStatus(advancePrivacyController.alist());
-            }
-
-            //使用新初始化方法
-            String appID = adapter.getAppID();
-            GDTAdSdk.initWithoutStart(adapter.getRealContext(), appID); // 该接口不会采集用户信息
-// 调用initWithoutStart后请尽快调用start，否则可能影响广告填充，造成收入下降
-            GDTAdSdk.start(new GDTAdSdk.OnStartListener() {
-                @Override
-                public void onStartSuccess() {
-                    LogUtil.simple("[GdtUtil] onStartSuccess");
-
-                    // 推荐开发者在onStartSuccess回调后开始拉广告
-                    CustomUtil.getInstance().isYLHInited = true;
-                }
-
-                @Override
-                public void onStartFailed(Exception e) {
-                    LogUtil.e("[GdtUtil]  onStartFailed:" + e.toString());
-                    CustomUtil.getInstance().isYLHInited = false;
-                }
-            });
-            CustomUtil.getInstance().isYLHInited = true;
+////            隐私相关设置
+//            final AdvancePrivacyController advancePrivacyController = AdvanceSetting.getInstance().advPrivacyController;
+//            if (advancePrivacyController != null) {
+//                // 建议在初始化 SDK 前进行此设置
+//                GlobalSetting.setEnableCollectAppInstallStatus(advancePrivacyController.alist());
+//            }
+//
+//            //使用新初始化方法
+//            String appID = adapter.getAppID();
+//            GDTAdSdk.initWithoutStart(adapter.getRealContext(), appID); // 该接口不会采集用户信息
+//// 调用initWithoutStart后请尽快调用start，否则可能影响广告填充，造成收入下降
+//            GDTAdSdk.start(new GDTAdSdk.OnStartListener() {
+//                @Override
+//                public void onStartSuccess() {
+//                    LogUtil.simple("[GdtUtil] onStartSuccess");
+//
+//                    // 推荐开发者在onStartSuccess回调后开始拉广告
+//                    CustomUtil.getInstance().isYLHInited = true;
+//                }
+//
+//                @Override
+//                public void onStartFailed(Exception e) {
+//                    LogUtil.e("[GdtUtil]  onStartFailed:" + e.toString());
+//                    CustomUtil.getInstance().isYLHInited = false;
+//                }
+//            });
+//            CustomUtil.getInstance().isYLHInited = true;
 
         } catch (Throwable e) {
             e.printStackTrace();
