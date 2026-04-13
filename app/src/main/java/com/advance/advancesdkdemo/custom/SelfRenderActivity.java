@@ -344,10 +344,9 @@ public class SelfRenderActivity extends Activity {
             }
         }
 
+        mCreativeButton.setText("查看详情");
         if (adData.isDownloadAD()) {
-            //oppo自渲染2.0 仅支持通过bind方式进行连接类处理
 
-            mCreativeButton.setText("立即下载");
             // 六要素 相关内容
             AdvanceRFDownloadElement downloadElement = adData.getDownloadElement();
             if (downloadElement != null) {
@@ -419,7 +418,7 @@ public class SelfRenderActivity extends Activity {
             }
 
         } else {
-            mCreativeButton.setText("查看详情");
+
         }
     }
 

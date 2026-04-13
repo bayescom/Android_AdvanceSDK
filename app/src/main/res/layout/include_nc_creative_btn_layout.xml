@@ -24,7 +24,8 @@
 
     <Button
         android:id="@+id/btn_nc_creative"
-        android:layout_width="68dp"
+        android:layout_width="wrap_content"
+        android:minWidth="68dp"
         android:layout_height="28dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"

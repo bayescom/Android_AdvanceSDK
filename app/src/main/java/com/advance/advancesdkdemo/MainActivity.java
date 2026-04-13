@@ -59,8 +59,6 @@ public class MainActivity extends Activity {
         nativeExpress = findViewById(R.id.native_express_button);
         nativeCustom = findViewById(R.id.btn_rf);
         draw = findViewById(R.id.btn_draw);
-//         = findViewById(R.id.);
-//         = findViewById(R.id.);
 
         TextView title = findViewById(R.id.tv_title);
         title.setText("聚合demo(" + getPackageName() + ")");
