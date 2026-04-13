@@ -4,6 +4,7 @@ import android.location.Location;
 
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.itf.AdvanceSupplierBridge;
+import com.bayes.sdk.basic.core.BYConstants;
 import com.mercury.sdk.core.config.MercuryAD;
 import com.mercury.sdk.core.config.MercuryPrivacyController;
 
@@ -76,6 +77,10 @@ public class MercuryGlobalConfig implements AdvanceSupplierBridge {
 
                     @Override
                     public String getDevOaid() {
+                        //不允许获取oaid时，传入约定枚举值
+                        if (!controller.canUseOaid()){
+                            return BYConstants.OAID_VALUE_TYPE_DENY;
+                        }
                         return controller.getDevOaid();
                     }
 
