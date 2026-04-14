@@ -8,8 +8,7 @@ AAndroid_AdvanceSDK
 ├── advancemry              # 依赖引入 Mercury 变现 SDK 适配库 (需与核心库同时引入)
 │
 ├── # --- 广告平台适配库 (Adapter) ---
-├── advancecsj              # 依赖引入 穿山甲 (CSJ) 适配库     
-├── advancegdt              # 依赖引入 优量汇 (GDT/腾讯) 适配库
+├── advancesigmob           # aar引入 sigmob 适配库     
 │
 ├── doc                     # 项目相关集成文档
 ├── build.gradle            # 项目根构建文件
