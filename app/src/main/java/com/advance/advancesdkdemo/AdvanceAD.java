@@ -154,9 +154,7 @@ public class AdvanceAD {
 
 //        AdvanceSDK.disableShake(true);
 //        开发者模式打印日志更丰富
-        BYBasicSDK.setDev(true);
-
-        WindAds.sharedAds().setSensorStatus(false);
+//        BYBasicSDK.setDev(true);
 
     }
 
