@@ -61,6 +61,7 @@ public class AdvanceConfig {
     public static final String SDK_ID_XIAOMI = "13";
     public static final String SDK_ID_VIVO = "14";
     public static final String SDK_ID_HONOR = "15";
+    public static final String SDK_ID_FLINK = "19";
 
 
     static final String NOT_SUPPORT_SUPPLIER_TIPS = "不支持的SDK渠道，跳过该渠道加载。如需加载此渠道，请查看文档使用自定义渠道或者自定义广告来完成广告展示";

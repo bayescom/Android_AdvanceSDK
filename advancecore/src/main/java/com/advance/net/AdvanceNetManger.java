@@ -226,6 +226,7 @@ public class AdvanceNetManger {
                     extJsonObj.putOpt("xm_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_XIAOMI));
                     extJsonObj.putOpt("vivo_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_VIVO));
                     extJsonObj.putOpt("honor_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HONOR));
+                    extJsonObj.putOpt("flink_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_FLINK));
 
                     //todo 如何增加自定义渠道方式得版本号采集
                 } catch (Throwable e) {

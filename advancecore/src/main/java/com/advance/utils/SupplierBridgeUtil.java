@@ -35,6 +35,7 @@ public class SupplierBridgeUtil {
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_XIAOMI, "mi.XMGlobalConfig"));
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_HONOR, "honor.HonorGlobalConfig"));
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_VIVO, "vv.VivoGlobalConfig"));
+            supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_FLINK, "flink.FLGlobalConfig"));
 
             AdvanceConfig.getInstance().availableAdapterConfigMap = new HashMap<>();
             for (AdvanceSupConfigModel supConfigModel : supportSupList) {

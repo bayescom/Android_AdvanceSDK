@@ -53,6 +53,19 @@ public abstract class AdvanceSplashCustomAdapter extends AdvanceBaseCustomAdapte
         }
     }
 
+    protected void handleClose(){
+        try {
+            if (splashSetting != null) {
+                if (isCountingEnd) {
+                    splashSetting.adapterDidTimeOver();
+                } else {
+                    splashSetting.adapterDidSkip();
+                }
+            }
+        } catch (Exception e) {
+
+        }
+    }
     //    @Override
 //    public void show() {
 //
