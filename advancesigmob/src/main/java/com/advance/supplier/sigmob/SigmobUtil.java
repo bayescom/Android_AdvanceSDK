@@ -163,6 +163,9 @@ public class SigmobUtil {
                      */
                     @Override
                     public boolean isCanUseAndroidId() {
+                        if (!advancePrivacyController.isCanUsePhoneState()) {
+                            return false;
+                        }
                         String cusAID = advancePrivacyController.getDevAndroidID();
                         //如果用户传递为空，或默认未配置，true，允许SDK获取； 若用户配置了id，则不再允许SDK获取
                         return BYStringUtil.isEmpty(cusAID);
