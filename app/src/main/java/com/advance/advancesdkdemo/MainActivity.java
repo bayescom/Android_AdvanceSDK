@@ -287,7 +287,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onRewardServerInf(RewardServerCallBackInf inf) {
-                //广点通和穿山甲支持回调服务端激励验证信息，详见RewardServerCallBackInf中字段信息
+                //支持回调服务端激励验证信息，详见RewardServerCallBackInf中字段信息
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {

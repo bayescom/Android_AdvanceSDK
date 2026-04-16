@@ -57,7 +57,7 @@ public class SplashActivity extends Activity {
         //必须：设置开屏核心回调事件的监听器。
         advanceSplash.setAdListener(new AdvanceSplashListener() {
             /**
-             * @param id 代表当前被选中的策略id，值为"1" 代表mercury策略 ，值为"2" 代表优量汇策略， 值为"3" 代表穿山甲策略
+             * @param id 代表当前被选中的策略id，值为"1" 代表mercury策略 ，值为"11" 代表sigmob策略
              */
             @Override
             public void onSdkSelected(String id) {

@@ -33,6 +33,7 @@ import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.BYBasicSDK;
 import com.mercury.sdk.core.config.MercuryAD;
+import com.sigmob.windad.WindAds;
 
 import java.util.List;
 
@@ -117,7 +118,7 @@ public class AdvanceAD {
 
             @Override
             public boolean canUseMacAddress() {
-                return super.canUseMacAddress();
+                return false;
             }
 
             @Override
@@ -153,8 +154,9 @@ public class AdvanceAD {
 
 //        AdvanceSDK.disableShake(true);
 //        开发者模式打印日志更丰富
-//        BYBasicSDK.setDev(true);
+        BYBasicSDK.setDev(true);
 
+        WindAds.sharedAds().setSensorStatus(false);
 
     }
 
@@ -167,8 +169,6 @@ public class AdvanceAD {
         //初始化
         final AdvanceInterstitial advanceInterstitial = new AdvanceInterstitial(mActivity, id);
         baseAD = advanceInterstitial;
-        //注意：穿山甲是否为"新插屏广告"，默认为true
-//        advanceInterstitial.setCsjNew(false);
         //推荐：核心事件监听回调
         advanceInterstitial.setAdListener(new AdvanceInterstitialListener() {
 
@@ -300,7 +300,7 @@ public class AdvanceAD {
 
             @Override
             public void onRewardServerInf(RewardServerCallBackInf inf) {
-                //优量汇和穿山甲支持回调服务端激励验证信息，详见RewardServerCallBackInf中字段信息
+                //支持回调服务端激励验证信息，详见RewardServerCallBackInf中字段信息
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {

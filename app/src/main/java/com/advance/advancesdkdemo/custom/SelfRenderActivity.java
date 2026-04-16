@@ -130,8 +130,6 @@ public class SelfRenderActivity extends Activity {
 
         //广告初始化，传入聚合广告位id
         advanceRenderFeed = new AdvanceRenderFeed(this, DemoManger.getInstance().currentDemoIds.nativeCustom);
-        //设置期望图片大小，单位px，主要是设置给穿山甲使用，不设置将使用默认值 640*320
-        advanceRenderFeed.setCsjImgSize(1080, 720);
         //设置广告请求回调
         advanceRenderFeed.setLoadListener(new AdvanceRFLoadListener() {
             @Override
@@ -205,41 +203,10 @@ public class SelfRenderActivity extends Activity {
 //        materialProvider.disLikeView = mDislike;
         //可选，创意按钮指定
         materialProvider.creativeViews.add(mCreativeButton);
-        //可选，设置下载监听，仅穿山甲支持
-        materialProvider.downloadListener = new AdvanceRFDownloadListener() {
-            @Override
-            public void onIdle(AdvanceRFADData data) {
 
-            }
-
-            @Override
-            public void onDownloadStatusUpdate(AdvanceRFADData data, AdvanceRFDownloadInf downloadInf) {
-                int status = downloadInf.downloadStatus;
-                String showText = "";
-                switch (status) {
-                    case AdvanceRFConstant.AD_DOWNLOAD_STATUS_PAUSED:
-                    case AdvanceRFConstant.AD_DOWNLOAD_STATUS_ACTIVE:
-                        showText = downloadInf.getDownloadPercent() + "%";
-                        break;
-                    case AdvanceRFConstant.AD_DOWNLOAD_STATUS_FINISHED:
-                        showText = "点击安装";
-                        break;
-                    case AdvanceRFConstant.AD_DOWNLOAD_STATUS_FAILED:
-                        showText = "重新下载";
-                        break;
-                }
-                mCreativeButton.setText(showText);
-            }
-
-            @Override
-            public void onInstalled(AdvanceRFADData data, String appName) {
-                mCreativeButton.setText("点击打开");
-
-            }
-        };
 
         if (adData.isVideo()) {
-            //可选，设置视频播放选项，对优量汇、mercury、百度 生效
+            //可选，设置视频播放选项，
             AdvanceRFVideoOption videoOption = new AdvanceRFVideoOption();
             videoOption.isMute = true;
             videoOption.autoPlayNetStatus = AdvanceRFConstant.VIDEO_AUTO_PLAY_ALWAYS;
@@ -303,10 +270,6 @@ public class SelfRenderActivity extends Activity {
         //设置广告icon图标，可能无返回
         if (!TextUtils.isEmpty(adData.getIconUrl())) {
             Glide.with(this).load(adData.getIconUrl()).into(mIcon);
-        }
-        //广告来源信息，仅穿山甲会返回
-        if (!TextUtils.isEmpty(adData.getSourceText())) {
-            mSource.setText(adData.getSourceText());
         }
         //视频类广告
         if (adData.isVideo()) {

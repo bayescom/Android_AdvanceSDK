@@ -34,8 +34,6 @@ public class BannerActivity extends Activity {
     public void loadBanner(View view) {
 
         advanceBanner = new AdvanceBanner(this, adContainer, DemoManger.getInstance().currentDemoIds.banner);
-        //注意！！！：设置穿山甲布局尺寸填入具体dp值，尺寸必须要和穿山甲后台中的"代码位尺寸"宽高比例一致，高度不能设置为0。
-        advanceBanner.setCsjExpressViewAcceptedSize(360, 120);
         //推荐：核心事件监听回调
         advanceBanner.setAdListener(new AdvanceBannerListener() {
             @Override

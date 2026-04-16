@@ -9,7 +9,6 @@ android {
 
     defaultConfig {
         applicationId "com.advance.demo"
-//        applicationId "com.bayescom.imgcompress" //优量汇广告需要指定包名才可以
 
         minSdkVersion 21
         targetSdkVersion 30
