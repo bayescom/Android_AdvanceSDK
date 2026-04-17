@@ -121,10 +121,10 @@ public class AdvanceAD {
                 return false;
             }
 
-//            @Override
-//            public String getDevGaid() {
-//                return "";
-//            }
+            @Override
+            public String getDevGaid() {
+                return "";
+            }
 
             @Override
             public boolean canUseNetworkState() {
