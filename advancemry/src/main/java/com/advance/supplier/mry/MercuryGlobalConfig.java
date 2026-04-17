@@ -72,7 +72,14 @@ public class MercuryGlobalConfig implements AdvanceSupplierBridge {
 
                     @Override
                     public boolean isCanUseWifiState() {
-                        return controller.isCanUseWifiState() || controller.canUseMacAddress();
+                        if (!controller.canUseMacAddress()){
+                            return false;
+                        }
+                        if (!controller.isCanUseWifiState()){
+                            return false;
+                        }
+                        return true;
+//                        return controller.isCanUseWifiState() || controller.canUseMacAddress();
                     }
 
                     @Override

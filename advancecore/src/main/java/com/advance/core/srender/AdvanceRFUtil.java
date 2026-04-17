@@ -16,8 +16,12 @@ import com.mercury.sdk.util.MercuryTool;
 public class AdvanceRFUtil {
     public static final String TAG = "[AdvanceRFUtil] ";
 
-    //复制子控件至新布局，并将新布局添加至旧父布局中，等于在中间插入一层
     public static void copyChild(final ViewGroup oriParent, final ViewGroup toParent) {
+        copyChild(oriParent,toParent,true);
+    }
+
+    //复制子控件至新布局，并将新布局添加至旧父布局中，等于在中间插入一层
+    public static void copyChild(final ViewGroup oriParent, final ViewGroup toParent, final boolean addOri) {
         try {
             BYThreadUtil.switchMainThread(new BYBaseCallBack() {
                 @Override
@@ -34,13 +38,14 @@ public class AdvanceRFUtil {
                             LogUtil.devDebug(TAG + "  toParent.addView  i= " + i + " child = " + child);
                         }
                     }
-                    oriParent.addView(toParent);
+                    if (addOri) {
+                        oriParent.addView(toParent);
+                    }
                 }
             });
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     /**

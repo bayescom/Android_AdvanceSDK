@@ -7,7 +7,9 @@ import com.fl.saas.adx.api.FLConfig;
 public class FLGlobalConfig implements AdvanceSupplierBridge {
     @Override
     public void setCustomPrivacy(AdvancePrivacyController advancePrivacyController) {
-
+        if (advancePrivacyController != null){
+            FLConfig.getInstance().setEnableCollectAppInstallStatus(advancePrivacyController.alist());
+        }
     }
 
     @Override
@@ -22,6 +24,5 @@ public class FLGlobalConfig implements AdvanceSupplierBridge {
 
     @Override
     public void disableShake(boolean disableShake) {
-//        AdvanceFLManager.getInstance().disableShake = disableShake;
     }
 }

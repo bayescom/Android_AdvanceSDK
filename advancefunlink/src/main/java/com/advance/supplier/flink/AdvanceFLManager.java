@@ -11,6 +11,7 @@ public class AdvanceFLManager {
     }
 
     public boolean hasInit = false;
-    public boolean disableShake = false;
+
+    public boolean canUseBootId = true;
 
 }
