@@ -318,6 +318,7 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
 
             initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorSplashAdapter");
             initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoSplashAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_FLINK, "flink.FLSplashAdapter");
         } catch (Throwable e) {
 //            e.printStackTrace();
         }

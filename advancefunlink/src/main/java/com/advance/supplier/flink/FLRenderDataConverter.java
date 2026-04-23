@@ -21,7 +21,7 @@ public class FLRenderDataConverter implements AdvanceRFADData {
         try {
             this.ad = ad;
             this.sdkSupplier = sdkSupplier;
-            adMaterial = adMaterial;
+            this.adMaterial = ad.getAdMaterial();
         } catch (Exception e) {
 
         }

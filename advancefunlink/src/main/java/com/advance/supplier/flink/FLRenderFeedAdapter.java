@@ -4,11 +4,18 @@ import static com.fl.saas.adx.api.mixNative.NativeAdConst.AD_TYPE_VIDEO;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
@@ -25,6 +32,7 @@ import com.fl.saas.adx.api.AdParams;
 import com.fl.saas.adx.api.FLSDK;
 import com.fl.saas.adx.api.mixNative.NativeAd;
 import com.fl.saas.adx.api.mixNative.NativeAdView;
+import com.fl.saas.adx.api.mixNative.NativeEventListener;
 import com.fl.saas.adx.api.mixNative.NativeLoadListener;
 import com.fl.saas.adx.api.mixNative.NativeMaterial;
 import com.fl.saas.adx.api.mixNative.NativePrepareInfo;
@@ -84,8 +92,8 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                     handleFailed(AdvanceError.ERROR_DATA_NULL, nMsg);
                     return;
                 }
-                if (!nativeAd.isNativeExpress()) {
-                    handleFailed(AdvanceError.ERROR_DATA_NULL, "类型错误，期望模板广告，但返回了自渲染广告");
+                if (nativeAd.isNativeExpress()) {
+                    handleFailed(AdvanceError.ERROR_DATA_NULL, "类型错误，期望自渲染广告，但返回了模板广告");
                     return;
                 }
                 flAd = nativeAd;
@@ -141,6 +149,56 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             return;
         }
 
+        flAd.setNativeEventListener(new NativeEventListener() {
+            @Override
+            public void onAdImpressed(NativeAdView nativeAdView) {
+                LogUtil.simple(TAG + "onAdImpressed");
+
+                handleShow();
+            }
+
+            @Override
+            public void onAdClicked(NativeAdView nativeAdView) {
+                LogUtil.simple(TAG + "onAdClicked");
+
+                handleClick();
+            }
+
+            @Override
+            public void onAdClose(NativeAdView nativeAdView) {
+                LogUtil.simple(TAG + "onAdClose");
+
+                handleClose();
+            }
+
+            @Override
+            public void onAdVideoStart(NativeAdView nativeAdView) {
+                LogUtil.simple(TAG + "onAdVideoStart");
+
+            }
+
+            @Override
+            public void onAdVideoEnd(NativeAdView nativeAdView) {
+                LogUtil.simple(TAG + "onAdVideoEnd");
+
+            }
+
+            @Override
+            public void onAdVideoProgress(NativeAdView nativeAdView, long l) {
+                LogUtil.simple(TAG + "onAdVideoProgress");
+
+            }
+
+            @Override
+            public void onAdFailed(NativeAdView nativeAdView, FLError flError) {
+                LogUtil.simple(TAG + "show onAdFailed , error = " + flError);
+
+                FLUtil.handleErr(FLRenderFeedAdapter.this, flError);
+
+
+            }
+        });
+
 //            需要先拿到根布局信息
         AdvRFRootView rootView = rfMaterialProvider.rootView;
         Activity activity = getRealActivity(rootView);
@@ -187,6 +245,8 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         View[] img = new View[imageViews.size()];
         imageViews.toArray(img);
         prepareInfo.setImageView(img);
+
+        prepareInfo.setCloseView(rfMaterialProvider.disLikeView);
 // 渲染广告
         flAd.prepare(prepareInfo);
     }
@@ -195,6 +255,20 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         try {
             AdvRFLogoView logoView = mAdvanceRFBridge.getMaterialProvider().logoView;
             if (logoView!= null){
+                LinearLayout logoLayout = new LinearLayout(getRealContext());
+                logoLayout.setOrientation(LinearLayout.HORIZONTAL);
+                logoLayout.setGravity(Gravity.CENTER_VERTICAL);
+                //设置背景
+                GradientDrawable gd = new GradientDrawable();
+                gd.setColor(Color.GRAY);
+                gd.setCornerRadius(BYDisplay.dp2px(3));
+                gd.setAlpha(100);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    logoLayout.setBackground(gd);
+                } else {
+                    logoLayout.setBackgroundDrawable(gd);
+                }
+
                 ImageView recLogo = new ImageView(getRealContext());
                 int maxW = BYDisplay.dp2px((25));
                 int h = BYDisplay.dp2px((12));
@@ -209,7 +283,18 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                     //调用渲染图片方法
                     MercuryTool.renderNetImg(nativeMaterial.getAdLogoUrl(), recLogo);
                 }
-                logoView.addView(recLogo);
+                LinearLayout.LayoutParams imgLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, h);
+                imgLp.setMargins(0, 0, BYDisplay.dp2px(3), 0);
+                logoLayout.addView(recLogo,imgLp);
+
+                //文字一般是"广告"二字
+                TextView tv = new TextView(getRealContext());
+                tv.setText("广告");
+                tv.setTextColor(Color.WHITE);
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8);
+                logoLayout.addView(tv);
+
+                logoView.addView(logoLayout);
             }
         } catch (Exception e) {
 

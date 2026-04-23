@@ -239,6 +239,7 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
 
             initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorRewardAdapter");
             initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoRewardAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_FLINK, "flink.FLRewardAdapter");
         } catch (Throwable e) {
             e.printStackTrace();
         }

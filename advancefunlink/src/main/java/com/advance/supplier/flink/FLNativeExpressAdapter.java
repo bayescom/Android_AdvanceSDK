@@ -61,8 +61,9 @@ public class FLNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 //        if (mSetting.getGdtFullWidth() || 360 == width) {
 //        }
 
+        LogUtil.devDebug(TAG+" width = "+ width+" , height = "+height);
         AdParams params = new AdParams.Builder(getPosID())
-                .setExpressHeight(height) // 期望模板高度，单位dp。
+//                .setExpressHeight(height) // 期望模板高度，单位dp。
                 .setExpressWidth(width) // 期望模板宽度，单位dp。此参数设置为广告容器的 宽度
                 .build();
 

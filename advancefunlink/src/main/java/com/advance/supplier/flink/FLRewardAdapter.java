@@ -46,6 +46,7 @@ public class FLRewardAdapter extends AdvanceRewardCustomAdapter {
             return;
         }
         FLVideo.Builder builder = new FLVideo.Builder(getRealContext());
+        builder.setKey(getPosID());
         if (setting != null) {
             builder.setUserId(setting.getUserId());
             builder.setCustomData(setting.getExtraInfo());

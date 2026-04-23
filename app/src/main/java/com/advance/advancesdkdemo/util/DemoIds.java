@@ -146,6 +146,16 @@ public class DemoIds {
                 result.fullscreen = "";
                 result.draw = "";
                 break;
+            case "funlink":
+                result.banner = "10014865";
+                result.splash = "10014861";
+                result.reward = "10014869";
+                result.interstitial = "10014867";
+                result.nativeExpress = "10014862";
+                result.nativeCustom = "10014864";
+                result.fullscreen = "";
+                result.draw = "";
+                break;
         }
         return result;
     }
