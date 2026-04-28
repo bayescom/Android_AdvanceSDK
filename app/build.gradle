@@ -137,6 +137,8 @@ dependencies {
 //    implementation "com.github.bayescom.Android_AdvanceSDK:huawei:${advanceVersion}"
 //    implementation "com.github.bayescom.Android_AdvanceSDK:xiaomi:${advanceVersion}"
 //    implementation "com.github.bayescom.Android_AdvanceSDK:honor:${advanceVersion}"
+//    implementation "com.github.bayescom.Android_AdvanceSDK:funlink:${advanceVersion}"
+
 //    //引入广告SDK
 //    implementation fileTree(dir: 'libs', include: ["open_ad_sdk_xxx.aar","Baidu_MobAds_SDK_xxx.aar","kssdk-ad-xxx.aar","等其他广告SDK"])
 //----------------引入方式1 end ----------------------------------------------------------------
