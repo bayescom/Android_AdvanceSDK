@@ -65,8 +65,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
-    def v1 = 'wind-common-1.9.8.aar'
-    def v2 = 'wind-sdk-4.25.12.aar'
+    def v1 = 'wind-common-2.0.2.aar'
+    def v2 = 'wind-sdk-4.25.21.aar'
     compileOnly project(path: ':advancecore')
     if (IS_PUBLISH.toBoolean()) {
         compileOnly fileTree(dir: 'libs', include: [v1])
