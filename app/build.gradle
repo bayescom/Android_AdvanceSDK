@@ -94,27 +94,18 @@ private static String getBuildTime() {
     return "\"${dateTime}\""
 }
 
-//dependencies {
-//    implementation 'com.android.support:appcompat-v7:28.0.0'
-//    implementation 'com.android.support.constraint:constraint-layout:2.0.1'
-//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2', {
-//        exclude group: 'com.android.support', module: 'support-annotations'
-//    }
-//    androidTestImplementation 'com.android.support.test:rules:1.0.2'
-//}
 repositories {
     flatDir {
         dirs 'libs'
     }
 }
 dependencies {
-    implementation project(path: ':advancecore')
 
 
 //引入Advance SDK --------start--------
 
 //----------------引入方式1：在线依赖，适合直接使用得开发者
-//    def advanceVersion = '5.2.5.2'
+//    def advanceVersion = '5.2.6.0'
 //1.1  必须引入部分： 首先引入聚合库及广告变现
 //    implementation "com.github.bayescom.Android_AdvanceSDK:core:${advanceVersion}"
 //    implementation "com.github.bayescom.Android_AdvanceSDK:mry:${advanceVersion}"
@@ -132,6 +123,7 @@ dependencies {
 //----------------引入方式2：依赖代码工程（adn工程中包含了adapter及广告aar），适合可能有一些代码改动需求的用户
 //2.1 必须引入部分
     //聚合核心
+    implementation project(path: ':advancecore')
     implementation project(path: ':advancemry') //倍业Mercury
 
 //2.2 可选引入部分
@@ -140,16 +132,10 @@ dependencies {
 
 
 //----------------3.额外引入项. 部分广告SDK必须依赖项引入，请确保添加，另注意查看APP自身是否有相关重复引入，避免产生冲突
-    //---快手--- 必须依赖的引入库
     implementation 'androidx.appcompat:appcompat:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
-    // ---oppo--- 必须依赖的引入库
-    implementation 'androidx.palette:palette:1.0.0'//490版本新增
 
-    //---tanx-SDK---  必须依赖的引入库
-    //tanx广告SDK需要用到得公共库，如果版本不一致请一定要检查，确认广告执行正常
-    implementation 'com.alibaba:fastjson:1.1.72.android'
     //glide 图片加载
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
@@ -160,15 +146,8 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.0.1'
 //    implementation("com.squareup.okhttp3:okhttp:4.9.3")
 
-    //建议使用此版本glide
-//    implementation 'androidx.appcompat:appcompat:1.0.0'
-//    implementation 'com.github.bumptech.glide:glide:4.9.0'
-//    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'androidx.annotation:annotation:1.7.0'
     implementation 'androidx.annotation:annotation-jvm:1.9.1'
-
-//    implementation "com.android.support:support-v4:28.0.0"
-//    implementation 'com.android.support:recyclerview-v7:28.0.0'
 
     //小米SDK必要依赖
     implementation 'com.google.code.gson:gson:2.8.5'
