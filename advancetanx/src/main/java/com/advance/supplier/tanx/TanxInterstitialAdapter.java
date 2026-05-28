@@ -34,18 +34,17 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         initAD();
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (iTanxAdLoader != null) {
                 iTanxAdLoader.destroy();
@@ -55,8 +54,7 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (interExpressAD == null) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "  interExpressAD null"));
@@ -129,7 +127,7 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
 
-    private void initAD() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         TanxUtil.initTanx(this, new TanxUtil.InitListener() {
             @Override
             public void success() {

@@ -22,20 +22,19 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         super(activity, setting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
 
         reportStart();
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
 //            if (interstitialAd != null) {
 //                interstitialAd.();
@@ -49,8 +48,7 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             // Display an interstitial ad.
             if (interstitialAd != null && interstitialAd.isLoaded()) {

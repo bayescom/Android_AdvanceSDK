@@ -36,7 +36,7 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (null != bv) {
                 bv.destroy();
@@ -121,8 +121,7 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
     }
 
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         GdtUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
@@ -132,7 +131,7 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
             }
         });
     }
-    public void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtBannerAdapter.class, new BYAbsCallBack<GdtBannerAdapter>() {
@@ -156,7 +155,7 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
 //        if (null != advanceBanner) {
 //            ViewGroup adContainer = advanceBanner.getContainer();
@@ -167,8 +166,7 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
 //        }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             ViewGroup adContainer = advanceBanner.getContainer();
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

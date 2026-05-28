@@ -5,11 +5,7 @@ import android.app.Activity;
 import com.advance.FullScreenVideoSetting;
 
 public abstract class AdvanceFullScreenCustomAdapter extends AdvanceBaseCustomAdapter {
-    FullScreenVideoSetting mSetting;
-    public AdvanceFullScreenCustomAdapter(Activity activity, FullScreenVideoSetting setting) {
-        super(activity, setting);
-        mSetting = setting;
-    }
+
 
     public void handleCached() {
         try {
@@ -18,12 +14,41 @@ public abstract class AdvanceFullScreenCustomAdapter extends AdvanceBaseCustomAd
                     parallelListener.onCached();
                 }
             } else {
-                if (null != mSetting) {
-                    mSetting.adapterVideoCached();
+                if (null != fullScreenVideoSetting) {
+                    fullScreenVideoSetting.adapterVideoCached();
                 }
             }
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
+
+    public void handleClose(){
+        try {
+            if (fullScreenVideoSetting != null)
+                fullScreenVideoSetting.adapterClose();
+        }  catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleComplete(){
+        try {
+            if (fullScreenVideoSetting != null)
+                fullScreenVideoSetting.adapterVideoComplete();
+        }  catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+    public void handleSkip(){
+        try {
+            if (fullScreenVideoSetting != null)
+                fullScreenVideoSetting.adapterVideoSkipped();
+        }  catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 }

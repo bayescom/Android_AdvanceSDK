@@ -1,10 +1,10 @@
 package com.advance.supplier.csj;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 
 import com.advance.AdvanceConfig;
-import com.advance.AdvanceDrawSetting;
 import com.advance.custom.AdvanceDrawCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -15,42 +15,25 @@ import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
-import com.bytedance.sdk.openadsdk.TTDrawFeedAd;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import com.bytedance.sdk.openadsdk.mediation.ad.MediationExpressRenderListener;
 
 import java.util.List;
+import java.util.Map;
 
 
 public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNative.NativeExpressAdListener {
     private TTAdNative mTTAdNative;
     private String TAG = "[CsjDrawAdapter] ";
     TTNativeExpressAd ad;
-    TTDrawFeedAd newAD;
 
-    public CsjDrawAdapter(Activity activity, AdvanceDrawSetting setting) {
-        super(activity, setting);
-    }
-
-    @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
-
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
 
-                reportStart();
             }
 
             @Override
@@ -61,18 +44,17 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             ad.setExpressInteractionListener(new TTNativeExpressAd.ExpressAdInteractionListener() {
                 //广告点击的回调
@@ -157,7 +139,7 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId(sdkSupplier.adspotid)
                 .setSupportDeepLink(true)
-                .setExpressViewAcceptedSize(setting.getCsjExpressWidth(), setting.getCsjExpressHeight()) //期望模板广告view的size,单位dp
+                .setExpressViewAcceptedSize(drawSetting.getCsjExpressWidth(), drawSetting.getCsjExpressHeight()) //期望模板广告view的size,单位dp
                 .setAdCount(1) //请求广告数量为1到3条
 //                .setAdLoadType(PRELOAD)//推荐使用，用于标注此次的广告请求用途为预加载（当做缓存）还是实时加载，方便后续为开发者优化相关策略
                 .build();
@@ -272,6 +254,12 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
         if (ad != null && ad.getMediationManager() != null) {
             return ad.getMediationManager().isReady();
         }
-        return super.isValid();
+
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

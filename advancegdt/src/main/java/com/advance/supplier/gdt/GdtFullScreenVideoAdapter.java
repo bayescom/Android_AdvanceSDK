@@ -141,8 +141,7 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     }
 
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         GdtUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
@@ -152,7 +151,7 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
             }
         });
     }
-    public void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtFullScreenVideoAdapter.class, new BYAbsCallBack<GdtFullScreenVideoAdapter>() {
@@ -277,17 +276,16 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         try {
             iad.showFullScreenAD(activity);

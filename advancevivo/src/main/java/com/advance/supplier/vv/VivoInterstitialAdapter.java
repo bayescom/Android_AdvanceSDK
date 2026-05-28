@@ -24,8 +24,7 @@ public class VivoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         super(activity, setting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         VivoUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -42,12 +41,12 @@ public class VivoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 //        if (vivoInterstitialAd!=null){
 //            vivoInterstitialAd.
 //        }
@@ -58,8 +57,7 @@ public class VivoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (vivoInterstitialAd == null) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "vivoInterstitialAd null"));

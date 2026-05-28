@@ -3,6 +3,7 @@ package com.advance.supplier.baidu;
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
@@ -13,23 +14,17 @@ import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.RewardVideoAd;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
+import java.util.Map;
+
 
 public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements RewardVideoAd.RewardVideoAdListener {
     private RewardVideoAd mRewardVideoAd;
 
     private final String TAG = "[BDRewardAdapter] ";
 
-    public BDRewardAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
-    }
 
 
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
-    public void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         BDUtil.initBDAccount(this);
 
         //检查是否命中使用缓存逻辑
@@ -63,31 +58,23 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
     }
 
     @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(ERROR_EXCEPTION_LOAD));
-        }
+    public boolean isValid() {
+        return true;
     }
 
-//    @Override
-//    public boolean isValid() {
-//        if (mRewardVideoAd != null) {
-//            return mRewardVideoAd.isReady();
-//        }
-//        return super.isValid();
-//    }
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
 
 
     //以下为广告回调事件
@@ -187,8 +174,7 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
         handleSucceed(this);
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             mRewardVideoAd.show();
         } catch (Throwable e) {

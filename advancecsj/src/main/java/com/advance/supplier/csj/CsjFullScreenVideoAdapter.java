@@ -1,6 +1,7 @@
 package com.advance.supplier.csj;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Configuration;
 
 import com.advance.AdvanceConfig;
@@ -17,34 +18,21 @@ import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTFullScreenVideoAd;
 
+import java.util.Map;
+
 public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements TTAdNative.FullScreenVideoAdListener, TTFullScreenVideoAd.FullScreenVideoAdInteractionListener {
-    private FullScreenVideoSetting advanceFullScreenVideo;
     private TTFullScreenVideoAd ttFullScreenVideoAd;
     private String TAG = "[CsjFullScreenVideoAdapter] ";
 
-    public CsjFullScreenVideoAdapter(Activity activity, FullScreenVideoSetting advanceFullScreenVideo) {
-        super(activity, advanceFullScreenVideo);
-        this.advanceFullScreenVideo = advanceFullScreenVideo;
-    }
+   
 
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
-
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
 
-                reportStart();
             }
 
             @Override
@@ -86,11 +74,11 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
         }
 
         AdSlot adSlot;
-        if (advanceFullScreenVideo.isCsjExpress()) {
+        if (fullScreenVideoSetting.isCsjExpress()) {
 
             adSlot = new AdSlot.Builder()
                     .setCodeId(sdkSupplier.adspotid)
-                    .setExpressViewAcceptedSize(advanceFullScreenVideo.getCsjExpressWidth(), advanceFullScreenVideo.getCsjExpressHeight())
+                    .setExpressViewAcceptedSize(fullScreenVideoSetting.getCsjExpressWidth(), fullScreenVideoSetting.getCsjExpressHeight())
                     .setSupportDeepLink(true)
 //                    .setDownloadType(AdvanceSetting.getInstance().csj_downloadType)
                     .setOrientation(orientation)//必填参数，期望视频的播放方向：TTAdConstant.HORIZONTAL 或 TTAdConstant.VERTICAL
@@ -110,7 +98,7 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
     }
 
     @Override
@@ -125,7 +113,6 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
 
             this.ttFullScreenVideoAd = ttFullScreenVideoAd;
 
-            fullScreenItem = new CsjFullScreenVideoItem(activity, this, advanceFullScreenVideo, ttFullScreenVideoAd);
             if (ttFullScreenVideoAd == null) {
                 String nMsg = TAG + "ttFullScreenVideoAd  null";
                 AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, nMsg);
@@ -163,12 +150,11 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
 
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra){
         try {
             ttFullScreenVideoAd.setFullScreenVideoAdInteractionListener(this);
             ttFullScreenVideoAd.showFullScreenVideoAd(activity, TTAdConstant.RitScenes.GAME_GIFT_BONUS, null);
@@ -200,27 +186,21 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     public void onAdClose() {
         LogUtil.simple(TAG + "onFullScreenVideo onAdClose");
 
-        if (advanceFullScreenVideo != null)
-            advanceFullScreenVideo.adapterClose();
-
+        handleClose();
     }
 
     @Override
     public void onVideoComplete() {
         LogUtil.simple(TAG + "onFullScreenVideo onVideoComplete");
 
-        if (advanceFullScreenVideo != null)
-            advanceFullScreenVideo.adapterVideoComplete();
-
+        handleComplete();
     }
 
     @Override
     public void onSkippedVideo() {
         LogUtil.simple(TAG + "onFullScreenVideo onSkippedVideo");
 
-        if (advanceFullScreenVideo != null)
-            advanceFullScreenVideo.adapterVideoSkipped();
-
+       handleSkip();
     }
 
     @Override
@@ -228,6 +208,12 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
         if (ttFullScreenVideoAd != null && ttFullScreenVideoAd.getMediationManager() != null) {
             return ttFullScreenVideoAd.getMediationManager().isReady();
         }
-        return super.isValid();
+
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

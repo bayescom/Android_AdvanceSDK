@@ -1,9 +1,9 @@
 package com.advance.supplier.csj;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.AdvanceConfig;
-import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -16,24 +16,19 @@ import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTFullScreenVideoAd;
 
+import java.util.Map;
+
 public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
-    private InterstitialSetting advanceInterstitial;
     private final String TAG = "[CsjInterstitialAdapter] ";
 
     public TTFullScreenVideoAd newVersionAd;
 
-    public CsjInterstitialAdapter(Activity activity, InterstitialSetting advanceInterstitial) {
-        super(activity, advanceInterstitial);
-        this.advanceInterstitial = advanceInterstitial;
-    }
-
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra){
         try {
 //            if (AdvanceUtil.isDev()) {//todo 测试逻辑，正式上线需移除
 //                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -61,8 +56,7 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                 public void onAdClose() {
                     LogUtil.simple(TAG + "newVersionAd onAdClose");
 
-                    if (advanceInterstitial != null)
-                        advanceInterstitial.adapterDidClosed();
+                    handleClose();
                 }
 
                 @Override
@@ -90,27 +84,14 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable t) {
-            t.printStackTrace();
 
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-
-    }
-
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
 
-                reportStart();
             }
 
             @Override
@@ -141,7 +122,7 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId(sdkSupplier.adspotid)
                 .setSupportDeepLink(true)
-                .setExpressViewAcceptedSize(advanceInterstitial.getCsjExpressViewWidth(), advanceInterstitial.getCsjExpressViewHeight())
+                .setExpressViewAcceptedSize(interstitialSetting.getCsjExpressViewWidth(), interstitialSetting.getCsjExpressViewHeight())
                 .setImageAcceptedSize(600, 600) //根据广告平台选择的尺寸，传入同比例尺寸
 //                .setDownloadType(AdvanceSetting.getInstance().csj_downloadType)
                 .build();
@@ -196,7 +177,7 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
         //新版本调用的是全屏视频的方法
 
     }
@@ -206,6 +187,12 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         if (newVersionAd != null && newVersionAd.getMediationManager() != null) {
             return newVersionAd.getMediationManager().isReady();
         }
-        return super.isValid();
+
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

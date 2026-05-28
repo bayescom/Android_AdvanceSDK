@@ -28,18 +28,8 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTVfNati
         super(activity, setting);
     }
 
-    @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
             public void success() {
@@ -57,12 +47,12 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTVfNati
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 

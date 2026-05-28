@@ -1,6 +1,7 @@
 package com.advance.supplier.csj;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import com.advance.AdvanceConfig;
@@ -17,25 +18,12 @@ import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTRewardVideoAd;
 
+import java.util.Map;
+
 public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements TTAdNative.RewardVideoAdListener {
 
-    private RewardVideoSetting advanceRewardVideo;
     private TTRewardVideoAd ttRewardVideoAd;
     private String TAG = "[CsjRewardVideoAdapter] ";
-
-    public CsjRewardVideoAdapter(Activity activity, RewardVideoSetting advanceRewardVideo) {
-        super(activity, advanceRewardVideo);
-        this.advanceRewardVideo = advanceRewardVideo;
-    }
-
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
 
 
     @Override
@@ -78,7 +66,6 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         }
         this.ttRewardVideoAd = ttRewardVideoAd;
 
-        rewardVideoItem = new CsjRewardVideoAdItem(null, this, ttRewardVideoAd);
 
         updateBidding(CsjUtil.getEcpmValue(TAG, ttRewardVideoAd.getMediaExtraInfo()));
 
@@ -89,15 +76,6 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     public void onRewardVideoCached() {
         LogUtil.simple(TAG + "onRewardVideoCached");
 
-//        if (isParallel) {
-//            if (parallelListener != null) {
-//                parallelListener.onCached();
-//            }
-//        } else {
-//            if (null != advanceRewardVideo) {
-//                advanceRewardVideo.adapterVideoCached();
-//            }
-//        }
     }
 
     @Override
@@ -111,15 +89,7 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        if (isParallel) {
-            if (parallelListener != null) {
-                parallelListener.onCached();
-            }
-        } else {
-            if (null != advanceRewardVideo) {
-                advanceRewardVideo.adapterVideoCached();
-            }
-        }
+        handleCached();
     }
 
 
@@ -140,26 +110,22 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     public void onAdItemClose() {
         LogUtil.simple(TAG + "onAdItemClose");
 
-        if (null != advanceRewardVideo) {
-            advanceRewardVideo.adapterAdClose();
-        }
+
+        handleClose();
 
     }
 
     public void onAdItemVideoComplete() {
         LogUtil.simple(TAG + "onAdItemVideoComplete");
 
-        if (null != advanceRewardVideo) {
-            advanceRewardVideo.adapterVideoComplete();
-        }
 
+        handleComplete();
     }
 
     public void onAdItemVideoSkipped() {
         LogUtil.simple(TAG + "onAdItemVideoSkipped");
-        if (null != advanceRewardVideo) {
-            advanceRewardVideo.adapterVideoSkipped();
-        }
+
+        handleSkip();
     }
 
     public void onAdItemRewardVerify(boolean rewardVerify, int rewardAmount, String rewardName, int errorCode, String errMsg) {
@@ -187,25 +153,20 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
             csjRewardInf.errMsg = errMsg;
             inf.csjInf = csjRewardInf;
             inf.rewardVerify = rewardVerify;
-            if (null != advanceRewardVideo) {
-                if (sdkSupplier != null) {
-                    inf.supId = sdkSupplier.id;
-                }
-                advanceRewardVideo.postRewardServerInf(inf);
-            }
+            inf.supId = sdkSupplier.id;
+
+            handleRewardInf(inf);
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
         if (rewardVerify) {
-            if (null != advanceRewardVideo) {
-                advanceRewardVideo.adapterAdReward();
-//                advanceRewardVideo.adapterDidFailed(AdvanceError.parseErr(errorCode, errMsg));
-            }
+
+            handleReward();
         } else if (errorCode != 0) {//如果有异常信息，是否进行异常回调？
             LogUtil.e("onAdItemRewardVerify errorCode = " + errorCode + "  errMsg" + errMsg);
-//                advanceRewardVideo.adapterDidFailed(AdvanceError.parseErr(errorCode, errMsg));
         }
+
 
     }
 
@@ -215,15 +176,13 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         runParaFailed(advanceError);
     }
 
-    @Override
-    public void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
 
-                reportStart();
             }
 
             @Override
@@ -254,21 +213,21 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         TTAdNative ttAdNative = ttAdManager.createAdNative(getRealContext());
 
         AdSlot adSlot;
-        if (advanceRewardVideo.isCsjExpress()) {
+        if (rewardSetting.isCsjExpress()) {
             //个性化模板广告需要传入期望广告view的宽、高，单位dp，
             adSlot = new AdSlot.Builder()
                     .setCodeId(sdkSupplier.adspotid)
                     .setSupportDeepLink(true)
                     .setAdCount(1)
                     //设置模板属性
-                    .setExpressViewAcceptedSize(advanceRewardVideo.getCsjExpressWidth(), advanceRewardVideo.getCsjExpressHeight())
+                    .setExpressViewAcceptedSize(rewardSetting.getCsjExpressWidth(), rewardSetting.getCsjExpressHeight())
                     //必传参数，表来标识应用侧唯一用户；若非服务器回调模式或不需sdk透传
                     //可设置为空字符串
-                    .setUserID(advanceRewardVideo.getUserId())
-                    .setRewardAmount(advanceRewardVideo.getRewardCount())
-                    .setRewardName(advanceRewardVideo.getRewardName())
-                    .setOrientation(advanceRewardVideo.getOrientation())  //设置期望视频播放的方向，为TTAdConstant.HORIZONTAL或TTAdConstant.VERTICAL
-                    .setMediaExtra(advanceRewardVideo.getExtraInfo()) //用户透传的信息，可不传
+                    .setUserID(rewardSetting.getUserId())
+                    .setRewardAmount(rewardSetting.getRewardCount())
+                    .setRewardName(rewardSetting.getRewardName())
+                    .setOrientation(rewardSetting.getOrientation())  //设置期望视频播放的方向，为TTAdConstant.HORIZONTAL或TTAdConstant.VERTICAL
+                    .setMediaExtra(rewardSetting.getExtraInfo()) //用户透传的信息，可不传
 //                    .setDownloadType(AdvanceSetting.getInstance().csj_downloadType)
                     .build();
         } else {
@@ -277,14 +236,14 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
                     .setCodeId(sdkSupplier.adspotid)
                     .setSupportDeepLink(true)
                     .setAdCount(1)
-                    .setImageAcceptedSize(advanceRewardVideo.getCsjImageAcceptedSizeWidth(), advanceRewardVideo.getCsjImageAcceptedSizeHeight())
+                    .setImageAcceptedSize(rewardSetting.getCsjImageAcceptedSizeWidth(), rewardSetting.getCsjImageAcceptedSizeHeight())
                     //必传参数，表来标识应用侧唯一用户；若非服务器回调模式或不需sdk透传
                     //可设置为空字符串
-                    .setUserID(advanceRewardVideo.getUserId())
-                    .setRewardAmount(advanceRewardVideo.getRewardCount())
-                    .setRewardName(advanceRewardVideo.getRewardName())
-                    .setOrientation(advanceRewardVideo.getOrientation())  //设置期望视频播放的方向，为TTAdConstant.HORIZONTAL或TTAdConstant.VERTICAL
-                    .setMediaExtra(advanceRewardVideo.getExtraInfo()) //用户透传的信息，可不传
+                    .setUserID(rewardSetting.getUserId())
+                    .setRewardAmount(rewardSetting.getRewardCount())
+                    .setRewardName(rewardSetting.getRewardName())
+                    .setOrientation(rewardSetting.getOrientation())  //设置期望视频播放的方向，为TTAdConstant.HORIZONTAL或TTAdConstant.VERTICAL
+                    .setMediaExtra(rewardSetting.getExtraInfo()) //用户透传的信息，可不传
 //                    .setDownloadType(AdvanceSetting.getInstance().csj_downloadType)
                     .build();
         }
@@ -292,16 +251,15 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             ttRewardVideoAd.setRewardAdInteractionListener(new TTRewardVideoAd.RewardAdInteractionListener() {
                 @Override
@@ -364,7 +322,13 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         if (ttRewardVideoAd != null && ttRewardVideoAd.getMediationManager() != null) {
             return ttRewardVideoAd.getMediationManager().isReady();
         }
-        return super.isValid();
+
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
 //    @Override

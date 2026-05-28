@@ -1,6 +1,7 @@
 package com.advance.supplier.csj;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -20,29 +21,16 @@ import com.bytedance.sdk.openadsdk.TTAdSdk;
 import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 如果网络异常，不会进行刷新行为，且不会回调失败。当网络正常，会继续定时刷新。视为内部闭环了刷新行为，一旦失败就流转下一优先级
  */
 public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAdNative.NativeExpressAdListener {
-    private BannerSetting advanceBanner;
     private long startTime = 0;
     private String TAG = "[CsjBannerAdapter] ";
     private TTNativeExpressAd ad;
 
-    public CsjBannerAdapter(Activity activity, final BannerSetting advanceBanner) {
-        super(activity, advanceBanner);
-        this.advanceBanner = advanceBanner;
-    }
-
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
 
     @Override
     public void onError(int code, String message) {
@@ -76,8 +64,8 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
 
     private void bindAdListener(TTNativeExpressAd ad) {
         try {
-            if (null != advanceBanner) {
-                ad.setSlideIntervalTime(advanceBanner.getRefreshInterval() * 1000);
+            if (null != bannerSetting) {
+                ad.setSlideIntervalTime(bannerSetting.getRefreshInterval() * 1000);
             }
             ad.setExpressInteractionListener(new TTNativeExpressAd.ExpressAdInteractionListener() {
                 @Override
@@ -105,8 +93,7 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
                 public void onRenderSuccess(View view, float v, float v1) {
                     LogUtil.simple(TAG + "ExpressView render suc:" + (System.currentTimeMillis() - startTime));
 
-                    if (null != advanceBanner) {
-                        ViewGroup adContainer = advanceBanner.getContainer();
+                        ViewGroup adContainer = getAdContainer();
                         if (adContainer != null) {
 //                            adContainer.removeAllViews();
                             boolean add = AdvanceUtil.addADView(adContainer, view);
@@ -115,16 +102,12 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
                             }
 //                            adContainer.addView(view);
                         }
-                    }
+
                 }
             });
 
-            Activity showAct = activity;
-            if (advanceBanner != null && advanceBanner.getContainer() != null) {
-                showAct = getRealActivity(advanceBanner.getContainer());
-            }
             //使用默认模板中默认dislike弹出样式
-            ad.setDislikeCallback(showAct, new TTAdDislike.DislikeInteractionCallback() {
+            ad.setDislikeCallback(activity, new TTAdDislike.DislikeInteractionCallback() {
                 @Override
                 public void onShow() {
 
@@ -132,15 +115,17 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
 
                 @Override
                 public void onSelected(int position, String value, boolean enforce) {
-                    if (null != advanceBanner) {
-                        //用户选择不喜欢原因后，移除广告展示
-                        ViewGroup adContainer = advanceBanner.getContainer();
-                        if (adContainer != null) {
-                            adContainer.removeAllViews();
-                        }
+//                    if (null != bannerSetting) {
+//                        //用户选择不喜欢原因后，移除广告展示
+//                        ViewGroup adContainer = bannerSetting.getContainer();
+//                        if (adContainer != null) {
+//                            adContainer.removeAllViews();
+//                        }
+//
+//                        bannerSetting.adapterDidDislike();
+//                    }
 
-                        advanceBanner.adapterDidDislike();
-                    }
+                    handleClose();
                 }
 
                 @Override
@@ -159,7 +144,7 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (ad != null)
                 ad.destroy();
@@ -168,15 +153,13 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
         }
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
 
-                reportStart();
             }
 
             @Override
@@ -208,9 +191,9 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
                 // 必选参数 设置您的CodeId
                 .setCodeId(sdkSupplier.adspotid)
                 //期望模板广告view的size,单位dp
-                .setExpressViewAcceptedSize(advanceBanner.getCsjExpressViewAcceptedWidth(), advanceBanner.getCsjExpressViewAcceptedHeight())
+                .setExpressViewAcceptedSize(bannerSetting.getCsjExpressViewAcceptedWidth(), bannerSetting.getCsjExpressViewAcceptedHeight())
                 // 必选参数 设置广告图片的最大尺寸及期望的图片宽高比，单位Px
-                .setImageAcceptedSize(advanceBanner.getCsjAcceptedSizeWidth(), advanceBanner.getCsjAcceptedSizeHeight())
+                .setImageAcceptedSize(bannerSetting.getCsjAcceptedSizeWidth(), bannerSetting.getCsjAcceptedSizeHeight())
                 // 可选参数 设置是否支持deeplink
                 .setSupportDeepLink(true)
                 //请求原生广告时候需要设置，参数为TYPE_BANNER或TYPE_INTERACTION_AD
@@ -221,15 +204,14 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
 
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 //        startTime = System.currentTimeMillis();
 //        if (ad != null) {
 //            ad.render();
 //        }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra){
         try {
             startTime = System.currentTimeMillis();
             bindAdListener(ad);
@@ -245,6 +227,12 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
         if (ad != null && ad.getMediationManager() != null) {
             return ad.getMediationManager().isReady();
         }
-        return super.isValid();
+
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

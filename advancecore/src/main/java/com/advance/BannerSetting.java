@@ -15,5 +15,5 @@ public interface BannerSetting extends BaseAdEventListener {
 
     int getCsjExpressViewAcceptedHeight();
 
-    ViewGroup getContainer();
+//    ViewGroup getContainer();
 }

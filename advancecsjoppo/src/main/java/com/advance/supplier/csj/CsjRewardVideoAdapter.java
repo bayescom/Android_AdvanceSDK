@@ -199,8 +199,7 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         runParaFailed(advanceError);
     }
 
-    @Override
-    public void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
             public void success() {
@@ -277,11 +276,11 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 

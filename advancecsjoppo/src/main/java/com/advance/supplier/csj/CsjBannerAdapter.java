@@ -159,7 +159,7 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTVf
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (ad != null)
                 ad.destroy();
@@ -168,8 +168,7 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTVf
         }
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
             public void success() {
@@ -220,7 +219,7 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTVf
 
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 //        startTime = System.currentTimeMillis();
 //        if (ad != null) {
 //            ad.render();

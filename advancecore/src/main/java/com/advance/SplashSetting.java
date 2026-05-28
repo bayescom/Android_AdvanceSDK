@@ -41,7 +41,7 @@ public interface SplashSetting extends BaseAdEventListener {
 
 //    boolean isGdtCustomSkipHide();
 
-    ViewGroup getAdContainer(); //去除logo部分的承载布局
+//    ViewGroup getAdContainer(); //去除logo部分的承载布局
 
     ViewGroup getAdContainerOri(); //原始的广告承载布局
 

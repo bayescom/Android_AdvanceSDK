@@ -34,8 +34,7 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
         setting = baseSetting;
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 //初始化快手SDK
         KSUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
@@ -116,12 +115,12 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
 
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
@@ -188,8 +187,7 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             //回调监听
             if (ad.isAdEnable()) {

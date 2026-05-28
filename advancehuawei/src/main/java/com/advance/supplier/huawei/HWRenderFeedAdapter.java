@@ -35,20 +35,19 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         super(context, mAdvanceRFBridge);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
 
         reportStart();
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (mNativeAd != null) {
                 mNativeAd.destroy();
@@ -63,8 +62,7 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (mNativeAd == null) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "未获取到广告信息"));

@@ -62,7 +62,8 @@ public class AdvanceBanner extends AdvanceBaseAdspot implements BannerSetting {
         this.adContainer = adContainer;
     }
 
-    public ViewGroup getContainer() {
+    @Override
+    public ViewGroup getAdContainer() {
         return adContainer;
     }
 

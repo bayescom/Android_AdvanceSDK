@@ -20,8 +20,7 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
         super(activity, setting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         XMUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -37,12 +36,12 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
         if (rewardVideoAd != null) {
             rewardVideoAd.destroy();
@@ -54,8 +53,7 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (setting != null) {
                 rewardVideoAd.setMute(setting.isMute());

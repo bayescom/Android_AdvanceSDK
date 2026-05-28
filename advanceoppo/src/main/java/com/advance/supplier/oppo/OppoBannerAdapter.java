@@ -29,8 +29,7 @@ public class OppoBannerAdapter extends AdvanceBannerCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         OppoUtil.initAD(this);
         startLoad();
 
@@ -111,12 +110,12 @@ public class OppoBannerAdapter extends AdvanceBannerCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (mBannerAd != null)
                 mBannerAd.destroyAd();
@@ -126,8 +125,7 @@ public class OppoBannerAdapter extends AdvanceBannerCustomAdapter {
     }
 
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             ViewGroup adContainer = setting.getContainer();
             RelativeLayout.LayoutParams rbl = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);

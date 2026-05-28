@@ -56,7 +56,7 @@ public class GdtRewardVideoAdItem implements AdvanceRewardVideoItem {
     }
 
     @Deprecated
-    public void loadAD() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         if (rewardVideoAD != null) {
             rewardVideoAD.loadAD();
         }

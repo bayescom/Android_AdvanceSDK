@@ -34,8 +34,7 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
         setting = baseSetting;
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         KSUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -129,13 +128,13 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
 
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
     }
 
     @Override
@@ -249,8 +248,7 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
     }
     //--------广告回调 结束--------
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (isValid()) {
                 ad.setRewardAdInteractionListener(KSRewardAdapter.this);

@@ -30,8 +30,7 @@ public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter 
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         SigmobUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -49,12 +48,12 @@ public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter 
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         windNewInterstitialAd.destroy();
     }
 
@@ -150,8 +149,7 @@ public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter 
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (windNewInterstitialAd != null) {
                 windNewInterstitialAd.show(null);

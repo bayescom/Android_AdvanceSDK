@@ -39,18 +39,17 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
         showAD();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         initAD();
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 //        showAD();
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
@@ -146,7 +145,7 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    private void initAD() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         //初始化值
         CSJSplashClickEyeManager.getInstance().setSupportSplashClickEye(false);
 

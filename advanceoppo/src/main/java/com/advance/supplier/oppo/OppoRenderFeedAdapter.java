@@ -50,8 +50,7 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         OppoUtil.initAD(this);
         startLoad();
 
@@ -125,12 +124,12 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             LogUtil.devDebug("doDestroy");
             if (mNativeAdvanceAd != null) {
@@ -145,8 +144,7 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             LogUtil.simple(TAG + "call show ");
             if (mAdvanceRFBridge == null || mRenderAD == null) {

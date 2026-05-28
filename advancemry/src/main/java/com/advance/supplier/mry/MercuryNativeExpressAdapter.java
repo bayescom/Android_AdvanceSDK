@@ -36,12 +36,7 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
 
     }
 
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
-    public void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
 
 
@@ -82,7 +77,7 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
     }
 
     @Override
@@ -184,14 +179,13 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (null != adView) {
             adView.destroy();
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             addADView(adView);
             adView.render();

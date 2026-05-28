@@ -1,11 +1,10 @@
 package com.advance.supplier.csj;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 
 import com.advance.AdvanceConfig;
-import com.advance.AdvanceNativeExpressAdItem;
-import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -19,32 +18,22 @@ import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter implements TTAdNative.NativeExpressAdListener {
 
-    private List<TTNativeExpressAd> ads;
     TTNativeExpressAd ttNativeExpressAd;
-    private NativeExpressSetting advanceNativeExpress;
     private String TAG = "[CsjNativeExpressAdapter] ";
 
 
-    public CsjNativeExpressAdapter(Activity activity, NativeExpressSetting advanceNativeExpress) {
-        super(activity, advanceNativeExpress);
-        this.advanceNativeExpress = advanceNativeExpress;
-
-    }
-
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
 
-                reportStart();
             }
 
             @Override
@@ -67,39 +56,31 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
         if (hitCache) {
             return;
         }
-        
+
 
         final TTAdManager ttAdManager = TTAdSdk.getAdManager();
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
             ttAdManager.requestPermissionIfNecessary(activity);
         }
-        BYLog.dev(TAG + "advanceNativeExpress.getExpressViewWidth() = " + advanceNativeExpress.getExpressViewWidth());
+        BYLog.dev(TAG + "advanceNativeExpress.getExpressViewWidth() = " + nativeExpressSetting.getExpressViewWidth());
         TTAdNative ttAdNative = ttAdManager.createAdNative(activity);
         AdSlot adSlot = new AdSlot.Builder()
                 .setCodeId(sdkSupplier.adspotid) //广告位id
                 .setSupportDeepLink(true)
                 .setAdCount(sdkSupplier.adCount) //请求广告数量为1到3条
 //                .setDownloadType(AdvanceSetting.getInstance().csj_downloadType)
-                .setExpressViewAcceptedSize(advanceNativeExpress.getExpressViewWidth(), advanceNativeExpress.getExpressViewHeight()) //期望模板广告view的size,单位dp
-                .setImageAcceptedSize(advanceNativeExpress.getCsjImageWidth(), advanceNativeExpress.getCsjImageHeight())
+                .setExpressViewAcceptedSize(nativeExpressSetting.getExpressViewWidth(), nativeExpressSetting.getExpressViewHeight()) //期望模板广告view的size,单位dp
+                .setImageAcceptedSize(nativeExpressSetting.getCsjImageWidth(), nativeExpressSetting.getCsjImageHeight())
                 .build();
         //加载广告
         ttAdNative.loadNativeExpressAd(adSlot, this);
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
 
     @Override
     public void onError(int i, String s) {
@@ -108,17 +89,11 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
 
     @Override
     public void onNativeExpressAdLoad(List<TTNativeExpressAd> ads) {
-        this.ads = ads;
         try {
             LogUtil.simple(TAG + "onNativeExpressAdLoad");
             if (ads == null || ads.size() == 0) {
                 handleFailed(AdvanceError.ERROR_DATA_NULL, "ads empty");
             } else {
-                nativeExpressAdItemList = new ArrayList<>();
-                for (TTNativeExpressAd ttNativeExpressAd : ads) {
-                    AdvanceNativeExpressAdItem advanceNativeExpressAdItem = new CsjNativeExpressAdItem(activity, this, ttNativeExpressAd);
-                    nativeExpressAdItemList.add(advanceNativeExpressAdItem);
-                }
                 ttNativeExpressAd = ads.get(0);
 
                 if (ttNativeExpressAd == null) {
@@ -141,6 +116,7 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
 
     public void onAdItemShow(View view) {
         LogUtil.simple(TAG + "onAdItemShow");
+        nativeExpressADView = view;
 
         handleShow();
     }
@@ -154,30 +130,24 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
     public void onAdItemRenderFailed(View view, String msg, int code) {
         LogUtil.simple(TAG + "onAdItemRenderFailed");
 
-        if (null != advanceNativeExpress) {
-            advanceNativeExpress.adapterRenderFailed(view);
-        }
 
-        runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, TAG + code + "， " + msg));
-        removeADView();
+        handleRenderFailed(view);
+
+//        runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, TAG + code + "， " + msg));
+//        removeADView();
     }
 
     public void onAdItemRenderSuccess(View view) {
         LogUtil.simple(TAG + "onAdItemRenderSuccess");
 
-        if (null != advanceNativeExpress) {
-            advanceNativeExpress.adapterRenderSuccess(view);
-        }
+        handleRenderSuccess(view);
 
     }
 
     public void onAdItemClose(View view) {
         LogUtil.simple(TAG + "onAdItemClose");
 
-        if (null != advanceNativeExpress) {
-            advanceNativeExpress.adapterDidClosed(view);
-        }
-        removeADView();
+        handleClose();
     }
 
     public void onAdItemErr(AdvanceError advanceError) {
@@ -188,12 +158,11 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
 
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         if (ttNativeExpressAd == null) {
             LogUtil.e("无广告内容");
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL));
@@ -222,12 +191,9 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
                     onAdItemRenderSuccess(view);
                 }
             });
-            Activity showAct = activity;
-            if (mSetting != null && mSetting.getAdContainer() != null) {
-                showAct = getRealActivity(mSetting.getAdContainer());
-            }
+
             // 2024/4/15 分离加载是传入activity优化
-            ttNativeExpressAd.setDislikeCallback(showAct, new TTAdDislike.DislikeInteractionCallback() {
+            ttNativeExpressAd.setDislikeCallback(activity, new TTAdDislike.DislikeInteractionCallback() {
                 @Override
                 public void onShow() {
 
@@ -258,6 +224,12 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
         if (ttNativeExpressAd != null && ttNativeExpressAd.getMediationManager() != null) {
             return ttNativeExpressAd.getMediationManager().isReady();
         }
-        return super.isValid();
+
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

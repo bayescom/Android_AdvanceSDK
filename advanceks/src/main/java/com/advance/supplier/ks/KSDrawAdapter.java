@@ -29,8 +29,7 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
     }
 
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         KSUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -95,12 +94,12 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
 
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
@@ -109,8 +108,7 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         if (drawAD == null) {
             handleFailed(AdvanceError.ERROR_DATA_NULL, "ad is empty");
             return;

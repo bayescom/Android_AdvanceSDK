@@ -30,8 +30,7 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         TapUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
@@ -44,12 +43,12 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (adData != null) {
                 adData.dispose();
@@ -60,8 +59,7 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (adData != null) {
                 adData.setInteractionListener(new TapInterstitialAd.InterstitialAdInteractionListener() {

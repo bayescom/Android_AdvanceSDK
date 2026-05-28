@@ -1,5 +1,6 @@
 package com.advance.supplier.csj;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,23 +40,17 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         super(context, mAdvanceRFBridge);
     }
 
-    @Override
-    public void orderLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         startLoadOnly();
     }
 
     @Override
-    protected void paraLoadAd() {
-        startLoadOnly();
-    }
-
-    @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (mRenderAD != null) {
                 mRenderAD.destroy();
@@ -65,8 +60,7 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra){
         startShow();
     }
 
@@ -77,7 +71,6 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
 
-                reportStart();
             }
 
             @Override
@@ -116,7 +109,7 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             AdSlot adSlot = new AdSlot.Builder()
                     .setCodeId(sdkSupplier.adspotid)
                     .setSupportDeepLink(true)
-                    .setImageAcceptedSize(mAdvanceRFBridge.getADSizeW(), mAdvanceRFBridge.getADSizeH())
+                    .setImageAcceptedSize(nativeSetting.getADSizeW(), nativeSetting.getADSizeH())
                     .setAdCount(1) //请求广告数量为1到3条
                     .build();
 
@@ -162,11 +155,11 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     private void startShow() {
         try {
-            if (mAdvanceRFBridge == null || mTTAdNative == null || mRenderAD == null) {
+            if ( mTTAdNative == null || mRenderAD == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "advanceRFBridge null");
                 return;
             }
-            final AdvanceRFMaterialProvider rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
+            final AdvanceRFMaterialProvider rfMaterialProvider = getMaterialProvider();
 
             if (rfMaterialProvider == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "getMaterialProvider  null");
@@ -376,7 +369,12 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         if (mRenderAD != null && mRenderAD.getMediationManager() != null) {
             return mRenderAD.getMediationManager().isReady();
         }
-        return super.isValid();
+
+        return true;
     }
 
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
 }

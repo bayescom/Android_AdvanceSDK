@@ -5,7 +5,7 @@ import android.app.Activity;
 import com.advance.model.SdkSupplier;
 
 public interface RewardVideoSetting extends BaseSetting {
-    void adapterAdDidLoaded(AdvanceRewardVideoItem mercuryRewardVideoAdItem, SdkSupplier supplier);
+    void adapterAdDidLoaded( SdkSupplier supplier);
 
     void adapterVideoCached();
 

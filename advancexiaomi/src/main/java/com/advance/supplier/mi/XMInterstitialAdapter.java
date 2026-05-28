@@ -19,8 +19,7 @@ public class XMInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         super(activity, setting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         XMUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -36,12 +35,12 @@ public class XMInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (interstitialAd != null)
             interstitialAd.destroy();
     }
@@ -51,8 +50,7 @@ public class XMInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             interstitialAd.showAd(getRealActivity(null), new InterstitialAd.InterstitialAdInteractionListener() {
 

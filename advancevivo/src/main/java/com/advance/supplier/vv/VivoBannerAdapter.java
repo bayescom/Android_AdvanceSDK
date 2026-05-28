@@ -26,8 +26,7 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
         super(activity, setting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         VivoUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -44,12 +43,12 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (vivoBannerAd != null) {
             vivoBannerAd.destroy();
         }
@@ -60,8 +59,7 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (adView == null) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "adView null"));

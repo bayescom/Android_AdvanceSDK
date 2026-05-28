@@ -22,8 +22,7 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
         super(activity, setting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadRewardAd();
 
 
@@ -31,12 +30,12 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (rewardedAd != null) {
                 rewardedAd.destroy();
@@ -50,8 +49,7 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (rewardedAd == null || !rewardedAd.isLoaded()) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "未获取到广告信息"));

@@ -114,7 +114,7 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
 
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (mercuryBanner != null)
                 mercuryBanner.destroy();
@@ -123,12 +123,7 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
         }
     }
 
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
-    public void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
 
 
@@ -164,7 +159,7 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 //        if (null != advanceBanner) {
 //            ViewGroup adContainer = advanceBanner.getContainer();
 //            if (adContainer != null) {
@@ -176,8 +171,7 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
 //        }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             ViewGroup adContainer = advanceBanner.getContainer();
             RelativeLayout.LayoutParams rbl = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);

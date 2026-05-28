@@ -29,8 +29,7 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             interstitialAD.show(getRealActivity(null));
         } catch (Throwable e) {
@@ -128,12 +127,7 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
         }
     }
 
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
-    public void loadAd() {
+   public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra){
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
 
         //检查是否命中使用缓存逻辑
@@ -165,7 +159,7 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 

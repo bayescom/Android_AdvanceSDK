@@ -43,18 +43,17 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         startLoadOnly();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         startLoadOnly();
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (mRenderAD != null) {
                 mRenderAD.destroy();

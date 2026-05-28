@@ -32,20 +32,19 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         super(context, mAdvanceRFBridge);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
 
         reportStart();
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (mExpressAd != null) {
             mExpressAd.release();
         }
@@ -64,8 +63,7 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         try {
             if (mExpressAd != null) {

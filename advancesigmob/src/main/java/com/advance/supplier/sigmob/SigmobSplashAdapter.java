@@ -34,8 +34,7 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         SigmobUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -146,12 +145,12 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (splashAd != null) {
                 splashAd.destroy();
@@ -161,8 +160,7 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (splashAd != null) {
                 splashAd.show(splashSetting.getAdContainer());

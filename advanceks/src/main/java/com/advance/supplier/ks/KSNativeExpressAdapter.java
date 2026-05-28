@@ -35,8 +35,7 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         setting = baseSetting;
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         KSUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -189,12 +188,12 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
@@ -209,8 +208,7 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     }
 
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             final View adv = ad.getFeedView(activity);
             addADView(adv);

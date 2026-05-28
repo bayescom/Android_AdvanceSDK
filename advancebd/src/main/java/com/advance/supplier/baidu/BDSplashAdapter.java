@@ -1,8 +1,8 @@
 package com.advance.supplier.baidu;
 
-import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
@@ -19,41 +19,33 @@ import com.baidu.mobads.sdk.api.SplashInteractionListener;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 
-import java.lang.ref.SoftReference;
+import java.util.Map;
 
 public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements SplashInteractionListener {
     private SplashAd splashAd;
-    private final RequestParameters parameters;
+    private   RequestParameters parameters;
 
     private final String TAG = "[BDSplashAdapter] ";
 
-    public BDSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting setting) {
-        super(softReferenceActivity, setting);
 
-        parameters = AdvanceBDManager.getInstance().splashParameters;
-    }
-
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
     
-    public void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         BDUtil.initBDAccount(this);
 
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDSplashAdapter.class, new BYAbsCallBack<BDSplashAdapter>() {
-            @Override
-            public void invoke(BDSplashAdapter cacheAdapter) {
+        parameters = AdvanceBDManager.getInstance().splashParameters;
 
-                //更新缓存广告得价格
-                updateBidding(BDUtil.getEcpmValue(cacheAdapter.splashAd.getECPMLevel()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDSplashAdapter.class, new BYAbsCallBack<BDSplashAdapter>() {
+//            @Override
+//            public void invoke(BDSplashAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+//                updateBidding(BDUtil.getEcpmValue(cacheAdapter.splashAd.getECPMLevel()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
 
         splashAd = new SplashAd(BYUtil.getCtx(), sdkSupplier.adspotid, parameters, this);
@@ -66,7 +58,7 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 //        if (null != setting) {
 //            setting.adapterDidSucceed(sdkSupplier);
 //        }
@@ -79,7 +71,7 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (splashAd != null) {
                 splashAd.destroy();
@@ -91,17 +83,13 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
     }
 
     @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-             
-        } catch (Throwable e) {
-            e.printStackTrace();
-            String tag = TAG + "Throwable ";
-            runBaseFailed(AdvanceError.parseErr(ERROR_EXCEPTION_LOAD, tag));
-            String cause = e.getCause() != null ? e.getCause().toString() : "no cause";
-            reportCodeErr(tag + cause);
-        }
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
 
@@ -230,8 +218,7 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
 //        return super.isValid();
 //    }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             //并行时需要单独进行show
             if (isParallel) {

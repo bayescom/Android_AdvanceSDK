@@ -34,8 +34,7 @@ public class CustomADNYLHSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     //    并行方式加载广告
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         //先调用adn得初始化方法，也可以在应用启动时调用
         CustomUtil.initAD(this);
         //请求广告
@@ -44,13 +43,13 @@ public class CustomADNYLHSplashAdapter extends AdvanceSplashCustomAdapter {
 
     //   广告就绪，可以进行后续广告展示前特殊逻辑处理，一般不需要额外处理。串行or并行均会执行到此方法，区别是串行是广告加载成功后立即执行到此方法，并行时广告成功，也要等到选中改广告才执行此方法。
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     //    广告销毁
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 

@@ -28,7 +28,7 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
@@ -101,8 +101,7 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
             public void success() {
@@ -196,7 +195,7 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
         //新版本调用的是全屏视频的方法
 
     }

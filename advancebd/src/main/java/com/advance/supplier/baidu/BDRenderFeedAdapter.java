@@ -33,6 +33,7 @@ import com.bayes.sdk.basic.util.BYStringUtil;
 import com.mercury.sdk.util.MercuryTool;
 
 import java.util.List;
+import java.util.Map;
 
 public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private BaiduNativeManager mBaiduNativeManager;
@@ -40,27 +41,10 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     private NativeResponse nativeResponseAD;
 
-    public BDRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
+
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         parameters = AdvanceBDManager.getInstance().nativeCustomParameters;
-    }
 
-    @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
-
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
-    public void loadAd() {
         BDUtil.initBDAccount(this);
 
         //检查是否命中使用缓存逻辑
@@ -174,12 +158,12 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
     }
 
 
@@ -188,16 +172,21 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         if (nativeResponseAD != null) {
             return nativeResponseAD.isReady(getRealContext());
         }
-        return super.isValid();
+        return true;
     }
 
+
     @Override
-    public void show() {
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
+
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (AdvanceRFUtil.skipRender(this)) {
                 return;
             }
-            final AdvanceRFMaterialProvider rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
+            final AdvanceRFMaterialProvider rfMaterialProvider = getMaterialProvider();
 
             if (nativeResponseAD == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "未获取到广告信息");

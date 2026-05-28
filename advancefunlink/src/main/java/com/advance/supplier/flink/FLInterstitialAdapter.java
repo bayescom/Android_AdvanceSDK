@@ -23,8 +23,7 @@ public class FLInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         FLUtil.initAD(this);
         loadAd();
         reportStart();
@@ -91,20 +90,19 @@ public class FLInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (flAd != null) {
             flAd.destroy();
         }
     }
 
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         if (flAd != null) {
             flAd.show(getRealActivity(null));
         }

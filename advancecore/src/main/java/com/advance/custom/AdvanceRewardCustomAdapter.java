@@ -8,10 +8,7 @@ import com.advance.RewardVideoSetting;
 public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapter {
     public RewardVideoSetting setting;
 
-    public AdvanceRewardCustomAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
-        this.setting = setting;
-    }
+
 
     public void handleCached() {
         try {

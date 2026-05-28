@@ -39,8 +39,7 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         }
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         GdtUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
@@ -50,7 +49,7 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             }
         });
     }
-    public void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtNativeExpressAdapter.class, new BYAbsCallBack<GdtNativeExpressAdapter>() {
@@ -129,19 +128,10 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-
-    }
 
     public void onADLoadedEV(List<NativeExpressADView> list) {
         LogUtil.simple(TAG + "onADLoadedEV");
@@ -228,12 +218,11 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             addADView(adView);
             adView.render();

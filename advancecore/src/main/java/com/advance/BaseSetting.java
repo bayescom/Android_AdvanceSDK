@@ -1,5 +1,7 @@
 package com.advance;
 
+import android.view.ViewGroup;
+
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
 import com.advance.model.BiddingInf;
@@ -36,4 +38,7 @@ public interface BaseSetting {
 //    boolean isCurrentGroupTimeOut();
 
     void replaceCacheAdapter(String key,BaseParallelAdapter adapter);
+
+    ViewGroup getAdContainer(); //广告承载布局，适用于开屏、信息流、banner、draw信息流
+
 }

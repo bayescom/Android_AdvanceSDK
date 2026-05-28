@@ -23,19 +23,14 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
         super(activity, setting);
     }
 
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (mRewardExpressAd != null) {
             mRewardExpressAd.release();
         }
@@ -54,8 +49,7 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
         return super.isValid();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (mRewardExpressAd != null) {
                 /**

@@ -32,8 +32,7 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         TapUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
@@ -47,12 +46,12 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
 
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (adData != null) {
                 adData.dispose();
@@ -63,8 +62,7 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             adData.setBannerInteractionListener(new TapBannerAd.BannerInteractionListener() {
 

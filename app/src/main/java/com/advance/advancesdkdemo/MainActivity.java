@@ -306,10 +306,10 @@ public class MainActivity extends Activity {
     }
 
     public void onRewardShow(View view) {
-        if (hasRewardShow) {
-            logAndToast("激励已展示过");
-            return;
-        }
+//        if (hasRewardShow) {
+//            logAndToast("激励已展示过");
+//            return;
+//        }
         // 如果有业务需求，可以提前加载广告，在需要的时候调用show进行展示
         // 为了方便理解，这里在收到广告后直接调用广告展示，有可能会出现一段时间的缓冲状态。
         if (advanceRewardVideo != null && advanceRewardVideo.isValid()) {

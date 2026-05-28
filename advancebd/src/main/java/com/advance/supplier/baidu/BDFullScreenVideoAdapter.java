@@ -1,6 +1,7 @@
 package com.advance.supplier.baidu;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
@@ -10,23 +11,15 @@ import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.FullScreenVideoAd;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
+import java.util.Map;
+
 public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements FullScreenVideoAd.FullScreenVideoAdListener {
-    private FullScreenVideoSetting advanceFullScreenVideo;
     private String TAG = "[BDFullScreenVideoAdapter] ";
 
     private FullScreenVideoAd mFullScreenVideoAd;
 
-    public BDFullScreenVideoAdapter(Activity activity, FullScreenVideoSetting advanceFullScreenVideo) {
-        super(activity, advanceFullScreenVideo);
-        this.advanceFullScreenVideo = advanceFullScreenVideo;
-    }
 
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
-    public void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         BDUtil.initBDAccount(this);
 
         //检查是否命中使用缓存逻辑
@@ -56,22 +49,12 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
-    }
-
-    @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
     }
 
 
@@ -102,8 +85,7 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
         LogUtil.simple(TAG + "onAdClose" + playScale);
 
 
-        if (advanceFullScreenVideo != null)
-            advanceFullScreenVideo.adapterClose();
+        handleClose();
     }
 
     @Override
@@ -116,15 +98,8 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
     @Override
     public void onVideoDownloadSuccess() {
         LogUtil.simple(TAG + "onVideoDownloadSuccess");
-        if (isParallel) {
-            if (parallelListener != null) {
-                parallelListener.onCached();
-            }
-        } else {
-            if (null != advanceFullScreenVideo) {
-                advanceFullScreenVideo.adapterVideoCached();
-            }
-        }
+
+        handleCached();
     }
 
     @Override
@@ -136,8 +111,7 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
     public void playCompletion() {
         LogUtil.simple(TAG + "playCompletion");
 
-        if (advanceFullScreenVideo != null)
-            advanceFullScreenVideo.adapterVideoComplete();
+        handleComplete();
     }
 
     @Override
@@ -145,8 +119,8 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
         // 用户跳过了广告
         // playScale[0.0-1.0],1.0表示播放完成，媒体可以按照自己的设计给予奖励
         LogUtil.simple(TAG + "onAdSkip" + playScale);
-        if (advanceFullScreenVideo != null)
-            advanceFullScreenVideo.adapterVideoSkipped();
+
+        handleSkip();
     }
 
     @Override
@@ -162,16 +136,8 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
         handleSucceed(this);
     }
 
-//    @Override
-//    public boolean isValid() {
-//        if (mFullScreenVideoAd != null) {
-//            return mFullScreenVideoAd.isReady();
-//        }
-//        return super.isValid();
-//    }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             boolean isReady = mFullScreenVideoAd != null && mFullScreenVideoAd.isReady();
             LogUtil.simple(TAG + " isReady = " + isReady);
@@ -180,5 +146,15 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
         }
+    }
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

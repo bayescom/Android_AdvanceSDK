@@ -32,8 +32,7 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         OppoUtil.initAD(this);
         loadAd();
         reportStart();
@@ -151,12 +150,12 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (null != adView) {
                 adView.destroy();
@@ -169,8 +168,7 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             addADView(adView.getAdView());
             adView.render();

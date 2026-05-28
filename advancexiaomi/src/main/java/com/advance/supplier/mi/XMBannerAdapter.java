@@ -20,8 +20,7 @@ public class XMBannerAdapter extends AdvanceBannerCustomAdapter {
         super(activity, setting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         XMUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -37,12 +36,12 @@ public class XMBannerAdapter extends AdvanceBannerCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (bannerAd != null)
             bannerAd.destroy();
     }
@@ -52,8 +51,7 @@ public class XMBannerAdapter extends AdvanceBannerCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             ViewGroup adContainer = bannerSetting.getContainer();
 

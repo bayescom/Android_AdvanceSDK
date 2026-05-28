@@ -32,8 +32,7 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
         super(softReferenceActivity, baseSetting);
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 //        if (BYUtil.isDev()) {// 测试逻辑，正式上线需移除
 //            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
 //                @Override
@@ -85,8 +84,7 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
 
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         //初始化快手SDK
         KSUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
@@ -161,7 +159,7 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
 
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
 //        if (splashAd != null) {
 //            //获取SplashView
@@ -183,7 +181,7 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 

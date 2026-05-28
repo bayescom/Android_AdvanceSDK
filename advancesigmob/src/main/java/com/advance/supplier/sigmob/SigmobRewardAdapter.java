@@ -33,8 +33,7 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         SigmobUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -52,12 +51,12 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         windRewardVideoAd.destroy();
     }
 
@@ -187,8 +186,7 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
         return isValid;
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             windRewardVideoAd.show(null);
         } catch (Exception e) {

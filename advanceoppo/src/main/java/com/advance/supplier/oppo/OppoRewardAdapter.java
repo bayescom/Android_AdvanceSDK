@@ -25,20 +25,19 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         OppoUtil.initAD(this);
         loadAd();
         reportStart();
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (mRewardVideoAd != null)
                 mRewardVideoAd.destroyAd();
@@ -59,8 +58,7 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
         return super.isValid();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (mRewardVideoAd != null)
                 mRewardVideoAd.showAd();

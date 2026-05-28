@@ -203,8 +203,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         rewardError(adError);
     }
 
-    @Override
-    public void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         GdtUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
@@ -214,7 +213,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
             }
         });
     }
-    public void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtRewardVideoAdapter.class, new BYAbsCallBack<GdtRewardVideoAdapter>() {
@@ -249,7 +248,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
 
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 //        if (advanceRewardVideo != null)
 //            if (checkRewardOk()) {
 //                advanceRewardVideo.adapterAdDidLoaded(gdtRewardVideoAdItem, sdkSupplier);
@@ -259,7 +258,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
@@ -277,8 +276,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         runParaFailed(advanceError);
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (checkRewardOk()) {
                 rewardVideoAD.showAD();

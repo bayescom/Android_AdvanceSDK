@@ -28,19 +28,18 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
         super(activity, baseSetting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         initAD();
     }
 
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         LogUtil.simple(TAG + "doDestroy");
         if (iTanxAdLoader != null) {
             iTanxAdLoader.destroy();
@@ -53,8 +52,7 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
         initAD();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             TanxBiddingInfo biddingResult = new TanxBiddingInfo();
             biddingResult.setBidResult(true);
@@ -122,7 +120,7 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
     }
 
 
-    private void initAD() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         TanxUtil.initTanx(this, new TanxUtil.InitListener() {
             @Override
             public void success() {

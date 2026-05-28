@@ -88,12 +88,10 @@ public class AdvanceLoader {
                 if (result != null)
                     LogUtil.devDebug("getSDKAdapter result = " + result.toString());
             }
-
         } catch (Throwable e) {
             LogUtil.high("未找到adapter：" + clzName);
             e.printStackTrace();
         }
-
         return result;
     }
 

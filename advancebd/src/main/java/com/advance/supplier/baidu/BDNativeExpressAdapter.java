@@ -3,6 +3,7 @@ package com.advance.supplier.baidu;
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_SHOW;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
@@ -18,31 +19,22 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 模板信息流 对应了百度的智能优选信息流广告位
  */
 public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter implements BaiduNativeManager.ExpressAdListener, ExpressResponse.ExpressInteractionListener {
-    protected NativeExpressSetting setting;
     private BaiduNativeManager mBaiduNativeManager;
     private RequestParameters parameters;
     private List<ExpressResponse> ads;
     private String TAG = "[BDNativeExpressAdapter] ";
     ExpressResponse nativeResponse = null;
 
-    public BDNativeExpressAdapter(Activity activity, NativeExpressSetting baseSetting) {
-        super(activity, baseSetting);
-        setting = baseSetting;
 
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         parameters = AdvanceBDManager.getInstance().nativeExpressParameters;
-    }
 
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
-    public void loadAd() {
         BDUtil.initBDAccount(this);
 
         //检查是否命中使用缓存逻辑
@@ -80,24 +72,15 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
-    @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
 
 
     @Override
@@ -160,9 +143,9 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
 
     public void onADClose() {
         LogUtil.simple(TAG + "onADClose");
-        if (null != setting) {
-            setting.adapterDidClosed(nativeExpressADView);
-        }
+
+
+        handleClose();
     }
 
 
@@ -171,11 +154,17 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
         if (nativeResponse != null) {
             return nativeResponse.isReady(getRealContext());
         }
-        return super.isValid();
+        return true ;
     }
 
+
+
     @Override
-    public void show() {
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
+
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             // 添加view
             View adView = nativeResponse.getExpressAdView();
@@ -188,7 +177,7 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
                  * 2. 如果你配置了{@link com.baidu.mobads.sdk.api.BDAdConfig.Builder#useActivityDialog(Boolean)}为 false
                  *    那么请务必在展现前调用该方法绑定activity，否则会使下载弹框无法弹出（下载类无响应）
                  */
-                nativeResponse.bindInteractionActivity(getRealActivity(setting.getAdContainer()));
+                nativeResponse.bindInteractionActivity(getRealActivity(getAdContainer()));
                 addADView(adView);
             }
 
@@ -264,12 +253,15 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
         String tip = "onAdRenderFail , inf : reason = " + s + ", code =" + i;
         LogUtil.simple(TAG + tip);
 
-        handleFailed(i, tip);
+        handleRenderFailed(view);
     }
 
     @Override
     public void onAdRenderSuccess(View view, float width, float height) {
         LogUtil.simple(TAG + "onAdRenderSuccess: " + width + ", " + height);
+
+
+        handleRenderFailed(view);
     }
 
     @Override

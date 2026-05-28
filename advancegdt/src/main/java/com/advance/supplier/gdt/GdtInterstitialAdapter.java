@@ -26,15 +26,14 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (null != interstitialAD) {
             interstitialAD.destroy();
         }
 
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             interstitialAD.show();
         } catch (Throwable e) {
@@ -138,8 +137,7 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
         runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED));
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         GdtUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
@@ -149,7 +147,7 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
             }
         });
     }
-    public void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtInterstitialAdapter.class, new BYAbsCallBack<GdtInterstitialAdapter>() {
@@ -168,7 +166,7 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
         if (null != advanceInterstitial) {
             // onADReceive之后才能调用getAdPatternType()
             if (interstitialAD != null && interstitialAD.getAdPatternType() == AdPatternType.NATIVE_VIDEO) {

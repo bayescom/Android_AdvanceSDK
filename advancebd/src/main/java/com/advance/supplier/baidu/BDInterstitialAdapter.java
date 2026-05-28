@@ -4,6 +4,7 @@ import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_SHOW;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -14,23 +15,16 @@ import com.baidu.mobads.sdk.api.ExpressInterstitialAd;
 import com.baidu.mobads.sdk.api.ExpressInterstitialListener;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
+import java.util.Map;
+
 public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter implements ExpressInterstitialListener {
-    private final InterstitialSetting setting;
     private ExpressInterstitialAd mInterAd;            // 插屏广告实例
     private String TAG = "[BDInterstitialAdapter] ";
 
-    public BDInterstitialAdapter(Activity activity, InterstitialSetting baseSetting) {
-        super(activity, baseSetting);
-        this.setting = baseSetting;
-    }
 
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
+
     
-    public void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         BDUtil.initBDAccount(this);
 
         //检查是否命中使用缓存逻辑
@@ -62,7 +56,7 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 //        if (null != setting) {
 //            setting.adapterDidSucceed(sdkSupplier);
 //        }
@@ -77,8 +71,7 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
 //        return super.isValid();
 //    }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             mInterAd.show();
         } catch (Throwable e) {
@@ -88,20 +81,20 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (mInterAd != null) {
             mInterAd.destroy();
         }
     }
 
+
     @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable t) {
-            t.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(ERROR_EXCEPTION_LOAD));
-        }
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
 
     }
 
@@ -129,9 +122,8 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
     @Override
     public void onAdClose() {
         LogUtil.simple(TAG + "onAdClose");
-        if (null != setting) {
-            setting.adapterDidClosed();
-        }
+
+        handleClose();
     }
 
     @Override

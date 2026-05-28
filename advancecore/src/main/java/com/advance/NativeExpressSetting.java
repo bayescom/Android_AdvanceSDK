@@ -19,7 +19,7 @@ public interface NativeExpressSetting extends BaseSetting {
 
     boolean isVideoMute();
 
-    void adapterAdDidLoaded(List<AdvanceNativeExpressAdItem> advanceNativeExpressAdItemList, SdkSupplier supplier);
+    void adapterAdDidLoaded(  SdkSupplier supplier);
 
     void adapterRenderFailed(View nativeExpressADView);
 
@@ -37,5 +37,5 @@ public interface NativeExpressSetting extends BaseSetting {
 
     int getCsjImageHeight();
 
-    ViewGroup getAdContainer();
+//    ViewGroup getAdContainer();
 }

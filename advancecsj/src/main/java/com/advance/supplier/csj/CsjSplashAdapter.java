@@ -1,21 +1,18 @@
 package com.advance.supplier.csj;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
 import com.advance.AdvanceConfig;
-import com.advance.AdvanceSetting;
 
-import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.model.AdvanceSDKCacheModel;
 import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.util.BYUtil;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.CSJAdError;
 import com.bytedance.sdk.openadsdk.CSJSplashAd;
@@ -24,34 +21,24 @@ import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.bytedance.sdk.openadsdk.TTAdNative;
 import com.bytedance.sdk.openadsdk.TTAdSdk;
 
-import java.lang.ref.SoftReference;
+import java.util.Map;
 
 public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
     private CSJSplashAd newSplashAd;
     private String TAG = "[CsjSplashAdapter] ";
-//    boolean useOldApi = false;
 
-    public CsjSplashAdapter(SoftReference<Activity> activity, SplashSetting setting) {
-        super(activity, setting);
-    }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         showAD();
     }
 
     @Override
-    protected void paraLoadAd() {
-        initAD();
-    }
-
-    @Override
-    protected void adReady() {
+    protected void adPrepared() {
 //        showAD();
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
@@ -81,27 +68,26 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
                 @Override
                 public void onSplashAdClose(CSJSplashAd csjSplashAd, int closeType) {
                     LogUtil.simple(TAG + "onSplashAdClose , closeType = " + closeType);
-                    if (splashSetting != null) {
-                        if (closeType == CSJSplashCloseType.CLICK_SKIP) {
-                            splashSetting.adapterDidSkip();
-                        } else if (closeType == CSJSplashCloseType.COUNT_DOWN_OVER) {
-                            splashSetting.adapterDidTimeOver();
-                        } else {
-                            splashSetting.adapterDidSkip();
-                        }
+                    if (closeType == CSJSplashCloseType.CLICK_SKIP) {
+                        handleSkip();
+                    } else if (closeType == CSJSplashCloseType.COUNT_DOWN_OVER) {
+                        handleTimeOver();
+                    } else {
+                        handleSkip();
                     }
+
+
                 }
             });
 
             view = newSplashAd.getSplashView();
-            initNewSplashClickEyeData(newSplashAd, view);
-            boolean isDestroy = AdvanceUtil.isActivityDestroyed(getRealActivity(splashSetting.getAdContainer()));
+            boolean isDestroy = AdvanceUtil.isActivityDestroyed(getRealActivity(getAdContainer()));
             if (isDestroy) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "ActivityDestroyed"));
                 return;
             }
             //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕宽
-            boolean add = AdvanceUtil.addADView(splashSetting.getAdContainer(), view);
+            boolean add = AdvanceUtil.addADView(getAdContainer(), view);
             if (!add) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
             }
@@ -121,24 +107,9 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
 
-    public void orderLoadAd() {
-        try {
-//            if (setting != null && setting.getGdtSkipContainer() != null) {
-//                setting.getGdtSkipContainer().setVisibility(View.GONE);
-//            }
-            initAD();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-            String cause = e.getCause() != null ? e.getCause().toString() : "no cause";
-            String msg = "CsjSplashAdapter Throwable" + cause;
-            reportCodeErr(msg);
-        }
-    }
-
-    private void initAD() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         //初始化值
-        CSJSplashClickEyeManager.getInstance().setSupportSplashClickEye(false);
+//        CSJSplashClickEyeManager.getInstance().setSupportSplashClickEye(false);
 
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
@@ -146,7 +117,6 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
 
-                reportStart();
             }
 
             @Override
@@ -257,44 +227,6 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    /**
-     * 以下为点睛广告特殊处理
-     */
-
-    //是否进行点睛广告的展示
-    private void switchSplashClickShow() {
-        try {
-            if (splashSetting == null) {
-                return;
-            }
-            if (splashSetting.isShowInSingleActivity()) {
-                new CsjUtil().zoomOut(getRealActivity(splashSetting.getAdContainer()));
-            } else {
-                AdvanceSetting.getInstance().isSplashSupportZoomOut = true;
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
-
-//    NewSplashClickEyeListener mSplashClickEyeListener;
-
-    private void initNewSplashClickEyeData(CSJSplashAd splashAd, View splashView) {
-        try {
-//            if (splashAd == null || splashView == null) {
-//                return;
-//            }
-//            Activity adAct = getRealActivity(setting.getAdContainer());
-//            mSplashClickEyeListener = new NewSplashClickEyeListener(adAct, splashAd, setting.getAdContainer(), splashView);
-//
-//            splashAd.setSplashClickEyeListener(mSplashClickEyeListener);
-//            CSJSplashClickEyeManager.getInstance().init(adAct);
-//            CSJSplashClickEyeManager.getInstance().setCSJSplashInfo(splashAd, splashView, adAct.getWindow().getDecorView());
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
 
 
     @Override
@@ -302,6 +234,11 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
         if (newSplashAd != null && newSplashAd.getMediationManager() != null) {
             return newSplashAd.getMediationManager().isReady();
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

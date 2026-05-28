@@ -32,8 +32,7 @@ public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
         this.setting = baseSetting;
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             //回调监听
             interstitialAD.setAdInteractionListener(KSInterstitialAdapter.this);
@@ -45,8 +44,7 @@ public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
         }
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         KSUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -124,11 +122,11 @@ public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
 
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 

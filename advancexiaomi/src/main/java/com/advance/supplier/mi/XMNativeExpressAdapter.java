@@ -19,8 +19,7 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         super(activity, baseSetting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         XMUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -36,12 +35,12 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
         if (templateAd != null) {
             templateAd.destroy();
@@ -53,8 +52,7 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             templateAd.showAd(mSetting.getAdContainer(), new TemplateAd.TemplateAdInteractionListener() {
                 @Override

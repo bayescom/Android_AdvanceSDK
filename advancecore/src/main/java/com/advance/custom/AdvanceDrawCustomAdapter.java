@@ -11,21 +11,15 @@ import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 
 public abstract class AdvanceDrawCustomAdapter extends AdvanceBaseCustomAdapter {
-    protected AdvanceDrawSetting setting;
     String TAG = "[AdvanceDrawCustomAdapter] ";
-
-    public AdvanceDrawCustomAdapter(Activity activity, AdvanceDrawSetting setting) {
-        super(activity, setting);
-        this.setting = setting;
-    }
 
 
     public boolean isADViewAdded(View adView) {
         boolean hasAdded = false;
         try {
 
-            if (setting != null) {
-                ViewGroup adC = setting.getContainer();
+            if (drawSetting != null) {
+                ViewGroup adC = drawSetting.getContainer();
                 hasAdded = AdvanceUtil.addADView(adC, adView);
             } else {
                 LogUtil.e(TAG + "无法展示广告，原因：内部处理异常，AdvanceDrawSetting为空");

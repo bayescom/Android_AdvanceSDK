@@ -36,8 +36,7 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
 
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         CsjUtil.initCsj(this, new CsjUtil.InitListener() {
             @Override
             public void success() {
@@ -90,7 +89,7 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
@@ -190,7 +189,7 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
 
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 

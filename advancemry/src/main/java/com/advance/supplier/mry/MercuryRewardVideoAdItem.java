@@ -53,7 +53,7 @@ public class MercuryRewardVideoAdItem implements AdvanceRewardVideoItem {
         this.rewardVideoAD = rewardVideoAd;
     }
 
-    public void loadAD() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (null != rewardVideoAD) {
                 rewardVideoAD.loadAD();

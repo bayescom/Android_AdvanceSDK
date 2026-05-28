@@ -29,8 +29,7 @@ public class FLSplashAdapter extends AdvanceSplashCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         FLUtil.initAD(this);
         loadAd();
         reportStart();
@@ -121,20 +120,19 @@ public class FLSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (flAd != null) {
             flAd.destroy();
         }
     }
 
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         if (adData != null) {
             adData.show(splashSetting.getAdContainer());
         }

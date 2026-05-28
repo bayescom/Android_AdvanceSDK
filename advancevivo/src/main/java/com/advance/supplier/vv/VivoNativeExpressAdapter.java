@@ -24,8 +24,7 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
         super(activity, baseSetting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         VivoUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -42,12 +41,12 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (expressView != null) {
             expressView.destroy();
         }
@@ -58,8 +57,7 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (expressView == null) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "expressView null"));

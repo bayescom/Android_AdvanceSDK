@@ -35,8 +35,7 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         TapUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
@@ -48,12 +47,12 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (adData != null) {
                 adData.dispose();
@@ -65,8 +64,7 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (adData == null) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "splashAd null"));

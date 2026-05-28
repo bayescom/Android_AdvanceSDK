@@ -44,8 +44,7 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         GdtUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
@@ -57,12 +56,12 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             LogUtil.devDebug("doDestroy");
             if (mRenderAD != null) {
@@ -73,8 +72,7 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         doShow();
     }
 

@@ -34,8 +34,7 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         VivoUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -52,12 +51,12 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
         if (vivoSplashAd != null) {
             vivoSplashAd.destroy();
@@ -69,8 +68,7 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (usePro && splashPro != null) {
                 adView = splashPro.getAdView();

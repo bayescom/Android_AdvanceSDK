@@ -32,8 +32,7 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
         super(activity, setting);
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 //        if (BYUtil.isDev()) {//todo 测试逻辑，正式上线需移除
 //            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
 //                @Override
@@ -133,8 +132,7 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    @Override
-    public void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         initAD();
 
         reportStart();
@@ -147,19 +145,19 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
 
     //调用展示方法
     @Override
-    public void adReady() {
+    public void adPrepared() {
 //        if (mercurySplash != null && isParallel) {
 //            mercurySplash.showAd(adContainer);
 //        }
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
 
-    private void initAD() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
         
         //检查是否命中使用缓存逻辑

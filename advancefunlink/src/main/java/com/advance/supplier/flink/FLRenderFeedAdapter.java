@@ -53,8 +53,7 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         FLUtil.initAD(this);
         loadAd();
         reportStart();
@@ -118,20 +117,19 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         if (flAd != null) {
             flAd.destroy();
         }
     }
 
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         LogUtil.simple(TAG + "call show ");
         if (mAdvanceRFBridge == null || flAd == null) {
             handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "advanceRFBridge or flAd null");

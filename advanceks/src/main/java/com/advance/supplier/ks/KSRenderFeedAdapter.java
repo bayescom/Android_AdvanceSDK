@@ -69,8 +69,7 @@ public class KSRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         KSUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -140,18 +139,17 @@ public class KSRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
 
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
 
             if (AdvanceRFUtil.skipRender(this)) {

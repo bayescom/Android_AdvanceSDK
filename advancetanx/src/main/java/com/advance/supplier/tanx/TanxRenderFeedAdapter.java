@@ -54,18 +54,17 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         initAD();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         initAD();
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         LogUtil.simple(TAG + "doDestroy");
         if (iTanxAdLoader != null) {
             iTanxAdLoader.destroy();
@@ -73,8 +72,7 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (AdvanceRFUtil.skipRender(this)) {
                 return;
@@ -177,7 +175,7 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
 
-    private void initAD() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         TanxUtil.initTanx(this, new TanxUtil.InitListener() {
             @Override
             public void success() {

@@ -277,13 +277,13 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
 
     }
 
-    public void adapterAdDidLoaded(final List<AdvanceNativeExpressAdItem> advanceNativeExpressAdItemList, SdkSupplier supplier) {
+    public void adapterAdDidLoaded( SdkSupplier supplier) {
         reportAdSucceed(supplier);
         BYThreadUtil.switchMainThread(new BYBaseCallBack() {
             @Override
             public void call() {
                 if (null != listener) {
-                    listener.onAdLoaded(advanceNativeExpressAdItemList);
+                    listener.onAdLoaded(null);
                 }
 
                 if (expressGMCallBack != null) {

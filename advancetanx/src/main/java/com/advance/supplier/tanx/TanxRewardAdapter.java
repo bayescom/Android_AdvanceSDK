@@ -34,18 +34,17 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
         super(activity, setting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         initAD();
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         LogUtil.simple(TAG + "doDestroy");
         if (iTanxAdLoader != null) {
             iTanxAdLoader.destroy();
@@ -58,8 +57,7 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
         initAD();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         if (iTanxRewardVideoExpressAd == null) {
             handleFailed(AdvanceError.ERROR_EXCEPTION_SHOW, "无广告内容");
             return;
@@ -183,7 +181,7 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
         }
     }
 
-    private void initAD() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         TanxUtil.initTanx(this, new TanxUtil.InitListener() {
             @Override
             public void success() {

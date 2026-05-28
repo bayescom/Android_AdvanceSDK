@@ -40,8 +40,7 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         SigmobUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
@@ -59,12 +58,12 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
         try {
             if (windNativeUnifiedAd!=null){
@@ -138,8 +137,7 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         try {
             if (AdvanceRFUtil.skipRender(this)) {

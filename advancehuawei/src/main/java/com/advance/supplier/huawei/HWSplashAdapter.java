@@ -27,20 +27,19 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
         super(softReferenceActivity, splashSetting);
     }
 
-    @Override
-    protected void paraLoadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
 
         reportStart();
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (splashView != null) {
                 splashView.destroyView();
@@ -55,8 +54,7 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
         paraLoadAd();
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             splashView.setAdDisplayListener(new SplashAdDisplayListener() {
                 @Override
