@@ -1,6 +1,7 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import com.kwad.sdk.api.KsScene;
 import com.kwad.sdk.api.KsSplashScreenAd;
 
 import java.lang.ref.SoftReference;
+import java.util.Map;
 
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 
@@ -28,9 +30,6 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
     private String TAG = "[KSSplashAdapter] ";
     private KsSplashScreenAd splashAd;
 
-    public KSSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting baseSetting) {
-        super(softReferenceActivity, baseSetting);
-    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 //        if (BYUtil.isDev()) {// 测试逻辑，正式上线需移除
@@ -50,12 +49,12 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
         }
 
         try {
-            Activity adAct = getRealActivity(splashSetting.getAdContainer());
+            activity = getRealActivity(getAdContainer());
 
             //获取SplashView
-            View view = splashAd.getView(adAct, this);
+            View view = splashAd.getView(activity, this);
             //渲染之前判断activity生命周期状态
-            boolean isDestroy = AdvanceUtil.isActivityDestroyed(getRealActivity(splashSetting.getAdContainer()));
+            boolean isDestroy = AdvanceUtil.isActivityDestroyed(activity);
             if (isDestroy) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "ActivityDestroyed"));
                 return;
@@ -65,7 +64,7 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
                     ViewGroup.LayoutParams.MATCH_PARENT));
             //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕宽
 
-            boolean add = AdvanceUtil.addADView(splashSetting.getAdContainer(), view);
+            boolean add = AdvanceUtil.addADView(getAdContainer(), view);
             if (!add) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
             }
@@ -91,8 +90,6 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
-
-                reportStart();
             }
 
             @Override
@@ -115,7 +112,7 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
         if (hitCache) {
             return;
         }
-        
+
         //场景设置
         KsScene scene = new KsScene.Builder(KSUtil.getADID(sdkSupplier)).build(); // 此为测试posId，请联系快手平台申请正式posId
         KsAdSDK.getLoadManager().loadSplashScreenAd(scene, new KsLoadManager.SplashScreenAdListener() {
@@ -126,36 +123,36 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
                 handleFailed(code, msg);
 
 
-                }
+            }
 
-                @Override
-                public void onRequestResult(int adNumber) {
-                    LogUtil.simple(TAG + "onRequestResult，广告填充数量：" + adNumber);
-                }
+            @Override
+            public void onRequestResult(int adNumber) {
+                LogUtil.simple(TAG + "onRequestResult，广告填充数量：" + adNumber);
+            }
 
-                @Override
-                public void onSplashScreenAdLoad(KsSplashScreenAd splashScreenAd) {
-                    LogUtil.simple(TAG + "onSplashScreenAdLoad");
+            @Override
+            public void onSplashScreenAdLoad(KsSplashScreenAd splashScreenAd) {
+                LogUtil.simple(TAG + "onSplashScreenAdLoad");
 
-                    try {
-                        if (splashScreenAd == null) {
-                            String nMsg = TAG + " KsSplashScreenAd null";
-                            handleFailed(AdvanceError.ERROR_DATA_NULL, nMsg);
-                            return;
-                        }
-                        splashAd = splashScreenAd;
-                        updateBidding(splashAd.getECPM());
-
-                        handleSucceed(splashAd);
-
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                        runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
+                try {
+                    if (splashScreenAd == null) {
+                        String nMsg = TAG + " KsSplashScreenAd null";
+                        handleFailed(AdvanceError.ERROR_DATA_NULL, nMsg);
+                        return;
                     }
-                }
-            });
+                    splashAd = splashScreenAd;
+                    updateBidding(splashAd.getECPM());
 
-        }
+                    handleSucceed(splashAd);
+
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
+                }
+            }
+        });
+
+    }
 
 
     @Override
@@ -185,21 +182,6 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
 
     }
 
-    @Override
-    public void orderLoadAd() {
-        try {
-//            if (setting != null && setting.getGdtSkipContainer() != null) {
-//                setting.getGdtSkipContainer().setVisibility(View.GONE);
-//            }
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(ERROR_EXCEPTION_LOAD));
-            String cause = e.getCause() != null ? e.getCause().toString() : "no cause";
-            reportCodeErr(TAG + " Throwable" + cause);
-        }
-    }
-
 
     //------广告回调事件------
 
@@ -225,9 +207,7 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
     public void onAdShowEnd() {
         LogUtil.simple(TAG + "onAdShowEnd");
 
-        if (splashSetting != null) {
-            splashSetting.adapterDidTimeOver();
-        }
+        handleTimeOver();
     }
 
     @Override
@@ -240,9 +220,7 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
     @Override
     public void onSkippedAd() {
         LogUtil.simple(TAG + "onSkippedAd");
-        if (splashSetting != null) {
-            splashSetting.adapterDidSkip();
-        }
+        handleSkip();
     }
 
     @Override
@@ -272,6 +250,11 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

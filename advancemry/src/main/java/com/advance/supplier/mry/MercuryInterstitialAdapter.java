@@ -1,6 +1,7 @@
 package com.advance.supplier.mry;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -13,15 +14,12 @@ import com.mercury.sdk.core.interstitial.InterstitialAD;
 import com.mercury.sdk.core.interstitial.InterstitialADListener;
 import com.mercury.sdk.util.ADError;
 
+import java.util.Map;
+
 public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter implements InterstitialADListener {
-    private InterstitialSetting advanceInterstitial;
     private InterstitialAD interstitialAD;
     String TAG = "[MercuryInterstitialAdapter] ";
 
-    public MercuryInterstitialAdapter(Activity activity, InterstitialSetting advanceInterstitial) {
-        super(activity, advanceInterstitial);
-        this.advanceInterstitial = advanceInterstitial;
-    }
 
     public void doDestroy() {
         if (null != interstitialAD) {
@@ -38,18 +36,6 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
         }
     }
 
-
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-
-        } catch (Throwable t) {
-            t.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-
-
-    }
 
     @Override
     public void onADReceive() {
@@ -82,9 +68,7 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
     public void onADClosed() {
         LogUtil.simple(TAG + "onADClosed");
 
-        if (null != advanceInterstitial) {
-            advanceInterstitial.adapterDidClosed();
-        }
+        handleClose();
 
     }
 
@@ -127,7 +111,7 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
         }
     }
 
-   public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra){
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
 
         //检查是否命中使用缓存逻辑
@@ -143,18 +127,8 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
             return;
         }
 
-        boolean useNewAPI = true;
-        if (sdkSupplier.versionTag == 1) {
-            useNewAPI = false;
-        }
-        //根据配置选择使用新旧版本插屏广告，只有当versionTag 返回 1 才会执行旧版本插屏逻辑
-        if (useNewAPI) {
-            interstitialAD = new InterstitialAD(getRealActivity(null), sdkSupplier.adspotid);
-        } else {
-            interstitialAD = new InterstitialAD(getRealActivity(null), sdkSupplier.adspotid, this);
-        }
+        interstitialAD = new InterstitialAD(context, sdkSupplier.adspotid);
         interstitialAD.setAdListener(this);
-        interstitialAD.setVideoMute(true);
         interstitialAD.loadAD();
     }
 
@@ -169,6 +143,18 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
         if (interstitialAD != null) {
             return interstitialAD.isValid();
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void destroyAd() {
+        if (interstitialAD != null) {
+            interstitialAD.destroy();
+        }
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

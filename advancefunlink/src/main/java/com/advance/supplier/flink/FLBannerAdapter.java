@@ -1,6 +1,7 @@
 package com.advance.supplier.flink;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -16,22 +17,17 @@ import com.fl.saas.adx.api.FLBanner;
 import com.fl.saas.adx.base.exception.FLError;
 import com.fl.saas.adx.base.interfaces.AdViewBannerListener;
 
+import java.util.Map;
+
 public class FLBannerAdapter extends AdvanceBannerCustomAdapter {
     FLBanner flAd;
     View adView;
-    public FLBannerAdapter(Activity activity, BannerSetting setting) {
-        super(activity, setting);
-    }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         FLUtil.initAD(this);
         loadAd();
-        reportStart();
     }
 
     private void loadAd() {
@@ -123,7 +119,7 @@ flAd.requestBanner();
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            ViewGroup adContainer = bannerSetting.getContainer();
+            ViewGroup adContainer =  getAdContainer();
             RelativeLayout.LayoutParams rbl = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             rbl.addRule(RelativeLayout.CENTER_HORIZONTAL);
             boolean add = AdvanceUtil.addADView(adContainer, adView, rbl);
@@ -141,6 +137,11 @@ flAd.requestBanner();
         if (flAd != null) {
             return flAd.isReady();
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

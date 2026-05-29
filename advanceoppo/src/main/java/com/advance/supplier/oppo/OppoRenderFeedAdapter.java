@@ -36,25 +36,26 @@ import com.heytap.msp.mobad.api.params.NativeAdvanceContainer;
 import com.mercury.sdk.util.MercuryTool;
 
 import java.util.List;
+import java.util.Map;
 
 public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     NativeAdvanceAd mNativeAdvanceAd;
     INativeAdvanceData mRenderAD;
 
-    public OppoRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         OppoUtil.initAD(this);
         startLoad();
-
-        reportStart();
     }
 
     private void startLoad() {
@@ -147,12 +148,12 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             LogUtil.simple(TAG + "call show ");
-            if (mAdvanceRFBridge == null || mRenderAD == null) {
+            if (  mRenderAD == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "advanceRFBridge or mRenderAD null");
                 return;
             }
 
-            final AdvanceRFMaterialProvider rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
+            final AdvanceRFMaterialProvider rfMaterialProvider =  getMaterialProvider();
 
             if (rfMaterialProvider == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "getMaterialProvider  null");
@@ -165,7 +166,7 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 //            需要先拿到根布局信息
             AdvRFRootView rootView = rfMaterialProvider.rootView;
-            Activity activity = getRealActivity(rootView);
+              activity = getRealActivity(rootView);
             //新建oppo自己的根布局
             final NativeAdvanceContainer adContainer = new NativeAdvanceContainer(activity);
 

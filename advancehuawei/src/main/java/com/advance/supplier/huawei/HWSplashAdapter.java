@@ -2,6 +2,7 @@ package com.advance.supplier.huawei;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Handler;
@@ -19,18 +20,23 @@ import com.huawei.hms.ads.splash.SplashAdDisplayListener;
 import com.huawei.hms.ads.splash.SplashView;
 
 import java.lang.ref.SoftReference;
+import java.util.Map;
 
 public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
     SplashView splashView;
 
-    public HWSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting splashSetting) {
-        super(softReferenceActivity, splashSetting);
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
-
-        reportStart();
     }
 
     @Override
@@ -49,10 +55,7 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
 
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {

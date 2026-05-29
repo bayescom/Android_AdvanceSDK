@@ -3,12 +3,12 @@ package com.advance.supplier.tap;
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -20,19 +20,21 @@ import com.tapsdk.tapad.AdRequest;
 import com.tapsdk.tapad.TapAdNative;
 import com.tapsdk.tapad.TapSplashAd;
 
-import java.lang.ref.SoftReference;
+import java.util.Map;
 
 public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
     TapAdNative tapAdNative;
     TapSplashAd adData;
 
-    public TapSplashAdapter(SoftReference<Activity> activity, SplashSetting advanceSplash) {
-        super(activity, advanceSplash);
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -40,8 +42,6 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
             @Override
             public void call() {
                 loadAD();
-
-                reportStart();
             }
         });
     }
@@ -114,7 +114,7 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
                 }
             });
 
-            Activity activity = getRealActivity(splashSetting.getAdContainer());
+            activity = getRealActivity(getAdContainer());
             //获取SplashView
             View view = adData.getSplashView(activity);
             //渲染之前判断activity生命周期状态
@@ -128,15 +128,18 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
                     ViewGroup.LayoutParams.MATCH_PARENT));
             //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕宽
 
-            boolean add = AdvanceUtil.addADView(splashSetting.getAdContainer(), view);
+            boolean add = AdvanceUtil.addADView(getAdContainer(), view);
             if (!add) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
             }
 
 
-            TextView skipView = splashSetting.getSkipView();
-            if (null != skipView) {
-                skipView.setVisibility(View.INVISIBLE);
+            if (splashSetting != null) {
+
+                TextView skipView = splashSetting.getSkipView();
+                if (null != skipView) {
+                    skipView.setVisibility(View.INVISIBLE);
+                }
             }
 //            adData.show(activity);
         } catch (Throwable e) {

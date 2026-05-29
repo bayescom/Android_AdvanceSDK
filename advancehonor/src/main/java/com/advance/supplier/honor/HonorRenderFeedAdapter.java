@@ -24,19 +24,14 @@ import com.hihonor.adsdk.picturetextad.PictureTextAdLoad;
 import com.hihonor.adsdk.picturetextad.PictureTextAdRootView;
 
 import java.util.List;
+import java.util.Map;
 
 public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     PictureTextExpressAd mExpressAd;
 
-    public HonorRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
-    }
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        loadAd();
 
-        reportStart();
-    }
+
 
     @Override
     protected void adPrepared() {
@@ -55,13 +50,15 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         if (HonorUtil.isAdExpire(mExpressAd)) {
             return false;
         }
-        return super.isValid();
+           return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
@@ -144,24 +141,23 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 nativeView.setAd(mExpressAd);
 
 //            需要先拿到根布局信息
-                AdvRFRootView rootView = mAdvanceRFBridge.getMaterialProvider().rootView;
-                Activity activity = getRealActivity(rootView);
+                AdvRFRootView rootView = getMaterialProvider().rootView;
 //            -----------方案B copy全部子布局，复制子控件至新布局，并将新布局添加至旧父布局中
                 AdvanceRFUtil.copyChild(rootView, nativeView);
 
 
                 //注册点击
-                nativeView.registerViewForInteraction(mAdvanceRFBridge.getMaterialProvider().clickViews);
+                nativeView.registerViewForInteraction(getMaterialProvider().clickViews);
 
                 //渲染视频。
                 AdVideo video = mExpressAd.getAdVideo();
-                AdvRFVideoView videoView = mAdvanceRFBridge.getMaterialProvider().videoView;
+                AdvRFVideoView videoView = getMaterialProvider().videoView;
                 if (videoView != null) {
                     videoView.addView(video.getVideoView());
                 }
 
                 //关闭广告事件绑定
-                View dislikeView = mAdvanceRFBridge.getMaterialProvider().disLikeView;
+                View dislikeView = getMaterialProvider().disLikeView;
                 if (dislikeView != null) {
                     dislikeView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -184,7 +180,7 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    private void loadAd() {
+     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         HonorUtil.initAD(this);
 
         //检查是否命中使用缓存逻辑

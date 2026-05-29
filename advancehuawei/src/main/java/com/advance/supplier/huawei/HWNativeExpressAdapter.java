@@ -1,6 +1,7 @@
 package com.advance.supplier.huawei;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
@@ -19,13 +20,21 @@ import com.huawei.hms.ads.nativead.NativeAdLoader;
 import com.huawei.hms.ads.nativead.NativeView;
 import com.huawei.hms.ads.utils.NativeListener;
 
+import java.util.Map;
+
 public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     private NativeAd mNativeAd;
 
-    public HWNativeExpressAdapter(Activity activity, NativeExpressSetting baseSetting) {
-        super(activity, baseSetting);
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
 
     @Override
     protected void adPrepared() {
@@ -43,10 +52,6 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        loadAd();
-    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
@@ -93,11 +98,8 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
                 public void onCloseBtnClick() {
                     LogUtil.simple(TAG + "AdCloseBtnClickListener, onCloseBtnClick");
 
-                    if (mSetting!=null) {
-                        mSetting.adapterDidClosed(nativeView);
-                    }
+                   handleClose();
 
-                    removeADView();
                 }
             });
             addADView(nativeView);
@@ -108,7 +110,7 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         }
     }
 
-    private void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         //先执行SDK初始化
         HWUtil.initAD(this);
 

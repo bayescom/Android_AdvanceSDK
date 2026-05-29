@@ -1,10 +1,10 @@
 package com.advance.supplier.gdt;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -16,24 +16,11 @@ import com.qq.e.ads.banner2.UnifiedBannerADListener;
 import com.qq.e.ads.banner2.UnifiedBannerView;
 import com.qq.e.comm.util.AdError;
 
+import java.util.Map;
+
 public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements UnifiedBannerADListener {
-    private BannerSetting advanceBanner;
     private UnifiedBannerView bv;
     String TAG = "[GdtBannerAdapter] ";
-
-    public GdtBannerAdapter(Activity activity, BannerSetting advanceBanner) {
-        super(activity, advanceBanner);
-        this.advanceBanner = advanceBanner;
-    }
-
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
 
     @Override
     public void destroyAd() {
@@ -69,8 +56,8 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
         try {
             LogUtil.simple(TAG + "onADReceive");
 
-            if (advanceBanner != null) {
-                int refreshValue = advanceBanner.getRefreshInterval();
+            if (bannerSetting != null) {
+                int refreshValue = bannerSetting.getRefreshInterval();
                 LogUtil.high("refreshValue == " + refreshValue);
 
                 if (refreshValue > 0) {
@@ -84,8 +71,6 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
             handleSucceed(this);
         } catch (Throwable e) {
             e.printStackTrace();
-//            if (advanceBanner != null)
-//                advanceBanner.adapterDidFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
             doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
         }
     }
@@ -101,9 +86,7 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
     public void onADClosed() {
         LogUtil.simple(TAG + "onADClosed");
 
-        if (null != advanceBanner) {
-            advanceBanner.adapterDidDislike();
-        }
+        handleClose();
     }
 
     @Override
@@ -126,12 +109,10 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
             @Override
             public void call() {
                 loadAd();
-
-                reportStart();
             }
         });
     }
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+    public void loadAd() {
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtBannerAdapter.class, new BYAbsCallBack<GdtBannerAdapter>() {
@@ -146,8 +127,8 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
         }
 
         bv = new UnifiedBannerView(activity, sdkSupplier.adspotid, this);
-        if (advanceBanner != null) {
-            int refreshValue = advanceBanner.getRefreshInterval();
+        if (bannerSetting != null) {
+            int refreshValue = bannerSetting.getRefreshInterval();
             bv.setRefresh(refreshValue);
         }
         /* 发起广告请求，收到广告数据后会展示数据   */
@@ -168,7 +149,7 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            ViewGroup adContainer = advanceBanner.getContainer();
+            ViewGroup adContainer = getAdContainer();
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             boolean add = AdvanceUtil.addADView(adContainer, bv, lp);
             if (!add) {
@@ -185,7 +166,12 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
         if (bv != null) {
             return bv.isValid();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
 

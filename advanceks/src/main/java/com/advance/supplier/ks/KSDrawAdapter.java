@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import androidx.annotation.Nullable;
 
+import android.content.Context;
 import android.view.View;
 
 import com.advance.AdvanceDrawSetting;
@@ -19,13 +20,20 @@ import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsScene;
 
 import java.util.List;
+import java.util.Map;
 
 public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.AdInteractionListener {
     private String TAG = "[KSDrawAdapter] ";
     private KsDrawAd drawAD;
 
-    public KSDrawAdapter(Activity activity, AdvanceDrawSetting setting) {
-        super(activity, setting);
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
 
@@ -35,8 +43,6 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
-
-                reportStart();
             }
 
             @Override
@@ -103,10 +109,7 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
 
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         if (drawAD == null) {

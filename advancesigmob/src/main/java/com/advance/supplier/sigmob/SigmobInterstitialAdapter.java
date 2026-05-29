@@ -1,6 +1,7 @@
 package com.advance.supplier.sigmob;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -21,14 +22,18 @@ import java.util.Map;
 public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     WindNewInterstitialAd windNewInterstitialAd;
 
-    public SigmobInterstitialAdapter(Activity activity, InterstitialSetting setting) {
-        super(activity, setting);
+
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         SigmobUtil.initAD(this, new AdvanceADNInitResult() {
@@ -36,8 +41,6 @@ public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter 
             public void success() {
                 //只有在成功初始化以后才能调用load方法
                 startLoad();
-
-                reportStart();
             }
 
             @Override

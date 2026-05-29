@@ -1,6 +1,7 @@
 package com.advance.supplier.tanx;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 
 import com.advance.NativeExpressSetting;
@@ -19,17 +20,20 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 
 import java.util.List;
+import java.util.Map;
 
 public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     ITanxAdLoader iTanxAdLoader;
     ITanxFeedExpressAd iTanxFeedExpressAd;
 
-    public TanxNativeExpressAdapter(Activity activity, NativeExpressSetting baseSetting) {
-        super(activity, baseSetting);
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        initAD();
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
 
@@ -47,10 +51,6 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        initAD();
-    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
@@ -61,14 +61,8 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
                 @Override
                 public void onAdClose(ITanxAd iTanxAd) {
                     LogUtil.simple(TAG + "onAdClose");
-                    View adView = null;
-                    if (iTanxFeedExpressAd != null) {
-                        adView = iTanxFeedExpressAd.getAdView();
-                    }
-                    if (null != mSetting) {
-                        mSetting.adapterDidClosed(adView);
-                    }
-                    removeADView();
+
+                    handleClose();
                 }
 
                 @Override
@@ -104,7 +98,7 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
                 }
             });
 
-            Activity activity = BYUtil.getActivityFromView(mSetting.getAdContainer());
+//            Activity activity = BYUtil.getActivityFromView(mSetting.getAdContainer());
             View adView;
             if (activity != null) {
                 adView = iTanxFeedExpressAd.getAdView(activity);
@@ -125,7 +119,6 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
             @Override
             public void success() {
                 startLoadAD();
-                reportStart();
             }
 
             @Override

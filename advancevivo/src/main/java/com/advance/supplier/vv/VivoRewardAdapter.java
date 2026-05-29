@@ -1,6 +1,7 @@
 package com.advance.supplier.vv;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
@@ -16,11 +17,19 @@ import com.vivo.mobilead.unified.base.callback.MediaListener;
 import com.vivo.mobilead.unified.reward.UnifiedVivoRewardVideoAd;
 import com.vivo.mobilead.unified.reward.UnifiedVivoRewardVideoAdListener;
 
+import java.util.Map;
+
 public class VivoRewardAdapter extends AdvanceRewardCustomAdapter {
     UnifiedVivoRewardVideoAd rewardVideoAd;
 
-    public VivoRewardAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -28,7 +37,6 @@ public class VivoRewardAdapter extends AdvanceRewardCustomAdapter {
             @Override
             public void success() {
                 loadAd();
-                reportStart();
             }
 
             @Override
@@ -50,10 +58,7 @@ public class VivoRewardAdapter extends AdvanceRewardCustomAdapter {
             rewardVideoAd.destroy();
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {

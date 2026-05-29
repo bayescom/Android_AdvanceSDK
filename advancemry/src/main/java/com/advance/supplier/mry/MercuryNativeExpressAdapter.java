@@ -1,9 +1,8 @@
 package com.advance.supplier.mry;
 
 import android.app.Activity;
+import android.content.Context;
 
-import com.advance.AdvanceNativeExpressAdItem;
-import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -12,29 +11,20 @@ import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYLog;
 import com.mercury.sdk.core.config.ADSize;
-import com.mercury.sdk.core.config.VideoOption;
 import com.mercury.sdk.core.nativ.NativeExpressAD;
 import com.mercury.sdk.core.nativ.NativeExpressADListener;
 import com.mercury.sdk.core.nativ.NativeExpressADView;
 import com.mercury.sdk.util.ADError;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
 
 public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter implements NativeExpressADListener {
-    private List<NativeExpressADView> list;
-    private NativeExpressSetting advanceNativeExpress;
     String TAG = "[MercuryNativeExpressAdapter] ";
     NativeExpressADView adView;
     NativeExpressAD nativeExpressAd;
-
-    public MercuryNativeExpressAdapter(Activity activity, NativeExpressSetting advanceNativeExpress) {
-        super(activity, advanceNativeExpress);
-        this.advanceNativeExpress = advanceNativeExpress;
-
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
@@ -53,22 +43,22 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
             return;
         }
 
-        BYLog.dev(TAG + "advanceNativeExpress.getExpressViewWidth() = " + advanceNativeExpress.getExpressViewWidth());
+        BYLog.dev(TAG + "advanceNativeExpress.getExpressViewWidth() = " + nativeExpressSetting.getExpressViewWidth());
 
-        int width = advanceNativeExpress.getExpressViewWidth();
-        int height = advanceNativeExpress.getExpressViewHeight();
-        if (advanceNativeExpress.getGdtAutoHeight()) {
+        int width = nativeExpressSetting.getExpressViewWidth();
+        int height = nativeExpressSetting.getExpressViewHeight();
+        if (nativeExpressSetting.getGdtAutoHeight()) {
             height = ADSize.AUTO_HEIGHT;
         }
         //如果宽度为默认值，也按照填满配置，避免出现截断现象
-        if (advanceNativeExpress.getGdtFullWidth() || 360 == width) {
+        if (nativeExpressSetting.getGdtFullWidth() || 360 == width) {
             width = ADSize.FULL_WIDTH;
         }
         ADSize adSize = new ADSize(width, height);
 //        LogUtil.devDebug("paraLoadAd init");
         nativeExpressAd = new NativeExpressAD(activity, sdkSupplier.adspotid, adSize, this); // 这里的Context必须为Activity
         //设置播放属性
-        nativeExpressAd.setVideoOption(new VideoOption.Builder().setAutoPlayMuted(advanceNativeExpress.isVideoMute()).build());
+//        nativeExpressAd.setVideoOption(new VideoOption.Builder().setAutoPlayMuted(nativeExpressSetting.isVideoMute()).build());
 //        LogUtil.devDebug("paraLoadAd loadAD");
 //        nativeExpressAd.setWidthBlankDP();
 
@@ -80,17 +70,6 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
     protected void adPrepared() {
     }
 
-    @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-
-        }
-
-    }
 
     @Override
     public void onADLoaded(List<NativeExpressADView> list) {
@@ -99,12 +78,7 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
         if (list == null || list.isEmpty()) {
             handleFailed(ERROR_DATA_NULL, "");
         } else {
-            nativeExpressAdItemList = new ArrayList<>();
             adView = list.get(0);
-            for (NativeExpressADView nativeExpressADView : list) {
-                AdvanceNativeExpressAdItem advanceNativeExpressAdItem = new MercuryNativeExpressAdItem(this, nativeExpressADView);
-                nativeExpressAdItemList.add(advanceNativeExpressAdItem);
-            }
 
             //旧版本SDK中不包含价格返回方法，catch住
             try {
@@ -121,23 +95,20 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
     public void onRenderFail(NativeExpressADView nativeExpressADView) {
         LogUtil.simple(TAG + "onRenderFail");
 
-        if (advanceNativeExpress != null)
-            advanceNativeExpress.adapterRenderFailed(nativeExpressADView);
-
-        runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED));
+        handleRenderFailed(nativeExpressADView,AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED));
     }
 
     @Override
     public void onRenderSuccess(NativeExpressADView nativeExpressADView) {
         LogUtil.simple(TAG + "onRenderSuccess");
 
-        if (advanceNativeExpress != null)
-            advanceNativeExpress.adapterRenderSuccess(nativeExpressADView);
+        handleRenderSuccess(nativeExpressADView);
 
     }
 
     @Override
     public void onADExposure(NativeExpressADView nativeExpressADView) {
+        this.nativeExpressADView = nativeExpressADView;
         LogUtil.simple(TAG + "onADExposure");
 
         handleShow();
@@ -154,10 +125,7 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
     public void onADClosed(NativeExpressADView nativeExpressADView) {
         LogUtil.simple(TAG + "onADClosed");
 
-        if (advanceNativeExpress != null)
-            advanceNativeExpress.adapterDidClosed(nativeExpressADView);
-
-        removeADView();
+        handleClose();
     }
 
     @Override
@@ -201,6 +169,11 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
         if (nativeExpressAd != null) {
             return nativeExpressAd.isValid();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

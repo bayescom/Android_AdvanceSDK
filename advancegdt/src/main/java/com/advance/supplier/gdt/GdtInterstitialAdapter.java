@@ -1,6 +1,7 @@
 package com.advance.supplier.gdt;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -14,16 +15,12 @@ import com.qq.e.ads.interstitial2.UnifiedInterstitialADListener;
 import com.qq.e.comm.constants.AdPatternType;
 import com.qq.e.comm.util.AdError;
 
+import java.util.Map;
+
 public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter implements UnifiedInterstitialADListener {
-    private InterstitialSetting advanceInterstitial;
     private UnifiedInterstitialAD interstitialAD;
 
     String TAG = "[GdtInterstitialAdapter] ";
-
-    public GdtInterstitialAdapter(Activity activity, InterstitialSetting advanceInterstitial) {
-        super(activity, advanceInterstitial);
-        this.advanceInterstitial = advanceInterstitial;
-    }
 
     @Override
     public void destroyAd() {
@@ -43,16 +40,6 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
     }
 
 
-    @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable t) {
-            t.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-
-    }
 
     @Override
     public void onADReceive() {
@@ -121,9 +108,7 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
     public void onADClosed() {
         LogUtil.simple(TAG + "onADClosed");
 
-        if (null != advanceInterstitial) {
-            advanceInterstitial.adapterDidClosed();
-        }
+        handleClose();
     }
 
     @Override
@@ -142,12 +127,10 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
             @Override
             public void call() {
                 loadAd();
-
-                reportStart();
             }
         });
     }
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+    public void loadAd() {
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtInterstitialAdapter.class, new BYAbsCallBack<GdtInterstitialAdapter>() {
@@ -167,10 +150,10 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
 
     @Override
     protected void adPrepared() {
-        if (null != advanceInterstitial) {
+        if (null != interstitialSetting) {
             // onADReceive之后才能调用getAdPatternType()
             if (interstitialAD != null && interstitialAD.getAdPatternType() == AdPatternType.NATIVE_VIDEO) {
-                interstitialAD.setMediaListener(advanceInterstitial.getGdtMediaListener());
+                interstitialAD.setMediaListener(interstitialSetting.getGdtMediaListener());
             }
         }
     }
@@ -180,6 +163,11 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
         if (interstitialAD != null) {
             return interstitialAD.isValid();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

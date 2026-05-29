@@ -1,6 +1,7 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 
 import com.advance.NativeExpressSetting;
@@ -19,6 +20,7 @@ import com.kwad.sdk.api.KsScene;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 
@@ -26,13 +28,17 @@ import androidx.annotation.Nullable;
 
 public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     private String TAG = "[KSNativeExpressAdapter] ";
-    public NativeExpressSetting setting;
     List<KsFeedAd> list;
     KsFeedAd ad;
 
-    public KSNativeExpressAdapter(Activity activity, NativeExpressSetting baseSetting) {
-        super(activity, baseSetting);
-        setting = baseSetting;
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -41,8 +47,6 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
-
-                reportStart();
             }
 
             @Override
@@ -69,9 +73,9 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         int num = sdkSupplier != null ? sdkSupplier.adCount : 1;
         KsScene.Builder builder = new KsScene.Builder(KSUtil.getADID(sdkSupplier)).adNum(num);
         try {
-            if (setting != null) {
-                int widthDP = setting.getExpressViewWidth();
-                int heightDP = setting.getExpressViewHeight();
+            if (nativeExpressSetting != null) {
+                int widthDP = nativeExpressSetting.getExpressViewWidth();
+                int heightDP = nativeExpressSetting.getExpressViewHeight();
                 LogUtil.devDebug(TAG + "getExpressViewWidth = " + widthDP);
                 LogUtil.devDebug(TAG + "getExpressViewHeight = " + heightDP);
                 if (widthDP > 0) {
@@ -106,7 +110,6 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
                     if (list == null || list.size() == 0 || list.get(0) == null) {
                         handleFailed(AdvanceError.ERROR_DATA_NULL, "");
                     } else {
-                        nativeExpressAdItemList = new ArrayList<>();
                         for (final KsFeedAd adItem : list) {
                             if (adItem == null) {
                                 continue;
@@ -122,8 +125,6 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
                             }
 
 
-                            final KSNativeExpressItem advanceNativeExpressAdItem = new KSNativeExpressItem(activity, KSNativeExpressAdapter.this, adItem);
-                            nativeExpressAdItemList.add(advanceNativeExpressAdItem);
 //
 ////                    提前设置监听器
 //                            try {
@@ -170,7 +171,7 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 //                            }
 
                         }
-                        if (nativeExpressAdItemList != null && nativeExpressAdItemList.size() > 0 && ad != null) {
+                        if (  ad != null) {
                             updateBidding(ad.getECPM());
                             handleSucceed(ad);
                         } else {
@@ -197,15 +198,7 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
     }
 
-    @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(ERROR_EXCEPTION_LOAD));
-        }
-    }
+    
 
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -216,7 +209,7 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
                 //设置静音
                 KsAdVideoPlayConfig nativeExpressConfig = AdvanceKSManager.getInstance().nativeExpressConfig;
                 if (nativeExpressConfig == null) {
-                    nativeExpressConfig = new KsAdVideoPlayConfig.Builder().videoSoundEnable(setting.isVideoMute()).build();
+                    nativeExpressConfig = new KsAdVideoPlayConfig.Builder().videoSoundEnable(nativeExpressSetting.isVideoMute()).build();
                 }
                 ad.setVideoPlayConfig(nativeExpressConfig);
             } catch (Throwable e) {
@@ -242,10 +235,7 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
                 public void onDislikeClicked() {
                     LogUtil.simple(TAG + " onDislikeClicked ");
 
-                    if (setting != null) {
-                        setting.adapterDidClosed(adv);
-                    }
-                    removeADView();
+                    handleClose();
                 }
 
                 @Override

@@ -106,7 +106,6 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
 
                 handleSucceed(ttNativeExpressAd);
 
-
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -131,17 +130,13 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
         LogUtil.simple(TAG + "onAdItemRenderFailed");
 
 
-        handleRenderFailed(view);
-
-//        runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, TAG + code + "， " + msg));
-//        removeADView();
+        handleRenderFailed(view,AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, TAG + code + "， " + msg));
     }
 
     public void onAdItemRenderSuccess(View view) {
         LogUtil.simple(TAG + "onAdItemRenderSuccess");
 
         handleRenderSuccess(view);
-
     }
 
     public void onAdItemClose(View view) {

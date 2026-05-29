@@ -1,6 +1,7 @@
 package com.advance.supplier.honor;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
@@ -16,12 +17,10 @@ import com.hihonor.adsdk.base.api.reward.RewardItem;
 import com.hihonor.adsdk.base.callback.AdListener;
 import com.hihonor.adsdk.reward.RewardAdLoad;
 
+import java.util.Map;
+
 public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
     RewardExpressAd mRewardExpressAd;
-
-    public HonorRewardAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
-    }
 
 
     @Override
@@ -36,17 +35,18 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
 
     @Override
     public boolean isValid() {
         if (HonorUtil.isAdExpire(mRewardExpressAd)) {
             return false;
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -173,7 +173,7 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
         }
     }
 
-    private void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         HonorUtil.initAD(this);
 
         //检查是否命中使用缓存逻辑

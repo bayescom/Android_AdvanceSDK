@@ -1,6 +1,7 @@
 package com.advance.supplier.tap;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -13,21 +14,21 @@ import com.tapsdk.tapad.AdRequest;
 import com.tapsdk.tapad.TapAdNative;
 import com.tapsdk.tapad.TapInterstitialAd;
 
+import java.util.Map;
+
 public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     TapAdNative tapAdNative;
     TapInterstitialAd adData;
 
-    private final InterstitialSetting setting;
 
-
-    public TapInterstitialAdapter(Activity activity, InterstitialSetting setting) {
-        super(activity, setting);
-        this.setting = setting;
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -35,8 +36,6 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             @Override
             public void call() {
                 loadAD();
-
-                reportStart();
             }
         });
 
@@ -74,9 +73,8 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                     @Override
                     public void onAdClose() {
                         LogUtil.simple(TAG + " onAdClose");
-                        if (setting != null) {
-                            setting.adapterDidClosed();
-                        }
+
+                        handleClose();
                     }
 
                     @Override
@@ -109,10 +107,8 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     }
 
-
     private void loadAD() {
         try {
-
             //检查是否命中使用缓存逻辑
             boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TapInterstitialAd.class, new BYAbsCallBack<TapInterstitialAd>() {
                 @Override
@@ -166,8 +162,6 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD, "out"));
         }
-
     }
-
 
 }

@@ -1,6 +1,7 @@
 package com.advance.supplier.sigmob;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
@@ -22,16 +23,12 @@ import java.util.Map;
 
 public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
     WindRewardVideoAd windRewardVideoAd;
-    boolean isValid = false;
-
-    public SigmobRewardAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
-    }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         SigmobUtil.initAD(this, new AdvanceADNInitResult() {
@@ -39,8 +36,6 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
             public void success() {
                 //只有在成功初始化以后才能调用load方法
                 startLoad();
-
-                reportStart();
             }
 
             @Override
@@ -76,7 +71,7 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
                 return;
             }
 
-            
+
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
             options.put("user_id", userId);
@@ -89,7 +84,6 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
                 public void onRewardAdLoadSuccess(String placementId) {
                     LogUtil.simple(TAG + "onRewardAdLoadSuccess");
 
-                    isValid = true;
                     if (windRewardVideoAd != null)
                         updateBidding(SigmobUtil.getEcpmNumber(windRewardVideoAd.getEcpm()));
 
@@ -141,17 +135,16 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
                     LogUtil.simple(TAG + "onRewardAdRewarded");
 
 
-                    if (null != setting) {
-                        RewardServerCallBackInf inf = new RewardServerCallBackInf();
+                    RewardServerCallBackInf inf = new RewardServerCallBackInf();
 
-                        if (null != rewardInfo) {
-                            inf.rewardVerify = rewardInfo.isReward();
-                            if (inf.rewardVerify) {
-                                setting.adapterAdReward();
-                            }
+                    if (null != rewardInfo) {
+                        inf.rewardVerify = rewardInfo.isReward();
+                        if (inf.rewardVerify) {
+                            handleReward();
                         }
-                        setting.postRewardServerInf(inf);
                     }
+                    handleRewardInf(inf);
+
                 }
 
                 @Override
@@ -183,7 +176,7 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return isValid;
+        return true;
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {

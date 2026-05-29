@@ -1,10 +1,10 @@
 package com.advance.supplier.oppo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 
 
-import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -14,25 +14,27 @@ import com.heytap.msp.mobad.api.ad.HotSplashAd;
 import com.heytap.msp.mobad.api.listener.IHotSplashListener;
 import com.heytap.msp.mobad.api.params.SplashAdParams;
 
-import java.lang.ref.SoftReference;
+import java.util.Map;
 
 public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
     private final String TAG = "[OppoSplashAdapter] ";
     private HotSplashAd splashAd;
 
-    public OppoSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting baseSetting) {
-        super(softReferenceActivity, baseSetting);
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         OppoUtil.initAD(this);
         startLoad();
-        reportStart();
     }
 
     @Override
@@ -58,8 +60,7 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
                 return;
             }
 
-
-            splashAd.showAd(getRealActivity(splashSetting.getAdContainer()));
+            splashAd.showAd(activity);
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -81,15 +82,15 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
             if (hitCache) {
                 return;
             }
-            
+
             //可以自定义跳过按钮样式结束
             SplashAdParams.Builder builder = new SplashAdParams.Builder()
                     .setFetchTimeout(sdkSupplier.timeout);
 
             //如果请求时未赋值，将无法展示自定义跳过view
-            if (splashSetting.getSkipView() != null) {
-                builder.setBottomArea(splashSetting.getSkipView());
-            }
+//            if (splashSetting.getSkipView() != null) {
+//                builder.setSplashSkipView(splashSetting.getSkipView());
+//            }
 
             splashAd = new HotSplashAd(getRealContext(), sdkSupplier.adspotid, "", new IHotSplashListener() {
                 @Override
@@ -105,12 +106,10 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
                 public void onAdDismissed() {
                     LogUtil.simple(TAG + " onAdDismissed ");
 
-                    if (splashSetting != null) {
-                        if (isCountingEnd) {
-                            splashSetting.adapterDidTimeOver();
-                        } else {
-                            splashSetting.adapterDidSkip();
-                        }
+                    if (isCountingEnd) {
+                        handleTimeOver();
+                    } else {
+                        handleSkip();
                     }
                 }
 

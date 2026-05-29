@@ -1,8 +1,8 @@
 package com.advance.supplier.mi;
 
 import android.app.Activity;
+import android.content.Context;
 
-import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
@@ -12,13 +12,20 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.miui.zeus.mimo.sdk.ADParams;
 import com.miui.zeus.mimo.sdk.SplashAd;
 
-import java.lang.ref.SoftReference;
+import java.util.Map;
 
 public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
     SplashAd splashAd;
 
-    public XMSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting splashSetting) {
-        super(softReferenceActivity, splashSetting);
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -26,7 +33,6 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
             @Override
             public void success() {
                 loadAd();
-                reportStart();
             }
 
             @Override
@@ -47,26 +53,22 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
             splashAd.destroy();
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            splashAd.showAd(splashSetting.getAdContainer(), new SplashAd.SplashAdInteractionListener() {
+            splashAd.showAd(getAdContainer(), new SplashAd.SplashAdInteractionListener() {
 
                 @Override
                 public void onAdShow() {
                     // 广告展示
-                    LogUtil.d(TAG+"onAdShow");
+                    LogUtil.d(TAG + "onAdShow");
                     handleShow();
                 }
 
                 @Override
                 public void onAdClick() {
                     // 广告被点击
-                    LogUtil.d(TAG+"onAdClick");
+                    LogUtil.d(TAG + "onAdClick");
                     handleClick();
                 }
 
@@ -74,13 +76,12 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
                 public void onAdDismissed() {
                     // 点击关闭按钮广告消失回调
 
-                    LogUtil.d(TAG+"onAdDismissed");
-                    if (splashSetting != null) {
-                        if (isCountingEnd) {
-                            splashSetting.adapterDidTimeOver();
-                        } else {
-                            splashSetting.adapterDidSkip();
-                        }
+                    LogUtil.d(TAG + "onAdDismissed");
+                    if (isCountingEnd) {
+                        handleTimeOver();
+                    } else {
+                        handleSkip();
+
                     }
                 }
 
@@ -88,7 +89,7 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
                 public void onAdRenderFailed(int errorCode, String errorMsg) {
                     //广告渲染失败
 //                container.setVisibility(View.GONE)
-                    LogUtil.d(TAG+"onAdRenderFailed");
+                    LogUtil.d(TAG + "onAdRenderFailed");
                     handleFailed(errorCode, errorMsg);
 
                 }
@@ -113,7 +114,7 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
             return;
         }
 
-        
+
         splashAd = new SplashAd();
         ADParams params = new ADParams.Builder().setUpId(sdkSupplier.adspotid).build();
         splashAd.loadAd(params, new SplashAd.SplashAdLoadListener() {
@@ -121,7 +122,7 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
             @Override
             public void onAdRequestSuccess() {
                 // 广告请求成功
-                LogUtil.d(TAG+"onAdRequestSuccess");
+                LogUtil.d(TAG + "onAdRequestSuccess");
 
                 updateBidding(XMUtil.getPrice(splashAd.getMediaExtraInfo()));
 
@@ -130,14 +131,14 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
 
             @Override
             public void onAdLoaded() {
-                LogUtil.d(TAG+"onAdLoaded");
+                LogUtil.d(TAG + "onAdLoaded");
                 // 广告加载成功，在需要的时候在此处展示广告
             }
 
             @Override
             public void onAdLoadFailed(int errorCode, String errorMsg) {
                 // 广告加载失败
-                LogUtil.d(TAG+"onAdLoadFailed");
+                LogUtil.d(TAG + "onAdLoadFailed");
                 handleFailed(errorCode, errorMsg);
             }
         });

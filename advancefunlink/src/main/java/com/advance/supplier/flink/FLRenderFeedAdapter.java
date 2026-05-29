@@ -40,23 +40,16 @@ import com.fl.saas.adx.base.exception.FLError;
 import com.mercury.sdk.util.MercuryTool;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     NativeAd flAd;
 
-    public FLRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
-    }
-
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         FLUtil.initAD(this);
         loadAd();
-        reportStart();
     }
 
     private void loadAd() {
@@ -131,12 +124,12 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         LogUtil.simple(TAG + "call show ");
-        if (mAdvanceRFBridge == null || flAd == null) {
+        if (  flAd == null) {
             handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "advanceRFBridge or flAd null");
             return;
         }
 
-        final AdvanceRFMaterialProvider rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
+        final AdvanceRFMaterialProvider rfMaterialProvider = getMaterialProvider();
 
         if (rfMaterialProvider == null) {
             handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "getMaterialProvider  null");
@@ -199,7 +192,7 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 //            需要先拿到根布局信息
         AdvRFRootView rootView = rfMaterialProvider.rootView;
-        Activity activity = getRealActivity(rootView);
+          activity = getRealActivity(rootView);
 
         // 构造NativeAdViewd对象，广告View均需在此ViewGroup中
         NativeAdView nativeAdView = new NativeAdView(activity);
@@ -251,7 +244,7 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     private void bindLogo() {
         try {
-            AdvRFLogoView logoView = mAdvanceRFBridge.getMaterialProvider().logoView;
+            AdvRFLogoView logoView = getMaterialProvider().logoView;
             if (logoView!= null){
                 LinearLayout logoLayout = new LinearLayout(getRealContext());
                 logoLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -304,6 +297,11 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         if (flAd != null) {
             return flAd.isReady();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

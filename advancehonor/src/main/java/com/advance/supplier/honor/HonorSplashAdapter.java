@@ -1,9 +1,9 @@
 package com.advance.supplier.honor;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 
-import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -16,20 +16,14 @@ import com.hihonor.adsdk.base.api.splash.SplashExpressAd;
 import com.hihonor.adsdk.base.callback.AdListener;
 import com.hihonor.adsdk.splash.SplashAdLoad;
 
-import java.lang.ref.SoftReference;
+import java.util.Map;
 
 public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
     SplashExpressAd mSplashExpressAd;
-    SplashAdLoad splashAdLoad;
 
-    public HonorSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting splashSetting) {
-        super(softReferenceActivity, splashSetting);
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
-
-        reportStart();
     }
 
     @Override
@@ -44,17 +38,18 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
 
     @Override
     public boolean isValid() {
         if (HonorUtil.isAdExpire(mSplashExpressAd)) {
             return false;
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -74,12 +69,10 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
                     public void onAdSkip(int type) {
                         LogUtil.simple(TAG + "onAdSkip, type: " + type);
                         // 可以跳转您的启动页或首页
-                        if (splashSetting != null) {
-                            if (type == 0) {
-                                splashSetting.adapterDidSkip();
-                            } else {
-                                splashSetting.adapterDidTimeOver();
-                            }
+                        if (type == 0) {
+                            handleSkip();
+                        } else {
+                            handleTimeOver();
                         }
 
                     }
@@ -129,7 +122,7 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
                 });
                 View view = mSplashExpressAd.getExpressAdView();
                 //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕宽
-                boolean add = AdvanceUtil.addADView(splashSetting.getAdContainer(), view);
+                boolean add = AdvanceUtil.addADView(getAdContainer(), view);
                 if (!add) {
                     runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
                 }
@@ -155,7 +148,7 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
         if (hitCache) {
             return;
         }
-        
+
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()
                 .setSlotId(sdkSupplier.adspotid) // 必传,设置您的广告位ID。

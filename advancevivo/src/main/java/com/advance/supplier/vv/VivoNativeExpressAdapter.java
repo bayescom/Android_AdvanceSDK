@@ -1,6 +1,7 @@
 package com.advance.supplier.vv;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 
 import com.advance.NativeExpressSetting;
@@ -16,12 +17,21 @@ import com.vivo.mobilead.unified.nativead.UnifiedVivoNativeExpressAd;
 import com.vivo.mobilead.unified.nativead.UnifiedVivoNativeExpressAdListener;
 import com.vivo.mobilead.unified.nativead.VivoNativeExpressView;
 
+import java.util.Map;
+
 public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     UnifiedVivoNativeExpressAd nativeExpressAd;
     VivoNativeExpressView expressView;
 
-    public VivoNativeExpressAdapter(Activity activity, NativeExpressSetting baseSetting) {
-        super(activity, baseSetting);
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -29,7 +39,6 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
             @Override
             public void success() {
                 loadAd();
-                reportStart();
             }
 
             @Override
@@ -52,10 +61,7 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
@@ -90,8 +96,8 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
         AdParams.Builder builder = VivoUtil.getAdParamsBuilder(this);
 
         if (builder != null) {
-            int widthDP = mSetting.getExpressViewWidth();
-            int heightDP = mSetting.getExpressViewHeight();
+            int widthDP = nativeExpressSetting.getExpressViewWidth();
+            int heightDP = nativeExpressSetting.getExpressViewHeight();
             LogUtil.devDebug(TAG + "getExpressViewWidth = " + widthDP);
             LogUtil.devDebug(TAG + "getExpressViewHeight = " + heightDP);
             if (widthDP > 0) {
@@ -104,10 +110,8 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
             adParams = builder.build();
         }
 
-        View container = null;
-        if (mSetting != null) {
-            container = mSetting.getAdContainer();
-        }
+        View container = getAdContainer();
+
         nativeExpressAd = new UnifiedVivoNativeExpressAd(getRealActivity(container), adParams, new UnifiedVivoNativeExpressAdListener() {
             @Override
             public void onAdReady(VivoNativeExpressView vivoNativeExpressView) {

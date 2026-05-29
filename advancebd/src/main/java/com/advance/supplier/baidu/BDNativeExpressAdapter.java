@@ -92,7 +92,6 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
                 handleFailed(AdvanceError.ERROR_DATA_NULL, "");
             } else {
                 //赋值item信息
-                nativeExpressAdItemList = new ArrayList<>();
                 nativeResponse = ads.get(0);
 
                 try { //避免方法有异常，catch一下，不影响success逻辑
@@ -253,7 +252,7 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
         String tip = "onAdRenderFail , inf : reason = " + s + ", code =" + i;
         LogUtil.simple(TAG + tip);
 
-        handleRenderFailed(view);
+        handleRenderFailed(view,AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, TAG + i + "， " + s));
     }
 
     @Override
@@ -261,7 +260,7 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
         LogUtil.simple(TAG + "onAdRenderSuccess: " + width + ", " + height);
 
 
-        handleRenderFailed(view);
+        handleRenderSuccess(view);
     }
 
     @Override

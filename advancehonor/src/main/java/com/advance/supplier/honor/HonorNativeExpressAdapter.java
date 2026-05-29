@@ -3,6 +3,8 @@ package com.advance.supplier.honor;
 import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
 
 import android.app.Activity;
+import android.content.Context;
+import android.view.View;
 
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
@@ -17,18 +19,14 @@ import com.hihonor.adsdk.base.callback.AdListener;
 import com.hihonor.adsdk.picturetextad.PictureTextAdLoad;
 
 import java.util.List;
+import java.util.Map;
 
 public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     PictureTextExpressAd mExpressAd;
 
-    public HonorNativeExpressAdapter(Activity activity, NativeExpressSetting baseSetting) {
-        super(activity, baseSetting);
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
-
-        reportStart();
     }
 
     @Override
@@ -48,13 +46,15 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
         if (HonorUtil.isAdExpire(mExpressAd)) {
             return false;
         }
-        return super.isValid();
+           return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
@@ -62,6 +62,7 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
             if (mExpressAd != null) {
 
 
+                View adView = mExpressAd.getExpressAdView() ;
                 /**
                  * 广告事件监听器
                  */
@@ -107,7 +108,7 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
                         super.onAdImpressionFailed(errCode, msg);
                         LogUtil.simple(TAG + "onAdImpressionFailed, errCode: " + errCode + ", msg: " + msg);
 
-                        handleFailed(errCode, msg);
+                        handleRenderFailed(adView,  AdvanceError.parseErr(errCode, msg));
                     }
 
                     /**
@@ -159,8 +160,8 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
 
         //实际测试宽高设置无任何效果
 //        if (mSetting != null) {
-//            int widthDP = mSetting.getExpressViewWidth();
-//            int heightDP = mSetting.getExpressViewHeight();
+//            int widthDP = nativeExpressSetting.getExpressViewWidth();
+//            int heightDP = nativeExpressSetting.getExpressViewHeight();
 //            LogUtil.devDebug(TAG + "getExpressViewWidth = " + widthDP);
 //            LogUtil.devDebug(TAG + "getExpressViewHeight = " + heightDP);
 //            if (widthDP > 0) {

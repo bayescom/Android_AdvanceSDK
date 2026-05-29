@@ -45,7 +45,6 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
         }
         mFullScreenVideoAd.load();
 
-        fullScreenItem = new BDFullScreenVideoItem(activity, this, mFullScreenVideoAd);
     }
 
     @Override

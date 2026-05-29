@@ -39,24 +39,24 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
 
 import java.util.List;
+import java.util.Map;
 
 public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private final String TAG = "[TanxRenderFeedAdapter] ";
     ITanxAdLoader iTanxAdLoader;
     ITanxFeedAd nativeAD;
 
-    public TanxRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        initAD();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        initAD();
-    }
+
 
     @Override
     protected void adPrepared() {
@@ -81,8 +81,8 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "未获取到广告信息");
                 return;
             }
-            final AdvanceRFMaterialProvider rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
-            Activity activity = getRealActivity(rfMaterialProvider.rootView);
+            final AdvanceRFMaterialProvider rfMaterialProvider = getMaterialProvider();
+              activity = getRealActivity(rfMaterialProvider.rootView);
 
             TanxAdView tanxAdView;
             if (activity == null) {
@@ -180,7 +180,6 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             @Override
             public void success() {
                 startLoadAD();
-                reportStart();
             }
 
             @Override

@@ -1,6 +1,7 @@
 package com.advance.supplier.sigmob;
 
 import android.app.Activity;
+import android.content.Context;
 
 
 import com.advance.SplashSetting;
@@ -25,14 +26,16 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
 
     private boolean isSkip = false;
 
-    public SigmobSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting setting) {
-        super(softReferenceActivity, setting);
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         SigmobUtil.initAD(this, new AdvanceADNInitResult() {
@@ -40,8 +43,6 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
             public void success() {
                 //只有在成功初始化以后才能调用load方法
                 startLoad();
-
-                reportStart();
             }
 
             @Override
@@ -66,7 +67,7 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
             if (hitCache) {
                 return;
             }
-            
+
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
             options.put("user_id", userId);
@@ -118,12 +119,10 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
                 @Override
                 public void onSplashAdClose(String placementId) {
                     LogUtil.simple(TAG + "onSplashAdClose");
-                    if (splashSetting != null) {
-                        if (isSkip) {
-                            splashSetting.adapterDidSkip();
-                        } else {
-                            splashSetting.adapterDidTimeOver();
-                        }
+                    if (isSkip) {
+                        handleSkip();
+                    } else {
+                        handleTimeOver();
                     }
                 }
 
@@ -163,7 +162,7 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (splashAd != null) {
-                splashAd.show(splashSetting.getAdContainer());
+                splashAd.show(getAdContainer());
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,6 +1,7 @@
 package com.advance.supplier.tap;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -16,20 +17,21 @@ import com.tapsdk.tapad.AdRequest;
 import com.tapsdk.tapad.TapAdNative;
 import com.tapsdk.tapad.TapBannerAd;
 
+import java.util.Map;
+
 public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
     TapAdNative tapAdNative;
     TapBannerAd adData;
 
-    private final BannerSetting setting;
 
-    public TapBannerAdapter(Activity activity, BannerSetting setting) {
-        super(activity, setting);
-        this.setting = setting;
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -37,8 +39,6 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
             @Override
             public void call() {
                 loadAD();
-
-                reportStart();
             }
         });
 
@@ -76,9 +76,7 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
                 @Override
                 public void onAdClose() {
                     LogUtil.simple(TAG + " onAdClose");
-                    if (setting != null) {
-                        setting.adapterDidDislike();
-                    }
+                    handleClose();
                 }
 
                 @Override
@@ -103,7 +101,7 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
 
             });
             
-            ViewGroup adContainer = setting.getContainer();
+            ViewGroup adContainer = getAdContainer();
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             boolean add = AdvanceUtil.addADView(adContainer, adData.getBannerView(), lp);
             if (!add) {

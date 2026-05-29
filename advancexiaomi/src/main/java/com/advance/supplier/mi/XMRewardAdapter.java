@@ -1,6 +1,7 @@
 package com.advance.supplier.mi;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
@@ -13,19 +14,26 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.miui.zeus.mimo.sdk.ADParams;
 import com.miui.zeus.mimo.sdk.RewardVideoAd;
 
+import java.util.Map;
+
 public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
     RewardVideoAd rewardVideoAd;
 
-    public XMRewardAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         XMUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
                 loadAd();
-                reportStart();
             }
 
             @Override
@@ -48,15 +56,12 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            if (setting != null) {
-                rewardVideoAd.setMute(setting.isMute());
+            if (rewardSetting != null) {
+                rewardVideoAd.setMute(rewardSetting.isMute());
             }
             rewardVideoAd.showAd(getRealActivity(null), new RewardVideoAd.RewardVideoInteractionListener() {
 

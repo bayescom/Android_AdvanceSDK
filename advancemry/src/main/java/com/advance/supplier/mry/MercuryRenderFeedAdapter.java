@@ -46,6 +46,7 @@ import com.mercury.sdk.util.MercuryTool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     boolean hasPicExpose = false;
@@ -53,19 +54,10 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     NativeADData mRenderAD;
     NativeAD nativeAD;
 
-    public MercuryRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
-    }
-
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         doStart();
-
-        reportStart();
     }
 
     @Override
@@ -157,12 +149,12 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private void doShow() {
         try {
             LogUtil.simple(TAG + "call show ");
-            if (mAdvanceRFBridge == null || mRenderAD == null) {
+            if ( mRenderAD == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "advanceRFBridge or mRenderAD null");
                 return;
             }
 
-            final AdvanceRFMaterialProvider rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
+            final AdvanceRFMaterialProvider rfMaterialProvider =  getMaterialProvider();
 
             if (rfMaterialProvider == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "getMaterialProvider  null");
@@ -455,6 +447,11 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         if (nativeAD != null) {
             return nativeAD.isValid();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

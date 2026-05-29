@@ -113,6 +113,9 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     public Activity getRealActivity(View adContainerView) {
         Activity result = null;
         try {
+            if (rewardSetting!=null && rewardSetting.getShowActivity()!=null){
+                activity = rewardSetting.getShowActivity();
+            }
             if (adContainerView != null) {
                 result = AdvanceUtil.getActivityFromView(adContainerView);
             } else {
@@ -914,6 +917,7 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
 
 
     //统一处理广告成功，并传入实时获取到的广告对象，用来进行缓存
+    // TODO: 2026/5/28 移除此方法
     public void handleSucceed(Object realtimeAD) {
         if (realtimeAD != null) {
             //执行缓存

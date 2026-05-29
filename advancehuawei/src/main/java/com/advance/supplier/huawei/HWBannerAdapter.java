@@ -1,6 +1,7 @@
 package com.advance.supplier.huawei;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -19,6 +20,7 @@ import com.huawei.hms.ads.BannerAdSize;
 import com.huawei.hms.ads.banner.BannerView;
 
 import java.util.Locale;
+import java.util.Map;
 
 public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
 
@@ -29,14 +31,9 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
     long openTime = 0;
     boolean isLandingPage = false;
 
-    public HWBannerAdapter(Activity activity, BannerSetting setting) {
-        super(activity, setting);
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
-
-        reportStart();
     }
 
     @Override
@@ -54,14 +51,11 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            ViewGroup adContainer = bannerSetting.getContainer();
+            ViewGroup adContainer = getAdContainer();
             RelativeLayout.LayoutParams rbl = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             rbl.addRule(RelativeLayout.CENTER_HORIZONTAL);
             boolean add = AdvanceUtil.addADView(adContainer, bannerView, rbl);
@@ -196,4 +190,16 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
         }
         bannerView.loadAd(adParam.build());
     }
+
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
+
 }

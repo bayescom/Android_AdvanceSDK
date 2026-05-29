@@ -88,31 +88,31 @@ public class GdtUtil implements AdvanceSplashPlusManager.ZoomCall {
 
     @Override
     public void zoomOut(Activity activity) {
-        try {
-            LogUtil.simple("GdtUtil start zoomOut");
-            final SplashZoomOutManager zoomOutManager = SplashZoomOutManager.getInstance();
-            final SplashAD zoomAd = zoomOutManager.getSplashAD();
-            final ViewGroup zoomOutView = zoomOutManager.startZoomOut((ViewGroup) activity.getWindow().getDecorView(),
-                    (ViewGroup) activity.findViewById(android.R.id.content), new SplashZoomOutManager.AnimationCallBack() {
-
-                        @Override
-                        public void animationStart(int animationTime) {
-
-                        }
-
-                        @Override
-                        public void animationEnd() {
-                            zoomAd.zoomOutAnimationFinish();
-                        }
-                    });
-
-            if (zoomOutView != null) {
-                activity.overridePendingTransition(0, 0);
-            }
-            AdvanceUtil.autoClose(zoomOutView);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+//        try {
+//            LogUtil.simple("GdtUtil start zoomOut");
+//            final SplashZoomOutManager zoomOutManager = SplashZoomOutManager.getInstance();
+//            final SplashAD zoomAd = zoomOutManager.getSplashAD();
+//            final ViewGroup zoomOutView = zoomOutManager.startZoomOut((ViewGroup) activity.getWindow().getDecorView(),
+//                    (ViewGroup) activity.findViewById(android.R.id.content), new SplashZoomOutManager.AnimationCallBack() {
+//
+//                        @Override
+//                        public void animationStart(int animationTime) {
+//
+//                        }
+//
+//                        @Override
+//                        public void animationEnd() {
+//                            zoomAd.zoomOutAnimationFinish();
+//                        }
+//                    });
+//
+//            if (zoomOutView != null) {
+//                activity.overridePendingTransition(0, 0);
+//            }
+//            AdvanceUtil.autoClose(zoomOutView);
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
     }
 
 

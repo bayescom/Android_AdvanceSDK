@@ -1,6 +1,7 @@
 package com.advance.supplier.gdt;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
@@ -15,28 +16,15 @@ import com.qq.e.ads.interstitial2.UnifiedInterstitialADListener;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialMediaListener;
 import com.qq.e.comm.util.AdError;
 
+import java.util.Map;
+
 public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements UnifiedInterstitialADListener {
-    private FullScreenVideoSetting advanceFullScreenVideo;
 
     private UnifiedInterstitialAD iad;
     private long videoDuration;
     private long videoStartTime;
     String TAG = "[GdtFullScreenVideoAdapter] ";
-
-    public GdtFullScreenVideoAdapter(Activity activity, FullScreenVideoSetting advanceFullScreenVideo) {
-        super(activity, advanceFullScreenVideo);
-        this.advanceFullScreenVideo = advanceFullScreenVideo;
-    }
-
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-
-        }
-    }
+ 
 
     @Override
     public void onADReceive() {
@@ -57,16 +45,8 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     public void onVideoCached() {
         LogUtil.simple(TAG + "onVideoCached");
 
-
-        if (isParallel) {
-            if (parallelListener != null) {
-                parallelListener.onCached();
-            }
-        } else {
-            if (null != advanceFullScreenVideo) {
-                advanceFullScreenVideo.adapterVideoCached();
-            }
-        }
+        
+        handleCached();
     }
 
     @Override
@@ -115,17 +95,15 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     public void onADClosed() {
         LogUtil.simple(TAG + "onADClosed");
 
-        if (advanceFullScreenVideo != null) {
             long costTime = System.currentTimeMillis() - videoStartTime;
             LogUtil.high(TAG + "costTime ==   " + costTime + " videoDuration == " + videoDuration);
 
             if (costTime < videoDuration) {
                 LogUtil.high(TAG + " adapterVideoSkipped");
-                advanceFullScreenVideo.adapterVideoSkipped();
+                handleSkip();
             }
             LogUtil.high(TAG + " adapterClose");
-            advanceFullScreenVideo.adapterClose();
-        }
+            handleClose();
     }
 
     @Override
@@ -146,12 +124,10 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
             @Override
             public void call() {
                 loadAd();
-
-                reportStart();
             }
         });
     }
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+    public void loadAd() {
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtFullScreenVideoAdapter.class, new BYAbsCallBack<GdtFullScreenVideoAdapter>() {
@@ -173,24 +149,24 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
             public void onVideoInit() {
                 LogUtil.high(TAG + " onVideoInit");
 
-                if (advanceFullScreenVideo != null && advanceFullScreenVideo.getGdtMediaListener() != null)
-                    advanceFullScreenVideo.getGdtMediaListener().onVideoInit();
+                if (fullScreenVideoSetting != null && fullScreenVideoSetting.getGdtMediaListener() != null)
+                    fullScreenVideoSetting.getGdtMediaListener().onVideoInit();
             }
 
             @Override
             public void onVideoLoading() {
                 LogUtil.high(TAG + " onVideoLoading");
 
-                if (advanceFullScreenVideo != null && advanceFullScreenVideo.getGdtMediaListener() != null)
-                    advanceFullScreenVideo.getGdtMediaListener().onVideoLoading();
+                if (fullScreenVideoSetting != null && fullScreenVideoSetting.getGdtMediaListener() != null)
+                    fullScreenVideoSetting.getGdtMediaListener().onVideoLoading();
             }
 
             @Override
             public void onVideoReady(long l) {
                 LogUtil.high(TAG + " onVideoReady, videoDuration = " + l);
                 try {
-                    if (advanceFullScreenVideo != null && advanceFullScreenVideo.getGdtMediaListener() != null)
-                        advanceFullScreenVideo.getGdtMediaListener().onVideoReady(l);
+                    if (fullScreenVideoSetting != null && fullScreenVideoSetting.getGdtMediaListener() != null)
+                        fullScreenVideoSetting.getGdtMediaListener().onVideoReady(l);
                     videoStartTime = System.currentTimeMillis();
                     videoDuration = l;
                 } catch (Throwable e) {
@@ -202,27 +178,27 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
             public void onVideoStart() {
                 LogUtil.high(TAG + " onVideoStart");
 
-                if (advanceFullScreenVideo != null && advanceFullScreenVideo.getGdtMediaListener() != null)
-                    advanceFullScreenVideo.getGdtMediaListener().onVideoStart();
+                if (fullScreenVideoSetting != null && fullScreenVideoSetting.getGdtMediaListener() != null)
+                    fullScreenVideoSetting.getGdtMediaListener().onVideoStart();
             }
 
             @Override
             public void onVideoPause() {
                 LogUtil.high(TAG + " onVideoPause");
 
-                if (advanceFullScreenVideo != null && advanceFullScreenVideo.getGdtMediaListener() != null)
-                    advanceFullScreenVideo.getGdtMediaListener().onVideoPause();
+                if (fullScreenVideoSetting != null && fullScreenVideoSetting.getGdtMediaListener() != null)
+                    fullScreenVideoSetting.getGdtMediaListener().onVideoPause();
             }
 
             @Override
             public void onVideoComplete() {
                 LogUtil.high(TAG + " onVideoComplete");
 
-                if (advanceFullScreenVideo != null && advanceFullScreenVideo.getGdtMediaListener() != null)
-                    advanceFullScreenVideo.getGdtMediaListener().onVideoComplete();
+                if (fullScreenVideoSetting != null && fullScreenVideoSetting.getGdtMediaListener() != null)
+                    fullScreenVideoSetting.getGdtMediaListener().onVideoComplete();
 
-                if (null != advanceFullScreenVideo) {
-                    advanceFullScreenVideo.adapterVideoComplete();
+                if (null != fullScreenVideoSetting) {
+                    fullScreenVideoSetting.adapterVideoComplete();
                 }
 
             }
@@ -236,8 +212,8 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
                     msgInf = TAG + adError.getErrorCode() + "， " + adError.getErrorMsg();
                 }
 
-                if (advanceFullScreenVideo != null && advanceFullScreenVideo.getGdtMediaListener() != null)
-                    advanceFullScreenVideo.getGdtMediaListener().onVideoError(adError);
+                if (fullScreenVideoSetting != null && fullScreenVideoSetting.getGdtMediaListener() != null)
+                    fullScreenVideoSetting.getGdtMediaListener().onVideoError(adError);
 
                 handleFailed(AdvanceError.ERROR_RENDER_FAILED, msgInf);
             }
@@ -246,22 +222,22 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
             public void onVideoPageOpen() {
                 LogUtil.high(TAG + "onVideoPageOpen ");
 
-                if (advanceFullScreenVideo != null && advanceFullScreenVideo.getGdtMediaListener() != null)
-                    advanceFullScreenVideo.getGdtMediaListener().onVideoPageOpen();
+                if (fullScreenVideoSetting != null && fullScreenVideoSetting.getGdtMediaListener() != null)
+                    fullScreenVideoSetting.getGdtMediaListener().onVideoPageOpen();
             }
 
             @Override
             public void onVideoPageClose() {
                 LogUtil.high(TAG + " onVideoPageClose");
 
-                if (advanceFullScreenVideo != null && advanceFullScreenVideo.getGdtMediaListener() != null)
-                    advanceFullScreenVideo.getGdtMediaListener().onVideoPageClose();
+                if (fullScreenVideoSetting != null && fullScreenVideoSetting.getGdtMediaListener() != null)
+                    fullScreenVideoSetting.getGdtMediaListener().onVideoPageClose();
             }
         });
         //    private UnifiedInterstitialMediaListener mediaListener;
         VideoOption videoOption;
-        if (advanceFullScreenVideo != null && advanceFullScreenVideo.getGdtVideoOption() != null) {
-            videoOption = advanceFullScreenVideo.getGdtVideoOption();
+        if (fullScreenVideoSetting != null && fullScreenVideoSetting.getGdtVideoOption() != null) {
+            videoOption = fullScreenVideoSetting.getGdtVideoOption();
         } else {
             videoOption = new VideoOption.Builder().setAutoPlayMuted(false)
                     .setAutoPlayPolicy(VideoOption.AutoPlayPolicy.ALWAYS)
@@ -272,7 +248,6 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
         iad.setMaxVideoDuration(60);
         iad.setVideoOption(videoOption);
         iad.loadFullScreenAD();
-        fullScreenItem = new GdtFullScreenVideoItem(activity, this, iad);
     }
 
     @Override
@@ -301,6 +276,11 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
         if (iad != null) {
             return iad.isValid();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

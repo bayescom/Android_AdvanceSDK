@@ -1,9 +1,9 @@
 package com.advance.supplier.mry;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
-import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -16,26 +16,11 @@ import com.mercury.sdk.core.rewardvideo.RewardVideoAD;
 import com.mercury.sdk.core.rewardvideo.RewardVideoADListener;
 import com.mercury.sdk.util.ADError;
 
+import java.util.Map;
+
 public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implements RewardVideoADListener {
-    private RewardVideoSetting advanceRewardVideo;
     String TAG = "[MercuryRewardVideoAdapter] ";
     RewardVideoAD rewardVideoAD;
-
-    public MercuryRewardVideoAdapter(Activity activity, RewardVideoSetting advanceRewardVideo) {
-        super(activity, advanceRewardVideo);
-        this.advanceRewardVideo = advanceRewardVideo;
-
-    }
-
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-
-    }
 
 
     @Override
@@ -60,15 +45,7 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
     public void onVideoCached() {
         LogUtil.simple(TAG + "onVideoCached");
 
-        if (isParallel) {
-            if (parallelListener != null) {
-                parallelListener.onCached();
-            }
-        } else {
-            if (null != advanceRewardVideo) {
-                advanceRewardVideo.adapterVideoCached();
-            }
-        }
+        handleCached();
 
     }
 
@@ -120,19 +97,14 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
                 inf.errMsg = result.errMsg;
             }
 
-            if (null != advanceRewardVideo) {
-                if (sdkSupplier != null) {
-                    inf.supId = sdkSupplier.id;
-                }
-                advanceRewardVideo.postRewardServerInf(inf);
-            }
+
+            handleRewardInf(inf);
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
-        if (null != advanceRewardVideo) {
-            advanceRewardVideo.adapterAdReward();
-        }
+        handleReward();
+
 
     }
 
@@ -141,19 +113,16 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
     public void onVideoComplete() {
         LogUtil.simple(TAG + "onVideoComplete");
 
-        if (null != advanceRewardVideo) {
-            advanceRewardVideo.adapterVideoComplete();
-        }
 
+        handleComplete();
     }
 
     @Override
     public void onADClose() {
         LogUtil.simple(TAG + "onADClose");
 
-        if (null != advanceRewardVideo) {
-            advanceRewardVideo.adapterAdClose();
-        }
+
+        handleClose();
 
     }
 
@@ -190,14 +159,12 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
         rewardVideoAD = new RewardVideoAD(getRealContext(), sdkSupplier.adspotid, this);
         // (可选) 激励相关参数配置
         rewardVideoAD.setRewardOptions(new MercuryRewardOptions.Builder()
-                .setUserID(advanceRewardVideo.getUserId()) //用户唯一id，服务端验证时必传
-                .setRewardName(advanceRewardVideo.getRewardName()) // 发放奖励名称
-                .setRewardAmount(advanceRewardVideo.getRewardCount()) // 发放奖励数量
-                .setExtCustomInf(advanceRewardVideo.getExtraInfo()) // 额外自定义信息
+                .setUserID(rewardSetting.getUserId()) //用户唯一id，服务端验证时必传
+                .setRewardName(rewardSetting.getRewardName()) // 发放奖励名称
+                .setRewardAmount(rewardSetting.getRewardCount()) // 发放奖励数量
+                .setExtCustomInf(rewardSetting.getExtraInfo()) // 额外自定义信息
                 .build());
-        MercuryRewardVideoAdItem mercuryRewardVideoAdItem = new MercuryRewardVideoAdItem(this, rewardVideoAD);
-        mercuryRewardVideoAdItem.loadAD();
-        rewardVideoItem = mercuryRewardVideoAdItem;
+        rewardVideoAD.loadAD();
     }
 
     @Override
@@ -212,7 +179,7 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            rewardVideoAD.showAD(setting.getShowActivity());
+            rewardVideoAD.showAD(activity);
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
@@ -224,7 +191,12 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
         if (rewardVideoAD != null) {
             return rewardVideoAD.isValid();
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
 //    @Override

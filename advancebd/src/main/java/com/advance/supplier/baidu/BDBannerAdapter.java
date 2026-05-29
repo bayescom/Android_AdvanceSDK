@@ -48,7 +48,7 @@ package com.advance.supplier.baidu;//package com.advance.supplier.baidu;
 //    private void addADView(ViewGroup.LayoutParams params) {
 //        //必须要添加布局后，才会返回广告
 //        if (null != setting) {
-//            ViewGroup adContainer = setting.getContainer();
+//            ViewGroup adContainer = getAdContainer;
 //            if (adContainer != null) {
 ////                adContainer.removeAllViews();
 //                int width = adContainer.getWidth();
@@ -95,7 +95,7 @@ package com.advance.supplier.baidu;//package com.advance.supplier.baidu;
 //    public void onAdReady(AdView adView) {
 //        LogUtil.simple(TAG + "onAdReady" + adView);
 ////        if (setting!=null){
-////            setting.getContainer().removeAllViews();
+////            getAdContainer.removeAllViews();
 ////        }
 //        handleSucceed(this);
 //    }

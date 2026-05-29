@@ -53,21 +53,16 @@ import java.util.Map;
 public class KSRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     KsNativeAd nativeAd;
 
-    public KSRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(ERROR_EXCEPTION_LOAD));
-            String cause = e.getCause() != null ? e.getCause().toString() : "no cause";
-            reportCodeErr(TAG + " Throwable" + cause);
-        }
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         KSUtil.initAD(this, new AdvanceADNInitResult() {
@@ -75,8 +70,6 @@ public class KSRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
-
-                reportStart();
             }
 
             @Override
@@ -156,7 +149,7 @@ public class KSRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 LogUtil.d(TAG + " skipRender");
                 return;
             }
-            final AdvanceRFMaterialProvider rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
+            final AdvanceRFMaterialProvider rfMaterialProvider = getMaterialProvider();
 
             if (nativeAd == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "未获取到广告信息");
@@ -168,7 +161,7 @@ public class KSRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 //                converter.printAdInf();
 //            }
 
-            Activity activity = getRealActivity(rfMaterialProvider.rootView);
+              activity = getRealActivity(rfMaterialProvider.rootView);
 
             //核心：注册view及响应事件
             nativeAd.registerViewForInteraction(activity, rfMaterialProvider.rootView, getClickMap(rfMaterialProvider), new KsNativeAd.AdInteractionListener() {

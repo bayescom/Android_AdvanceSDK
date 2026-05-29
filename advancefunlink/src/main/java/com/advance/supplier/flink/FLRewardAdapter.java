@@ -1,6 +1,7 @@
 package com.advance.supplier.flink;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
@@ -13,22 +14,16 @@ import com.fl.saas.adx.base.exception.FLError;
 import com.fl.saas.adx.base.interfaces.AdViewVideoCheckListener;
 import com.fl.saas.adx.base.interfaces.AdViewVideoListener;
 
+import java.util.Map;
+
 public class FLRewardAdapter extends AdvanceRewardCustomAdapter {
     FLVideo flAd;
 
-    public FLRewardAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
-    }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         FLUtil.initAD(this);
         loadAd();
-        reportStart();
     }
 
     private void loadAd() {
@@ -159,6 +154,11 @@ public class FLRewardAdapter extends AdvanceRewardCustomAdapter {
         if (flAd != null) {
             return flAd.isReady();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

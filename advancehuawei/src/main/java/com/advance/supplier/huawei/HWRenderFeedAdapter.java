@@ -27,18 +27,24 @@ import com.huawei.hms.ads.nativead.NativeView;
 import com.huawei.hms.ads.utils.NativeListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private NativeAd mNativeAd;
 
-    public HWRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
-
-        reportStart();
     }
 
     @Override
@@ -57,10 +63,7 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
@@ -116,19 +119,18 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 //        addADView(nativeView);
 
 //            需要先拿到根布局信息
-            AdvRFRootView rootView = mAdvanceRFBridge.getMaterialProvider().rootView;
-            Activity activity = getRealActivity(rootView);
+            AdvRFRootView rootView = getMaterialProvider().rootView;
 //            -----------方案B copy全部子布局，复制子控件至新布局，并将新布局添加至旧父布局中
             AdvanceRFUtil.copyChild(rootView, nativeView);
 
             //添加action交互按钮绑定
-            ArrayList<View> creativeViews = mAdvanceRFBridge.getMaterialProvider().creativeViews;
+            ArrayList<View> creativeViews = getMaterialProvider().creativeViews;
             if (!creativeViews.isEmpty()) {
                 nativeView.setCallToActionView(creativeViews.get(0));
             }
 
             //绑定素材、视频信息
-            AdvRFVideoView videoView = mAdvanceRFBridge.getMaterialProvider().videoView;
+            AdvRFVideoView videoView = getMaterialProvider().videoView;
             if (videoView != null) {
 
                 MediaView mediaView = new MediaView(getRealContext());
@@ -138,7 +140,7 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             }
 
             //关闭广告事件绑定
-            View dislikeView = mAdvanceRFBridge.getMaterialProvider().disLikeView;
+            View dislikeView = getMaterialProvider().disLikeView;
             if (dislikeView != null) {
                 dislikeView.setOnClickListener(new View.OnClickListener() {
                     @Override

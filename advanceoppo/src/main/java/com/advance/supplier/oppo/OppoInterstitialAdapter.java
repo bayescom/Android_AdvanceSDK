@@ -1,6 +1,7 @@
 package com.advance.supplier.oppo;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -10,25 +11,25 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.heytap.msp.mobad.api.ad.InterstitialAd;
 import com.heytap.msp.mobad.api.listener.IInterstitialAdListener;
 
+import java.util.Map;
+
 public class OppoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
-    private final InterstitialSetting setting;
     InterstitialAd mInterstitialAd;
 
-    public OppoInterstitialAdapter(Activity activity, InterstitialSetting setting) {
-        super(activity, setting);
-        this.setting = setting;
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+    
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         OppoUtil.initAD(this);
         startLoad();
-
-        reportStart();
     }
 
     private void startLoad() {
@@ -68,8 +69,8 @@ public class OppoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                 public void onAdClose() {
                     LogUtil.simple(TAG + " onAdClose");
 
-                    if (setting != null)
-                        setting.adapterDidClosed();
+
+                    handleClose();
                 }
 
                 @Override

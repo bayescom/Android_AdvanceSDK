@@ -1,6 +1,8 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
+import android.content.Context;
+
 import androidx.annotation.Nullable;
 
 import com.advance.RewardServerCallBackInf;
@@ -25,14 +27,9 @@ import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_SHOW;
 
 public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRewardVideoAd.RewardAdInteractionListener {
-    public RewardVideoSetting setting;
     private String TAG = "[KSRewardAdapter] ";
     KsRewardVideoAd ad;
 
-    public KSRewardAdapter(Activity activity, RewardVideoSetting baseSetting) {
-        super(activity, baseSetting);
-        setting = baseSetting;
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         KSUtil.initAD(this, new AdvanceADNInitResult() {
@@ -40,8 +37,6 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
-
-                reportStart();
             }
 
             @Override
@@ -64,7 +59,7 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
         if (hitCache) {
             return;
         }
-        
+
         KsScene scene = new KsScene.Builder(KSUtil.getADID(sdkSupplier)).build(); // 此为测试posId，请联系快手平台申请正式posId
         initS2SInf();
         KsAdSDK.getLoadManager().loadRewardVideoAd(scene, new KsLoadManager.RewardVideoAdListener() {
@@ -95,7 +90,6 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
                         handleFailed(AdvanceError.ERROR_DATA_NULL, "");
                     } else {
                         ad = list.get(0);
-                        rewardVideoItem = new KSRewardItem(null, KSRewardAdapter.this, ad);
 
                         updateBidding(ad.getECPM());
                         handleSucceed(ad);
@@ -117,9 +111,9 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
             // 激励视频服务端回调的参数设置
             Map<String, String> rewardCallbackExtraData = new HashMap<>();
             // 开发者系统中的用户id，会在请求客户的回调url中带上
-            rewardCallbackExtraData.put("thirdUserId", setting.getUserId());
+            rewardCallbackExtraData.put("thirdUserId", rewardSetting.getUserId());
             // 开发者自定义的附加参数，会在请求客户的回调url中带上
-            rewardCallbackExtraData.put("extraData", setting.getExtraInfo());
+            rewardCallbackExtraData.put("extraData", rewardSetting.getExtraInfo());
             builder.rewardCallbackExtraData(rewardCallbackExtraData);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -137,16 +131,6 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
     public void destroyAd() {
     }
 
-    @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(ERROR_EXCEPTION_LOAD));
-        }
-    }
-
 
     //--------广告回调--------
 
@@ -160,9 +144,8 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
     @Override
     public void onPageDismiss() {
         LogUtil.simple(TAG + " onPageDismiss");
-        if (setting != null) {
-            setting.adapterAdClose();
-        }
+
+        handleClose();
     }
 
     @Override
@@ -176,17 +159,15 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
     @Override
     public void onVideoPlayEnd() {
         LogUtil.simple(TAG + " onVideoPlayEnd");
-        if (setting != null) {
-            setting.adapterVideoComplete();
-        }
+
+        handleComplete();
     }
 
     @Override
     public void onVideoSkipToEnd(long l) {
         LogUtil.simple(TAG + " onVideoSkipToEnd，l=" + l);
-        if (null != setting) {
-            setting.adapterVideoSkipped();
-        }
+
+        handleSkip();
     }
 
     @Override
@@ -200,16 +181,14 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
     public void onRewardVerify() {
         LogUtil.simple(TAG + " onRewardVerify");
         try {
-            if (setting != null) {
-                setting.adapterAdReward();
-
-                RewardServerCallBackInf inf = new RewardServerCallBackInf();
-                inf.rewardVerify = true;
-                if (sdkSupplier != null) {
-                    inf.supId = sdkSupplier.id;
-                }
-                setting.postRewardServerInf(inf);
+            handleReward();
+            RewardServerCallBackInf inf = new RewardServerCallBackInf();
+            inf.rewardVerify = true;
+            if (sdkSupplier != null) {
+                inf.supId = sdkSupplier.id;
             }
+            handleRewardInf(inf);
+
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -252,7 +231,7 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
         try {
             if (isValid()) {
                 ad.setRewardAdInteractionListener(KSRewardAdapter.this);
-                ad.showRewardVideoAd(setting.getShowActivity(), AdvanceKSManager.getInstance().rewardVideoConfig);
+                ad.showRewardVideoAd(activity, AdvanceKSManager.getInstance().rewardVideoConfig);
             } else {
                 runParaFailed(AdvanceError.parseErr(ERROR_EXCEPTION_SHOW, "RewardNotVis"));
             }
@@ -271,6 +250,11 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

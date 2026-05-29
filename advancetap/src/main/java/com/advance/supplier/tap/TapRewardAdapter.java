@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
-import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -16,18 +15,21 @@ import com.tapsdk.tapad.AdRequest;
 import com.tapsdk.tapad.TapAdNative;
 import com.tapsdk.tapad.TapRewardVideoAd;
 
+import java.util.Map;
+
 public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
     TapAdNative tapAdNative;
     TapRewardVideoAd adData;
 
 
-    public TapRewardAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -35,8 +37,6 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
             @Override
             public void call() {
                 loadAD();
-
-                reportStart();
             }
         });
 
@@ -57,8 +57,8 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
             Context ctx = getRealActivity(null);
             if (ctx == null) {
                 Activity showAct = null;
-                if (setting != null) {
-                    showAct = setting.getShowActivity();
+                if (rewardSetting != null) {
+                    showAct = rewardSetting.getShowActivity();
                     if (showAct != null) {
                         ctx = showAct;
                     }
@@ -76,10 +76,6 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
         }
     }
 
-    @Override
-    public boolean isValid() {
-        return super.isValid();
-    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
@@ -96,9 +92,8 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
                     @Override
                     public void onAdClose() {
                         LogUtil.simple(TAG + " onAdClose");
-                        if (setting != null) {
-                            setting.adapterAdClose();
-                        }
+
+                        handleClose();
 
                     }
 
@@ -107,9 +102,7 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
                         //                        经测试，并不会回调此方法
                         LogUtil.simple(TAG + " onVideoComplete");
 
-                        if (setting != null) {
-                            setting.adapterVideoComplete();
-                        }
+                        handleComplete();
                     }
 
                     @Override
@@ -124,21 +117,22 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
                     public void onRewardVerify(boolean rewardVerify, int rewardAmount, String rewardName, int code, String msg) {
                         try {
                             LogUtil.simple(TAG + " onRewardVerify : rewardVerify = " + rewardVerify + ", rewardAmount = " + rewardAmount + ", rewardName = " + rewardName + ", code = " + code + ", msg = " + msg);
-                            if (setting != null) {
-                                setting.adapterAdReward();
 
-                                RewardServerCallBackInf inf = new RewardServerCallBackInf();
-                                inf.rewardVerify = rewardVerify;
-                                inf.rewardAmount = rewardAmount;
-                                inf.rewardName = rewardName;
+                            handleReward();
 
-                                inf.errorCode = code;
-                                inf.errMsg = msg;
-                                if (sdkSupplier != null) {
-                                    inf.supId = sdkSupplier.id;
-                                }
-                                setting.postRewardServerInf(inf);
+
+                            RewardServerCallBackInf inf = new RewardServerCallBackInf();
+                            inf.rewardVerify = rewardVerify;
+                            inf.rewardAmount = rewardAmount;
+                            inf.rewardName = rewardName;
+
+                            inf.errorCode = code;
+                            inf.errMsg = msg;
+                            if (sdkSupplier != null) {
+                                inf.supId = sdkSupplier.id;
                             }
+
+                            handleRewardInf(inf);
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
@@ -149,9 +143,7 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
 //                        经测试，并不会回调此方法
                         LogUtil.simple(TAG + " onSkippedVideo");
 
-                        if (setting != null) {
-                            setting.adapterVideoSkipped();
-                        }
+                        handleSkip();
                     }
 
                     @Override
@@ -170,7 +162,7 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
 
                 });
 
-                adData.showRewardVideoAd(setting.getShowActivity());
+                adData.showRewardVideoAd(activity);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -195,7 +187,7 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
                 return;
             }
 
-            
+
             Context ctx = getRealActivity(null);
             if (ctx == null) {
                 ctx = getRealContext();
@@ -208,13 +200,13 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
             int spaceId = TapUtil.getPlaceId(getPosID());
             String userID = AdvanceTapManger.getInstance().customTapUserId;
             if (BYStringUtil.isEmpty(userID)) {
-                userID = setting.getUserId();
+                userID = rewardSetting.getUserId();
             }
             AdRequest request = new AdRequest.Builder().withSpaceId(spaceId)
                     .withUserId(userID)
-                    .withRewardAmount(setting.getRewardCount())
-                    .withRewardName(setting.getRewardName())
-                    .withExtra1(setting.getExtraInfo())
+                    .withRewardAmount(rewardSetting.getRewardCount())
+                    .withRewardName(rewardSetting.getRewardName())
+                    .withExtra1(rewardSetting.getExtraInfo())
                     .build();
 
             tapAdNative.loadRewardVideoAd(request, new TapAdNative.RewardVideoAdListener() {
@@ -248,15 +240,7 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
                             adData = tapRewardVideoAd;
                         }
 
-                        if (isParallel) {
-                            if (parallelListener != null) {
-                                parallelListener.onCached();
-                            }
-                        } else {
-                            if (null != setting) {
-                                setting.adapterVideoCached();
-                            }
-                        }
+                        handleCached();
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }

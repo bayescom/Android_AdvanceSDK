@@ -1,9 +1,7 @@
 package com.advance.custom;
 
-import android.content.Context;
 import android.view.ViewGroup;
 
-import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
 import com.advance.utils.LogUtil;
 

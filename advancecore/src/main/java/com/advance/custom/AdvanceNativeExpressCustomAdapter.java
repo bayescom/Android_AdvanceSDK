@@ -49,11 +49,15 @@ public abstract class AdvanceNativeExpressCustomAdapter extends AdvanceBaseCusto
         }
     }
 
-    public void handleRenderFailed(View view) {
+    public void handleRenderFailed(View view,AdvanceError error) {
         try {
             if (nativeExpressSetting != null) {
                 nativeExpressSetting.adapterRenderFailed(view);
             }
+
+            runParaFailed(error);
+
+            removeADView();
         } catch (Throwable e) {
             e.printStackTrace();
         }

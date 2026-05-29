@@ -1,8 +1,8 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
+import android.content.Context;
 
-import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
@@ -16,23 +16,18 @@ import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsScene;
 
 import java.util.List;
+import java.util.Map;
 
-import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 
 import androidx.annotation.Nullable;
 
 public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements KsFullScreenVideoAd.FullScreenVideoAdInteractionListener {
 
-    public FullScreenVideoSetting setting;
     private String TAG = "[KSFullScreenVideoAdapter] ";
 
     private List<KsFullScreenVideoAd> list;
     KsFullScreenVideoAd ad;
 
-    public KSFullScreenVideoAdapter(Activity activity, FullScreenVideoSetting baseSetting) {
-        super(activity, baseSetting);
-        setting = baseSetting;
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 //初始化快手SDK
@@ -41,8 +36,6 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
             public void success() {
                 //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
                 startLoad();
-
-                reportStart();
             }
 
             @Override
@@ -65,7 +58,7 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
         if (hitCache) {
             return;
         }
-        
+
         long adid = KSUtil.getADID(sdkSupplier);
         if (BYUtil.isDev()) {
 //                adid = 90009002;
@@ -76,42 +69,41 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
             public void onError(int code, String msg) {
                 LogUtil.simple(TAG + " onError " + code + msg);
 
-                    handleFailed(code, msg);
-                }
+                handleFailed(code, msg);
+            }
 
-                @Override
-                public void onFullScreenVideoResult(@Nullable List<KsFullScreenVideoAd> adList) {
-                    LogUtil.simple(TAG + "onFullScreenVideoResult, ");
-                    try {
-                        list = adList;
-                        if (list == null || list.size() == 0 || list.get(0) == null) {
-                            handleFailed(AdvanceError.ERROR_DATA_NULL, "");
-                        } else {
-                            ad = list.get(0);
-                            fullScreenItem = new KSFullScreenItem(activity, KSFullScreenVideoAdapter.this, ad);
+            @Override
+            public void onFullScreenVideoResult(@Nullable List<KsFullScreenVideoAd> adList) {
+                LogUtil.simple(TAG + "onFullScreenVideoResult, ");
+                try {
+                    list = adList;
+                    if (list == null || list.size() == 0 || list.get(0) == null) {
+                        handleFailed(AdvanceError.ERROR_DATA_NULL, "");
+                    } else {
+                        ad = list.get(0);
 
-                            updateBidding(ad.getECPM());
+                        updateBidding(ad.getECPM());
 
-                            handleSucceed(ad);
-                        }
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                        handleFailed(AdvanceError.ERROR_EXCEPTION_LOAD, "");
+                        handleSucceed(ad);
                     }
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    handleFailed(AdvanceError.ERROR_EXCEPTION_LOAD, "");
                 }
+            }
 
 //                @Override
 //                public void onRequestResult(int adNumber) {
 //                    LogUtil.simple(TAG + "onRequestResult, 广告填充数量：" + adNumber);
 //                }
 
-                @Override
-                public void onFullScreenVideoAdLoad(@Nullable List<KsFullScreenVideoAd> adList) {
-                    LogUtil.simple(TAG + " onFullScreenVideoAdLoad");
+            @Override
+            public void onFullScreenVideoAdLoad(@Nullable List<KsFullScreenVideoAd> adList) {
+                LogUtil.simple(TAG + " onFullScreenVideoAdLoad");
 
-                }
-            });
-        }
+            }
+        });
+    }
 
 
     @Override
@@ -122,16 +114,6 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
     @Override
     public void destroyAd() {
 
-    }
-
-    @Override
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(ERROR_EXCEPTION_LOAD));
-        }
     }
 
 
@@ -145,9 +127,8 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
     @Override
     public void onPageDismiss() {
         LogUtil.simple(TAG + " onPageDismiss");
-        if (setting != null) {
-            setting.adapterClose();
-        }
+
+        handleClose();
     }
 
     @Override
@@ -156,10 +137,9 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
         LogUtil.e(TAG + msg);
 
         try {
-            if (setting != null) {
-                AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_RENDER, msg);
-                runParaFailed(error);
-            }
+            AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_RENDER, msg);
+            runParaFailed(error);
+
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -168,9 +148,7 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
     @Override
     public void onVideoPlayEnd() {
         LogUtil.simple(TAG + " onVideoPlayEnd");
-        if (setting != null) {
-            setting.adapterVideoComplete();
-        }
+        handleComplete();
     }
 
     @Override
@@ -182,9 +160,8 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
     @Override
     public void onSkippedVideo() {
         LogUtil.simple(TAG + " onSkippedVideo");
-        if (setting != null) {
-            setting.adapterVideoSkipped();
-        }
+
+        handleSkip();
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -209,6 +186,11 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

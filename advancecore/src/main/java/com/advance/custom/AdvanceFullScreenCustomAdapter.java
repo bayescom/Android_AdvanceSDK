@@ -1,8 +1,5 @@
 package com.advance.custom;
 
-import android.app.Activity;
-
-import com.advance.FullScreenVideoSetting;
 
 public abstract class AdvanceFullScreenCustomAdapter extends AdvanceBaseCustomAdapter {
 

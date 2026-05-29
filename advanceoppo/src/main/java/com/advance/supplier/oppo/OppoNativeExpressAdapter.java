@@ -3,6 +3,7 @@ package com.advance.supplier.oppo;
 import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
@@ -18,24 +19,27 @@ import com.heytap.msp.mobad.api.params.NativeAdParams;
 import com.heytap.msp.mobad.api.params.NativeAdSize;
 
 import java.util.List;
+import java.util.Map;
 
 public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     NativeTempletAd mNativeTempletAd;
     INativeTempletAdView adView;
 
-    public OppoNativeExpressAdapter(Activity activity, NativeExpressSetting baseSetting) {
-        super(activity, baseSetting);
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+    
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         OppoUtil.initAD(this);
         loadAd();
-        reportStart();
     }
 
     void loadAd() {
@@ -61,8 +65,8 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
 
 
             //  2025/2/21 测试高度为0时表现？？？  测试看下来设置宽高信息，广告不会根据设置的值来渲染。。。。
-            int width = mSetting.getExpressViewWidth();
-            int height = mSetting.getExpressViewHeight();
+            int width = nativeExpressSetting.getExpressViewWidth();
+            int height = nativeExpressSetting.getExpressViewHeight();
             LogUtil.devDebug(TAG + " width = " + width + " , height = " + height);
             NativeAdSize nativeAdSize = new NativeAdSize.Builder()
                     .setWidthInDp(width)
@@ -82,6 +86,7 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
+                        nativeExpressADView = adView.getAdView();
                         handleSucceed(OppoNativeExpressAdapter.this);
                     }
                 }
@@ -117,28 +122,21 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
                 public void onAdClose(INativeTempletAdView iNativeTempletAdView) {
                     LogUtil.simple(TAG + " onAdClose ");
 
-                    if (mSetting != null)
-                        mSetting.adapterDidClosed(nativeExpressADView);
-
-                    removeADView();
+                    handleClose();
                 }
 
                 @Override
                 public void onRenderSuccess(INativeTempletAdView iNativeTempletAdView) {
                     LogUtil.simple(TAG + " onRenderSuccess ");
 
-                    if (mSetting != null)
-                        mSetting.adapterRenderSuccess(nativeExpressADView);
+                    handleRenderSuccess(nativeExpressADView);
                 }
 
                 @Override
                 public void onRenderFailed(NativeAdError nativeAdError, INativeTempletAdView iNativeTempletAdView) {
                     LogUtil.simple(TAG + "onRenderFailed  ");
 
-                    if (mSetting != null)
-                        mSetting.adapterRenderFailed(nativeExpressADView);
-                    runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED));
-
+                    handleRenderFailed(nativeExpressADView,AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED));
                 }
             });
 

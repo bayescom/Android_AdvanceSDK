@@ -54,7 +54,6 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
         mRewardVideoAd.setDownloadAppConfirmPolicy(AdvanceBDManager.getInstance().rewardDownloadAppConfirmPolicy);
         mRewardVideoAd.load();
 
-        rewardVideoItem = new BDRewardItem(this, mRewardVideoAd);
     }
 
     @Override

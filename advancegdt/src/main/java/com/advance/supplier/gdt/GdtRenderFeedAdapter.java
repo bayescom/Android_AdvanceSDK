@@ -1,5 +1,6 @@
 package com.advance.supplier.gdt;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
@@ -31,26 +32,17 @@ import com.qq.e.ads.nativ.widget.NativeAdContainer;
 import com.qq.e.comm.util.AdError;
 
 import java.util.List;
+import java.util.Map;
 
 public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     NativeUnifiedADData mRenderAD;
 
-    public GdtRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
-    }
-
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         GdtUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
                 loadAd();
-
-                reportStart();
             }
         });
     }
@@ -149,7 +141,7 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private void doShow() {
         try {
             LogUtil.simple(TAG + "call show ");
-            if (mAdvanceRFBridge == null || mRenderAD == null) {
+            if (mRenderAD == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "advanceRFBridge or mRenderAD null");
                 return;
             }
@@ -158,7 +150,7 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "ad invalid");
                 return;
             }
-            final AdvanceRFMaterialProvider rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
+            final AdvanceRFMaterialProvider rfMaterialProvider = getMaterialProvider();
 
             if (rfMaterialProvider == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "getMaterialProvider  null");
@@ -428,6 +420,11 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         if (mRenderAD != null) {
             return mRenderAD.isValid();
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

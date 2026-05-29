@@ -1,9 +1,9 @@
 package com.advance.supplier.tanx;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
-import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -28,15 +28,16 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
     private final String TAG = "[TanxRewardAdapter] ";
     ITanxAdLoader iTanxAdLoader;
     ITanxRewardExpressAd iTanxRewardVideoExpressAd;
-
-
-    public TanxRewardAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        initAD();
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+
 
     @Override
     protected void adPrepared() {
@@ -52,10 +53,6 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        initAD();
-    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         if (iTanxRewardVideoExpressAd == null) {
@@ -69,8 +66,8 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
             iTanxRewardVideoExpressAd.setBiddingResult(biddingResult);
 
             VideoParam videoParam = new VideoParam();
-            videoParam.mute = setting.isMute();
-            iTanxRewardVideoExpressAd.showAd(setting.getShowActivity(), videoParam);
+            videoParam.mute = rewardSetting.isMute();
+            iTanxRewardVideoExpressAd.showAd(activity, videoParam);
 
             iTanxRewardVideoExpressAd.setOnRewardAdListener(new ITanxRewardExpressAd.OnRewardAdListener() {
 
@@ -102,17 +99,14 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
                 @Override
                 public void onAdClose() {
                     LogUtil.simple(TAG + "onAdClose");
-                    if (null != setting) {
-                        setting.adapterAdClose();
-                    }
+                    handleClose();
                 }
 
                 @Override
                 public void onVideoComplete() {
                     LogUtil.simple(TAG + "onVideoComplete");
-                    if (null != setting) {
-                        setting.adapterVideoComplete();
-                    }
+
+                    handleComplete();
                 }
 
                 @Override
@@ -144,24 +138,21 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
 
                     inf.rewardVerify = b;
                     inf.rewardMap = map;
-                    if (null != setting) {
                         if (b) {
-                            setting.adapterAdReward();
+                            handleReward();
                         }
 
                         if (sdkSupplier != null) {
                             inf.supId = sdkSupplier.id;
                         }
-                        setting.postRewardServerInf(inf);
-                    }
+                        handleRewardInf( inf);
                 }
 
                 @Override
                 public void onSkippedVideo() {
                     LogUtil.simple(TAG + "onSkippedVideo");
-                    if (null != setting) {
-                        setting.adapterVideoSkipped();
-                    }
+
+                    handleSkip();
                 }
 
                 @Override
@@ -186,7 +177,6 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
             @Override
             public void success() {
                 startLoadAD();
-                reportStart();
             }
 
             @Override
@@ -215,7 +205,7 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
         String uid = AdvanceTanxSetting.getInstance().mediaUID;
         //为空则获取广告位上配置的uid
         if (BYStringUtil.isEmpty(uid)){
-            uid = setting.getUserId();
+            uid = rewardSetting.getUserId();
         }
         if (BYStringUtil.isEmpty(uid)){
             LogUtil.e(TAG+"tanx激励需要配置用户id信息，否则可能拉取不到广告。");
@@ -255,15 +245,8 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
             public void onRewardVideoCached(ITanxRewardExpressAd ad) {
                 //这里启动广告 视频流畅不卡顿
                 LogUtil.simple(TAG + "onRewardVideoCached");
-                if (isParallel) {
-                    if (parallelListener != null) {
-                        parallelListener.onCached();
-                    }
-                } else {
-                    if (null != setting) {
-                        setting.adapterVideoCached();
-                    }
-                }
+
+                handleCached();
             }
 
             @Override
@@ -285,12 +268,5 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
 
             }
         }, timeout);
-    }
-
-
-    @Override
-    public boolean isValid() {
-//        return iTanxRewardVideoExpressAd != null;
-        return super.isValid();
     }
 }

@@ -1,6 +1,7 @@
 package com.advance.supplier.honor;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -17,17 +18,13 @@ import com.hihonor.adsdk.base.api.banner.BannerAdLoadListener;
 import com.hihonor.adsdk.base.api.banner.BannerExpressAd;
 import com.hihonor.adsdk.base.callback.AdListener;
 
+import java.util.Map;
+
 public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
     BannerExpressAd mBannerExpressAd;
 
-    public HonorBannerAdapter(Activity activity, BannerSetting setting) {
-        super(activity, setting);
-    }
-
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
-
-        reportStart();
     }
 
     @Override
@@ -42,17 +39,18 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
 
     @Override
     public boolean isValid() {
         if (HonorUtil.isAdExpire(mBannerExpressAd)) {
             return false;
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -143,7 +141,7 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
 //当达到间隔时间且用户停留在广告所在页面时，会自动触发轮播。
                 mBannerExpressAd.setIntervalTime(refreshValue * 1000L);
 
-                ViewGroup adContainer = bannerSetting.getContainer();
+                ViewGroup adContainer = getAdContainer();
                 RelativeLayout.LayoutParams rbl = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 rbl.addRule(RelativeLayout.CENTER_HORIZONTAL);
                 boolean add = AdvanceUtil.addADView(adContainer, mBannerExpressAd.getExpressAdView(), rbl);

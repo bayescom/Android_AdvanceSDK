@@ -31,14 +31,18 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     WindNativeAdData mRenderAD;
     AdvanceRFMaterialProvider rfMaterialProvider;
 
-    public SigmobRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+
+
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         SigmobUtil.initAD(this, new AdvanceADNInitResult() {
@@ -46,8 +50,6 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             public void success() {
                 //只有在成功初始化以后才能调用load方法
                 startLoad();
-
-                reportStart();
             }
 
             @Override
@@ -150,7 +152,7 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW, "广告对象为空"));
                 return;
             }
-            rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
+            rfMaterialProvider = getMaterialProvider();
             //必要事件
             bindCoreView();
             //视频内容

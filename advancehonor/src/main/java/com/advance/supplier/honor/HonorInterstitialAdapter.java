@@ -1,6 +1,7 @@
 package com.advance.supplier.honor;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -14,16 +15,13 @@ import com.hihonor.adsdk.base.api.interstitial.InterstitialExpressAd;
 import com.hihonor.adsdk.base.callback.AdListener;
 import com.hihonor.adsdk.interstitial.InterstitialAdLoad;
 
+import java.util.Map;
+
 public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     InterstitialExpressAd mInterstitialExpressAd;
-    public HonorInterstitialAdapter(Activity activity, InterstitialSetting setting) {
-        super(activity, setting);
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
-
-        reportStart();
     }
 
     @Override
@@ -38,17 +36,20 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+
     @Override
     public boolean isValid() {
         if (HonorUtil.isAdExpire(mInterstitialExpressAd)) {
             return false;
         }
-        return super.isValid();
+        return true;
     }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
+
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         try {
@@ -101,7 +102,7 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                         super.onAdImpressionFailed(errCode, msg);
                         LogUtil.simple(TAG + "onAdImpressionFailed, errCode: " + errCode + ", msg: " + msg);
 
-                        handleFailed(errCode,msg);
+                        handleFailed(errCode, msg);
                     }
 
                     /**

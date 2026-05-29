@@ -1,8 +1,8 @@
 package com.advance.supplier.oppo;
 
 import android.app.Activity;
+import android.content.Context;
 
-import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -12,23 +12,17 @@ import com.heytap.msp.mobad.api.ad.RewardVideoAd;
 import com.heytap.msp.mobad.api.listener.IRewardVideoAdListener;
 import com.heytap.msp.mobad.api.params.RewardVideoAdParams;
 
+import java.util.Map;
+
 public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
     private final String TAG = "[OppoRewardAdapter] ";
     RewardVideoAd mRewardVideoAd;
 
-    public OppoRewardAdapter(Activity activity, RewardVideoSetting advanceRewardVideo) {
-        super(activity, advanceRewardVideo);
-    }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         OppoUtil.initAD(this);
         loadAd();
-        reportStart();
     }
 
     @Override
@@ -55,7 +49,12 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -128,9 +127,7 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
                 public void onVideoPlayComplete() {
                     LogUtil.simple(TAG + "onVideoPlayComplete");
 
-                    if (null != setting) {
-                        setting.adapterVideoComplete();
-                    }
+                    handleComplete();
                 }
 
                 @Override
@@ -145,9 +142,7 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
 //                    当视频播放过程中被关闭时回调
                     LogUtil.simple(TAG + "onVideoPlayClose  ,currentPosition =" + currentPosition);
 
-                    if (null != setting) {
-                        setting.adapterAdClose();
-                    }
+                    handleClose();
                 }
 
                 @Override
@@ -162,18 +157,14 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
 //                    当视频落地页关闭时回调
                     LogUtil.simple(TAG + "onLandingPageClose ");
 
-                    if (null != setting) {
-                        setting.adapterAdClose();
-                    }
+
                 }
 
                 @Override
                 public void onReward(Object... objects) {
                     LogUtil.simple(TAG + " onReward");
 
-                    if (null != setting) {
-                        setting.adapterAdReward();
-                    }
+                    handleReward();
                 }
             });
 

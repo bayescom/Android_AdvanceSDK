@@ -1,6 +1,7 @@
 package com.advance.supplier.mi;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -12,11 +13,20 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.miui.zeus.mimo.sdk.ADParams;
 import com.miui.zeus.mimo.sdk.InterstitialAd;
 
+import java.util.Map;
+
 public class XMInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     InterstitialAd interstitialAd;
 
-    public XMInterstitialAdapter(Activity activity, InterstitialSetting setting) {
-        super(activity, setting);
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -24,7 +34,6 @@ public class XMInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             @Override
             public void success() {
                 loadAd();
-                reportStart();
             }
 
             @Override
@@ -45,10 +54,7 @@ public class XMInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             interstitialAd.destroy();
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {

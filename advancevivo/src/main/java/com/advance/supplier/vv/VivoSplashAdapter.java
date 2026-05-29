@@ -39,7 +39,6 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
             @Override
             public void success() {
                 loadAd();
-                reportStart();
             }
 
             @Override
@@ -63,10 +62,7 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {

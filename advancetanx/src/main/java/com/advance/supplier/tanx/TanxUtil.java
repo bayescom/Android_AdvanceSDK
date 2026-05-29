@@ -38,7 +38,7 @@ public class TanxUtil {
 
 //            AdvanceUtil advanceUtil = new AdvanceUtil(adapter.getADActivity());
             String oaid = BYDevice.getOaidValue();
-            String imei = BYDevice.getImeiValue();
+//            String imei = BYDevice.getImeiValue();
 //设置图片加载自定义loader
 
             TanxConfig config = new TanxConfig.Builder()
@@ -49,7 +49,7 @@ public class TanxUtil {
                     .oaid(oaid)
                     //是不是开启自动获取oaid开关
                     .oaidSwitch(true)
-                    .imei(imei)
+//                    .imei(imei)
 //                    .imageLoader(iLoader)
                     .debug(BYUtil.isDebug())
                     .setEnableSensor(!AdvanceSetting.getInstance().disableShake)

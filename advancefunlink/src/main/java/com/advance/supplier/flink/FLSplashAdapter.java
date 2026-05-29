@@ -1,9 +1,9 @@
 package com.advance.supplier.flink;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 
-import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -14,25 +14,17 @@ import com.fl.saas.adx.base.exception.FLError;
 import com.fl.saas.adx.base.interfaces.AdViewSpreadListener;
 import com.fl.saas.adx.base.interfaces.SpreadLoadListener;
 
-import java.lang.ref.SoftReference;
+import java.util.Map;
 
 public class FLSplashAdapter extends AdvanceSplashCustomAdapter {
     FLSpread flAd;
     SpreadLoadListener.SpreadAd adData;
 
-    public FLSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting splashSetting) {
-        super(softReferenceActivity, splashSetting);
-    }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         FLUtil.initAD(this);
         loadAd();
-        reportStart();
     }
 
     private void loadAd() {
@@ -143,6 +135,11 @@ public class FLSplashAdapter extends AdvanceSplashCustomAdapter {
         if (adData != null) {
             return adData.isAdReady();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

@@ -1,6 +1,7 @@
 package com.advance.supplier.gdt;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 
 import com.advance.AdvanceNativeExpressAdItem;
@@ -20,36 +21,24 @@ import com.qq.e.comm.util.AdError;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
 
 public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
-    private NativeExpressSetting advanceNativeExpress;
     String TAG = "[GdtNativeExpressAdapter] ";
     NativeExpressADView adView;
-    boolean isVideoMute = false;
 
-    public GdtNativeExpressAdapter(Activity activity, NativeExpressSetting advanceNativeExpress) {
-        super(activity, advanceNativeExpress);
-        try {
-            this.advanceNativeExpress = advanceNativeExpress;
-            isVideoMute = advanceNativeExpress.isVideoMute();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         GdtUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
                 loadAd();
-
-                reportStart();
             }
         });
     }
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+    public void loadAd() {
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtNativeExpressAdapter.class, new BYAbsCallBack<GdtNativeExpressAdapter>() {
@@ -63,8 +52,8 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             return;
         }
 
-        int width = advanceNativeExpress.getExpressViewWidth();
-        int height = advanceNativeExpress.getExpressViewHeight();
+        int width = nativeExpressSetting.getExpressViewWidth();
+        int height = nativeExpressSetting.getExpressViewHeight();
         if (height <= 0) {
             height = ADSize.AUTO_HEIGHT;
         }
@@ -118,10 +107,10 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             }
         }); // 这里的Context必须为Activity
         VideoOption option = new VideoOption.Builder()
-                .setAutoPlayMuted(isVideoMute)
+                .setAutoPlayMuted(nativeExpressSetting.isVideoMute())
                 .build();
         nativeExpressAd.setVideoOption(option);
-        nativeExpressAd.setMaxVideoDuration(advanceNativeExpress.getGdtMaxVideoDuration());
+        nativeExpressAd.setMaxVideoDuration(nativeExpressSetting.getGdtMaxVideoDuration());
 //        nativeExpressAd.setDownAPPConfirmPolicy(DownAPPConfirmPolicy.NOConfirm);
         nativeExpressAd.loadAD(sdkSupplier.adCount);
 
@@ -141,12 +130,9 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             runParaFailed(AdvanceError.parseErr(ERROR_DATA_NULL));
             return;
         }
-        nativeExpressAdItemList = new ArrayList<>();
 
         boolean isAllDataNull = true;
         for (NativeExpressADView nativeExpressADView : list) {
-            AdvanceNativeExpressAdItem advanceNativeExpressAdItem = new GdtNativeAdExpressAdItem(this, nativeExpressADView);
-            nativeExpressAdItemList.add(advanceNativeExpressAdItem);
             //判断view是否全部为空
             isAllDataNull = isAllDataNull && nativeExpressADView == null;
         }
@@ -169,18 +155,14 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     public void onRenderFailEV(View nativeExpressADView) {
         LogUtil.simple(TAG + "onRenderFailEV");
 
-        if (advanceNativeExpress != null)
-            advanceNativeExpress.adapterRenderFailed(nativeExpressADView);
+        handleRenderFailed(nativeExpressADView,AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED));
 
-        runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED));
-        removeADView();
     }
 
     public void onRenderSuccessEV(View nativeExpressADView) {
         LogUtil.simple(TAG + "onRenderSuccessEV");
-        if (advanceNativeExpress != null)
-            advanceNativeExpress.adapterRenderSuccess(nativeExpressADView);
 
+        handleRenderSuccess(nativeExpressADView);
     }
 
     public void onADExposureEV(View nativeExpressADView) {
@@ -199,10 +181,7 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     public void onADClosedEV(View nativeExpressADView) {
         LogUtil.simple(TAG + "onADClosedEV");
 
-        if (advanceNativeExpress != null)
-            advanceNativeExpress.adapterDidClosed(nativeExpressADView);
-
-        removeADView();
+        handleClose();
     }
 
 
@@ -237,6 +216,11 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         if (adView != null) {
             return adView.isValid();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

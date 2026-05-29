@@ -38,6 +38,7 @@ import com.vivo.mobilead.unified.vnative.ProVivoNativeAdListener;
 import com.vivo.mobilead.unified.vnative.VNativeAd;
 
 import java.util.List;
+import java.util.Map;
 
 public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     VivoNativeAd nativeAd;
@@ -51,8 +52,15 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     ClosePosition closePosition = ClosePosition.RIGHT_TOP;
 
-    public VivoRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -60,7 +68,6 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             @Override
             public void success() {
                 loadAd();
-                reportStart();
             }
 
             @Override
@@ -89,17 +96,11 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         try {
-            if (mAdvanceRFBridge != null) {
-                rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
-            }
+            rfMaterialProvider = getMaterialProvider();
             if (rfMaterialProvider == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "未获取到 MaterialProvider 信息，展示前请参考demo调用 advanceRenderFeed.setRfMaterialProvider(materialProvider)方法");
                 return;
@@ -516,8 +517,8 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 
     private Activity getActivity() {
-        if (container == null && mAdvanceRFBridge != null && mAdvanceRFBridge.getMaterialProvider() != null) {
-            container = mAdvanceRFBridge.getMaterialProvider().rootView;
+        if (container == null && getMaterialProvider() != null) {
+            container = getMaterialProvider().rootView;
         }
 
         return getRealActivity(container);

@@ -1,11 +1,8 @@
 package com.advance.custom;
 
-import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 
-import com.advance.AdvanceDrawSetting;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;

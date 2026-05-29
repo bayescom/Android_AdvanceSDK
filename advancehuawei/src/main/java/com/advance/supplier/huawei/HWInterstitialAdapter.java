@@ -1,6 +1,7 @@
 package com.advance.supplier.huawei;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -14,18 +15,24 @@ import com.huawei.hms.ads.InterstitialAd;
 import com.huawei.hms.ads.VideoConfiguration;
 
 import java.util.Locale;
+import java.util.Map;
 
 public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     InterstitialAd interstitialAd;
 
-    public HWInterstitialAdapter(Activity activity, InterstitialSetting setting) {
-        super(activity, setting);
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadAd();
+    }
 
-        reportStart();
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     @Override
@@ -43,10 +50,7 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {

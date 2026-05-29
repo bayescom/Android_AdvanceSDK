@@ -1,6 +1,7 @@
 package com.advance.supplier.gdt;
 
 import android.app.Activity;
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.advance.RewardServerCallBackInf;
@@ -23,24 +24,10 @@ import static com.advance.model.AdvanceError.ERROR_EXCEPTION_SHOW;
 
 public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements RewardVideoADListener {
 
-    private RewardVideoSetting advanceRewardVideo;
     public RewardVideoAD rewardVideoAD;
     String TAG = "[GdtRewardVideoAdapter] ";
 
-    public GdtRewardVideoAdapter(Activity activity, RewardVideoSetting advanceRewardVideo) {
-        super(activity, advanceRewardVideo);
-        this.advanceRewardVideo = advanceRewardVideo;
-    }
 
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-
-    }
 
     private void rewardLoaded() {
         try {
@@ -60,15 +47,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         try {
             LogUtil.simple(TAG + "rewardCached");
 
-            if (isParallel) {
-                if (parallelListener != null) {
-                    parallelListener.onCached();
-                }
-            } else {
-                if (null != advanceRewardVideo) {
-                    advanceRewardVideo.adapterVideoCached();
-                }
-            }
+            handleCached();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -93,17 +72,16 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         try {
             LogUtil.simple(TAG + "rewardReward");
 
-            if (advanceRewardVideo != null) {
-                advanceRewardVideo.adapterAdReward();
-
+            handleReward();
                 RewardServerCallBackInf inf = new RewardServerCallBackInf();
                 inf.rewardMap = map;
                 inf.rewardVerify = true;
                 if (sdkSupplier != null) {
                     inf.supId = sdkSupplier.id;
                 }
-                advanceRewardVideo.postRewardServerInf(inf);
-            }
+
+                handleRewardInf(inf);
+
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -123,8 +101,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         try {
             LogUtil.simple(TAG + "rewardComplete");
 
-            if (advanceRewardVideo != null)
-                advanceRewardVideo.adapterVideoComplete();
+            handleComplete();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -134,8 +111,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         try {
             LogUtil.simple(TAG + "rewardClose");
 
-            if (advanceRewardVideo != null)
-                advanceRewardVideo.adapterAdClose();
+           handleClose();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -208,12 +184,10 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
             @Override
             public void call() {
                 loadAd();
-
-                reportStart();
             }
         });
     }
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+    public void loadAd() {
 
         //检查是否命中使用缓存逻辑
         boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtRewardVideoAdapter.class, new BYAbsCallBack<GdtRewardVideoAdapter>() {
@@ -231,30 +205,22 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         boolean vo = false;
         String userId = "";
         String extraInfo = "";
-        if (advanceRewardVideo != null) {
+        if (rewardSetting != null) {
 
-            vo = advanceRewardVideo.isGdtVolumeOn() || !advanceRewardVideo.isMute();
-            userId = advanceRewardVideo.getUserId();
-            extraInfo = advanceRewardVideo.getExtraInfo();
+            vo = rewardSetting.isGdtVolumeOn() || !rewardSetting.isMute();
+            userId = rewardSetting.getUserId();
+            extraInfo = rewardSetting.getExtraInfo();
         }
-        rewardVideoItem = new GdtRewardVideoAdItem(this);
         rewardVideoAD = new RewardVideoAD(getRealContext(), sdkSupplier.adspotid, this, vo);
         if (!TextUtils.isEmpty(userId) || !TextUtils.isEmpty(extraInfo)) {
             rewardVideoAD.setServerSideVerificationOptions(new ServerSideVerificationOptions.Builder().setUserId(userId).setCustomData(extraInfo).build());
         }
         rewardVideoAD.loadAD();
-//        LogUtil.devDebug(TAG + " , sdk = " + sdkSupplier + " reqid:" + advanceRewardVideo.getAdvanceId());
     }
 
 
     @Override
     protected void adPrepared() {
-//        if (advanceRewardVideo != null)
-//            if (checkRewardOk()) {
-//                advanceRewardVideo.adapterAdDidLoaded(gdtRewardVideoAdItem, sdkSupplier);
-//            } else {
-//                runBaseFailed(AdvanceError.parseErr(ERROR_EXCEPTION_LOAD));
-//            }
     }
 
     @Override
@@ -294,19 +260,12 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         if (rewardVideoAD != null) {
             return rewardVideoAD.isValid();
         }
-        return super.isValid();
+           return true;
     }
-//
-//    @Override
-//    public boolean isValid() {
-//        try {
-//            if (rewardVideoAD == null) {
-//                return false;
-//            }
-//            return rewardVideoAD.isValid();
-//        } catch (Throwable e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
+
 }

@@ -1,11 +1,11 @@
 package com.advance.supplier.tanx;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
 
-import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -19,22 +19,24 @@ import com.alimm.tanx.core.request.TanxAdSlot;
 import com.alimm.tanx.core.request.TanxError;
 import com.alimm.tanx.ui.TanxSdk;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.util.BYUtil;
 
-import java.lang.ref.SoftReference;
 import java.util.List;
+import java.util.Map;
 
 //根据tanx文档，开屏SDK内部有有效期逻辑，非品牌广告1天，品牌广告多天。每7天清理一次本地缓存。暂无对外有效性判断方法
 public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
     ITanxAdLoader iTanxAdLoader;
     ITanxSplashExpressAd iTanxSplashExpressAd;
 
-    public TanxSplashAdapter(SoftReference<Activity> activity, SplashSetting advanceSplash) {
-        super(activity, advanceSplash);
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        initAD();
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
 
@@ -52,19 +54,12 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        initAD();
-    }
-
-
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         TanxUtil.initTanx(this, new TanxUtil.InitListener() {
             @Override
             public void success() {
                 // TODO: 2023/9/5 测试开启线程池来加载广告请求方法
                 startLoadAD();
-                reportStart();
             }
 
             @Override
@@ -140,7 +135,7 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
 
     }
 
-    private void showAD() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         if (iTanxSplashExpressAd == null) {
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "iTanxSplashExpressAd null"));
             return;
@@ -196,18 +191,14 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
                 public void onAdClosed() {
                     LogUtil.simple(TAG + "onAdClosed");
 
-                    if (splashSetting != null) {
-                        splashSetting.adapterDidSkip();
-                    }
+                    handleSkip();
                 }
 
                 @Override
                 public void onAdFinish() {
                     LogUtil.simple(TAG + "onAdFinish");
 
-                    if (splashSetting != null) {
-                        splashSetting.adapterDidTimeOver();
-                    }
+                    handleTimeOver();
                 }
 
                 @Override
@@ -222,19 +213,21 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
             });
             // TODO: 2024/7/1 优化此处和信息流广告位得activity信息采集来源，优先使用承载view中获取的activity，其次使用初始化时传递得，最次使用当前展示的activity（待实现补充）；如果都没有则不使用带activity的getAdView方法
             //获取SplashView
-            View view = iTanxSplashExpressAd.getAdView(BYUtil.getActivityFromView(splashSetting.getAdContainer()));
+            View view = iTanxSplashExpressAd.getAdView(activity);
             //渲染之前判断activity生命周期状态
 //            if (!AdvanceUtil.isActivityDestroyed(softReferenceActivity)) {
 //                adContainer.removeAllViews();
 //                //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕宽
 //                adContainer.addView(view);
-            boolean add = AdvanceUtil.addADView(splashSetting.getAdContainer(), view);
+            boolean add = AdvanceUtil.addADView(getAdContainer(), view);
             if (!add) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
             }
-            TextView skipView = splashSetting.getSkipView();
-            if (null != skipView) {
-                skipView.setVisibility(View.INVISIBLE);
+            if (splashSetting!=null){
+                TextView skipView = splashSetting.getSkipView();
+                if (null != skipView) {
+                    skipView.setVisibility(View.INVISIBLE);
+                }
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -244,7 +237,4 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
 
     }
 
-    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        showAD();
-    }
 }

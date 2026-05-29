@@ -1,6 +1,7 @@
 package com.advance.supplier.oppo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -15,25 +16,27 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.heytap.msp.mobad.api.ad.BannerAd;
 import com.heytap.msp.mobad.api.listener.IBannerAdListener;
 
+import java.util.Map;
+
 public class OppoBannerAdapter extends AdvanceBannerCustomAdapter {
-    BannerSetting setting;
     private BannerAd mBannerAd;
 
-    public OppoBannerAdapter(Activity activity, BannerSetting setting) {
-        super(activity, setting);
-        this.setting = setting;
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
+
+    
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         OppoUtil.initAD(this);
         startLoad();
-
-        reportStart();
     }
 
     private void startLoad() {
@@ -71,8 +74,7 @@ public class OppoBannerAdapter extends AdvanceBannerCustomAdapter {
                 public void onAdClose() {
                     LogUtil.simple(TAG + " onAdClose");
 
-                    if (setting != null)
-                        setting.adapterDidDislike();
+                   handleClose();
                 }
 
                 @Override
@@ -127,7 +129,7 @@ public class OppoBannerAdapter extends AdvanceBannerCustomAdapter {
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            ViewGroup adContainer = setting.getContainer();
+            ViewGroup adContainer = getAdContainer();
             RelativeLayout.LayoutParams rbl = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             rbl.addRule(RelativeLayout.CENTER_HORIZONTAL);
             View bannerView = mBannerAd.getAdView();

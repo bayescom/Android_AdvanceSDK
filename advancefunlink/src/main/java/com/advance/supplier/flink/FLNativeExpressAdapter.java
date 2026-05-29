@@ -1,6 +1,7 @@
 package com.advance.supplier.flink;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -20,22 +21,16 @@ import com.fl.saas.adx.api.mixNative.NativeLoadListener;
 import com.fl.saas.adx.api.mixNative.NativePrepareInfo;
 import com.fl.saas.adx.base.exception.FLError;
 
+import java.util.Map;
+
 public class FLNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     NativeAd flAd;
 
-    public FLNativeExpressAdapter(Activity activity, NativeExpressSetting baseSetting) {
-        super(activity, baseSetting);
-    }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         FLUtil.initAD(this);
         loadAd();
-        reportStart();
     }
 
     private void loadAd() {
@@ -52,8 +47,8 @@ public class FLNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             return;
         }
 
-        int width = mSetting.getExpressViewWidth();
-        int height = mSetting.getExpressViewHeight();
+        int width = nativeExpressSetting.getExpressViewWidth();
+        int height = nativeExpressSetting.getExpressViewHeight();
 //        if (mSetting.getGdtAutoHeight()) {
 //        }
 //        //如果宽度为默认值，也按照填满配置，避免出现截断现象
@@ -170,7 +165,6 @@ public class FLNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             // 对于模板广告只需获取MediaView填充到广告容器中即可,模版广告展示时高度最好设置为自适应。
 // 因为返回的模版高度可能不是传入的高度，避免广告显示不全导致产生问题
             View mediaView = flAd.getAdMaterial().getAdMediaView();
-            Activity activity = getRealActivity(mSetting.getAdContainer());
 
 
             NativeAdView nativeAdView = new NativeAdView(activity);
@@ -193,6 +187,11 @@ public class FLNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         if (flAd != null) {
             return flAd.isReady();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

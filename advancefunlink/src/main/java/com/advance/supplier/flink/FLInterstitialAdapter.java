@@ -1,6 +1,7 @@
 package com.advance.supplier.flink;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -11,22 +12,17 @@ import com.fl.saas.adx.api.FLInterstitial;
 import com.fl.saas.adx.base.exception.FLError;
 import com.fl.saas.adx.base.interfaces.AdViewInterstitialListener;
 
+import java.util.Map;
+
 public class FLInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     FLInterstitial flAd;
 
-    public FLInterstitialAdapter(Activity activity, InterstitialSetting setting) {
-        super(activity, setting);
-    }
-
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
+    
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         FLUtil.initAD(this);
         loadAd();
-        reportStart();
     }
 
     private void loadAd() {
@@ -113,6 +109,11 @@ public class FLInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         if (flAd != null) {
             return flAd.isReady();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }

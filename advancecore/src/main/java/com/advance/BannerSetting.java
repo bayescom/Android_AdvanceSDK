@@ -1,6 +1,5 @@
 package com.advance;
 
-import android.view.ViewGroup;
 
 public interface BannerSetting extends BaseAdEventListener {
     void adapterDidDislike();

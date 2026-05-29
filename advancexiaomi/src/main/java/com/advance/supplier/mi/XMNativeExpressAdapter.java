@@ -1,6 +1,7 @@
 package com.advance.supplier.mi;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
@@ -12,11 +13,19 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.miui.zeus.mimo.sdk.ADParams;
 import com.miui.zeus.mimo.sdk.TemplateAd;
 
+import java.util.Map;
+
 public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     TemplateAd templateAd;
 
-    public XMNativeExpressAdapter(Activity activity, NativeExpressSetting baseSetting) {
-        super(activity, baseSetting);
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -24,7 +33,6 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             @Override
             public void success() {
                 loadAd();
-                reportStart();
             }
 
             @Override
@@ -47,14 +55,11 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            templateAd.showAd(mSetting.getAdContainer(), new TemplateAd.TemplateAdInteractionListener() {
+            templateAd.showAd(getAdContainer(), new TemplateAd.TemplateAdInteractionListener() {
                 @Override
                 public void onAdShow() {
                     LogUtil.d(TAG+"onAdShow");
@@ -107,9 +112,9 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         
         templateAd = new TemplateAd();
 
-        int width = mSetting.getExpressViewWidth();
-        int height = mSetting.getExpressViewHeight();
-        if (mSetting.getGdtAutoHeight()) {
+        int width = nativeExpressSetting.getExpressViewWidth();
+        int height = nativeExpressSetting.getExpressViewHeight();
+        if (nativeExpressSetting.getGdtAutoHeight()) {
             height = 0;
         }
 

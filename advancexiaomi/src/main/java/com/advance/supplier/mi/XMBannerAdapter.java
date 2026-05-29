@@ -1,9 +1,9 @@
 package com.advance.supplier.mi;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.ViewGroup;
 
-import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
@@ -13,19 +13,25 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.miui.zeus.mimo.sdk.ADParams;
 import com.miui.zeus.mimo.sdk.BannerAd;
 
+import java.util.Map;
+
 public class XMBannerAdapter extends AdvanceBannerCustomAdapter {
     BannerAd bannerAd;
 
-    public XMBannerAdapter(Activity activity, BannerSetting setting) {
-        super(activity, setting);
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         XMUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
                 loadAd();
-                reportStart();
             }
 
             @Override
@@ -46,16 +52,13 @@ public class XMBannerAdapter extends AdvanceBannerCustomAdapter {
             bannerAd.destroy();
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            ViewGroup adContainer = bannerSetting.getContainer();
+            ViewGroup adContainer = getAdContainer();
 
-            bannerAd.showAd(getRealActivity(adContainer), adContainer, new BannerAd.BannerInteractionListener() {
+            bannerAd.showAd(activity, adContainer, new BannerAd.BannerInteractionListener() {
 
                 @Override
                 public void onAdShow() {

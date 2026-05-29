@@ -1,9 +1,9 @@
 package com.advance.supplier.vv;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 
-import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
@@ -16,14 +16,23 @@ import com.vivo.mobilead.unified.banner.UnifiedVivoBannerAdListener;
 import com.vivo.mobilead.unified.base.AdParams;
 import com.vivo.mobilead.unified.base.VivoAdError;
 
+import java.util.Map;
+
 
 //注意：此广告类型不支持
 public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
     UnifiedVivoBannerAd vivoBannerAd;
     View adView;
 
-    public VivoBannerAdapter(Activity activity, BannerSetting setting) {
-        super(activity, setting);
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -31,7 +40,6 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
             @Override
             public void success() {
                 loadAd();
-                reportStart();
             }
 
             @Override
@@ -54,10 +62,6 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
@@ -67,7 +71,7 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
             }
 
             //把SplashView 添加到ViewGroup中,注意开屏广告view：width >=70%屏幕宽；height >=50%屏幕宽
-            boolean add = AdvanceUtil.addADView(bannerSetting.getContainer(), adView);
+            boolean add = AdvanceUtil.addADView(getAdContainer(), adView);
             if (!add) {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
             }
@@ -92,7 +96,7 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
         if (hitCache) {
             return;
         }
-        
+
         //如果不在需要使用到banner广告，请及时销毁
         if (vivoBannerAd != null) {
             vivoBannerAd.destroy();
@@ -101,16 +105,13 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
         AdParams.Builder builder = VivoUtil.getAdParamsBuilder(this);
         if (builder != null) {
             //设置刷新频率
-            if (bannerSetting!=null){
+            if (bannerSetting != null) {
                 builder.setRefreshIntervalSeconds(bannerSetting.getRefreshInterval());
             }
             adParams = builder.build();
         }
         //父容器，可能为空
-        View container = null ;
-        if (bannerSetting!=null){
-            container = bannerSetting.getContainer();
-        }
+        View container = getAdContainer();
         vivoBannerAd = new UnifiedVivoBannerAd(getRealActivity(container), adParams, new UnifiedVivoBannerAdListener() {
             @Override
             public void onAdShow() {

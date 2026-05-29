@@ -1,6 +1,7 @@
 package com.advance.supplier.huawei;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
 import com.advance.RewardVideoSetting;
@@ -15,18 +16,25 @@ import com.huawei.hms.ads.reward.RewardAd;
 import com.huawei.hms.ads.reward.RewardAdLoadListener;
 import com.huawei.hms.ads.reward.RewardAdStatusListener;
 
+import java.util.Map;
+
 public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
     private RewardAd rewardedAd;
-
-    public HWRewardAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         loadRewardAd();
 
 
-        reportStart();
+    }
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
     @Override
@@ -44,10 +52,7 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
         }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {

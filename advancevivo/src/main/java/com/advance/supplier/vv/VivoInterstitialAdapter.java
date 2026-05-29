@@ -1,6 +1,7 @@
 package com.advance.supplier.vv;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -15,21 +16,28 @@ import com.vivo.mobilead.unified.base.callback.MediaListener;
 import com.vivo.mobilead.unified.interstitial.UnifiedVivoInterstitialAd;
 import com.vivo.mobilead.unified.interstitial.UnifiedVivoInterstitialAdListener;
 
+import java.util.Map;
+
 public class VivoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     UnifiedVivoInterstitialAd vivoInterstitialAd;
 
     boolean loadVideo = false;
 
-    public VivoInterstitialAdapter(Activity activity, InterstitialSetting setting) {
-        super(activity, setting);
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
+    }
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         VivoUtil.initAD(this, new AdvanceADNInitResult() {
             @Override
             public void success() {
                 loadAd();
-                reportStart();
             }
 
             @Override
@@ -52,10 +60,7 @@ public class VivoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 //        }
     }
 
-    @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
@@ -64,7 +69,7 @@ public class VivoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                 return;
             }
             if (loadVideo) {
-                vivoInterstitialAd.showVideoAd(getRealActivity(null));
+                vivoInterstitialAd.showVideoAd(activity);
             } else {
                 vivoInterstitialAd.showAd();
             }

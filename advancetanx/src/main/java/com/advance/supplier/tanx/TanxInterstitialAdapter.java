@@ -1,6 +1,7 @@
 package com.advance.supplier.tanx;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
@@ -18,24 +19,21 @@ import com.alimm.tanx.ui.TanxSdk;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
 import java.util.List;
+import java.util.Map;
 
 public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     ITanxAdLoader iTanxAdLoader;
     ITanxTableScreenExpressAd interExpressAD;
-    InterstitialSetting interstitialSetting;
 
-    public TanxInterstitialAdapter(Activity activity, InterstitialSetting setting) {
-        super(activity, setting);
-        interstitialSetting = setting;
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
-    }
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        initAD();
     }
 
     @Override
@@ -133,7 +131,6 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             public void success() {
                 loadOnly();
 
-                reportStart();
             }
 
             @Override

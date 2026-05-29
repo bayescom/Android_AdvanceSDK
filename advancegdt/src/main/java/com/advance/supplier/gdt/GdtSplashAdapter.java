@@ -1,6 +1,7 @@
 package com.advance.supplier.gdt;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.SystemClock;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.qq.e.ads.splash.SplashADListener;
 import com.qq.e.comm.util.AdError;
 
 import java.lang.ref.SoftReference;
+import java.util.Map;
 
 public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
 
@@ -29,10 +31,6 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
     protected SplashAD splashAD;
     private final String TAG = "[GdtSplashAdapter:" + this + "] ";
 
-    public GdtSplashAdapter(SoftReference<Activity> activity, SplashSetting setting) {
-        super(activity, setting);
-        initVis();
-    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         LogUtil.devDebug(TAG + " show");
@@ -65,25 +63,12 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    public void orderLoadAd() {
-
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-            String cause = e.getCause() != null ? e.getCause().toString() : "no cause";
-            reportCodeErr("GdtSplashAdapter Throwable" + cause);
-        }
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         GdtUtil.initAD(this, new BYBaseCallBack() {
             @Override
             public void call() {
                 loadAd();
-
-                reportStart();
             }
         });
 
@@ -176,9 +161,9 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
                     checkAndReview();
                     //剩余时长在600ms以上，且未点击才按照跳过
                     if (remainTime >= 600 && !isClicked) {
-                        splashSetting.adapterDidSkip();
+                        handleSkip();
                     } else {
-                        splashSetting.adapterDidTimeOver();
+                        handleTimeOver();
                     }
                 }
             }
@@ -276,28 +261,28 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    private void zoomOut() {
-        try {
-            if (splashSetting == null) {
-                return;
-            }
-            Activity adAct = getRealActivity(splashSetting.getAdContainer());
-
-            SplashZoomOutManager zoomOutManager = SplashZoomOutManager.getInstance();
-            zoomOutManager.initSize(adAct);
-            zoomOutManager.setSplashInfo(splashAD, splashSetting.getAdContainer().getChildAt(0),
-                    adAct.getWindow().getDecorView());
-
-            checkAndReview();
-            if (splashSetting.isShowInSingleActivity()) {
-                new GdtUtil().zoomOut(adAct);
-            } else {
-                AdvanceSetting.getInstance().isSplashSupportZoomOut = true;
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
+//    private void zoomOut() {
+//        try {
+//            if (splashSetting == null) {
+//                return;
+//            }
+//            Activity adAct = getRealActivity(splashSetting.getAdContainer());
+//
+//            SplashZoomOutManager zoomOutManager = SplashZoomOutManager.getInstance();
+//            zoomOutManager.initSize(adAct);
+//            zoomOutManager.setSplashInfo(splashAD, splashSetting.getAdContainer().getChildAt(0),
+//                    adAct.getWindow().getDecorView());
+//
+//            checkAndReview();
+//            if (splashSetting.isShowInSingleActivity()) {
+//                new GdtUtil().zoomOut(adAct);
+//            } else {
+//                AdvanceSetting.getInstance().isSplashSupportZoomOut = true;
+//            }
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     //检查是否需要对holder进行遮罩图层赋值
     private void checkAndReview() {
@@ -332,6 +317,11 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
         if (splashAD != null) {
             return splashAD.isValid();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 }
