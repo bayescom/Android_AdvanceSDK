@@ -1,9 +1,8 @@
 package com.advance;
 
-import androidx.annotation.Nullable;
 
 public interface AdvanceRewardVideoListener extends AdvanceBaseListener {
-    void onAdLoaded(@Nullable AdvanceRewardVideoItem advanceRewardVideoItem);
+    void onAdLoaded();
 
     void onVideoCached();
 

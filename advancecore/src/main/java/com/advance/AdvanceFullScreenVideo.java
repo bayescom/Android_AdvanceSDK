@@ -1,6 +1,7 @@
 package com.advance;
 
 import android.app.Activity;
+import android.view.ViewGroup;
 
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.model.AdvanceError;
@@ -60,7 +61,7 @@ public class AdvanceFullScreenVideo extends AdvanceBaseAdspot implements FullScr
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getFullVideoAdapter(clzName, getADActivity(), this));
+            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getFullVideoAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -129,6 +130,11 @@ public class AdvanceFullScreenVideo extends AdvanceBaseAdspot implements FullScr
         }
     }
 
+    @Override
+    public ViewGroup getAdContainer() {
+        return null;
+    }
+
     public void adapterDidClicked(SdkSupplier supplier) {
         try {
             reportAdClicked(supplier);
@@ -140,14 +146,14 @@ public class AdvanceFullScreenVideo extends AdvanceBaseAdspot implements FullScr
         }
     }
 
-    public void adapterAdDidLoaded(final AdvanceFullScreenItem advanceFullScreenItem, SdkSupplier supplier) {
+    public void adapterAdDidLoaded( SdkSupplier supplier) {
         try {
             reportAdSucceed(supplier);
             BYThreadUtil.switchMainThread(new BYBaseCallBack() {
                 @Override
                 public void call() {
                     if (null != listener) {
-                        listener.onAdLoaded(advanceFullScreenItem);
+                        listener.onAdLoaded();
                     }
                 }
             });

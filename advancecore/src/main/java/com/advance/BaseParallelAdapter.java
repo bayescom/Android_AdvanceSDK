@@ -373,12 +373,12 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
         cacheModel = AdvanceCacheUtil.getCachedSDKInf(sdkSupplier);
     }
 
-    /**
-     * 并行请求广告。并行请求拿到广告信息后，会存储结果状态。
-     *
-     * @see AdvanceBaseAdapter#orderLoadAd() 串行请求广告方法
-     */
-//    protected abstract void paraLoadAd();
+//    /**
+//     * 并行请求广告。并行请求拿到广告信息后，会存储结果状态。
+//     *
+//     * @see AdvanceBaseAdapter#orderLoadAd() 串行请求广告方法
+//     */
+////    protected abstract void paraLoadAd();
 
     //广告就绪，可以进行后续广告展示方法，串行or并行均会执行到此方法，区别是串行是广告加载成功后立即执行到此方法，并行时广告成功，也要等到选中改广告才执行此方法。
     protected void adPrepared() {

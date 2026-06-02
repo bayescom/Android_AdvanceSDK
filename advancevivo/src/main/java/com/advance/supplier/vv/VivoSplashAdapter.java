@@ -1,9 +1,9 @@
 package com.advance.supplier.vv;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 
-import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
@@ -19,7 +19,7 @@ import com.vivo.mobilead.unified.splash.pro.ProVivoSplashAd;
 import com.vivo.mobilead.unified.splash.pro.ProVivoSplashAdListener;
 import com.vivo.mobilead.unified.splash.pro.VSplashAd;
 
-import java.lang.ref.SoftReference;
+import java.util.Map;
 
 public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
     UnifiedVivoSplashAd vivoSplashAd;
@@ -29,8 +29,15 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
     ProVivoSplashAd vivoSplashAd2;
     VSplashAd splashPro;
 
-    public VivoSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting splashSetting) {
-        super(softReferenceActivity, splashSetting);
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+
     }
 
 

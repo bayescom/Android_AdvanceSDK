@@ -41,10 +41,10 @@ public class FLRewardAdapter extends AdvanceRewardCustomAdapter {
         }
         FLVideo.Builder builder = new FLVideo.Builder(getRealContext());
         builder.setKey(getPosID());
-        if (setting != null) {
-            builder.setUserId(setting.getUserId());
-            builder.setCustomData(setting.getExtraInfo());
-            builder.setMute(setting.isMute());
+        if (rewardSetting != null) {
+            builder.setUserId(rewardSetting.getUserId());
+            builder.setCustomData(rewardSetting.getExtraInfo());
+            builder.setMute(rewardSetting.isMute());
         }
         builder.setAdViewVideoCheckListener(new AdViewVideoCheckListener() {//不使用服务端校验无须设置
             @Override

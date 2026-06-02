@@ -310,7 +310,7 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
                     onAdItemVideoSkipped();
                 }
             });
-            ttRewardVideoAd.showRewardVideoAd(setting.getShowActivity());
+            ttRewardVideoAd.showRewardVideoAd(activity);
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));

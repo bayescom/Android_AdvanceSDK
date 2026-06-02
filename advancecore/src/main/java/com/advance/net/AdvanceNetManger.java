@@ -32,6 +32,7 @@ import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -172,7 +173,7 @@ public class AdvanceNetManger {
                 secretObject.putOpt("brand", BYDevice.getDeviceBrandValue());
 
 
-                secretObject.putOpt("imei", BYDevice.getImeiValue());
+//                secretObject.putOpt("imei", BYDevice.getImeiValue());
                 secretObject.putOpt("oaid", BYDevice.getOaidValue());
                 secretObject.putOpt("androidid", BYDevice.getAndroidIdValue());
 
@@ -214,19 +215,35 @@ public class AdvanceNetManger {
             if (needReportVersions) {
                 try {
                     extJsonObj.putOpt("mry_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_MERCURY));
-                    extJsonObj.putOpt("csj_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_CSJ));
-                    extJsonObj.putOpt("gdt_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_GDT));
-                    extJsonObj.putOpt("bd_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_BAIDU));
-                    extJsonObj.putOpt("ks_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_KS));
-                    extJsonObj.putOpt("tanx_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TANX));
-                    extJsonObj.putOpt("tap_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TAP));
-                    extJsonObj.putOpt("oppo_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_OPPO));
-                    extJsonObj.putOpt("sig_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_SIG));
-                    extJsonObj.putOpt("hw_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HW));
-                    extJsonObj.putOpt("xm_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_XIAOMI));
-                    extJsonObj.putOpt("vivo_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_VIVO));
-                    extJsonObj.putOpt("honor_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HONOR));
-                    extJsonObj.putOpt("flink_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_FLINK));
+
+                    putADNVersion(extJsonObj,"csj_v",AdvanceConfig.SDK_ID_CSJ);
+                    putADNVersion(extJsonObj,"gdt_v",AdvanceConfig.SDK_ID_GDT);
+                    putADNVersion(extJsonObj,"bd_v",AdvanceConfig.SDK_ID_BAIDU);
+                    putADNVersion(extJsonObj,"ks_v",AdvanceConfig.SDK_ID_KS);
+                    putADNVersion(extJsonObj,"tanx_v",AdvanceConfig.SDK_ID_TANX);
+                    putADNVersion(extJsonObj,"tap_v",AdvanceConfig.SDK_ID_TAP);
+                    putADNVersion(extJsonObj,"oppo_v",AdvanceConfig.SDK_ID_OPPO);
+                    putADNVersion(extJsonObj,"sig_v",AdvanceConfig.SDK_ID_SIG);
+                    putADNVersion(extJsonObj,"hw_v",AdvanceConfig.SDK_ID_HW);
+                    putADNVersion(extJsonObj,"xm_v",AdvanceConfig.SDK_ID_XIAOMI);
+                    putADNVersion(extJsonObj,"vivo_v",AdvanceConfig.SDK_ID_VIVO);
+                    putADNVersion(extJsonObj,"honor_v",AdvanceConfig.SDK_ID_HONOR);
+                    putADNVersion(extJsonObj,"flink_v",AdvanceConfig.SDK_ID_FLINK);
+//
+//
+//                    extJsonObj.putOpt("csj_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_CSJ));
+//                    extJsonObj.putOpt("gdt_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_GDT));
+//                    extJsonObj.putOpt("bd_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_BAIDU));
+//                    extJsonObj.putOpt("ks_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_KS));
+//                    extJsonObj.putOpt("tanx_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TANX));
+//                    extJsonObj.putOpt("tap_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_TAP));
+//                    extJsonObj.putOpt("oppo_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_OPPO));
+//                    extJsonObj.putOpt("sig_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_SIG));
+//                    extJsonObj.putOpt("hw_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HW));
+//                    extJsonObj.putOpt("xm_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_XIAOMI));
+//                    extJsonObj.putOpt("vivo_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_VIVO));
+//                    extJsonObj.putOpt("honor_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HONOR));
+//                    extJsonObj.putOpt("flink_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_FLINK));
 
                     //todo 如何增加自定义渠道方式得版本号采集
                 } catch (Throwable e) {
@@ -247,6 +264,16 @@ public class AdvanceNetManger {
             e.printStackTrace();
         }
         return jsonObject;
+    }
+
+    private static void putADNVersion(JSONObject extJsonObj,String key,String sdkID){
+        try {
+            String adn_v = SupplierBridgeUtil.getSupVersion(sdkID);
+            if (BYStringUtil.isNotEmpty(adn_v)) {
+                extJsonObj.putOpt(key, adn_v);
+            }
+        } catch (JSONException e) {
+        }
     }
 
 

@@ -22,8 +22,8 @@ public class AdvanceSetting {
 
     public String logTag = "AdvanceSDK";
 
-//    todo 改为存储在sp中
-public boolean isADTrack = true;
+    //    todo 改为存储在sp中
+    public boolean isADTrack = true;
     public HashMap<String, String> customData = null;
 
     //标记各平台是否初始化过
@@ -88,7 +88,7 @@ public boolean isADTrack = true;
     //用来缓存广告对象，
     public HashMap<String, AdvanceSDKCacheModel> cachedSDKs = new HashMap<>();
 
-    public int getReportVersionInf(){
+    public int getReportVersionInf() {
         return reportVersionInf;
     }
 

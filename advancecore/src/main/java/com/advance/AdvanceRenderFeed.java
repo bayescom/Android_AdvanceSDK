@@ -1,6 +1,7 @@
 package com.advance;
 
 import android.content.Context;
+import android.view.ViewGroup;
 
 import com.advance.core.srender.AdvanceRFADData;
 import com.advance.core.srender.AdvanceRFEventListener;
@@ -64,7 +65,7 @@ public class AdvanceRenderFeed extends AdvanceBaseAdspot implements AdvanceRFBri
     @Override
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getRenderFeedAdapter(clzName, mContext, this));
+            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getRenderFeedAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -193,5 +194,10 @@ public class AdvanceRenderFeed extends AdvanceBaseAdspot implements AdvanceRFBri
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public ViewGroup getAdContainer() {
+        return null;
     }
 }

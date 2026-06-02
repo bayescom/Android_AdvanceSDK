@@ -33,12 +33,8 @@ import java.util.WeakHashMap;
 public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     TTAdNative mTTAdNative;
     TTFeedAd mRenderAD;
-//    CsjRenderDataConverter dataConverter;
     private final Map<CsjRenderFeedAdapter, TTAppDownloadListener> mTTAppDownloadListenerMap = new WeakHashMap<>();
 
-    public CsjRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         startLoadOnly();

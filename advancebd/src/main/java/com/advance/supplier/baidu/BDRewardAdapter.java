@@ -1,12 +1,10 @@
 package com.advance.supplier.baidu;
 
-import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 
 import android.app.Activity;
 import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
-import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
@@ -21,7 +19,6 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
     private RewardVideoAd mRewardVideoAd;
 
     private final String TAG = "[BDRewardAdapter] ";
-
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
@@ -42,9 +39,9 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
 
         mRewardVideoAd = new RewardVideoAd(getRealContext(), sdkSupplier.adspotid, this, AdvanceBDManager.getInstance().rewardUseSurfaceView);
         //服务端校验透传参数
-        if (setting != null) {
-            mRewardVideoAd.setUserId(setting.getUserId());
-            mRewardVideoAd.setExtraInfo(setting.getExtraInfo());
+        if (rewardSetting != null) {
+            mRewardVideoAd.setUserId(rewardSetting.getUserId());
+            mRewardVideoAd.setExtraInfo(rewardSetting.getExtraInfo());
         }
         //设置广告的底价，单位：分（仅支持bidding模式，需通过运营单独加白）
         int bidFloor = AdvanceBDManager.getInstance().rewardBidFloor;
@@ -93,9 +90,8 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
     @Override
     public void onAdClose(float v) {
         LogUtil.simple(TAG + "onAdClose " + v);
-        if (null != setting) {
-            setting.adapterAdClose();
-        }
+
+        handleClose();
 
     }
 
@@ -122,9 +118,8 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
     @Override
     public void playCompletion() {
         LogUtil.simple(TAG + "playCompletion");
-        if (null != setting) {
-            setting.adapterVideoComplete();
-        }
+
+        handleComplete();
     }
 
     @Override
@@ -132,9 +127,9 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
         // 用户点击跳过, 展示尾帧
         // 建议：媒体可以按照自己的设计给予奖励
         LogUtil.simple(TAG + " onSkip: playScale = " + playScale);
-        if (null != setting) {
-            setting.adapterVideoSkipped();
-        }
+
+
+        handleSkip();
     }
 
     @Override
@@ -144,17 +139,18 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
 
             RewardServerCallBackInf inf = new RewardServerCallBackInf();
             inf.rewardVerify = rewardVerify;
-            if (null != setting) {
-                if (rewardVerify) {
-                    //激励达成回调
-                    setting.adapterAdReward();
-                }
+            if (rewardVerify) {
+                //激励达成回调
+                handleReward();
 
-                if (sdkSupplier != null) {
-                    inf.supId = sdkSupplier.id;
-                }
-                setting.postRewardServerInf(inf);
             }
+
+
+            if (sdkSupplier != null) {
+                inf.supId = sdkSupplier.id;
+            }
+            handleRewardInf(inf);
+
         } catch (Throwable e) {
             e.printStackTrace();
         }

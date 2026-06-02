@@ -123,7 +123,7 @@ public class AdvanceBanner extends AdvanceBaseAdspot implements BannerSetting {
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getBannerAdapter(clzName, getADActivity(), this));
+            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getBannerAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }

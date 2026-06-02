@@ -2,6 +2,7 @@ package com.advance;
 
 import android.app.Activity;
 import android.text.TextUtils;
+import android.view.ViewGroup;
 
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceSDKCacheModel;
@@ -220,6 +221,11 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
     }
 
     @Override
+    public ViewGroup getAdContainer() {
+        return null;
+    }
+
+    @Override
     public void initSdkSupplier() {
         try {
             //配置渠道信息
@@ -248,7 +254,7 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getRewardAdapter(clzName, getADActivity(), this));
+            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getRewardAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -282,13 +288,13 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
         }
     }
 
-    public void adapterAdDidLoaded(final AdvanceRewardVideoItem advanceRewardVideoItem, SdkSupplier supplier) {
+    public void adapterAdDidLoaded( SdkSupplier supplier) {
         reportAdSucceed(supplier);
         BYThreadUtil.switchMainThread(new BYBaseCallBack() {
             @Override
             public void call() {
                 if (null != listener) {
-                    listener.onAdLoaded(advanceRewardVideoItem);
+                    listener.onAdLoaded();
                 }
                 if (rewardGMCallBack != null) {
                     rewardGMCallBack.onAdSuccess();

@@ -1,6 +1,7 @@
 package com.advance;
 
 import android.app.Activity;
+import android.view.ViewGroup;
 
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.InterstitialGMCallBack;
@@ -87,7 +88,7 @@ public class AdvanceInterstitial extends AdvanceBaseAdspot implements Interstiti
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getInterstitialAdapter(clzName, getADActivity(), this));
+            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getInterstitialAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -172,5 +173,10 @@ public class AdvanceInterstitial extends AdvanceBaseAdspot implements Interstiti
     @Deprecated
     public void setCsjNew(boolean csjNew) {
         isCsjNew = csjNew;
+    }
+
+    @Override
+    public ViewGroup getAdContainer() {
+        return null;
     }
 }

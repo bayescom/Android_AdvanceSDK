@@ -30,7 +30,7 @@ public class AdvanceDraw extends AdvanceBaseAdspot implements AdvanceDrawSetting
 
     public void initAdapterData(SdkSupplier sdkSupplier,String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getDrawAdapter(clzName, getADActivity(), this));
+            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getDrawAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -119,4 +119,8 @@ public class AdvanceDraw extends AdvanceBaseAdspot implements AdvanceDrawSetting
         return csjExpressWidth;
     }
 
+    @Override
+    public ViewGroup getAdContainer() {
+        return null;
+    }
 }

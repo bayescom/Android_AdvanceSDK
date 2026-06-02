@@ -411,7 +411,7 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
     @Override
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getSplashAdapter(clzName, softReferenceActivity, this));
+            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getSplashAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }

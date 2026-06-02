@@ -8,7 +8,9 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.webkit.WebView;
 
+import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvanceSupplierBridge;
+import com.advance.model.AdvanceCustomADNModel;
 import com.advance.model.AdvanceSupConfigModel;
 import com.advance.model.CacheMode;
 import com.advance.utils.AdvanceLoader;
@@ -89,8 +91,9 @@ public class AdvanceConfig {
     private CacheMode defaultStrategyCacheTime; //如果后台未下发策略缓存时长，本地的默认的策略缓存时间
 
     //有效的渠道config配置信息，一般有此信息代表引入了对应的adapter库。 key为SDKid信息，value为config实例。
-    public HashMap<String, AdvanceSupplierBridge> availableAdapterConfigMap = new HashMap<>();
+    public HashMap<String, AdvanceCustomInit> availableAdapterConfigMap = new HashMap<>();
     public boolean hasInitConfig = false;
+    public ArrayList<AdvanceCustomADNModel> customADNList = new ArrayList<>();
 
     private AdvanceConfig() {
         LogUtil.simple(" advance config start");

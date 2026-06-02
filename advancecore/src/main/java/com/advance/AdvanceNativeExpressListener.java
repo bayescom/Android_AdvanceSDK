@@ -16,5 +16,5 @@ public interface AdvanceNativeExpressListener extends AdvanceSelectListener {
 
     void onAdClicked(@Nullable View view);
 
-    void onAdLoaded(@Nullable List<AdvanceNativeExpressAdItem> list);
+    void onAdLoaded();
 }

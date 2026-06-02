@@ -1,8 +1,11 @@
 package com.advance.utils;
 
 
+import com.advance.custom.AdvanceCustomInit;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -20,6 +23,8 @@ public class AdvanceInitManger {
     private final AtomicBoolean isInitialized = new AtomicBoolean(false);
     private final CountDownLatch initLatch = new CountDownLatch(1);
 
+    //单例存储初始化处理类，key为类名+appID，value为实例化后的初始化处理类
+    Map<String, AdvanceCustomInit> runningInitMap = new HashMap<>();
 
     //线程安全的初始化处理逻辑
     public void initialize(BYBaseCallBack initCall) {

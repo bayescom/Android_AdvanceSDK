@@ -14,16 +14,13 @@ import android.widget.Toast;
 import com.advance.AdvanceBaseAdspot;
 import com.advance.AdvanceDraw;
 import com.advance.AdvanceDrawListener;
-import com.advance.AdvanceFullScreenItem;
 import com.advance.AdvanceFullScreenVideo;
 import com.advance.AdvanceFullScreenVideoListener;
 import com.advance.AdvanceInterstitial;
 import com.advance.AdvanceInterstitialListener;
 import com.advance.AdvanceNativeExpress;
-import com.advance.AdvanceNativeExpressAdItem;
 import com.advance.AdvanceNativeExpressListener;
 import com.advance.AdvanceRewardVideo;
-import com.advance.AdvanceRewardVideoItem;
 import com.advance.AdvanceRewardVideoListener;
 import com.advance.AdvanceSDK;
 import com.advance.RewardServerCallBackInf;
@@ -243,7 +240,7 @@ public class AdvanceAD {
         //设置通用事件监听器
         advanceRewardVideo.setAdListener(new AdvanceRewardVideoListener() {
             @Override
-            public void onAdLoaded(AdvanceRewardVideoItem advanceRewardVideoItem) {
+            public void onAdLoaded() {
                 logAndToast(mActivity, "广告加载成功");
                 if (hasRewardShow) {
                     return;
@@ -329,7 +326,7 @@ public class AdvanceAD {
         //推荐：核心事件监听回调
         advanceFullScreenVideo.setAdListener(new AdvanceFullScreenVideoListener() {
             @Override
-            public void onAdLoaded(AdvanceFullScreenItem advanceFullScreenItem) {
+            public void onAdLoaded() {
                 logAndToast(mActivity, "广告加载成功");
 
                 // 如果有业务需求，可以提前加载广告，在需要的时候调用show进行展示
@@ -415,7 +412,7 @@ public class AdvanceAD {
         //推荐：核心事件监听回调
         advanceNativeExpress.setAdListener(new AdvanceNativeExpressListener() {
             @Override
-            public void onAdLoaded(List<AdvanceNativeExpressAdItem> list) {
+            public void onAdLoaded() {
                 if (baseAD != null) {
                     baseAD.show();
                 }
@@ -498,7 +495,7 @@ public class AdvanceAD {
         //推荐：核心事件监听回调
         advanceNativeExpress.setAdListener(new AdvanceNativeExpressListener() {
             @Override
-            public void onAdLoaded(List<AdvanceNativeExpressAdItem> list) {
+            public void onAdLoaded() {
                 logAndToast(mActivity, "广告加载成功");
                 if (callBack != null) {
                     callBack.adSuccess();

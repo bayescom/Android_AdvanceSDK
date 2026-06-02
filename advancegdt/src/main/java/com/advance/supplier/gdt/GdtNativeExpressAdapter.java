@@ -4,22 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
-import com.advance.AdvanceNativeExpressAdItem;
-import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
-import com.qq.e.ads.cfg.DownAPPConfirmPolicy;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.nativ.ADSize;
 import com.qq.e.ads.nativ.NativeExpressAD;
 import com.qq.e.ads.nativ.NativeExpressADView;
 import com.qq.e.comm.util.AdError;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

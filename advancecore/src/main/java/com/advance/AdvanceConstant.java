@@ -63,7 +63,12 @@ public class AdvanceConstant {
      */
 
     public static final String SP_SETTING_REPORT = "sp_setting_report";
+    //个性化广告推荐开关存储标记
+    public static final String SP_SETTING_TRACK = "sp_setting_track_ad";
+    //摇一摇开关存储标记
+    public static final String SP_SETTING_SHAKE = "sp_setting_shake";;
 
+    public static final String CACHED_CUSTOM_ADN_SETTING = "cached_custom_adn_setting";
 
 
 

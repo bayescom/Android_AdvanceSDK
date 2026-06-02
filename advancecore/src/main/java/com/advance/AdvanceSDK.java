@@ -4,8 +4,8 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.advance.advancelib.BuildConfig;
+import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvancePrivacyController;
-import com.advance.itf.AdvanceSupplierBridge;
 import com.advance.model.AdvanceLogLevel;
 import com.advance.utils.ActivityTracker;
 import com.advance.utils.AdvanceUtil;
@@ -26,12 +26,12 @@ public class AdvanceSDK {
     public static void enableTrackAD(final boolean doTrack) {
         try {
             AdvanceSetting.getInstance().isADTrack = doTrack;
-            SupplierBridgeUtil.recycleCheckSup(new BYAbsCallBack<AdvanceSupplierBridge>() {
+            SupplierBridgeUtil.recycleCheckSup(new BYAbsCallBack<AdvanceCustomInit>() {
                 @Override
-                public void invoke(AdvanceSupplierBridge advanceSupplierBridge) {
+                public void invoke(AdvanceCustomInit advanceSupplierBridge) {
                     if (advanceSupplierBridge != null) {
                         LogUtil.devDebug("setPersonalRecommend :" + doTrack + ", advanceSupplierBridge = " + advanceSupplierBridge);
-                        advanceSupplierBridge.setPersonalRecommend(doTrack);
+                        advanceSupplierBridge.switchPersonalRecommend(doTrack);
                     }
                 }
             });
@@ -81,10 +81,10 @@ public class AdvanceSDK {
             } else {
                 AdvanceConfig.getInstance().setMercuryMediaId(appId);
             }
+            AdvanceConfig.getInstance().initSDKs(context);
+
             //初始化引入的渠道配置
             SupplierBridgeUtil.initSup();
-
-            AdvanceConfig.getInstance().initSDKs(context);
 
             //跟踪activity信息
             ActivityTracker.getInstance().initialize(context);
@@ -185,15 +185,15 @@ public class AdvanceSDK {
         try {
             AdvanceSetting.getInstance().advPrivacyController = controller;
 
-            SupplierBridgeUtil.recycleCheckSup(new BYAbsCallBack<AdvanceSupplierBridge>() {
-                @Override
-                public void invoke(AdvanceSupplierBridge advanceSupplierBridge) {
-                    if (advanceSupplierBridge != null) {
-                        LogUtil.devDebug("setCustomPrivacy , advanceSupplierBridge = " + advanceSupplierBridge);
-                        advanceSupplierBridge.setCustomPrivacy(controller);
-                    }
-                }
-            });
+//            SupplierBridgeUtil.recycleCheckSup(new BYAbsCallBack<AdvanceCustomInit>() {
+//                @Override
+//                public void invoke(AdvanceCustomInit advanceSupplierBridge) {
+//                    if (advanceSupplierBridge != null) {
+//                        LogUtil.devDebug("setCustomPrivacy , advanceSupplierBridge = " + advanceSupplierBridge);
+//                        advanceSupplierBridge.(controller);
+//                    }
+//                }
+//            });
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -211,12 +211,12 @@ public class AdvanceSDK {
         try {
             AdvanceSetting.getInstance().disableShake = shakeDisabled;
 
-            SupplierBridgeUtil.recycleCheckSup(new BYAbsCallBack<AdvanceSupplierBridge>() {
+            SupplierBridgeUtil.recycleCheckSup(new BYAbsCallBack<AdvanceCustomInit>() {
                 @Override
-                public void invoke(AdvanceSupplierBridge advanceSupplierBridge) {
+                public void invoke(AdvanceCustomInit advanceSupplierBridge) {
                     if (advanceSupplierBridge != null) {
                         LogUtil.devDebug("disableShake , advanceSupplierBridge = " + advanceSupplierBridge);
-                        advanceSupplierBridge.disableShake(shakeDisabled);
+                        advanceSupplierBridge.switchDisableShake(shakeDisabled);
                     }
                 }
             });
