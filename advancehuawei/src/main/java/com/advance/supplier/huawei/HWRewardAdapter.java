@@ -21,11 +21,6 @@ import java.util.Map;
 public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
     private RewardAd rewardedAd;
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        loadRewardAd();
-
-
-    }
 
     @Override
     public boolean isValid() {
@@ -106,25 +101,28 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
         }
     }
 
-    /**
-     * Load a rewarded ad.
-     */
-    private void loadRewardAd() {
-        //先执行SDK初始化
-        HWUtil.initAD(this);
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, RewardAd.class, new BYAbsCallBack<RewardAd>() {
-            @Override
-            public void invoke(RewardAd cacheAD) {
-                rewardedAd = cacheAD;
-
-                updateBidding(HWUtil.getPrice(cacheAD.getBiddingInfo()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        loadRewardAd();
+//    }
+//    /**
+//     * Load a rewarded ad.
+//     */
+//    private void loadRewardAd() {
+//        //先执行SDK初始化
+//        HWUtil.initAD(this);
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, RewardAd.class, new BYAbsCallBack<RewardAd>() {
+//            @Override
+//            public void invoke(RewardAd cacheAD) {
+//                rewardedAd = cacheAD;
+//
+//                updateBidding(HWUtil.getPrice(cacheAD.getBiddingInfo()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         if (rewardedAd == null) {
             rewardedAd = new RewardAd(getRealContext(), sdkSupplier.adspotid);

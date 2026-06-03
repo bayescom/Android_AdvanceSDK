@@ -283,7 +283,7 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
             @Override
             public void call() {
                 if (null != listener) {
-                    listener.onAdLoaded(null);
+                    listener.onAdLoaded();
                 }
 
                 if (expressGMCallBack != null) {

@@ -130,22 +130,22 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SplashAD.class, new BYAbsCallBack<SplashAD>() {
-            @Override
-            public void invoke(SplashAD cacheAD) {
-                mercurySplash = cacheAD;
-                //自渲染需要转换返回广告model为聚合通用model
-//                dataConverter = new KSRenderDataConverter(cacheAD, sdkSupplier);
-
-                updateBidding(cacheAD.getEcpm());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SplashAD.class, new BYAbsCallBack<SplashAD>() {
+//            @Override
+//            public void invoke(SplashAD cacheAD) {
+//                mercurySplash = cacheAD;
+//                //自渲染需要转换返回广告model为聚合通用model
+////                dataConverter = new KSRenderDataConverter(cacheAD, sdkSupplier);
+//
+//                updateBidding(cacheAD.getEcpm());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         int timeout = sdkSupplier.timeout <= 0 ? 5000 : sdkSupplier.timeout;
 //  2023/9/5 替换为分离加载模式

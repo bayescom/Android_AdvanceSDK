@@ -120,26 +120,26 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        GdtUtil.initAD(this, new BYBaseCallBack() {
-            @Override
-            public void call() {
-                loadAd();
-            }
-        });
-    }
-    public void loadAd() {
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtFullScreenVideoAdapter.class, new BYAbsCallBack<GdtFullScreenVideoAdapter>() {
-            @Override
-            public void invoke(GdtFullScreenVideoAdapter cacheAdapter) {
-                //更新缓存广告得价格
-                updateBidding(cacheAdapter.iad.getECPM());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        GdtUtil.initAD(this, new BYBaseCallBack() {
+//            @Override
+//            public void call() {
+//                loadAd();
+//            }
+//        });
+//    }
+//    public void loadAd() {
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtFullScreenVideoAdapter.class, new BYAbsCallBack<GdtFullScreenVideoAdapter>() {
+//            @Override
+//            public void invoke(GdtFullScreenVideoAdapter cacheAdapter) {
+//                //更新缓存广告得价格
+//                updateBidding(cacheAdapter.iad.getECPM());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
 
         iad = new UnifiedInterstitialAD(activity, sdkSupplier.adspotid, this);

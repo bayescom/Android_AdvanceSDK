@@ -51,6 +51,7 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     private Activity activity;
@@ -130,6 +131,9 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     //是否在子线程进行load，默认false，因为快手SDK不支持子线程调用load。
     protected boolean loadWithAsync = false;
     protected boolean isReard = false;
+
+    //用来传递给adn使用得自定义数据参数
+    Map<String, Object> mCustomData = new HashMap<>();
 
     public AdvanceBaseAdspot(Activity activity, String mediaId, String adspotId) {
         try {
@@ -378,6 +382,11 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
 //        return result;
 //    }
 
+    @Override
+    public Map<String, Object> getCustomData() {
+        return mCustomData;
+    }
+
 
     /**
      * BaseSetting 相关接口方法 ---end
@@ -385,6 +394,10 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
 
     public void setAdvanceLifecycleCallback(AdvanceLifecycleCallback callback) {
         advanceLifecycleCallback = callback;
+    }
+
+    public void setCustomData(Map<String, Object> customData) {
+        mCustomData = customData;
     }
 
     //获取ecpm 价格，一定要在广告返回回调以后调用，才会有值，否则为0

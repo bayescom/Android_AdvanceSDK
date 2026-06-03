@@ -65,36 +65,36 @@ public class KSRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        KSUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-                startLoad();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-
-    }
-
-    private void startLoad() {
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsNativeAd.class, new BYAbsCallBack<KsNativeAd>() {
-            @Override
-            public void invoke(KsNativeAd cacheAD) {
-                nativeAd = cacheAD;
-                //转换穿山甲返回广告model为聚合通用model
-                dataConverter = new KSRenderDataConverter(cacheAD, sdkSupplier);
-
-                updateBidding(cacheAD.getECPM());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        KSUtil.initAD(this, new AdvanceADNInitResult() {
+//            @Override
+//            public void success() {
+//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
+//                startLoad();
+//            }
+//
+//            @Override
+//            public void fail(String code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//
+//    }
+//
+//    private void startLoad() {
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsNativeAd.class, new BYAbsCallBack<KsNativeAd>() {
+//            @Override
+//            public void invoke(KsNativeAd cacheAD) {
+//                nativeAd = cacheAD;
+//                //转换穿山甲返回广告model为聚合通用model
+//                dataConverter = new KSRenderDataConverter(cacheAD, sdkSupplier);
+//
+//                updateBidding(cacheAD.getECPM());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
         
         //场景设置
         KsScene scene = new KsScene.Builder(KSUtil.getADID(sdkSupplier)).build(); // 此为测试posId，请联系快手平台申请正式posId

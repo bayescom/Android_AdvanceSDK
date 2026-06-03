@@ -9,6 +9,7 @@ import com.advance.model.SdkSupplier;
 import com.advance.model.SupplierSettingModel;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public interface BaseSetting {
     boolean needDelayReport(); //是否进行延迟上报
@@ -41,4 +42,7 @@ public interface BaseSetting {
 
     ViewGroup getAdContainer(); //广告承载布局，适用于开屏、信息流、banner、draw信息流
 
+//      void setCustomData(Map<String, Object> customData);
+
+    Map<String, Object> getCustomData();
 }

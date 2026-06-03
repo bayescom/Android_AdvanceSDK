@@ -20,37 +20,37 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class HWUtil {
-    public static synchronized void initAD(BaseParallelAdapter adapter) {
-        try {
-            final String tag = "[HWUtil.initAD] ";
-            String eMsg;
-            if (adapter == null) {
-                eMsg = tag + "initAD failed BaseParallelAdapter null";
-                LogUtil.e(eMsg);
-                return;
-            }
-
-            SdkSupplier supplier = adapter.sdkSupplier;
-            if (supplier == null) {
-                eMsg = tag + "initAD failed BaseParallelAdapter null";
-
-                LogUtil.e(eMsg);
-                return;
-            }
-
-            boolean hasInit = AdvanceHWManager.getInstance().hasInit;
-            if (hasInit) {
-                LogUtil.simple(tag + " already init");
-                return;
-            }
-            Context context = adapter.getRealContext();
-
-            HwAds.init(context.getApplicationContext());
-        } catch (Exception e) {
-
-        }
-
-    }
+//    public static synchronized void initAD(BaseParallelAdapter adapter) {
+//        try {
+//            final String tag = "[HWUtil.initAD] ";
+//            String eMsg;
+//            if (adapter == null) {
+//                eMsg = tag + "initAD failed BaseParallelAdapter null";
+//                LogUtil.e(eMsg);
+//                return;
+//            }
+//
+//            SdkSupplier supplier = adapter.sdkSupplier;
+//            if (supplier == null) {
+//                eMsg = tag + "initAD failed BaseParallelAdapter null";
+//
+//                LogUtil.e(eMsg);
+//                return;
+//            }
+//
+//            boolean hasInit = AdvanceHWManager.getInstance().hasInit;
+//            if (hasInit) {
+//                LogUtil.simple(tag + " already init");
+//                return;
+//            }
+//            Context context = adapter.getRealContext();
+//
+//            HwAds.init(context.getApplicationContext());
+//        } catch (Exception e) {
+//
+//        }
+//
+//    }
 
     public static synchronized double getPrice(BiddingInfo biddingInfo) {
         double result = 0;

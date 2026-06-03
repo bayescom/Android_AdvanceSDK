@@ -112,21 +112,21 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         //先执行SDK初始化
-        HWUtil.initAD(this);
-
-
-//检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWNativeExpressAdapter.class, new BYAbsCallBack<HWNativeExpressAdapter>() {
-            @Override
-            public void invoke(HWNativeExpressAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                updateBidding(HWUtil.getPrice(cacheAdapter.mNativeAd.getBiddingInfo()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        HWUtil.initAD(this);
+//
+//
+////检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWNativeExpressAdapter.class, new BYAbsCallBack<HWNativeExpressAdapter>() {
+//            @Override
+//            public void invoke(HWNativeExpressAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+//                updateBidding(HWUtil.getPrice(cacheAdapter.mNativeAd.getBiddingInfo()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         String adId = sdkSupplier.adspotid;
 //        adId = "testb65czjivt9"; // 原生小图广告

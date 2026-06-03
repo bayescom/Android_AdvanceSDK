@@ -111,34 +111,32 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
         //初始化值
 //        CSJSplashClickEyeManager.getInstance().setSupportSplashClickEye(false);
 
-        CsjUtil.initCsj(this, new CsjUtil.InitListener() {
-            @Override
-            public void success() {
-                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-                startLoad();
-
-            }
-
-            @Override
-            public void fail(int code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
-
-    private void startLoad() {
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, CSJSplashAd.class, new BYAbsCallBack<CSJSplashAd>() {
-            @Override
-            public void invoke(CSJSplashAd csjSplashAd) {
-                newSplashAd = csjSplashAd;
-                updateBidding(CsjUtil.getEcpmValue(TAG, newSplashAd.getMediaExtraInfo()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        CsjUtil.initCsj(this, new CsjUtil.InitListener() {
+//            @Override
+//            public void success() {
+//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
+//                startLoad();
+//
+//            }
+//
+//            @Override
+//            public void fail(int code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, CSJSplashAd.class, new BYAbsCallBack<CSJSplashAd>() {
+//            @Override
+//            public void invoke(CSJSplashAd csjSplashAd) {
+//                newSplashAd = csjSplashAd;
+//                updateBidding(CsjUtil.getEcpmValue(TAG, newSplashAd.getMediaExtraInfo()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
 
         final TTAdManager ttAdManager = TTAdSdk.getAdManager();

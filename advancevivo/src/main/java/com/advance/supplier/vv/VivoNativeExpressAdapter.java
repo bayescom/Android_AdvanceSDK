@@ -34,20 +34,6 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
 
     }
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        VivoUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                loadAd();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-
-    }
 
     @Override
     protected void adPrepared() {
@@ -77,20 +63,34 @@ public class VivoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
         }
     }
 
-    private void loadAd() {
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoNativeExpressAdapter.class, new BYAbsCallBack<VivoNativeExpressAdapter>() {
-            @Override
-            public void invoke(VivoNativeExpressAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                updateBidding(VivoUtil.getPrice(cacheAdapter.expressView));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        VivoUtil.initAD(this, new AdvanceADNInitResult() {
+//            @Override
+//            public void success() {
+//                loadAd();
+//            }
+//
+//            @Override
+//            public void fail(String code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//
+//    }
+//    private void loadAd() {
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoNativeExpressAdapter.class, new BYAbsCallBack<VivoNativeExpressAdapter>() {
+//            @Override
+//            public void invoke(VivoNativeExpressAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+//                updateBidding(VivoUtil.getPrice(cacheAdapter.expressView));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
         
         AdParams adParams = null;
         AdParams.Builder builder = VivoUtil.getAdParamsBuilder(this);

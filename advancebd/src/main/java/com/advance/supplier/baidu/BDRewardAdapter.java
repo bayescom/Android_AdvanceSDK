@@ -22,20 +22,20 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        BDUtil.initBDAccount(this);
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDRewardAdapter.class, new BYAbsCallBack<BDRewardAdapter>() {
-            @Override
-            public void invoke(BDRewardAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                updateBidding(BDUtil.getEcpmValue(cacheAdapter.mRewardVideoAd.getECPMLevel()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        BDUtil.initBDAccount(this);
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDRewardAdapter.class, new BYAbsCallBack<BDRewardAdapter>() {
+//            @Override
+//            public void invoke(BDRewardAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+//                updateBidding(BDUtil.getEcpmValue(cacheAdapter.mRewardVideoAd.getECPMLevel()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         mRewardVideoAd = new RewardVideoAd(getRealContext(), sdkSupplier.adspotid, this, AdvanceBDManager.getInstance().rewardUseSurfaceView);
         //服务端校验透传参数

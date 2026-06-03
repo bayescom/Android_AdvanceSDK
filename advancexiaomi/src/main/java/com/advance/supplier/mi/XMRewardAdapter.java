@@ -29,20 +29,6 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
     public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
 
     }
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        XMUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                loadAd();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
-
     @Override
     protected void adPrepared() {
 
@@ -146,19 +132,33 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
         }
     }
 
-    private void loadAd() {
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, RewardVideoAd.class, new BYAbsCallBack<RewardVideoAd>() {
-            @Override
-            public void invoke(RewardVideoAd cacheAD) {
-                rewardVideoAd = cacheAD;
-
-                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        XMUtil.initAD(this, new AdvanceADNInitResult() {
+//            @Override
+//            public void success() {
+//                loadAd();
+//            }
+//
+//            @Override
+//            public void fail(String code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//    }
+//
+//    private void loadAd() {
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, RewardVideoAd.class, new BYAbsCallBack<RewardVideoAd>() {
+//            @Override
+//            public void invoke(RewardVideoAd cacheAD) {
+//                rewardVideoAd = cacheAD;
+//
+//                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         
         rewardVideoAd = new RewardVideoAd();

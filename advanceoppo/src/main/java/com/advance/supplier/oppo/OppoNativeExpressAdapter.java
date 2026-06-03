@@ -38,11 +38,11 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
     
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        OppoUtil.initAD(this);
-        loadAd();
-    }
-
-    void loadAd() {
+//        OppoUtil.initAD(this);
+//        loadAd();
+//    }
+//
+//    void loadAd() {
         try {
             /**
              * 通过构造NativeAdSize对象，在NativeTempletAd初始化时传入、可以指定原生模板广告的大小，单位为dp
@@ -52,16 +52,16 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
              */
 
 //检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoNativeExpressAdapter.class, new BYAbsCallBack<OppoNativeExpressAdapter>() {
-                @Override
-                public void invoke(OppoNativeExpressAdapter cacheAdapter) {
-                    //更新缓存广告得价格
-                    updateBidding(cacheAdapter.adView.getECPM());
-                }
-            });
-            if (hitCache) {
-                return;
-            }
+//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoNativeExpressAdapter.class, new BYAbsCallBack<OppoNativeExpressAdapter>() {
+//                @Override
+//                public void invoke(OppoNativeExpressAdapter cacheAdapter) {
+//                    //更新缓存广告得价格
+//                    updateBidding(cacheAdapter.adView.getECPM());
+//                }
+//            });
+//            if (hitCache) {
+//                return;
+//            }
 
 
             //  2025/2/21 测试高度为0时表现？？？  测试看下来设置宽高信息，广告不会根据设置的值来渲染。。。。

@@ -35,20 +35,6 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
 
     }
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        VivoUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                loadAd();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-
-    }
 
     @Override
     protected void adPrepared() {
@@ -81,21 +67,36 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
         }
     }
 
-    private void loadAd() {
 
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoBannerAdapter.class, new BYAbsCallBack<VivoBannerAdapter>() {
-            @Override
-            public void invoke(VivoBannerAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-//                updateBidding();
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        VivoUtil.initAD(this, new AdvanceADNInitResult() {
+//            @Override
+//            public void success() {
+//                loadAd();
+//            }
+//
+//            @Override
+//            public void fail(String code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//
+//    }
+//    private void loadAd() {
+//
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoBannerAdapter.class, new BYAbsCallBack<VivoBannerAdapter>() {
+//            @Override
+//            public void invoke(VivoBannerAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+////                updateBidding();
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         //如果不在需要使用到banner广告，请及时销毁
         if (vivoBannerAd != null) {

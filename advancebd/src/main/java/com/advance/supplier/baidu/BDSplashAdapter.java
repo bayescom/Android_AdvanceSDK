@@ -27,7 +27,7 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
 
     
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        BDUtil.initBDAccount(this);
+//        BDUtil.initBDAccount(this);
 
         parameters = AdvanceBDManager.getInstance().splashParameters;
 

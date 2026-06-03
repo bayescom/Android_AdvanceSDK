@@ -176,34 +176,34 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
-            @Override
-            public void success() {
-                startLoadAD();
-            }
-
-            @Override
-            public void fail(int code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
-
-    private void startLoadAD() {
+//        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
+//            @Override
+//            public void success() {
+//                startLoadAD();
+//            }
+//
+//            @Override
+//            public void fail(int code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//    }
+//
+//    private void startLoadAD() {
         try {
             //检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxFeedAd.class, new BYAbsCallBack<ITanxFeedAd>() {
-                @Override
-                public void invoke(ITanxFeedAd cacheAD) {
-                    nativeAD = cacheAD;
-                    dataConverter = new TanxRenderDataConverter(nativeAD, sdkSupplier);
-
-                    updateBidding(cacheAD.getBidInfo().getBidPrice());
-                }
-            });
-            if (hitCache) {
-                return;
-            }
+//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxFeedAd.class, new BYAbsCallBack<ITanxFeedAd>() {
+//                @Override
+//                public void invoke(ITanxFeedAd cacheAD) {
+//                    nativeAD = cacheAD;
+//                    dataConverter = new TanxRenderDataConverter(nativeAD, sdkSupplier);
+//
+//                    updateBidding(cacheAD.getBidInfo().getBidPrice());
+//                }
+//            });
+//            if (hitCache) {
+//                return;
+//            }
 
 //            if (BYUtil.isDev()) {
 //                int a = 0 / 0;

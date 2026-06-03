@@ -6,9 +6,7 @@ import android.os.Handler;
 
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.fl.saas.adx.api.FLSpread;
 import com.fl.saas.adx.base.exception.FLError;
 import com.fl.saas.adx.base.interfaces.AdViewSpreadListener;
@@ -23,23 +21,23 @@ public class FLSplashAdapter extends AdvanceSplashCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        FLUtil.initAD(this);
-        loadAd();
-    }
-
-    private void loadAd() {
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, FLSplashAdapter.class, new BYAbsCallBack<FLSplashAdapter>() {
-            @Override
-            public void invoke(FLSplashAdapter cacheAdapter) {
-                //更新缓存广告得价格
-                updateBidding(cacheAdapter.adData.getEcpm());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        FLUtil.initAD(this);
+//        loadAd();
+//    }
+//
+//    private void loadAd() {
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, FLSplashAdapter.class, new BYAbsCallBack<FLSplashAdapter>() {
+//            @Override
+//            public void invoke(FLSplashAdapter cacheAdapter) {
+//                //更新缓存广告得价格
+//                updateBidding(cacheAdapter.adData.getEcpm());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
         FLSpread.Builder flBuilder = new FLSpread.Builder(getRealContext());
         flBuilder.setKey(getPosID())
                 .setSpreadLoadListener(new SpreadLoadListener() {

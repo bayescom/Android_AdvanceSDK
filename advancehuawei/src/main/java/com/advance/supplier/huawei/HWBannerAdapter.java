@@ -32,9 +32,6 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
     boolean isLandingPage = false;
 
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        loadAd();
-    }
 
     @Override
     protected void adPrepared() {
@@ -84,23 +81,26 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
         }
     }
 
-    private void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        loadAd();
+//    }
+//    private void loadAd() {
         //先执行SDK初始化
-        HWUtil.initAD(this);
-
-
-//检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWBannerAdapter.class, new BYAbsCallBack<HWBannerAdapter>() {
-            @Override
-            public void invoke(HWBannerAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                updateBidding(HWUtil.getPrice(cacheAdapter.bannerView.getBiddingInfo()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        HWUtil.initAD(this);
+//
+//
+////检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWBannerAdapter.class, new BYAbsCallBack<HWBannerAdapter>() {
+//            @Override
+//            public void invoke(HWBannerAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+//                updateBidding(HWUtil.getPrice(cacheAdapter.bannerView.getBiddingInfo()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         // Call new BannerView(Context context) to create a BannerView class.
         bannerView = new BannerView(getRealContext());

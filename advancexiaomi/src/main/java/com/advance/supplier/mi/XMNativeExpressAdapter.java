@@ -28,19 +28,6 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
     }
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        XMUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                loadAd();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
 
     @Override
     protected void adPrepared() {
@@ -96,19 +83,32 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         }
     }
 
-    private void loadAd() {
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TemplateAd.class, new BYAbsCallBack<TemplateAd>() {
-            @Override
-            public void invoke(TemplateAd cacheAD) {
-                templateAd = cacheAD;
-
-                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        XMUtil.initAD(this, new AdvanceADNInitResult() {
+//            @Override
+//            public void success() {
+//                loadAd();
+//            }
+//
+//            @Override
+//            public void fail(String code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//    }
+//    private void loadAd() {
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TemplateAd.class, new BYAbsCallBack<TemplateAd>() {
+//            @Override
+//            public void invoke(TemplateAd cacheAD) {
+//                templateAd = cacheAD;
+//
+//                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
         
         templateAd = new TemplateAd();
 

@@ -112,20 +112,20 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryInterstitialAdapter.class, new BYAbsCallBack<MercuryInterstitialAdapter>() {
-            @Override
-            public void invoke(MercuryInterstitialAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                updateBidding(cacheAdapter.interstitialAD.getEcpm());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryInterstitialAdapter.class, new BYAbsCallBack<MercuryInterstitialAdapter>() {
+//            @Override
+//            public void invoke(MercuryInterstitialAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+//                updateBidding(cacheAdapter.interstitialAD.getEcpm());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         interstitialAD = new InterstitialAD(context, sdkSupplier.adspotid);
         interstitialAD.setAdListener(this);

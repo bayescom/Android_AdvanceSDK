@@ -34,21 +34,21 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         parameters = AdvanceBDManager.getInstance().nativeExpressParameters;
-
-        BDUtil.initBDAccount(this);
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDNativeExpressAdapter.class, new BYAbsCallBack<BDNativeExpressAdapter>() {
-            @Override
-            public void invoke(BDNativeExpressAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                updateBidding(BDUtil.getEcpmValue(cacheAdapter.nativeResponse.getECPMLevel()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//
+//        BDUtil.initBDAccount(this);
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDNativeExpressAdapter.class, new BYAbsCallBack<BDNativeExpressAdapter>() {
+//            @Override
+//            public void invoke(BDNativeExpressAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+//                updateBidding(BDUtil.getEcpmValue(cacheAdapter.nativeResponse.getECPMLevel()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         if (sdkSupplier != null) {
 

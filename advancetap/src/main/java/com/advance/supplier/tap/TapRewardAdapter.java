@@ -32,16 +32,6 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
 
     }
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        TapUtil.initAD(this, new BYBaseCallBack() {
-            @Override
-            public void call() {
-                loadAD();
-            }
-        });
-
-    }
-
 
     @Override
     protected void adPrepared() {
@@ -171,21 +161,31 @@ public class TapRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
 
-    private void loadAD() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        TapUtil.initAD(this, new BYBaseCallBack() {
+//            @Override
+//            public void call() {
+//                loadAD();
+//            }
+//        });
+//
+//    }
+//
+//    private void loadAD() {
         try {
 
             //检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TapRewardVideoAd.class, new BYAbsCallBack<TapRewardVideoAd>() {
-                @Override
-                public void invoke(TapRewardVideoAd cacheAD) {
-                    adData = cacheAD;
-
-                    updateBidding(TapUtil.getBiddingPrice(cacheAD.getMediaExtraInfo()));
-                }
-            });
-            if (hitCache) {
-                return;
-            }
+//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TapRewardVideoAd.class, new BYAbsCallBack<TapRewardVideoAd>() {
+//                @Override
+//                public void invoke(TapRewardVideoAd cacheAD) {
+//                    adData = cacheAD;
+//
+//                    updateBidding(TapUtil.getBiddingPrice(cacheAD.getMediaExtraInfo()));
+//                }
+//            });
+//            if (hitCache) {
+//                return;
+//            }
 
 
             Context ctx = getRealActivity(null);

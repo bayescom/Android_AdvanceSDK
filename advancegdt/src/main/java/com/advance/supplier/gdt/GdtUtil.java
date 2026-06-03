@@ -21,70 +21,70 @@ public class GdtUtil implements AdvanceSplashPlusManager.ZoomCall {
 //        initAD(adapter, null);
 //    }
 
-    public static synchronized void initAD(final BaseParallelAdapter adapter, final BYBaseCallBack callBack) {
-        try {
-            if (adapter == null) {
-                String eMsg = "[GdtUtil] initAD failed BaseParallelAdapter null";
-                LogUtil.e(eMsg);
-                return;
-            }
-            boolean hasInit = AdvanceSetting.getInstance().hasGDTInit;
-
-            if (adapter.sdkSupplier == null) {
-                String eMsg = "[GdtUtil] initAD failed adapter.sdkSupplier null";
-                LogUtil.e(eMsg);
-                adapter.handleFailed(AdvanceError.ERROR_INIT_DEFAULT + "", eMsg);
-                return;
-            }
-            String mid = adapter.sdkSupplier.mediaid;
-            String lastAppId = AdvanceSetting.getInstance().lastGDTAID;
-            String gdtMID = AdvanceUtil.getGdtAccount(mid);
-            boolean isSame = lastAppId.equals(gdtMID);
-            //只有当允许初始化优化时，且快手已经初始化成功过，并行初始化的id和当前id一致，才可以不再重复初始化。
-            if (hasInit && adapter.canOptInit() && isSame) {
-                LogUtil.simple("[GdtUtil] initAD already init");
-                if (callBack != null) {
-                    callBack.call();
-                }
-                return;
-            }
-
-//            GDTAdSdk.init(adapter.getRealContext(), gdtMID);
-            final AdvancePrivacyController advancePrivacyController = AdvanceSetting.getInstance().advPrivacyController;
-            if (advancePrivacyController != null) {
-                // 建议在初始化 SDK 前进行此设置
-                GlobalSetting.setEnableCollectAppInstallStatus(advancePrivacyController.alist());
-            }
-
-            //使用新初始化方法
-            GDTAdSdk.initWithoutStart(adapter.getRealContext(), gdtMID); // 该接口不会采集用户信息
-// 调用initWithoutStart后请尽快调用start，否则可能影响广告填充，造成收入下降
-            GDTAdSdk.start(new GDTAdSdk.OnStartListener() {
-                @Override
-                public void onStartSuccess() {
-                    LogUtil.simple("[GdtUtil] onStartSuccess");
-
-
-                    // 推荐开发者在onStartSuccess回调后开始拉广告
-                    AdvanceSetting.getInstance().hasGDTInit = true;
-                }
-
-                @Override
-                public void onStartFailed(Exception e) {
-                    LogUtil.e("[GdtUtil]  onStartFailed:" + e.toString());
-                    AdvanceSetting.getInstance().hasGDTInit = false;
-                    adapter.handleFailed(AdvanceError.ERROR_INIT_DEFAULT + "", e.toString());
-                }
-            });
-            AdvanceSetting.getInstance().hasGDTInit = true;
-            AdvanceSetting.getInstance().lastGDTAID = gdtMID;
-            if (callBack != null) {
-                callBack.call();
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
+//    public static synchronized void initAD(final BaseParallelAdapter adapter, final BYBaseCallBack callBack) {
+//        try {
+//            if (adapter == null) {
+//                String eMsg = "[GdtUtil] initAD failed BaseParallelAdapter null";
+//                LogUtil.e(eMsg);
+//                return;
+//            }
+//            boolean hasInit = AdvanceSetting.getInstance().hasGDTInit;
+//
+//            if (adapter.sdkSupplier == null) {
+//                String eMsg = "[GdtUtil] initAD failed adapter.sdkSupplier null";
+//                LogUtil.e(eMsg);
+//                adapter.handleFailed(AdvanceError.ERROR_INIT_DEFAULT + "", eMsg);
+//                return;
+//            }
+//            String mid = adapter.sdkSupplier.mediaid;
+//            String lastAppId = AdvanceSetting.getInstance().lastGDTAID;
+//            String gdtMID = AdvanceUtil.getGdtAccount(mid);
+//            boolean isSame = lastAppId.equals(gdtMID);
+//            //只有当允许初始化优化时，且快手已经初始化成功过，并行初始化的id和当前id一致，才可以不再重复初始化。
+//            if (hasInit && adapter.canOptInit() && isSame) {
+//                LogUtil.simple("[GdtUtil] initAD already init");
+//                if (callBack != null) {
+//                    callBack.call();
+//                }
+//                return;
+//            }
+//
+////            GDTAdSdk.init(adapter.getRealContext(), gdtMID);
+//            final AdvancePrivacyController advancePrivacyController = AdvanceSetting.getInstance().advPrivacyController;
+//            if (advancePrivacyController != null) {
+//                // 建议在初始化 SDK 前进行此设置
+//                GlobalSetting.setEnableCollectAppInstallStatus(advancePrivacyController.alist());
+//            }
+//
+//            //使用新初始化方法
+//            GDTAdSdk.initWithoutStart(adapter.getRealContext(), gdtMID); // 该接口不会采集用户信息
+//// 调用initWithoutStart后请尽快调用start，否则可能影响广告填充，造成收入下降
+//            GDTAdSdk.start(new GDTAdSdk.OnStartListener() {
+//                @Override
+//                public void onStartSuccess() {
+//                    LogUtil.simple("[GdtUtil] onStartSuccess");
+//
+//
+//                    // 推荐开发者在onStartSuccess回调后开始拉广告
+//                    AdvanceSetting.getInstance().hasGDTInit = true;
+//                }
+//
+//                @Override
+//                public void onStartFailed(Exception e) {
+//                    LogUtil.e("[GdtUtil]  onStartFailed:" + e.toString());
+//                    AdvanceSetting.getInstance().hasGDTInit = false;
+//                    adapter.handleFailed(AdvanceError.ERROR_INIT_DEFAULT + "", e.toString());
+//                }
+//            });
+//            AdvanceSetting.getInstance().hasGDTInit = true;
+//            AdvanceSetting.getInstance().lastGDTAID = gdtMID;
+//            if (callBack != null) {
+//                callBack.call();
+//            }
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public void zoomOut(Activity activity) {

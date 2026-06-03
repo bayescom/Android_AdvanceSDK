@@ -21,9 +21,6 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     InterstitialAd interstitialAd;
 
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        loadAd();
-    }
 
     @Override
     public boolean isValid() {
@@ -67,23 +64,26 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         }
     }
 
-    private void loadAd() {
-        //先执行SDK初始化
-        HWUtil.initAD(this);
-
-
-//检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWInterstitialAdapter.class, new BYAbsCallBack<HWInterstitialAdapter>() {
-            @Override
-            public void invoke(HWInterstitialAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                updateBidding(HWUtil.getPrice(cacheAdapter.interstitialAd.getBiddingInfo()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        loadAd();
+//    }
+//    private void loadAd() {
+//        //先执行SDK初始化
+//        HWUtil.initAD(this);
+//
+//
+////检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWInterstitialAdapter.class, new BYAbsCallBack<HWInterstitialAdapter>() {
+//            @Override
+//            public void invoke(HWInterstitialAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+//                updateBidding(HWUtil.getPrice(cacheAdapter.interstitialAd.getBiddingInfo()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         interstitialAd = new InterstitialAd(getRealContext());
         interstitialAd.setAdId(sdkSupplier.adspotid);

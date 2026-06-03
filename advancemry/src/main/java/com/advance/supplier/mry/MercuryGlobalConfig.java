@@ -1,18 +1,29 @@
 package com.advance.supplier.mry;
 
+import android.content.Context;
 import android.location.Location;
 
+import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.itf.AdvanceSupplierBridge;
 import com.bayes.sdk.basic.core.BYConstants;
+import com.mercury.sdk.core.config.AdConfigManager;
 import com.mercury.sdk.core.config.MercuryAD;
 import com.mercury.sdk.core.config.MercuryPrivacyController;
 
-public class MercuryGlobalConfig implements AdvanceSupplierBridge {
-    @Override
-    public void setCustomPrivacy(AdvancePrivacyController advancePrivacyController) {
+import java.util.Map;
 
-        initMercuryPrivacy(advancePrivacyController);
+public class MercuryGlobalConfig extends AdvanceCustomInit {
+
+
+    @Override
+    public void initADN(Context context, Map<String, Object> serverExtra) {
+        initMercuryPrivacy(getPrivacyController());
+
+        AdConfigManager.getInstance().setMediaId(getAppID());
+        AdConfigManager.getInstance().setMediaKey(getAppKey());
+
+        callInitSuccess();
     }
 
     @Override
@@ -27,14 +38,25 @@ public class MercuryGlobalConfig implements AdvanceSupplierBridge {
     }
 
     @Override
-    public void setPersonalRecommend(boolean allow) {
+    public void switchPersonalRecommend(boolean isPersonalRecommend) {
         try {
-            MercuryAD.enableTrackAD(allow);
+            MercuryAD.enableTrackAD(isPersonalRecommend);
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
     }
+
+    @Override
+    public void switchDisableShake(boolean disableShake) {
+        try {
+            MercuryAD.disableShake(disableShake);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     public static void initMercuryPrivacy(final AdvancePrivacyController controller) {
         try {
@@ -108,13 +130,6 @@ public class MercuryGlobalConfig implements AdvanceSupplierBridge {
         }
     }
 
-    @Override
-    public void disableShake(boolean disableShake) {
-        try {
-            MercuryAD.disableShake(disableShake);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
+
 
 }

@@ -428,7 +428,7 @@ public class AdvanceNetManger {
                     JSONArray succeedJsonArray = job.optJSONArray("succeedtk");
                     JSONArray failedJsonArray = job.optJSONArray("failedtk");
                     JSONArray loadedJsonArray = job.optJSONArray("loadedtk");
-                    JSONArray ext = job.optJSONArray("ext");
+                    String ext = job.optString("ext");
                     int biddingOpen = job.optInt("is_head_bidding", 0);
                     boolean enableBidding = biddingOpen == 1;
                     SdkSupplier ss = new SdkSupplier();

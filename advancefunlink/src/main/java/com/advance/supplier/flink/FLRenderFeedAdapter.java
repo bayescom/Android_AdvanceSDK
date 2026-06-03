@@ -17,17 +17,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
 import com.advance.core.srender.AdvanceRFUtil;
 import com.advance.core.srender.widget.AdvRFLogoView;
 import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.fl.saas.adx.api.AdParams;
 import com.fl.saas.adx.api.FLSDK;
 import com.fl.saas.adx.api.mixNative.NativeAd;
@@ -48,23 +45,23 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        FLUtil.initAD(this);
-        loadAd();
-    }
-
-    private void loadAd() {
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, FLRenderFeedAdapter.class, new BYAbsCallBack<FLRenderFeedAdapter>() {
-            @Override
-            public void invoke(FLRenderFeedAdapter cacheAdapter) {
-                //更新缓存广告得价格
-                updateBidding(cacheAdapter.flAd.getECPM());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        FLUtil.initAD(this);
+//        loadAd();
+//    }
+//
+//    private void loadAd() {
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, FLRenderFeedAdapter.class, new BYAbsCallBack<FLRenderFeedAdapter>() {
+//            @Override
+//            public void invoke(FLRenderFeedAdapter cacheAdapter) {
+//                //更新缓存广告得价格
+//                updateBidding(cacheAdapter.flAd.getECPM());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         AdParams params = new AdParams.Builder(getPosID())
 //                .setExpressHeight(height) // 期望模板高度，单位dp。

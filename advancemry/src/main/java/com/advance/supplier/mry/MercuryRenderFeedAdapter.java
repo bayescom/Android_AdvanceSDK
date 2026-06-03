@@ -56,10 +56,6 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        doStart();
-    }
-
     @Override
     protected void adPrepared() {
 
@@ -85,23 +81,27 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
 
-    private void doStart() {
-        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
-        
-//检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, NativeADData.class, new BYAbsCallBack<NativeADData>() {
-            @Override
-            public void invoke(NativeADData cacheAD) {
-                mRenderAD = cacheAD;
-                //自渲染需要转换返回广告model为聚合通用model
-                dataConverter = new MercuryRenderDataConverter(cacheAD, sdkSupplier);
-
-                updateBidding(cacheAD.getECPM());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        doStart();
+//    }
+//
+//    private void doStart() {
+//        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
+//
+////检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, NativeADData.class, new BYAbsCallBack<NativeADData>() {
+//            @Override
+//            public void invoke(NativeADData cacheAD) {
+//                mRenderAD = cacheAD;
+//                //自渲染需要转换返回广告model为聚合通用model
+//                dataConverter = new MercuryRenderDataConverter(cacheAD, sdkSupplier);
+//
+//                updateBidding(cacheAD.getECPM());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
         nativeAD = new NativeAD(getRealActivity(null), sdkSupplier.adspotid, new NativeADListener() {
             @Override
             public void onADLoaded(List<NativeADData> list) {

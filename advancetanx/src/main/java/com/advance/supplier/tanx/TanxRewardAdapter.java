@@ -173,33 +173,33 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
-            @Override
-            public void success() {
-                startLoadAD();
-            }
-
-            @Override
-            public void fail(int code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
-
-    private void startLoadAD() {
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxRewardExpressAd.class, new BYAbsCallBack<ITanxRewardExpressAd>() {
-            @Override
-            public void invoke(ITanxRewardExpressAd cacheAD) {
-                iTanxRewardVideoExpressAd = cacheAD;
-
-                updateBidding(cacheAD.getBidInfo().getBidPrice());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
+//            @Override
+//            public void success() {
+//                startLoadAD();
+//            }
+//
+//            @Override
+//            public void fail(int code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//    }
+//
+//    private void startLoadAD() {
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxRewardExpressAd.class, new BYAbsCallBack<ITanxRewardExpressAd>() {
+//            @Override
+//            public void invoke(ITanxRewardExpressAd cacheAD) {
+//                iTanxRewardVideoExpressAd = cacheAD;
+//
+//                updateBidding(cacheAD.getBidInfo().getBidPrice());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
         
         //获取用户id，首先检查tanx通用配置
         String uid = AdvanceTanxSetting.getInstance().mediaUID;

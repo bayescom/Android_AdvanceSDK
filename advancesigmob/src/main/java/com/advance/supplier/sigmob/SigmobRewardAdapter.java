@@ -30,21 +30,6 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        SigmobUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                //只有在成功初始化以后才能调用load方法
-                startLoad();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
-
     @Override
     protected void adPrepared() {
 
@@ -55,21 +40,37 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
         windRewardVideoAd.destroy();
     }
 
-    private void startLoad() {
+
+
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        SigmobUtil.initAD(this, new AdvanceADNInitResult() {
+//            @Override
+//            public void success() {
+//                //只有在成功初始化以后才能调用load方法
+//                startLoad();
+//            }
+//
+//            @Override
+//            public void fail(String code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//    }
+//    private void startLoad() {
         try {
 
 //检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, SigmobRewardAdapter.class, new BYAbsCallBack<SigmobRewardAdapter>() {
-                @Override
-                public void invoke(SigmobRewardAdapter cacheAdapter) {
-
-                    //更新缓存广告得价格
-                    updateBidding(SigmobUtil.getEcpmNumber(cacheAdapter.windRewardVideoAd.getEcpm()));
-                }
-            });
-            if (hitCache) {
-                return;
-            }
+//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, SigmobRewardAdapter.class, new BYAbsCallBack<SigmobRewardAdapter>() {
+//                @Override
+//                public void invoke(SigmobRewardAdapter cacheAdapter) {
+//
+//                    //更新缓存广告得价格
+//                    updateBidding(SigmobUtil.getEcpmNumber(cacheAdapter.windRewardVideoAd.getEcpm()));
+//                }
+//            });
+//            if (hitCache) {
+//                return;
+//            }
 
 
             String userId = SigmobSetting.getInstance().userId;

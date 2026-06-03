@@ -27,26 +27,26 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        GdtUtil.initAD(this, new BYBaseCallBack() {
-            @Override
-            public void call() {
-                loadAd();
-            }
-        });
-    }
-    public void loadAd() {
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtNativeExpressAdapter.class, new BYAbsCallBack<GdtNativeExpressAdapter>() {
-            @Override
-            public void invoke(GdtNativeExpressAdapter cacheAdapter) {
-                //更新缓存广告得价格
-                updateBidding(cacheAdapter.adView.getECPM());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        GdtUtil.initAD(this, new BYBaseCallBack() {
+//            @Override
+//            public void call() {
+//                loadAd();
+//            }
+//        });
+//    }
+//    public void loadAd() {
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtNativeExpressAdapter.class, new BYAbsCallBack<GdtNativeExpressAdapter>() {
+//            @Override
+//            public void invoke(GdtNativeExpressAdapter cacheAdapter) {
+//                //更新缓存广告得价格
+//                updateBidding(cacheAdapter.adView.getECPM());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         int width = nativeExpressSetting.getExpressViewWidth();
         int height = nativeExpressSetting.getExpressViewHeight();

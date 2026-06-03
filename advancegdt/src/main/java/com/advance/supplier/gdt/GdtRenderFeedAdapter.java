@@ -38,15 +38,6 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     NativeUnifiedADData mRenderAD;
 
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        GdtUtil.initAD(this, new BYBaseCallBack() {
-            @Override
-            public void call() {
-                loadAd();
-            }
-        });
-    }
-
     @Override
     protected void adPrepared() {
 
@@ -68,22 +59,31 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         doShow();
     }
 
-    private void loadAd() {
+
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        GdtUtil.initAD(this, new BYBaseCallBack() {
+//            @Override
+//            public void call() {
+//                loadAd();
+//            }
+//        });
+//    }
+//    private void loadAd() {
         try {
             LogUtil.simple(TAG + "call load start ");
 
-            //检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtRenderFeedAdapter.class, new BYAbsCallBack<GdtRenderFeedAdapter>() {
-                @Override
-                public void invoke(GdtRenderFeedAdapter cacheAdapter) {
-
-                    //更新缓存广告得价格
-                    updateBidding(cacheAdapter.mRenderAD.getECPM());
-                }
-            });
-            if (hitCache) {
-                return;
-            }
+//            //检查是否命中使用缓存逻辑
+//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtRenderFeedAdapter.class, new BYAbsCallBack<GdtRenderFeedAdapter>() {
+//                @Override
+//                public void invoke(GdtRenderFeedAdapter cacheAdapter) {
+//
+//                    //更新缓存广告得价格
+//                    updateBidding(cacheAdapter.mRenderAD.getECPM());
+//                }
+//            });
+//            if (hitCache) {
+//                return;
+//            }
 
 
             NativeUnifiedAD mAdManager = new NativeUnifiedAD(getRealActivity(null), sdkSupplier.adspotid, new NativeADUnifiedListener() {

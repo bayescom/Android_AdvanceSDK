@@ -8,7 +8,7 @@
 //import org.json.JSONArray;
 //import org.json.JSONObject;
 //
-//public class CsjGlobalConfig implements AdvanceSupplierBridge {
+//public class CsjGlobalConfig extends AdvanceCustomInit {
 //    @Override
 //    public void setCustomPrivacy(AdvancePrivacyController advancePrivacyController) {
 //

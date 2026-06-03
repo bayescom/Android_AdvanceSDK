@@ -36,16 +36,6 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
     public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
 
     }
-
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        TapUtil.initAD(this, new BYBaseCallBack() {
-            @Override
-            public void call() {
-                loadAD();
-            }
-        });
-    }
-
     @Override
     protected void adPrepared() {
 
@@ -148,22 +138,32 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-
-    private void loadAD() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        TapUtil.initAD(this, new BYBaseCallBack() {
+//            @Override
+//            public void call() {
+//                loadAD();
+//            }
+//        });
+//    }
+//
+//
+//
+//    private void loadAD() {
         try {
 
             //检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TapSplashAd.class, new BYAbsCallBack<TapSplashAd>() {
-                @Override
-                public void invoke(TapSplashAd cacheAD) {
-                    adData = cacheAD;
-
-                    updateBidding(TapUtil.getBiddingPrice(cacheAD.getMediaExtraInfo()));
-                }
-            });
-            if (hitCache) {
-                return;
-            }
+//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TapSplashAd.class, new BYAbsCallBack<TapSplashAd>() {
+//                @Override
+//                public void invoke(TapSplashAd cacheAD) {
+//                    adData = cacheAD;
+//
+//                    updateBidding(TapUtil.getBiddingPrice(cacheAD.getMediaExtraInfo()));
+//                }
+//            });
+//            if (hitCache) {
+//                return;
+//            }
 
 
             //不支持使用applicationContext属性，必须为activity实例，否则报错

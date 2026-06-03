@@ -28,19 +28,49 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
     TTNativeExpressAd ad;
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        CsjUtil.initCsj(this, new CsjUtil.InitListener() {
-            @Override
-            public void success() {
-                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-                startLoad();
+//        CsjUtil.initCsj(this, new CsjUtil.InitListener() {
+//            @Override
+//            public void success() {
+//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
+//                startLoad();
+//
+//            }
+//
+//            @Override
+//            public void fail(int code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTNativeExpressAd.class, new BYAbsCallBack<TTNativeExpressAd>() {
+//            @Override
+//            public void invoke(TTNativeExpressAd cacheAD) {
+//                ad = cacheAD;
+//                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
-            }
+        //step1:初始化sdk
+        TTAdManager ttAdManager = TTAdSdk.getAdManager();
+        //step2:(可选，强烈建议在合适的时机调用):申请部分权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题。
+        if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
+            ttAdManager.requestPermissionIfNecessary(activity);
+        }
+        //step3:创建TTAdNative对象,用于调用广告请求接口
+        mTTAdNative = ttAdManager.createAdNative(activity.getApplicationContext());
 
-            @Override
-            public void fail(int code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
+        AdSlot adSlot = new AdSlot.Builder()
+                .setCodeId(sdkSupplier.adspotid)
+                .setSupportDeepLink(true)
+                .setExpressViewAcceptedSize(drawSetting.getCsjExpressWidth(), drawSetting.getCsjExpressHeight()) //期望模板广告view的size,单位dp
+                .setAdCount(1) //请求广告数量为1到3条
+//                .setAdLoadType(PRELOAD)//推荐使用，用于标注此次的广告请求用途为预加载（当做缓存）还是实时加载，方便后续为开发者优化相关策略
+                .build();
+
+        mTTAdNative.loadExpressDrawFeedAd(adSlot, this);
     }
 
     @Override
@@ -106,81 +136,7 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
 
 
     private void startLoad() {
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTNativeExpressAd.class, new BYAbsCallBack<TTNativeExpressAd>() {
-            @Override
-            public void invoke(TTNativeExpressAd cacheAD) {
-                ad = cacheAD;
-                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
 
-        //step1:初始化sdk
-        TTAdManager ttAdManager = TTAdSdk.getAdManager();
-        //step2:(可选，强烈建议在合适的时机调用):申请部分权限，如read_phone_state,防止获取不了imei时候，下载类广告没有填充的问题。
-        if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
-            ttAdManager.requestPermissionIfNecessary(activity);
-        }
-        //step3:创建TTAdNative对象,用于调用广告请求接口
-        mTTAdNative = ttAdManager.createAdNative(activity.getApplicationContext());
-
-        //ces
-
-        if (BYUtil.isDev()) {
-
-//            sdkSupplier.adspotid = "964573305"; //维度为来
-//            sdkSupplier.adspotid = "964575564"; //ceshi
-//            sdkSupplier.adspotid = "901121041"; //demoid
-        }
-
-        AdSlot adSlot = new AdSlot.Builder()
-                .setCodeId(sdkSupplier.adspotid)
-                .setSupportDeepLink(true)
-                .setExpressViewAcceptedSize(drawSetting.getCsjExpressWidth(), drawSetting.getCsjExpressHeight()) //期望模板广告view的size,单位dp
-                .setAdCount(1) //请求广告数量为1到3条
-//                .setAdLoadType(PRELOAD)//推荐使用，用于标注此次的广告请求用途为预加载（当做缓存）还是实时加载，方便后续为开发者优化相关策略
-                .build();
-
-//        mTTAdNative.loadDrawFeedAd(adSlot, new TTAdNative.DrawFeedAdListener() {
-//            @Override
-//            public void onError(int code, String message) {
-//                LogUtil.simple(TAG + "onError" + code + message);
-//
-//                handleFailed(code, message);
-//            }
-//
-//            @Override
-//            public void onDrawFeedAdLoad(List<TTDrawFeedAd> ads) {
-//                try {
-//                    LogUtil.simple(TAG + "onNativeExpressAdLoad, ads = " + ads);
-//
-//                    if (ads == null || ads.isEmpty()) {
-//                        handleFailed(AdvanceError.ERROR_DATA_NULL, "ads empty");
-//                        return;
-//                    }
-//                    newAD = ads.get(0);
-//                    if (newAD == null) {
-//                        String nMsg = TAG + " ad null";
-//                        AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, nMsg);
-//                        runParaFailed(error);
-//                        return;
-//                    }
-//                    updateBidding(CsjUtil.getEcpmValue(TAG, newAD.getMediaExtraInfo()));
-//
-////            ad.setCanInterruptVideoPlay(false);
-//                    newAD.setExpressRenderListener(getExpressAdInteractionListener());
-//
-//                    handleSucceed();
-//
-//                } catch (Throwable e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-        mTTAdNative.loadExpressDrawFeedAd(adSlot, this);
     }
 
     private MediationExpressRenderListener getExpressAdInteractionListener() {

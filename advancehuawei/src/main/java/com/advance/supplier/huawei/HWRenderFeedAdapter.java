@@ -166,22 +166,22 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     private void loadAd() {
         //先执行SDK初始化
-        HWUtil.initAD(this);
-
-
-//检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWRenderFeedAdapter.class, new BYAbsCallBack<HWRenderFeedAdapter>() {
-            @Override
-            public void invoke(HWRenderFeedAdapter cacheAdapter) {
-                dataConverter = new HWRenderDataConverter(cacheAdapter.mNativeAd, HWRenderFeedAdapter.this);
-
-                //更新缓存广告得价格
-                updateBidding(HWUtil.getPrice(cacheAdapter.mNativeAd.getBiddingInfo()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        HWUtil.initAD(this);
+//
+//
+////检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWRenderFeedAdapter.class, new BYAbsCallBack<HWRenderFeedAdapter>() {
+//            @Override
+//            public void invoke(HWRenderFeedAdapter cacheAdapter) {
+//                dataConverter = new HWRenderDataConverter(cacheAdapter.mNativeAd, HWRenderFeedAdapter.this);
+//
+//                //更新缓存广告得价格
+//                updateBidding(HWUtil.getPrice(cacheAdapter.mNativeAd.getBiddingInfo()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         String adId = sdkSupplier.adspotid;
         NativeAdLoader.Builder builder = new NativeAdLoader.Builder(getRealContext(), adId);

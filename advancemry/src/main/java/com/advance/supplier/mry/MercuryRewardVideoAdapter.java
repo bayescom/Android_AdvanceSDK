@@ -141,20 +141,20 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryRewardVideoAdapter.class, new BYAbsCallBack<MercuryRewardVideoAdapter>() {
-            @Override
-            public void invoke(MercuryRewardVideoAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                updateBidding(cacheAdapter.rewardVideoAD.getEcpm());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryRewardVideoAdapter.class, new BYAbsCallBack<MercuryRewardVideoAdapter>() {
+//            @Override
+//            public void invoke(MercuryRewardVideoAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+//                updateBidding(cacheAdapter.rewardVideoAD.getEcpm());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         rewardVideoAD = new RewardVideoAD(getRealContext(), sdkSupplier.adspotid, this);
         // (可选) 激励相关参数配置

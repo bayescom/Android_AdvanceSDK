@@ -69,6 +69,8 @@ public class SupplierBridgeUtil {
                         LogUtil.simple("检测到已引入得SDK id：" + supConfigModel.sdkID);
                         //放入已生效的map
                         AdvanceConfig.getInstance().availableAdapterConfigMap.put(supConfigModel.sdkID, customInit);
+                        //放入已生效的类名map
+                        AdvanceConfig.getInstance().availableInitClassMap.put(supConfigModel.sdkID, clzName);
                     }
                 }
             }

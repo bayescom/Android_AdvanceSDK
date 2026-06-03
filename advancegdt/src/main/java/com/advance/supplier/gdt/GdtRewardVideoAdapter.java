@@ -180,26 +180,26 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        GdtUtil.initAD(this, new BYBaseCallBack() {
-            @Override
-            public void call() {
-                loadAd();
-            }
-        });
-    }
-    public void loadAd() {
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtRewardVideoAdapter.class, new BYAbsCallBack<GdtRewardVideoAdapter>() {
-            @Override
-            public void invoke(GdtRewardVideoAdapter cacheAdapter) {
-                //更新缓存广告得价格
-                updateBidding(cacheAdapter.rewardVideoAD.getECPM());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        GdtUtil.initAD(this, new BYBaseCallBack() {
+//            @Override
+//            public void call() {
+//                loadAd();
+//            }
+//        });
+//    }
+//    public void loadAd() {
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtRewardVideoAdapter.class, new BYAbsCallBack<GdtRewardVideoAdapter>() {
+//            @Override
+//            public void invoke(GdtRewardVideoAdapter cacheAdapter) {
+//                //更新缓存广告得价格
+//                updateBidding(cacheAdapter.rewardVideoAD.getECPM());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
 
         boolean vo = false;

@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
-import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFUtil;
 import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.core.srender.widget.AdvRFVideoView;
@@ -28,9 +27,6 @@ import java.util.Map;
 
 public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     PictureTextExpressAd mExpressAd;
-
-
-
 
 
     @Override
@@ -181,21 +177,21 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
      public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        HonorUtil.initAD(this);
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, PictureTextExpressAd.class, new BYAbsCallBack<PictureTextExpressAd>() {
-            @Override
-            public void invoke(PictureTextExpressAd cacheAD) {
-                mExpressAd = cacheAD;
-                dataConverter = new HonorRenderDataConverter(mExpressAd, HonorRenderFeedAdapter.this);
-
-                updateBidding(HonorUtil.getECPM(mExpressAd));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        HonorUtil.initAD(this);
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, PictureTextExpressAd.class, new BYAbsCallBack<PictureTextExpressAd>() {
+//            @Override
+//            public void invoke(PictureTextExpressAd cacheAD) {
+//                mExpressAd = cacheAD;
+//                dataConverter = new HonorRenderDataConverter(mExpressAd, HonorRenderFeedAdapter.this);
+//
+//                updateBidding(HonorUtil.getECPM(mExpressAd));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()

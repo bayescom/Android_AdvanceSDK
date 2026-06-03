@@ -29,23 +29,23 @@ public class FLNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        FLUtil.initAD(this);
-        loadAd();
-    }
-
-    private void loadAd() {
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, FLNativeExpressAdapter.class, new BYAbsCallBack<FLNativeExpressAdapter>() {
-            @Override
-            public void invoke(FLNativeExpressAdapter cacheAdapter) {
-                //更新缓存广告得价格
-                updateBidding(cacheAdapter.flAd.getECPM());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        FLUtil.initAD(this);
+//        loadAd();
+//    }
+//
+//    private void loadAd() {
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, FLNativeExpressAdapter.class, new BYAbsCallBack<FLNativeExpressAdapter>() {
+//            @Override
+//            public void invoke(FLNativeExpressAdapter cacheAdapter) {
+//                //更新缓存广告得价格
+//                updateBidding(cacheAdapter.flAd.getECPM());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         int width = nativeExpressSetting.getExpressViewWidth();
         int height = nativeExpressSetting.getExpressViewHeight();

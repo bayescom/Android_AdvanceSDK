@@ -54,26 +54,26 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        OppoUtil.initAD(this);
-        startLoad();
-    }
-
-    private void startLoad() {
+//        OppoUtil.initAD(this);
+//        startLoad();
+//    }
+//
+//    private void startLoad() {
         try {
 //检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoRenderFeedAdapter.class, new BYAbsCallBack<OppoRenderFeedAdapter>() {
-                @Override
-                public void invoke(OppoRenderFeedAdapter cacheAdapter) {
-
-                    dataConverter = new OppoRenderDataConverter(getRealContext(), cacheAdapter.mRenderAD, sdkSupplier);
-
-                    //更新缓存广告得价格
-                    updateBidding(cacheAdapter.mRenderAD.getECPM());
-                }
-            });
-            if (hitCache) {
-                return;
-            }
+//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoRenderFeedAdapter.class, new BYAbsCallBack<OppoRenderFeedAdapter>() {
+//                @Override
+//                public void invoke(OppoRenderFeedAdapter cacheAdapter) {
+//
+//                    dataConverter = new OppoRenderDataConverter(getRealContext(), cacheAdapter.mRenderAD, sdkSupplier);
+//
+//                    //更新缓存广告得价格
+//                    updateBidding(cacheAdapter.mRenderAD.getECPM());
+//                }
+//            });
+//            if (hitCache) {
+//                return;
+//            }
             
             /**
              * 通过构造NativeAdSize对象，在NativeTempletAd初始化时传入、可以指定原生模板广告的大小，单位为dp

@@ -55,34 +55,34 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
-            @Override
-            public void success() {
-                // TODO: 2023/9/5 测试开启线程池来加载广告请求方法
-                startLoadAD();
-            }
-
-            @Override
-            public void fail(int code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
-
-    private void startLoadAD() {
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxSplashExpressAd.class, new BYAbsCallBack<ITanxSplashExpressAd>() {
-            @Override
-            public void invoke(ITanxSplashExpressAd cacheAD) {
-                iTanxSplashExpressAd = cacheAD;
-
-                updateBidding(cacheAD.getBidInfo().getBidPrice());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
+//            @Override
+//            public void success() {
+//                // TODO: 2023/9/5 测试开启线程池来加载广告请求方法
+//                startLoadAD();
+//            }
+//
+//            @Override
+//            public void fail(int code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//    }
+//
+//    private void startLoadAD() {
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxSplashExpressAd.class, new BYAbsCallBack<ITanxSplashExpressAd>() {
+//            @Override
+//            public void invoke(ITanxSplashExpressAd cacheAD) {
+//                iTanxSplashExpressAd = cacheAD;
+//
+//                updateBidding(cacheAD.getBidInfo().getBidPrice());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         
         TanxAdSlot adSlot = new TanxAdSlot.Builder()

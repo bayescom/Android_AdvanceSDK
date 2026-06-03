@@ -27,19 +27,7 @@ public class XMBannerAdapter extends AdvanceBannerCustomAdapter {
     public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
 
     }
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        XMUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                loadAd();
-            }
 
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
 
     @Override
     protected void adPrepared() {
@@ -107,20 +95,32 @@ public class XMBannerAdapter extends AdvanceBannerCustomAdapter {
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
         }
     }
-
-    private void loadAd() {
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, BannerAd.class, new BYAbsCallBack<BannerAd>() {
-            @Override
-            public void invoke(BannerAd cacheAD) {
-                bannerAd = cacheAD;
-
-                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        XMUtil.initAD(this, new AdvanceADNInitResult() {
+//            @Override
+//            public void success() {
+//                loadAd();
+//            }
+//
+//            @Override
+//            public void fail(String code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//    }
+//    private void loadAd() {
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, BannerAd.class, new BYAbsCallBack<BannerAd>() {
+//            @Override
+//            public void invoke(BannerAd cacheAD) {
+//                bannerAd = cacheAD;
+//
+//                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         bannerAd = new BannerAd();
         //(5.3.4新增接口) 请使用最新接口集成

@@ -20,20 +20,20 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        BDUtil.initBDAccount(this);
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDFullScreenVideoAdapter.class, new BYAbsCallBack<BDFullScreenVideoAdapter>() {
-            @Override
-            public void invoke(BDFullScreenVideoAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                updateBidding(BDUtil.getEcpmValue(cacheAdapter.mFullScreenVideoAd.getECPMLevel()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        BDUtil.initBDAccount(this);
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDFullScreenVideoAdapter.class, new BYAbsCallBack<BDFullScreenVideoAdapter>() {
+//            @Override
+//            public void invoke(BDFullScreenVideoAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+//                updateBidding(BDUtil.getEcpmValue(cacheAdapter.mFullScreenVideoAd.getECPMLevel()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         // 全屏视频产品可以选择是否使用SurfaceView进行渲染视频
         mFullScreenVideoAd = new FullScreenVideoAd(activity, sdkSupplier.adspotid

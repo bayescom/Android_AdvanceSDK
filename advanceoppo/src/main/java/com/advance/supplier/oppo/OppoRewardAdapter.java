@@ -19,12 +19,6 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
     RewardVideoAd mRewardVideoAd;
 
 
-
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        OppoUtil.initAD(this);
-        loadAd();
-    }
-
     @Override
     protected void adPrepared() {
 
@@ -67,21 +61,27 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
 
-    private void loadAd() {
+
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        OppoUtil.initAD(this);
+//        loadAd();
+//    }
+//
+//    private void loadAd() {
         try {
 
 //检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoRewardAdapter.class, new BYAbsCallBack<OppoRewardAdapter>() {
-                @Override
-                public void invoke(OppoRewardAdapter cacheAdapter) {
-
-                    //更新缓存广告得价格
-                    updateBidding(cacheAdapter.mRewardVideoAd.getECPM());
-                }
-            });
-            if (hitCache) {
-                return;
-            }
+//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoRewardAdapter.class, new BYAbsCallBack<OppoRewardAdapter>() {
+//                @Override
+//                public void invoke(OppoRewardAdapter cacheAdapter) {
+//
+//                    //更新缓存广告得价格
+//                    updateBidding(cacheAdapter.mRewardVideoAd.getECPM());
+//                }
+//            });
+//            if (hitCache) {
+//                return;
+//            }
 
             
             mRewardVideoAd = new RewardVideoAd(getRealContext(), sdkSupplier.adspotid, new IRewardVideoAdListener() {

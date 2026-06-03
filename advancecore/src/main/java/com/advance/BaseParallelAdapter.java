@@ -10,10 +10,14 @@ import android.view.ViewGroup;
 import com.advance.core.srender.AdvanceRFADData;
 import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.custom.AdvanceAdapterItf;
+import com.advance.custom.AdvanceCustomInit;
+import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceSDKCacheModel;
 import com.advance.net.AdvanceReport;
 import com.advance.utils.ActivityTracker;
 import com.advance.utils.AdvanceCacheUtil;
+import com.advance.utils.AdvanceInitManger;
+import com.advance.utils.CustomADNUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
@@ -53,7 +57,7 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
 
     public SdkSupplier sdkSupplier;
     //是否为异步请求
-    public boolean isParallel = false;
+    public boolean isParallel = true;
     public boolean hasOrderRun = false;
 
     public int adStatus = AdvanceConstant.AD_STATUS_DEFAULT; //AdvanceConstant.AD_STATUS_DEFAULT 初始值
@@ -113,7 +117,7 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     public Activity getRealActivity(View adContainerView) {
         Activity result = null;
         try {
-            if (rewardSetting!=null && rewardSetting.getShowActivity()!=null){
+            if (rewardSetting != null && rewardSetting.getShowActivity() != null) {
                 activity = rewardSetting.getShowActivity();
             }
             if (adContainerView != null) {
@@ -417,12 +421,43 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     //策略层发起的广告请求
     protected void load() {
         try {
-            ++adNum;
-            isParallel = true;
-            adStatus = AdvanceConstant.AD_STATUS_LOADING;
 
-//            todo 改为在初始化时进行
+//           初始化前进行启动上报
             reportLoaded();
+
+            //获取初始化类
+            AdvanceCustomInit init = CustomADNUtil.getCustomInitClass(sdkSupplier);
+            if (init == null) {
+                runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_INIT_DEFAULT, "未获取到初始化类"));
+                return;
+            }
+            init.addSdkSupplier(sdkSupplier);
+            init.addInitListener(new AdvanceADNInitResult() {
+                @Override
+                public void success() {
+                    loadADN();
+                }
+
+                @Override
+                public void fail(String code, String msg) {
+
+                    runParaFailed(AdvanceError.parseErr(code, msg));
+                }
+            });
+            init.innerInitSDK(getRealContext());
+        } catch (Throwable e) {
+            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD, "BaseParallelAdapter load init Throwable"));
+//            advanceError =
+//            reportFailed();
+//            //标记为失败
+//            adStatus = AdvanceConstant.AD_STATUS_LOAD_FAILED;
+            e.printStackTrace();
+        }
+    }
+
+    private void loadADN() {
+        try {
+            ++adNum;
 
 
             //todo 统一进行缓存adapter检查
@@ -438,6 +473,7 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
 //                return;
 //            }
 
+            adStatus = AdvanceConstant.AD_STATUS_LOADING;
 
 //            根据设置，选择不进入主线程load
             if (baseSetting != null && baseSetting.isLoadAsync()) {
@@ -448,27 +484,41 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
             BYThreadUtil.switchMainThread(new BYBaseCallBack() {
                 @Override
                 public void call() {
-                    loadAd(getRealContext(), getLocalExtra(), getServerExtra());
-                    reportStart();
+                    try {
+                        loadAd(getRealContext(), getLocalExtra(), getServerExtra());
+                        reportStart();
+                    } catch (Throwable e) {
+                        runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD, "BaseParallelAdapter main load init Throwable"));
+                        e.printStackTrace();
+                    }
                 }
             });
         } catch (Throwable e) {
+            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD, "BaseParallelAdapter load init Throwable"));
             e.printStackTrace();
-            advanceError = AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD, "BaseParallelAdapter load Throwable");
-            reportFailed();
-            //标记为失败
-            adStatus = AdvanceConstant.AD_STATUS_LOAD_FAILED;
         }
     }
 
     // TODO: 2026/5/27 添加获取逻辑，从本地、后端服务器返回的json对象中解析转换成map结构
     private Map<String, Object> getLocalExtra() {
+        try {
+            if (localExtra != null && localExtra.isEmpty() && baseSetting != null) {
+                localExtra = baseSetting.getCustomData();
+            }
+        } catch (Exception e) {
 
+        }
         return localExtra;
     }
 
     private Map<String, Object> getServerExtra() {
+        try {
+            if (serverExtra != null && serverExtra.isEmpty() && sdkSupplier != null) {
+                serverExtra = CustomADNUtil.getServerCustomExtData(sdkSupplier.ext);
+            }
+        } catch (Exception e) {
 
+        }
         return serverExtra;
     }
 
@@ -505,10 +555,10 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
 //                    setting.adapterDidSucceed(sdkSupplier);
                 } else if (baseSetting instanceof RewardVideoSetting) {
                     RewardVideoSetting setting = (RewardVideoSetting) baseSetting;
-                    setting.adapterAdDidLoaded(  sdkSupplier);
+                    setting.adapterAdDidLoaded(sdkSupplier);
                 } else if (baseSetting instanceof FullScreenVideoSetting) {
                     FullScreenVideoSetting setting = (FullScreenVideoSetting) baseSetting;
-                    setting.adapterAdDidLoaded(  sdkSupplier);
+                    setting.adapterAdDidLoaded(sdkSupplier);
                 } else if (baseSetting instanceof NativeExpressSetting) {
                     NativeExpressSetting setting = (NativeExpressSetting) baseSetting;
                     setting.adapterAdDidLoaded(sdkSupplier);
@@ -703,18 +753,17 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
 
     //聚合策略层调用的show方法
     protected void show() {
-
         if (!isSuccess) {
-
+            LogUtil.e(TAG + "广告未成功返回，无法show");
             return;
         }
         //若广告无效，直接回调失败
         if (!isValid()) {
-
+            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW, "BaseParallelAdapter show ad invalid"));
             return;
         }
 
-        showAd(getRealActivity(),getLocalExtra(),getServerExtra());
+        showAd(getRealActivity(), getLocalExtra(), getServerExtra());
     }
 
 

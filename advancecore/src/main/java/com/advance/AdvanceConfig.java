@@ -92,6 +92,8 @@ public class AdvanceConfig {
 
     //有效的渠道config配置信息，一般有此信息代表引入了对应的adapter库。 key为SDKid信息，value为config实例。
     public HashMap<String, AdvanceCustomInit> availableAdapterConfigMap = new HashMap<>();
+    //可用的初始化类， key为SDKid信息，value为类名
+    public HashMap<String,String> availableInitClassMap = new HashMap<>();
     public boolean hasInitConfig = false;
     public ArrayList<AdvanceCustomADNModel> customADNList = new ArrayList<>();
 

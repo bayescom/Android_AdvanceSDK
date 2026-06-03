@@ -126,34 +126,34 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
-            @Override
-            public void success() {
-                loadOnly();
-
-            }
-
-            @Override
-            public void fail(int code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
-
-
-    private void loadOnly() {
+//        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
+//            @Override
+//            public void success() {
+//                loadOnly();
+//
+//            }
+//
+//            @Override
+//            public void fail(int code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//    }
+//
+//
+//    private void loadOnly() {
         try {
             //检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxTableScreenExpressAd.class, new BYAbsCallBack<ITanxTableScreenExpressAd>() {
-                @Override
-                public void invoke(ITanxTableScreenExpressAd cacheAD) {
-                    interExpressAD = cacheAD;
-                    updateBidding(cacheAD.getBidInfo().getBidPrice());
-                }
-            });
-            if (hitCache) {
-                return;
-            }
+//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxTableScreenExpressAd.class, new BYAbsCallBack<ITanxTableScreenExpressAd>() {
+//                @Override
+//                public void invoke(ITanxTableScreenExpressAd cacheAD) {
+//                    interExpressAD = cacheAD;
+//                    updateBidding(cacheAD.getBidInfo().getBidPrice());
+//                }
+//            });
+//            if (hitCache) {
+//                return;
+//            }
 
 
             iTanxAdLoader = TanxSdk.getSDKManager().createAdLoader(getRealContext());

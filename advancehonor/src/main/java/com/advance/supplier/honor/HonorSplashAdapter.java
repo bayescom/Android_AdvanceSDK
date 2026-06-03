@@ -22,9 +22,6 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
     SplashExpressAd mSplashExpressAd;
 
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        loadAd();
-    }
 
     @Override
     protected void adPrepared() {
@@ -133,21 +130,25 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    private void loadAd() {
-        HonorUtil.initAD(this);
 
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SplashExpressAd.class, new BYAbsCallBack<SplashExpressAd>() {
-            @Override
-            public void invoke(SplashExpressAd cacheAD) {
-                mSplashExpressAd = cacheAD;
-
-                updateBidding(HonorUtil.getECPM(mSplashExpressAd));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        loadAd();
+//    }
+//    private void loadAd() {
+//        HonorUtil.initAD(this);
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SplashExpressAd.class, new BYAbsCallBack<SplashExpressAd>() {
+//            @Override
+//            public void invoke(SplashExpressAd cacheAD) {
+//                mSplashExpressAd = cacheAD;
+//
+//                updateBidding(HonorUtil.getECPM(mSplashExpressAd));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()

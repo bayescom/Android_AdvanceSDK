@@ -63,20 +63,6 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     }
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        VivoUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                loadAd();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-
-    }
 
     @Override
     protected void adPrepared() {
@@ -387,31 +373,45 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    private void loadAd() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        VivoUtil.initAD(this, new AdvanceADNInitResult() {
+//            @Override
+//            public void success() {
+//                loadAd();
+//            }
+//
+//            @Override
+//            public void fail(String code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//
+//    }
+//    private void loadAd() {
+//
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoRenderFeedAdapter.class, new BYAbsCallBack<VivoRenderFeedAdapter>() {
+//            @Override
+//            public void invoke(VivoRenderFeedAdapter cacheAdapter) {
+//
+//                //更新缓存广告得价格
+//                if (usePro) {
+//                    updateBidding(VivoUtil.getPrice(cacheAdapter.adDataPro));
+//                } else {
+//                    updateBidding(VivoUtil.getPrice(cacheAdapter.adData));
+//
+//                }
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         if (sdkSupplier.versionTag == 1) {
             usePro = false;
         }
         LogUtil.simple(TAG + "usePro = " + usePro);
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoRenderFeedAdapter.class, new BYAbsCallBack<VivoRenderFeedAdapter>() {
-            @Override
-            public void invoke(VivoRenderFeedAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                if (usePro) {
-                    updateBidding(VivoUtil.getPrice(cacheAdapter.adDataPro));
-                } else {
-                    updateBidding(VivoUtil.getPrice(cacheAdapter.adData));
-
-                }
-            }
-        });
-        if (hitCache) {
-            return;
-        }
-
 
         if (usePro) {
             loadProAd();

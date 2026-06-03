@@ -36,10 +36,6 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private final Map<CsjRenderFeedAdapter, TTAppDownloadListener> mTTAppDownloadListenerMap = new WeakHashMap<>();
 
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        startLoadOnly();
-    }
-
     @Override
     protected void adPrepared() {
 
@@ -60,38 +56,38 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         startShow();
     }
 
-    private void startLoadOnly() {
-        CsjUtil.initCsj(this, new CsjUtil.InitListener() {
-            @Override
-            public void success() {
-                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-                startLoad();
 
-            }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//
+//        CsjUtil.initCsj(this, new CsjUtil.InitListener() {
+//            @Override
+//            public void success() {
+//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
+//                startLoad();
+//
+//            }
+//
+//            @Override
+//            public void fail(int code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
 
-            @Override
-            public void fail(int code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
-
-    private void startLoad() {
         try {
             //检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTFeedAd.class, new BYAbsCallBack<TTFeedAd>() {
-                @Override
-                public void invoke(TTFeedAd cacheAD) {
-                     mRenderAD = cacheAD;
-                    //转换穿山甲返回广告model为聚合通用model
-                    dataConverter = new CsjRenderDataConverter(mRenderAD, sdkSupplier);
-
-                    updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
-                }
-            });
-            if (hitCache) {
-                return;
-            }
+//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTFeedAd.class, new BYAbsCallBack<TTFeedAd>() {
+//                @Override
+//                public void invoke(TTFeedAd cacheAD) {
+//                     mRenderAD = cacheAD;
+//                    //转换穿山甲返回广告model为聚合通用model
+//                    dataConverter = new CsjRenderDataConverter(mRenderAD, sdkSupplier);
+//
+//                    updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
+//                }
+//            });
+//            if (hitCache) {
+//                return;
+//            }
 
             //step1:初始化sdk
             final TTAdManager ttAdManager = TTAdSdk.getAdManager();

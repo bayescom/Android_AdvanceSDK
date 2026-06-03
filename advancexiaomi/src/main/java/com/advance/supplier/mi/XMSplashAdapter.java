@@ -4,11 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.advance.custom.AdvanceSplashCustomAdapter;
-import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.miui.zeus.mimo.sdk.ADParams;
 import com.miui.zeus.mimo.sdk.SplashAd;
 
@@ -28,19 +25,6 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
 
     }
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        XMUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                loadAd();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
 
     @Override
     protected void adPrepared() {
@@ -100,19 +84,32 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    private void loadAd() {
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SplashAd.class, new BYAbsCallBack<SplashAd>() {
-            @Override
-            public void invoke(SplashAd cacheAD) {
-                splashAd = cacheAD;
-
-                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        XMUtil.initAD(this, new AdvanceADNInitResult() {
+//            @Override
+//            public void success() {
+//                loadAd();
+//            }
+//
+//            @Override
+//            public void fail(String code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//    }
+//    private void loadAd() {
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SplashAd.class, new BYAbsCallBack<SplashAd>() {
+//            @Override
+//            public void invoke(SplashAd cacheAD) {
+//                splashAd = cacheAD;
+//
+//                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
 
         splashAd = new SplashAd();

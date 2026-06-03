@@ -5,6 +5,7 @@ import android.content.Context;
 import com.advance.AdvanceSetting;
 import com.advance.itf.AdvanceADNInitResult;
 import com.advance.itf.AdvancePrivacyController;
+import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.util.BYStringUtil;
@@ -40,7 +41,6 @@ public abstract class AdvanceCustomInit implements AdvanceAdnInitItf {
         try {
             // TODO: 2026/6/1 loadedtk上报
             startInitTime = System.currentTimeMillis();
-            reportLoaded();
 
             if (initState == State.INITIALIZED_SUCCESS) {
                 LogUtil.simple(TAG + "(innerInitSDK) init success , no need to init again");
@@ -63,13 +63,10 @@ public abstract class AdvanceCustomInit implements AdvanceAdnInitItf {
             initState = State.INITIALIZING;
 
             initADN(context, serverExtra);
-        } catch (Exception e) {
-
+        } catch (Throwable e) {
+            callInitFail(AdvanceError.ERROR_INIT_DEFAULT + "", "initADN exception");
+            e.printStackTrace();
         }
-    }
-
-    private void reportLoaded() {
-
     }
 
     @Override

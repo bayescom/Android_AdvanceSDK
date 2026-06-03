@@ -64,15 +64,6 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        GdtUtil.initAD(this, new BYBaseCallBack() {
-            @Override
-            public void call() {
-                loadAd();
-            }
-        });
-
-    }
 
     //调用展示方法
     @Override
@@ -108,20 +99,30 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    private void loadAd() {
 
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtSplashAdapter.class, new BYAbsCallBack<GdtSplashAdapter>() {
-            @Override
-            public void invoke(GdtSplashAdapter cacheAdapter) {
-                //更新缓存广告得价格
-                updateBidding(cacheAdapter.splashAD.getECPM());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        GdtUtil.initAD(this, new BYBaseCallBack() {
+//            @Override
+//            public void call() {
+//                loadAd();
+//            }
+//        });
+//
+//    }
+//    private void loadAd() {
+//
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtSplashAdapter.class, new BYAbsCallBack<GdtSplashAdapter>() {
+//            @Override
+//            public void invoke(GdtSplashAdapter cacheAdapter) {
+//                //更新缓存广告得价格
+//                updateBidding(cacheAdapter.splashAD.getECPM());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         initVis();
 

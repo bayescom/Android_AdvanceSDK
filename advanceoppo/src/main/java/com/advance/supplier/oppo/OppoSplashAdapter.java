@@ -32,10 +32,6 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        OppoUtil.initAD(this);
-        startLoad();
-    }
 
     @Override
     protected void adPrepared() {
@@ -67,21 +63,25 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
 
-    private void startLoad() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        OppoUtil.initAD(this);
+//        startLoad();
+//    }
+//    private void startLoad() {
         try {
 
 //检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoSplashAdapter.class, new BYAbsCallBack<OppoSplashAdapter>() {
-                @Override
-                public void invoke(OppoSplashAdapter cacheAdapter) {
-
-                    //更新缓存广告得价格
-                    updateBidding(cacheAdapter.splashAd.getECPM());
-                }
-            });
-            if (hitCache) {
-                return;
-            }
+//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoSplashAdapter.class, new BYAbsCallBack<OppoSplashAdapter>() {
+//                @Override
+//                public void invoke(OppoSplashAdapter cacheAdapter) {
+//
+//                    //更新缓存广告得价格
+//                    updateBidding(cacheAdapter.splashAd.getECPM());
+//                }
+//            });
+//            if (hitCache) {
+//                return;
+//            }
 
             //可以自定义跳过按钮样式结束
             SplashAdParams.Builder builder = new SplashAdParams.Builder()

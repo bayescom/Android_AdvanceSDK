@@ -5,6 +5,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.advance.BaseParallelAdapter;
+import com.advance.custom.AdvanceNativeExpressCustomAdapter;
+import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
@@ -54,18 +56,14 @@ public class AdvanceRFUtil {
      * @param adapter
      * @return
      */
-    public static boolean skipRender(BaseParallelAdapter adapter) {
+    public static boolean skipRender(AdvanceSelfRenderCustomAdapter adapter) {
         boolean result = false;
 
         if (adapter == null) {
             return true;
         }
-        if (adapter.mAdvanceRFBridge == null) {
-            adapter.handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "advanceRFBridge  null");
-            return true;
-        }
 
-        final AdvanceRFMaterialProvider rfMaterialProvider = adapter.mAdvanceRFBridge.getMaterialProvider();
+        final AdvanceRFMaterialProvider rfMaterialProvider = adapter.getMaterialProvider();
 
         if (rfMaterialProvider == null) {
             adapter.handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "getMaterialProvider  null");

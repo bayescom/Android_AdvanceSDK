@@ -20,10 +20,6 @@ import java.util.Map;
 public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     InterstitialExpressAd mInterstitialExpressAd;
 
-    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        loadAd();
-    }
-
     @Override
     protected void adPrepared() {
 
@@ -133,21 +129,25 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         }
     }
 
-    private void loadAd() {
-        HonorUtil.initAD(this);
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, InterstitialExpressAd.class, new BYAbsCallBack<InterstitialExpressAd>() {
-            @Override
-            public void invoke(InterstitialExpressAd cacheAD) {
-                mInterstitialExpressAd = cacheAD;
-
-                updateBidding(HonorUtil.getECPM(mInterstitialExpressAd));
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
+//        loadAd();
+//    }
+//
+//    private void loadAd() {
+//        HonorUtil.initAD(this);
+//
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, InterstitialExpressAd.class, new BYAbsCallBack<InterstitialExpressAd>() {
+//            @Override
+//            public void invoke(InterstitialExpressAd cacheAD) {
+//                mInterstitialExpressAd = cacheAD;
+//
+//                updateBidding(HonorUtil.getECPM(mInterstitialExpressAd));
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
 
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()

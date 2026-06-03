@@ -115,31 +115,31 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
-            @Override
-            public void success() {
-                startLoadAD();
-            }
-
-            @Override
-            public void fail(int code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
-
-    private void startLoadAD() {
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxFeedExpressAd.class, new BYAbsCallBack<ITanxFeedExpressAd>() {
-            @Override
-            public void invoke(ITanxFeedExpressAd cacheAD) {
-                iTanxFeedExpressAd = cacheAD;
-                updateBidding(cacheAD.getBidInfo().getBidPrice());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
+//            @Override
+//            public void success() {
+//                startLoadAD();
+//            }
+//
+//            @Override
+//            public void fail(int code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//    }
+//
+//    private void startLoadAD() {
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxFeedExpressAd.class, new BYAbsCallBack<ITanxFeedExpressAd>() {
+//            @Override
+//            public void invoke(ITanxFeedExpressAd cacheAD) {
+//                iTanxFeedExpressAd = cacheAD;
+//                updateBidding(cacheAD.getBidInfo().getBidPrice());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
         
         TanxAdSlot adSlot = new TanxAdSlot.Builder()
                 .adCount(sdkSupplier.adCount)

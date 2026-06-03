@@ -1,19 +1,79 @@
 package com.advance.supplier.tanx;
 
+import android.app.Application;
+import android.content.Context;
+
 import androidx.annotation.Keep;
 
+import com.advance.AdvanceConfig;
+import com.advance.AdvanceSetting;
+import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.itf.AdvanceSupplierBridge;
+import com.advance.model.AdvanceError;
+import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.SdkConstant;
+import com.alimm.tanx.core.TanxInitListener;
 import com.alimm.tanx.core.ad.ad.table.screen.model.TableScreenParam;
 import com.alimm.tanx.core.ad.bean.RewardParam;
+import com.alimm.tanx.core.config.TanxConfig;
 import com.alimm.tanx.core.image.ILoader;
+import com.alimm.tanx.ui.TanxSdk;
+import com.bayes.sdk.basic.device.BYDevice;
+import com.bayes.sdk.basic.util.BYUtil;
+
+import java.util.Map;
 
 @Keep
-public class TanxGlobalConfig implements AdvanceSupplierBridge {
-    @Override
-    public void setCustomPrivacy(AdvancePrivacyController advancePrivacyController) {
+public class TanxGlobalConfig extends AdvanceCustomInit {
 
+    @Override
+    public void initADN(Context context, Map<String, Object> serverExtra) {
+
+//            AdvanceUtil advanceUtil = new AdvanceUtil(adapter.getADActivity());
+        String oaid = BYDevice.getOaidValue();
+//            String imei = BYDevice.getImeiValue();
+//设置图片加载自定义loader
+
+        TanxConfig config = new TanxConfig.Builder()
+                .appName(AdvanceConfig.getInstance().getAppName())
+                .appId(getAppID())
+                .appKey(getAppKey())
+//                    .appSecret(adapter.sdkSupplier.mediaSecret)
+                .oaid(oaid)
+                //是不是开启自动获取oaid开关
+                .oaidSwitch(true)
+//                    .imei(imei)
+//                    .imageLoader(iLoader)
+                .debug(BYUtil.isDebug())
+                .setEnableSensor(!AdvanceSetting.getInstance().disableShake)
+                //                .dark(new SettingConfig().setNightConfig())
+                .build();
+
+        ILoader iLoader = AdvanceTanxSetting.getInstance().iLoader;
+        if (iLoader != null) {
+            config.setImageLoader(iLoader);
+        }
+        Application application = (Application) context.getApplicationContext();
+        LogUtil.simple("[TanxUtil.initTanx] tanx init start");
+
+        TanxSdk.init(application, config, new TanxInitListener() {
+            @Override
+            public void succ() {
+                LogUtil.high("[TanxUtil.initTanx] TanxInitListener succ");
+
+                callInitSuccess();
+            }
+
+
+            @Override
+            public void error(int code, String msg) {
+                LogUtil.e("[TanxUtil.initTanx] TanxInitListener err code = " + code + " ,msg = " + msg);
+
+                callInitFail(code + "", msg);
+            }
+        });
+        LogUtil.simple("[TanxUtil.initTanx] tanx init end");
     }
 
     @Override
@@ -28,14 +88,15 @@ public class TanxGlobalConfig implements AdvanceSupplierBridge {
     }
 
     @Override
-    public void setPersonalRecommend(boolean allow) {
+    public void switchPersonalRecommend(boolean isPersonalRecommend) {
 
     }
 
     @Override
-    public void disableShake(boolean disableShake) {
+    public void switchDisableShake(boolean disableShake) {
 
     }
+
 
     public static void setImgLoader(ILoader loader) {
         try {

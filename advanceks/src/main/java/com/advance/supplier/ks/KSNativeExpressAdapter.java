@@ -42,33 +42,33 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        KSUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-                startLoad();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-
-    }
-
-    private void startLoad() {
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsFeedAd.class, new BYAbsCallBack<KsFeedAd>() {
-            @Override
-            public void invoke(KsFeedAd cacheAD) {
-                ad = cacheAD;
-                updateBidding(cacheAD.getECPM());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+//        KSUtil.initAD(this, new AdvanceADNInitResult() {
+//            @Override
+//            public void success() {
+//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
+//                startLoad();
+//            }
+//
+//            @Override
+//            public void fail(String code, String msg) {
+//                handleFailed(code, msg);
+//            }
+//        });
+//
+//    }
+//
+//    private void startLoad() {
+//        //检查是否命中使用缓存逻辑
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsFeedAd.class, new BYAbsCallBack<KsFeedAd>() {
+//            @Override
+//            public void invoke(KsFeedAd cacheAD) {
+//                ad = cacheAD;
+//                updateBidding(cacheAD.getECPM());
+//            }
+//        });
+//        if (hitCache) {
+//            return;
+//        }
         
         int num = sdkSupplier != null ? sdkSupplier.adCount : 1;
         KsScene.Builder builder = new KsScene.Builder(KSUtil.getADID(sdkSupplier)).adNum(num);
