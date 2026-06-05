@@ -23,6 +23,7 @@ import com.advance.AdvanceNativeExpressListener;
 import com.advance.AdvanceRewardVideo;
 import com.advance.AdvanceRewardVideoListener;
 import com.advance.AdvanceSDK;
+import com.advance.AdvanceSetting;
 import com.advance.RewardServerCallBackInf;
 import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.itf.AdvancePrivacyController;

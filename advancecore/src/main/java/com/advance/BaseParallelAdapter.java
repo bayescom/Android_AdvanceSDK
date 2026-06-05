@@ -16,7 +16,6 @@ import com.advance.model.AdvanceSDKCacheModel;
 import com.advance.net.AdvanceReport;
 import com.advance.utils.ActivityTracker;
 import com.advance.utils.AdvanceCacheUtil;
-import com.advance.utils.AdvanceInitManger;
 import com.advance.utils.CustomADNUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.model.AdvanceError;
@@ -31,8 +30,8 @@ import com.bayes.sdk.basic.util.BYUtil;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     public String TAG = "[" + this.getClass().getSimpleName() + "] ";
@@ -435,7 +434,7 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
             init.addInitListener(new AdvanceADNInitResult() {
                 @Override
                 public void success() {
-                    loadADN();
+                    callADNLoad();
                 }
 
                 @Override
@@ -455,25 +454,16 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
         }
     }
 
-    private void loadADN() {
+    private void callADNLoad() {
         try {
             ++adNum;
-
-
-            //todo 统一进行缓存adapter检查
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDNativeExpressAdapter.class, new BYAbsCallBack<BDNativeExpressAdapter>() {
-//                @Override
-//                public void invoke(BDNativeExpressAdapter cacheAdapter) {
-//
-//                    //更新缓存广告得价格
-//                    updateBidding(BDUtil.getEcpmValue(cacheAdapter.nativeResponse.getECPMLevel()));
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-
             adStatus = AdvanceConstant.AD_STATUS_LOADING;
+
+            //统一进行缓存adapter检查
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this);
+            if (hitCache) {
+                return;
+            }
 
 //            根据设置，选择不进入主线程load
             if (baseSetting != null && baseSetting.isLoadAsync()) {
@@ -967,17 +957,17 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
 
     //统一处理广告成功，并传入实时获取到的广告对象，用来进行缓存
     // TODO: 2026/5/28 移除此方法
+    @Deprecated
     public void handleSucceed(Object realtimeAD) {
-        if (realtimeAD != null) {
-            //执行缓存
-            AdvanceCacheUtil.cacheSDK(this, realtimeAD);
-        }
-
         handleSucceed();
     }
 
+    // TODO: 2026/6/4 和updateBidding方法合并
     public void handleSucceed() {
         try {
+            //执行缓存
+            AdvanceCacheUtil.cacheSDK(this);
+
             isSuccess = true;
             if (baseSetting == null) {
                 return;
@@ -1036,7 +1026,7 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     }
 
     //对支持bidding的渠道进行比价逻辑
-    protected void updateBidding(double price) {
+    public void updateBidding(double price) {
         try {
             LogUtil.devDebug(TAG + "result price = " + price + ", need update bidding price : " + sdkSupplier.enableBidding);
             if (sdkSupplier.enableBidding) {//如果是竞价开启状态，才会执行

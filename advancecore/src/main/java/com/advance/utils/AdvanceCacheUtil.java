@@ -61,7 +61,46 @@ public class AdvanceCacheUtil {
         return result;
     }
 
-    //将获取到的广告，进行缓存
+    //直接缓存adapter
+    public static void cacheSDK(BaseParallelAdapter adapter) {
+        if (adapter == null) {
+            LogUtil.simple(TAG + "cacheSDK ,skip  adapter null");
+            return;
+        }
+
+
+        SdkSupplier supplier = adapter.sdkSupplier;
+        if (!supplier.enableCache) {
+            LogUtil.simple(TAG + "根据配置，SDK缓存功能未启用");
+            return;
+        }
+
+        String key = getCacheKey(supplier);
+        LogUtil.simple(TAG + "cacheSDK ,key = " + key);
+
+
+        //检查缓存中是否已存在
+        AdvanceSDKCacheModel cacheModel = AdvanceSetting.getInstance().cachedSDKs.get(key);
+        if (cacheModel != null) {
+            LogUtil.simple(TAG + "cacheSDK skip ,缓存已存在");
+            return;
+        }
+
+        //不存在的话新建并存入缓存。
+        cacheModel = new AdvanceSDKCacheModel();
+        //此处留存的为缓存对象的必要属性，待下次使用时，supplier对象对应的reqid已经不同了
+        cacheModel.cacheTime = System.currentTimeMillis();
+        cacheModel.cacheKey = key;
+        cacheModel.adID = supplier.adspotid;
+        cacheModel.cacheValue = adapter;
+        cacheModel.serverReqID = supplier.serverReqID;
+        if (adapter.baseSetting != null) {
+            cacheModel.advanceReqID = adapter.baseSetting.getAdvanceId();
+        }
+        AdvanceSetting.getInstance().cachedSDKs.put(key, cacheModel);
+    }
+
+    @Deprecated
     public static void cacheSDK(BaseParallelAdapter adapter, Object value) {
         try {
             if (adapter == null) {
@@ -216,6 +255,52 @@ public class AdvanceCacheUtil {
             }
         } catch (Exception e) {
             LogUtil.d(TAG + "loadWithCacheData 异常");
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+    public static boolean loadWithCacheAdapter(BaseParallelAdapter adapter) {
+        boolean result = false;
+        try {
+            if (adapter != null) {
+                //检查当前广告位id下是否存在已缓存adapter
+                AdvanceSDKCacheModel cacheModel = adapter.getCacheModel();
+                if (cacheModel != null) {
+                    BaseParallelAdapter cacheValue = (BaseParallelAdapter) cacheModel.cacheValue;
+
+                    //转换为具体广告data
+                    if (cacheValue != null) {
+                        adapter.sdkSupplier.useCachedSDK = true;
+                        try {
+                            //更新价格
+                            //将当前adapter得渠道信息里的价格，赋值为缓存广告的价格，这样在下一步进行sdkSupplier完整覆盖时保证价格是已缓存的广告价格
+                            adapter.updateBidding(cacheValue.sdkSupplier.price);
+
+                            //替换缓存adapter得渠道参数信息为新的，这样在收到回调事件时上报时会使用新tk地址
+                            cacheValue.sdkSupplier = adapter.sdkSupplier;
+
+                            //替换执行策略中得adapter
+                            if (adapter.baseSetting != null) {
+                                //置换桥接类
+                                cacheValue.baseSetting = adapter.baseSetting;
+                                //置换实现adapter
+                                adapter.baseSetting.replaceCacheAdapter(adapter.sdkSupplier.priority + "", cacheValue);
+                            }
+
+                        } catch (Exception e) {
+                        }
+                        //通知广告成功依然是由当前adapter进行，不过show时使用的adapter将由被replaceCacheAdapter操作更新后的缓存adapter进行。
+                        adapter.handleSucceed();
+
+                        LogUtil.d(TAG + "loadWithCacheAdapter 将使用缓存的广告");
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LogUtil.d(TAG + "loadWithCacheAdapter 异常");
             e.printStackTrace();
         }
         return result;

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceRewardVideo;
 import com.advance.AdvanceRewardVideoListener;
+import com.advance.AdvanceSetting;
 import com.advance.RewardServerCallBackInf;
 import com.advance.advancesdkdemo.custom.SelfRenderActivity;
 import com.advance.advancesdkdemo.util.BaseCallBack;
@@ -46,6 +47,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AdvanceSetting.getInstance().canMock = true;
 
         //获取按钮
         fullVideo = findViewById(R.id.fullvideo_button);

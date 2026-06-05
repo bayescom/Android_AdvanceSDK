@@ -37,6 +37,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 //网络请求相关
 public class AdvanceNetManger {
@@ -440,6 +441,10 @@ public class AdvanceNetManger {
                     ss.name = name;
                     ss.mediaSecret = job.optString("mediasecret");
                     ss.price = job.optDouble("sdk_price", 0);
+                    if (BYUtil.isDev() && AdvanceSetting.getInstance().canMock){
+                        ss.price = new Random().nextInt(2000);
+                        LogUtil.devDebug("mock随机价格："+ss.price );
+                    }
                     ss.bidRatio = job.optDouble("bid_ratio", 1);
                     ss.priority = priority;
 //                    ss.sortIndex = priority;
