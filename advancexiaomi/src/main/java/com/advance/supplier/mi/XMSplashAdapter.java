@@ -85,32 +85,6 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        XMUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                loadAd();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//    }
-//    private void loadAd() {
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SplashAd.class, new BYAbsCallBack<SplashAd>() {
-//            @Override
-//            public void invoke(SplashAd cacheAD) {
-//                splashAd = cacheAD;
-//
-//                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-
 
         splashAd = new SplashAd();
         ADParams params = new ADParams.Builder().setUpId(sdkSupplier.adspotid).build();
@@ -121,9 +95,7 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
                 // 广告请求成功
                 LogUtil.d(TAG + "onAdRequestSuccess");
 
-                updateBidding(XMUtil.getPrice(splashAd.getMediaExtraInfo()));
-
-                handleSucceed(splashAd);
+                handleSucceed(splashAd == null ? 0 : XMUtil.getPrice(splashAd.getMediaExtraInfo()));
             }
 
             @Override

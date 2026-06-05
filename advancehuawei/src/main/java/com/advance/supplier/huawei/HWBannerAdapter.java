@@ -31,8 +31,6 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
     long openTime = 0;
     boolean isLandingPage = false;
 
-
-
     @Override
     protected void adPrepared() {
 
@@ -82,25 +80,6 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        loadAd();
-//    }
-//    private void loadAd() {
-        //先执行SDK初始化
-//        HWUtil.initAD(this);
-//
-//
-////检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWBannerAdapter.class, new BYAbsCallBack<HWBannerAdapter>() {
-//            @Override
-//            public void invoke(HWBannerAdapter cacheAdapter) {
-//
-//                //更新缓存广告得价格
-//                updateBidding(HWUtil.getPrice(cacheAdapter.bannerView.getBiddingInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         // Call new BannerView(Context context) to create a BannerView class.
         bannerView = new BannerView(getRealContext());
@@ -131,11 +110,12 @@ public class HWBannerAdapter extends AdvanceBannerCustomAdapter {
                 // Called when an ad is loaded successfully.
                 LogUtil.simple(TAG + "Ad loaded.");
 
+                double ecpm = 0;
                 if (bannerView != null) {
-                    updateBidding(HWUtil.getPrice(bannerView.getBiddingInfo()));
+                    ecpm=(HWUtil.getPrice(bannerView.getBiddingInfo()));
                 }
 
-                handleSucceed(HWBannerAdapter.this);
+                handleSucceed(ecpm);
             }
 
             @Override

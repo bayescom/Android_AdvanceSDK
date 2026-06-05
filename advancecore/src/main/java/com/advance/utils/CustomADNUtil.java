@@ -1,7 +1,5 @@
 package com.advance.utils;
 
-import static java.util.stream.Collectors.toList;
-
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceConstant;
 import com.advance.custom.AdvanceCustomInit;

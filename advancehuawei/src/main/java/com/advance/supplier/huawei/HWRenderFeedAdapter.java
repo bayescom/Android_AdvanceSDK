@@ -165,24 +165,6 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     private void loadAd() {
-        //先执行SDK初始化
-//        HWUtil.initAD(this);
-//
-//
-////检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWRenderFeedAdapter.class, new BYAbsCallBack<HWRenderFeedAdapter>() {
-//            @Override
-//            public void invoke(HWRenderFeedAdapter cacheAdapter) {
-//                dataConverter = new HWRenderDataConverter(cacheAdapter.mNativeAd, HWRenderFeedAdapter.this);
-//
-//                //更新缓存广告得价格
-//                updateBidding(HWUtil.getPrice(cacheAdapter.mNativeAd.getBiddingInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-
         String adId = sdkSupplier.adspotid;
         NativeAdLoader.Builder builder = new NativeAdLoader.Builder(getRealContext(), adId);
         builder.setNativeAdLoadedListener(new NativeAd.NativeAdLoadedListener() {
@@ -191,9 +173,10 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 mNativeAd = nativeAd;
                 // Call this method when an ad is successfully loaded.
                 LogUtil.simple(TAG + " onNativeAdLoaded , nativeAd = " + nativeAd);
+                double ecpm = 0;
 
                 if (nativeAd != null) {
-                    updateBidding(HWUtil.getPrice(nativeAd.getBiddingInfo()));
+                    ecpm =(HWUtil.getPrice(nativeAd.getBiddingInfo()));
 
                     //原生模板广告为 99
                     int createType = nativeAd.getCreativeType();
@@ -203,7 +186,7 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 //转换广告model为聚合通用model
                 dataConverter = new HWRenderDataConverter(nativeAd, HWRenderFeedAdapter.this);
 
-                handleSucceed(HWRenderFeedAdapter.this);
+                handleSucceed(ecpm);
 
             }
         }).setAdListener(new AdListener() {

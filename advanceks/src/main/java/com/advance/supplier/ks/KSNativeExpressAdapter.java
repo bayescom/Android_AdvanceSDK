@@ -4,27 +4,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
-import com.advance.NativeExpressSetting;
+import androidx.annotation.Nullable;
+
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
-import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsAdVideoPlayConfig;
 import com.kwad.sdk.api.KsFeedAd;
 import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsScene;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
-
-import androidx.annotation.Nullable;
 
 public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     private String TAG = "[KSNativeExpressAdapter] ";
@@ -42,34 +35,6 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        KSUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-//                startLoad();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//
-//    }
-//
-//    private void startLoad() {
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsFeedAd.class, new BYAbsCallBack<KsFeedAd>() {
-//            @Override
-//            public void invoke(KsFeedAd cacheAD) {
-//                ad = cacheAD;
-//                updateBidding(cacheAD.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-        
         int num = sdkSupplier != null ? sdkSupplier.adCount : 1;
         KsScene.Builder builder = new KsScene.Builder(KSUtil.getADID(sdkSupplier)).adNum(num);
         try {
@@ -126,54 +91,10 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
 
 //
-////                    提前设置监听器
-//                            try {
-//                                final View adview = adItem.getFeedView(activity);
-//                                adItem.setAdInteractionListener(new KsFeedAd.AdInteractionListener() {
-//                                    @Override
-//                                    public void onAdClicked() {
-//                                        LogUtil.simple(TAG + " onAdClicked ");
-//                                        handleClick();
-//                                    }
-//
-//                                    @Override
-//                                    public void onAdShow() {
-//                                        LogUtil.simple(TAG + " onAdShow ");
-//
-//                                        nativeExpressADView = adview;
-//                                        handleShow();
-//                                    }
-//
-//                                    @Override
-//                                    public void onDislikeClicked() {
-//                                        LogUtil.simple(TAG + " onDislikeClicked ");
-//
-//                                        if (setting != null) {
-//                                            setting.adapterDidClosed(adview);
-//                                        }
-//                                        removeADView();
-//                                    }
-//
-//                                    @Override
-//                                    public void onDownloadTipsDialogShow() {
-//                                        LogUtil.simple(TAG + " onDownloadTipsDialogShow ");
-//
-//                                    }
-//
-//                                    @Override
-//                                    public void onDownloadTipsDialogDismiss() {
-//                                        LogUtil.simple(TAG + " onDownloadTipsDialogDismiss ");
-//
-//                                    }
-//                                });
-//                            } catch (Throwable e) {
-//                                e.printStackTrace();
-//                            }
 
                         }
-                        if (  ad != null) {
-                            updateBidding(ad.getECPM());
-                            handleSucceed(ad);
+                        if (ad != null) {
+                            handleSucceed(ad.getECPM());
                         } else {
                             handleFailed(AdvanceError.ERROR_DATA_NULL, "nativeExpressAdItemList empty");
                         }
@@ -197,8 +118,6 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     public void destroyAd() {
 
     }
-
-    
 
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {

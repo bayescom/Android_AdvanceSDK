@@ -3,13 +3,10 @@ package com.advance.supplier.baidu;
 import android.app.Activity;
 import android.content.Context;
 
-import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.FullScreenVideoAd;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
 import java.util.Map;
 
@@ -125,14 +122,15 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
     @Override
     public void onAdLoaded() {
         LogUtil.simple(TAG + "onAdLoaded");
+        double ecpm = 0;
         try { //避免方法有异常，catch一下，不影响success逻辑
             if (mFullScreenVideoAd != null) {
-                updateBidding(BDUtil.getEcpmValue(mFullScreenVideoAd.getECPMLevel()));
+                ecpm = (BDUtil.getEcpmValue(mFullScreenVideoAd.getECPMLevel()));
             }
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        handleSucceed(this);
+        handleSucceed(ecpm);
     }
 
 
@@ -149,6 +147,9 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
 
     @Override
     public boolean isValid() {
+        if (mFullScreenVideoAd!=null){
+            return mFullScreenVideoAd.isReady();
+        }
         return true;
     }
 

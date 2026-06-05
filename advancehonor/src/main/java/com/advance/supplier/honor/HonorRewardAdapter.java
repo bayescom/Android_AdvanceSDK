@@ -21,8 +21,6 @@ import java.util.Map;
 
 public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
     RewardExpressAd mRewardExpressAd;
-
-
     @Override
     protected void adPrepared() {
 
@@ -174,20 +172,6 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        HonorUtil.initAD(this);
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, RewardExpressAd.class, new BYAbsCallBack<RewardExpressAd>() {
-//            @Override
-//            public void invoke(RewardExpressAd cacheAD) {
-//                mRewardExpressAd = cacheAD;
-//
-//                updateBidding(HonorUtil.getECPM(mRewardExpressAd));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()
                 .setSlotId(sdkSupplier.adspotid) // 必传,设置您的广告位ID。
@@ -203,9 +187,7 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
 
                         mRewardExpressAd = rewardExpressAd;
 
-                        updateBidding(HonorUtil.getECPM(mRewardExpressAd));
-
-                        handleSucceed(mRewardExpressAd);
+                        handleSucceed(HonorUtil.getECPM(mRewardExpressAd));
                     }
 
                     @Override

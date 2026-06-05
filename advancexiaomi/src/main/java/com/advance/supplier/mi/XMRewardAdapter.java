@@ -133,34 +133,7 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        XMUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                loadAd();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//    }
-//
-//    private void loadAd() {
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, RewardVideoAd.class, new BYAbsCallBack<RewardVideoAd>() {
-//            @Override
-//            public void invoke(RewardVideoAd cacheAD) {
-//                rewardVideoAd = cacheAD;
-//
-//                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
-        
         rewardVideoAd = new RewardVideoAd();
 
         //(5.3.4新增接口) 请使用最新接口集成
@@ -172,9 +145,7 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
                 //广告请求成功
                 LogUtil.d(TAG+"onAdRequestSuccess");
 
-                updateBidding(XMUtil.getPrice(rewardVideoAd.getMediaExtraInfo()));
-
-                handleSucceed(rewardVideoAd);
+                handleSucceed(rewardVideoAd == null ? 0 : XMUtil.getPrice(rewardVideoAd.getMediaExtraInfo()));
             }
 
             @Override

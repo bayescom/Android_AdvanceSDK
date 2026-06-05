@@ -1,14 +1,13 @@
 package com.advance.supplier.mry;
 
+import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
+
 import android.app.Activity;
 import android.content.Context;
 
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
-import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYLog;
 import com.mercury.sdk.core.config.ADSize;
 import com.mercury.sdk.core.nativ.NativeExpressAD;
@@ -19,29 +18,12 @@ import com.mercury.sdk.util.ADError;
 import java.util.List;
 import java.util.Map;
 
-import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
-
 public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter implements NativeExpressADListener {
     String TAG = "[MercuryNativeExpressAdapter] ";
     NativeExpressADView adView;
     NativeExpressAD nativeExpressAd;
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
-//
-//
-////检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryNativeExpressAdapter.class, new BYAbsCallBack<MercuryNativeExpressAdapter>() {
-//            @Override
-//            public void invoke(MercuryNativeExpressAdapter cacheAdapter) {
-//
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.adView.getEcpm());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         BYLog.dev(TAG + "advanceNativeExpress.getExpressViewWidth() = " + nativeExpressSetting.getExpressViewWidth());
 
@@ -81,13 +63,13 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
             adView = list.get(0);
 
             //旧版本SDK中不包含价格返回方法，catch住
+            int cpm = 0;
             try {
-                int cpm = adView.getEcpm();
-                updateBidding(cpm);
+                cpm = adView.getEcpm();
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            handleSucceed(this);
+            handleSucceed(cpm);
         }
     }
 

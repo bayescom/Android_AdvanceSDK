@@ -1,21 +1,10 @@
 package com.advance.supplier.baidu;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.text.TextUtils;
 
 import com.advance.AdvanceConfig;
-import com.advance.AdvanceSetting;
-import com.advance.BaseParallelAdapter;
-import com.advance.itf.AdvancePrivacyController;
 import com.advance.utils.AdvanceSplashPlusManager;
-import com.advance.utils.AdvanceUtil;
-import com.advance.utils.LogUtil;
-import com.baidu.mobads.sdk.api.BDAdConfig;
-import com.baidu.mobads.sdk.api.BDDialogParams;
-import com.baidu.mobads.sdk.api.MobadsPermissionSettings;
-import com.bayes.sdk.basic.util.BYUtil;
 
 public class BDUtil implements AdvanceSplashPlusManager.ZoomCall {
 

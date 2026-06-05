@@ -15,27 +15,7 @@ import java.util.Map;
 
 public class FLRewardAdapter extends AdvanceRewardCustomAdapter {
     FLVideo flAd;
-
-
-
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        FLUtil.initAD(this);
-//        loadAd();
-//    }
-//
-//    private void loadAd() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, FLRewardAdapter.class, new BYAbsCallBack<FLRewardAdapter>() {
-//            @Override
-//            public void invoke(FLRewardAdapter cacheAdapter) {
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.flAd.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
         FLVideo.Builder builder = new FLVideo.Builder(getRealContext());
         builder.setKey(getPosID());
         if (rewardSetting != null) {
@@ -77,9 +57,7 @@ public class FLRewardAdapter extends AdvanceRewardCustomAdapter {
 // 需要在此回调后调用视频播放方法
                 LogUtil.simple(TAG + "onVideoPrepared");
 
-                updateBidding(flAd.getEcpm());
-
-                handleSucceed(FLRewardAdapter.this);
+                handleSucceed(flAd.getEcpm());
             }
 
             @Override

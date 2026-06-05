@@ -23,7 +23,6 @@ import com.advance.AdvanceNativeExpressListener;
 import com.advance.AdvanceRewardVideo;
 import com.advance.AdvanceRewardVideoListener;
 import com.advance.AdvanceSDK;
-import com.advance.AdvanceSetting;
 import com.advance.RewardServerCallBackInf;
 import com.advance.advancesdkdemo.util.DemoManger;
 import com.advance.itf.AdvancePrivacyController;
@@ -149,8 +148,6 @@ public class AdvanceAD {
 
         //必要配置：初始化聚合SDK，三个参数依次为context上下文，appId媒体id，isDebug调试模式开关
         AdvanceSDK.initSDK(context, Constants.APP_ID, BuildConfig.DEBUG);
-        //接入tanx配置项，当glide不兼容时必填
-//        TanxGlobalConfig.setImgLoader(new MyImageLoader());
 
 //        AdvanceSDK.disableShake(true);
 //        开发者模式打印日志更丰富

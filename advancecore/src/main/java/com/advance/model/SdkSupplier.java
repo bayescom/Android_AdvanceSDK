@@ -6,8 +6,6 @@ import com.advance.AdvanceConfig;
 import com.advance.AdvanceConstant;
 import com.advance.utils.LogUtil;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 
 public class SdkSupplier implements Comparable<SdkSupplier> {

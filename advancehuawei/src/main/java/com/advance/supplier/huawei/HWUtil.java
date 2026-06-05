@@ -8,11 +8,7 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 
-import com.advance.BaseParallelAdapter;
-import com.advance.model.SdkSupplier;
-import com.advance.utils.LogUtil;
 import com.huawei.hms.ads.BiddingInfo;
-import com.huawei.hms.ads.HwAds;
 
 import java.io.File;
 import java.io.FileOutputStream;

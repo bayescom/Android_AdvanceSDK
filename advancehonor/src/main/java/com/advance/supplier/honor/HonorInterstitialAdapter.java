@@ -47,11 +47,8 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-
         try {
             if (mInterstitialExpressAd != null) {
-
-
                 /**
                  * 广告事件监听器
                  */
@@ -64,9 +61,7 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                     @Override
                     public void onAdSkip(int type) {
                         LogUtil.simple(TAG + "onAdSkip, type: " + type);
-
                     }
-
 
                     /**
                      * 广告关闭时回调
@@ -130,24 +125,6 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        loadAd();
-//    }
-//
-//    private void loadAd() {
-//        HonorUtil.initAD(this);
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, InterstitialExpressAd.class, new BYAbsCallBack<InterstitialExpressAd>() {
-//            @Override
-//            public void invoke(InterstitialExpressAd cacheAD) {
-//                mInterstitialExpressAd = cacheAD;
-//
-//                updateBidding(HonorUtil.getECPM(mInterstitialExpressAd));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()
@@ -164,9 +141,7 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
                         mInterstitialExpressAd = interstitialAD;
 
-                        updateBidding(HonorUtil.getECPM(mInterstitialExpressAd));
-
-                        handleSucceed(mInterstitialExpressAd);
+                        handleSucceed(HonorUtil.getECPM(mInterstitialExpressAd));
                     }
 
                     @Override

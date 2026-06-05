@@ -65,37 +65,8 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        SigmobUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                //只有在成功初始化以后才能调用load方法
-//                startLoad();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//    }
-//
-//    private void startLoad() {
         try {
 
-//检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SigmobRenderFeedAdapter.class, new BYAbsCallBack<SigmobRenderFeedAdapter>() {
-//                @Override
-//                public void invoke(SigmobRenderFeedAdapter cacheAdapter) {
-//                    dataConverter = new SigmobRenderDataConverter(cacheAdapter.mRenderAD, sdkSupplier);
-//
-//                    //更新缓存广告得价格
-//                    updateBidding(SigmobUtil.getEcpmNumber(cacheAdapter.windNativeUnifiedAd.getEcpm()));
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-            
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
             options.put("user_id", userId);
@@ -122,15 +93,12 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                         return;
                     }
 
-                    if (windNativeUnifiedAd != null)
-                        //更新ecpm价格信息
-                        updateBidding(SigmobUtil.getEcpmNumber(windNativeUnifiedAd.getEcpm()));
-
                     //转换返回广告model为聚合通用model
                     dataConverter = new SigmobRenderDataConverter(mRenderAD, sdkSupplier);
 
                     //标记广告成功
-                    handleSucceed(SigmobRenderFeedAdapter.this);
+                    handleSucceed(windNativeUnifiedAd == null ? 0 : SigmobUtil.getEcpmNumber(windNativeUnifiedAd.getEcpm()));
+
                 }
             });
             windNativeUnifiedAd.loadAd(1);

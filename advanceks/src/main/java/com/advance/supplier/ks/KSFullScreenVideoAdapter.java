@@ -3,12 +3,11 @@ package com.advance.supplier.ks;
 import android.app.Activity;
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
-import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsFullScreenVideoAd;
@@ -17,9 +16,6 @@ import com.kwad.sdk.api.KsScene;
 
 import java.util.List;
 import java.util.Map;
-
-
-import androidx.annotation.Nullable;
 
 public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements KsFullScreenVideoAd.FullScreenVideoAdInteractionListener {
 
@@ -30,34 +26,6 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-////初始化快手SDK
-//        KSUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-//                startLoad();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//
-//    }
-//
-//    private void startLoad() {
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsFullScreenVideoAd.class, new BYAbsCallBack<KsFullScreenVideoAd>() {
-//            @Override
-//            public void invoke(KsFullScreenVideoAd cacheAD) {
-//                ad = cacheAD;
-//                updateBidding(cacheAD.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         long adid = KSUtil.getADID(sdkSupplier);
         if (BYUtil.isDev()) {
@@ -82,9 +50,7 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
                     } else {
                         ad = list.get(0);
 
-                        updateBidding(ad.getECPM());
-
-                        handleSucceed(ad);
+                        handleSucceed(ad.getECPM());
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();

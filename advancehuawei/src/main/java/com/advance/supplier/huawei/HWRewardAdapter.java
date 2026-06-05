@@ -102,27 +102,6 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        loadRewardAd();
-//    }
-//    /**
-//     * Load a rewarded ad.
-//     */
-//    private void loadRewardAd() {
-//        //先执行SDK初始化
-//        HWUtil.initAD(this);
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, RewardAd.class, new BYAbsCallBack<RewardAd>() {
-//            @Override
-//            public void invoke(RewardAd cacheAD) {
-//                rewardedAd = cacheAD;
-//
-//                updateBidding(HWUtil.getPrice(cacheAD.getBiddingInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         if (rewardedAd == null) {
             rewardedAd = new RewardAd(getRealContext(), sdkSupplier.adspotid);
@@ -141,12 +120,13 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
             public void onRewardedLoaded() {
                 LogUtil.simple(TAG + "onRewardedLoaded");
 
+                double ecpm = 0;
 
                 if (rewardedAd != null) {
-                    updateBidding(HWUtil.getPrice(rewardedAd.getBiddingInfo()));
+                    ecpm=(HWUtil.getPrice(rewardedAd.getBiddingInfo()));
                 }
 
-                handleSucceed(rewardedAd);
+                handleSucceed(ecpm);
             }
         };
         AdParam.Builder adParam = AdvanceHWManager.getInstance().globalAdParamBuilder;

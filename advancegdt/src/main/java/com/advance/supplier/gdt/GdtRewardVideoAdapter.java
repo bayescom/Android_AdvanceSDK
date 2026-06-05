@@ -1,26 +1,22 @@
 package com.advance.supplier.gdt;
 
+import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
+import static com.advance.model.AdvanceError.ERROR_EXCEPTION_SHOW;
+
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 
 import com.advance.RewardServerCallBackInf;
-import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.rewardvideo.RewardVideoAD;
 import com.qq.e.ads.rewardvideo.RewardVideoADListener;
 import com.qq.e.ads.rewardvideo.ServerSideVerificationOptions;
 import com.qq.e.comm.util.AdError;
 
 import java.util.Map;
-
-import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
-import static com.advance.model.AdvanceError.ERROR_EXCEPTION_SHOW;
 
 public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements RewardVideoADListener {
 
@@ -32,10 +28,12 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     private void rewardLoaded() {
         try {
             LogUtil.simple(TAG + "rewardLoaded");
+            double ecpm = 0;
+
             if (rewardVideoAD != null) {
-                updateBidding(rewardVideoAD.getECPM());
+                ecpm = (rewardVideoAD.getECPM());
             }
-            handleSucceed(this);
+            handleSucceed(ecpm);
 
         } catch (Throwable e) {
             e.printStackTrace();
@@ -180,28 +178,6 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        GdtUtil.initAD(this, new BYBaseCallBack() {
-//            @Override
-//            public void call() {
-//                loadAd();
-//            }
-//        });
-//    }
-//    public void loadAd() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtRewardVideoAdapter.class, new BYAbsCallBack<GdtRewardVideoAdapter>() {
-//            @Override
-//            public void invoke(GdtRewardVideoAdapter cacheAdapter) {
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.rewardVideoAD.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-
-
         boolean vo = false;
         String userId = "";
         String extraInfo = "";

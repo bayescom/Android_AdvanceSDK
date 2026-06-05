@@ -13,14 +13,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
 import com.advance.core.srender.AdvanceRFUtil;
 import com.advance.core.srender.AdvanceRFVideoEventListener;
 import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ad.feed.ITanxFeedAd;
 import com.alimm.tanx.core.ad.ad.feed.ITanxFeedInteractionListener;
@@ -35,7 +33,6 @@ import com.alimm.tanx.core.request.TanxPlayerError;
 import com.alimm.tanx.core.utils.LogUtils;
 import com.alimm.tanx.ui.TanxSdk;
 import com.bayes.sdk.basic.device.BYDisplay;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
 
 import java.util.List;
@@ -55,8 +52,6 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
 
     }
-
-
 
     @Override
     protected void adPrepared() {
@@ -82,7 +77,7 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 return;
             }
             final AdvanceRFMaterialProvider rfMaterialProvider = getMaterialProvider();
-              activity = getRealActivity(rfMaterialProvider.rootView);
+            activity = getRealActivity(rfMaterialProvider.rootView);
 
             TanxAdView tanxAdView;
             if (activity == null) {
@@ -176,38 +171,7 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
-//            @Override
-//            public void success() {
-//                startLoadAD();
-//            }
-//
-//            @Override
-//            public void fail(int code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//    }
-//
-//    private void startLoadAD() {
         try {
-            //检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxFeedAd.class, new BYAbsCallBack<ITanxFeedAd>() {
-//                @Override
-//                public void invoke(ITanxFeedAd cacheAD) {
-//                    nativeAD = cacheAD;
-//                    dataConverter = new TanxRenderDataConverter(nativeAD, sdkSupplier);
-//
-//                    updateBidding(cacheAD.getBidInfo().getBidPrice());
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-
-//            if (BYUtil.isDev()) {
-//                int a = 0 / 0;
-//            }
             TanxAdSlot.Builder builder = new TanxAdSlot.Builder()
                     .adCount(sdkSupplier.adCount)
                     .pid(sdkSupplier.adspotid);
@@ -216,7 +180,6 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 //            videoParam.mute = advanceRFVideoOption.isMute;
 //        }
 //        builder.setVideoParam(videoParam);
-
 //        todo 测试尺寸设置后表现
 //        builder.adSize()
 
@@ -234,13 +197,16 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                         LogUtil.simple(TAG + "onSuccess");
                         nativeAD = adList.get(0);
 
-                        updateBidding(nativeAD.getBidInfo().getBidPrice());
-
                         //生成通用数据接口
                         dataConverter = new TanxRenderDataConverter(nativeAD, sdkSupplier);
 
 //                    回调成功事件
-                        handleSucceed(nativeAD);
+                        long ecpm = 0;
+                        try {
+                            ecpm = (nativeAD.getBidInfo().getBidPrice());
+                        } catch (Throwable e) {
+                        }
+                        handleSucceed(ecpm);
 
                     } catch (Throwable e) {
                         e.printStackTrace();
@@ -336,7 +302,8 @@ public class TanxRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     private void bindVideo(AdvanceRFMaterialProvider rfMaterialProvider) {
         try {
             if (dataConverter.isVideo()) {
-                Context context = getRealContext();;
+                Context context = getRealContext();
+                ;
                 ITanxFeedVideoPlayer iTanxVideoView = nativeAD.getITanxVideoView(context);
 
                 final AdvanceRFVideoEventListener videoEventListener = rfMaterialProvider.videoEventListener;

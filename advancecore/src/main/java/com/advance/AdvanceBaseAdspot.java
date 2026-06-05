@@ -8,22 +8,18 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import android.text.TextUtils;
-import android.view.View;
-
 import com.advance.core.common.AdvanceErrListener;
 import com.advance.custom.AdvanceBaseCustomAdapter;
 import com.advance.itf.AdvanceLifecycleCallback;
-import com.advance.net.AdvanceNetManger;
-import com.advance.net.AdvanceReport;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.BaseGMCallBackListener;
-import com.advance.itf.StrategyListener;
 import com.advance.itf.RenderEvent;
+import com.advance.itf.StrategyListener;
 import com.advance.model.AdStatus;
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
@@ -36,9 +32,12 @@ import com.advance.model.SdkSupplier;
 import com.advance.model.StrategyReadyInf;
 import com.advance.model.SupplierSettingModel;
 import com.advance.model.ValueDataModel;
+import com.advance.net.AdvanceNetManger;
+import com.advance.net.AdvanceReport;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYCacheUtil;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYThreadPoolUtil;

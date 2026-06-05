@@ -24,8 +24,6 @@ import java.util.Map;
 public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     PictureTextExpressAd mExpressAd;
 
-
-
     @Override
     protected void adPrepared() {
 
@@ -137,23 +135,6 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        loadAd();
-//    }
-//    private void loadAd() {
-//        HonorUtil.initAD(this);
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, PictureTextExpressAd.class, new BYAbsCallBack<PictureTextExpressAd>() {
-//            @Override
-//            public void invoke(PictureTextExpressAd cacheAD) {
-//                mExpressAd = cacheAD;
-//
-//                updateBidding(HonorUtil.getECPM(mExpressAd));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         AdSlot.Builder builder = new AdSlot.Builder();
         builder.setSlotId(sdkSupplier.adspotid);
@@ -189,9 +170,7 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
                         } else {
                             mExpressAd = list.get(0);
 
-                            updateBidding(HonorUtil.getECPM(mExpressAd));
-
-                            handleSucceed(mExpressAd);
+                            handleSucceed(HonorUtil.getECPM(mExpressAd));
                         }
                     }
 

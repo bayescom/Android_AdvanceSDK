@@ -18,10 +18,8 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
     private final String TAG = "[OppoRewardAdapter] ";
     RewardVideoAd mRewardVideoAd;
 
-
     @Override
     protected void adPrepared() {
-
     }
 
     @Override
@@ -63,35 +61,14 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        OppoUtil.initAD(this);
-//        loadAd();
-//    }
-//
-//    private void loadAd() {
         try {
-
-//检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoRewardAdapter.class, new BYAbsCallBack<OppoRewardAdapter>() {
-//                @Override
-//                public void invoke(OppoRewardAdapter cacheAdapter) {
-//
-//                    //更新缓存广告得价格
-//                    updateBidding(cacheAdapter.mRewardVideoAd.getECPM());
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-
-            
             mRewardVideoAd = new RewardVideoAd(getRealContext(), sdkSupplier.adspotid, new IRewardVideoAdListener() {
                 @Override
                 public void onAdSuccess() {
                     LogUtil.simple(TAG + "onAdSuccess ");
 
-                    updateBidding(mRewardVideoAd.getECPM());
-
-                    handleSucceed(OppoRewardAdapter.this);
+                    int ecpm = mRewardVideoAd == null ? 0 : mRewardVideoAd.getECPM();
+                    handleSucceed(ecpm);
                 }
 
                 @Override

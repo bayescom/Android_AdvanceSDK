@@ -38,35 +38,7 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        SigmobUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                //只有在成功初始化以后才能调用load方法
-//                startLoad();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//    }
-//
-//    private void startLoad() {
         try {
-
-//检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, SigmobSplashAdapter.class, new BYAbsCallBack<SigmobSplashAdapter>() {
-//                @Override
-//                public void invoke(SigmobSplashAdapter cacheAdapter) {
-//
-//                    //更新缓存广告得价格
-//                    updateBidding(SigmobUtil.getEcpmNumber(cacheAdapter.splashAd.getEcpm()));
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
 
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
@@ -87,10 +59,7 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
                 public void onSplashAdLoadSuccess(String placementId) {
                     LogUtil.simple(TAG + "onSplashAdLoadSuccess");
 
-                    if (splashAd != null)
-                        updateBidding(SigmobUtil.getEcpmNumber(splashAd.getEcpm()));
-
-                    handleSucceed(SigmobSplashAdapter.this);
+                    handleSucceed(splashAd == null ? 0 : SigmobUtil.getEcpmNumber(splashAd.getEcpm()));
                 }
 
                 @Override

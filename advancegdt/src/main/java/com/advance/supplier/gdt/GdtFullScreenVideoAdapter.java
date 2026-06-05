@@ -3,13 +3,9 @@ package com.advance.supplier.gdt;
 import android.app.Activity;
 import android.content.Context;
 
-import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialAD;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialADListener;
@@ -24,16 +20,18 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     private long videoDuration;
     private long videoStartTime;
     String TAG = "[GdtFullScreenVideoAdapter] ";
- 
+
 
     @Override
     public void onADReceive() {
         try {
             LogUtil.simple(TAG + "onADReceive");
+            double ecpm = 0;
+
             if (iad != null) {
-                updateBidding(iad.getECPM());
+                ecpm = (iad.getECPM());
             }
-            handleSucceed(this);
+            handleSucceed(ecpm);
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
@@ -45,7 +43,7 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     public void onVideoCached() {
         LogUtil.simple(TAG + "onVideoCached");
 
-        
+
         handleCached();
     }
 
@@ -95,15 +93,15 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     public void onADClosed() {
         LogUtil.simple(TAG + "onADClosed");
 
-            long costTime = System.currentTimeMillis() - videoStartTime;
-            LogUtil.high(TAG + "costTime ==   " + costTime + " videoDuration == " + videoDuration);
+        long costTime = System.currentTimeMillis() - videoStartTime;
+        LogUtil.high(TAG + "costTime ==   " + costTime + " videoDuration == " + videoDuration);
 
-            if (costTime < videoDuration) {
-                LogUtil.high(TAG + " adapterVideoSkipped");
-                handleSkip();
-            }
-            LogUtil.high(TAG + " adapterClose");
-            handleClose();
+        if (costTime < videoDuration) {
+            LogUtil.high(TAG + " adapterVideoSkipped");
+            handleSkip();
+        }
+        LogUtil.high(TAG + " adapterClose");
+        handleClose();
     }
 
     @Override
@@ -120,28 +118,6 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        GdtUtil.initAD(this, new BYBaseCallBack() {
-//            @Override
-//            public void call() {
-//                loadAd();
-//            }
-//        });
-//    }
-//    public void loadAd() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtFullScreenVideoAdapter.class, new BYAbsCallBack<GdtFullScreenVideoAdapter>() {
-//            @Override
-//            public void invoke(GdtFullScreenVideoAdapter cacheAdapter) {
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.iad.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-
-
         iad = new UnifiedInterstitialAD(activity, sdkSupplier.adspotid, this);
         //用来获取视频时长
         iad.setMediaListener(new UnifiedInterstitialMediaListener() {
@@ -276,7 +252,7 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
         if (iad != null) {
             return iad.isValid();
         }
-           return true;
+        return true;
     }
 
     @Override

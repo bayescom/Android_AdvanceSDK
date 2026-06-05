@@ -6,9 +6,7 @@ import android.content.Context;
 import com.advance.AdvanceConfig;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdConstant;
 import com.bytedance.sdk.openadsdk.TTAdManager;
@@ -86,32 +84,6 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        CsjUtil.initCsj(this, new CsjUtil.InitListener() {
-//            @Override
-//            public void success() {
-//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-//                startLoad();
-//
-//            }
-//
-//            @Override
-//            public void fail(int code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTFullScreenVideoAd.class, new BYAbsCallBack<TTFullScreenVideoAd>() {
-//            @Override
-//            public void invoke(TTFullScreenVideoAd cacheAD) {
-//                newVersionAd = cacheAD;
-//                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
         final TTAdManager ttAdManager = TTAdSdk.getAdManager();
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
             ttAdManager.requestPermissionIfNecessary(activity);
@@ -141,10 +113,7 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                         return;
                     }
 
-                    updateBidding(CsjUtil.getEcpmValue(TAG, newVersionAd.getMediaExtraInfo()));
-
-
-                    handleSucceed(newVersionAd);
+                    handleSucceed(CsjUtil.getEcpmValue(TAG, newVersionAd.getMediaExtraInfo()));
 
                 } catch (Throwable e) {
                     e.printStackTrace();

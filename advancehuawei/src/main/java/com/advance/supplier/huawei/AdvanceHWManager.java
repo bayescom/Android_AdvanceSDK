@@ -20,8 +20,6 @@ public class AdvanceHWManager {
     }
 
 
-    //标记是否初始化执行过
-    boolean hasInit = false;
     //全局广告请求参数，
     AdParam.Builder globalAdParamBuilder = null;
     //全局视频配置

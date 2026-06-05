@@ -25,7 +25,6 @@ import java.util.Map;
 public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
     SplashView splashView;
 
-
     @Override
     public boolean isValid() {
         return true;
@@ -104,25 +103,6 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        loadAd();
-//    }
-//    private void loadAd() {
-//        //先执行SDK初始化
-//        HWUtil.initAD(this);
-//
-//
-////检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWSplashAdapter.class, new BYAbsCallBack<HWSplashAdapter>() {
-//            @Override
-//            public void invoke(HWSplashAdapter cacheAdapter) {
-//
-//                //更新缓存广告得价格
-//                updateBidding(HWUtil.getPrice(cacheAdapter.splashView.getBiddingInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
 
         AdParam.Builder adParam = AdvanceHWManager.getInstance().globalAdParamBuilder;
@@ -135,12 +115,13 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
             public void onAdLoaded() {
                 // 广告加载成功时调用
                 LogUtil.simple(TAG + "SplashAdLoadListener onAdLoaded");
+                double ecpm = 0;
 
                 if (splashView != null) {
-                    updateBidding(HWUtil.getPrice(splashView.getBiddingInfo()));
+                    ecpm =(HWUtil.getPrice(splashView.getBiddingInfo()));
                 }
 
-                handleSucceed(HWSplashAdapter.this);
+                handleSucceed(ecpm);
             }
 
             @Override

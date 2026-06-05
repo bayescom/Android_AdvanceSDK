@@ -5,8 +5,6 @@ import static com.advance.advancesdkdemo.util.DemoUtil.logAndToast;
 
 import android.app.Activity;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +12,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.advance.AdvanceRenderFeed;
 import com.advance.advancesdkdemo.AdvanceAD;

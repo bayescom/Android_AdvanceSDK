@@ -5,7 +5,6 @@ import android.content.Context;
 import com.advance.AdvanceSetting;
 import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvancePrivacyController;
-import com.advance.itf.AdvanceSupplierBridge;
 import com.baidu.mobads.sdk.api.AdSettings;
 import com.baidu.mobads.sdk.api.BDAdConfig;
 import com.baidu.mobads.sdk.api.BDDialogParams;

@@ -5,14 +5,9 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
-
-import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
-import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.mercury.sdk.core.model.ADClickJumpInf;
 import com.mercury.sdk.core.splash.MercurySplashData;
 import com.mercury.sdk.core.splash.MercurySplashRenderListener;
@@ -20,10 +15,7 @@ import com.mercury.sdk.core.splash.MercurySplashRequestListener;
 import com.mercury.sdk.core.splash.SplashAD;
 import com.mercury.sdk.util.ADError;
 
-import java.lang.ref.SoftReference;
 import java.util.Map;
-
-import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 
 public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
     private long remainTime = 5000;
@@ -156,16 +148,14 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
                 LogUtil.simple(TAG + "onAdSuccess ");
 
                 //旧版本SDK中不包含价格返回方法，catch住
+
+                int cpm = 0;
                 try {
-                    int cpm = mercurySplash.getEcpm();
-//                    if (AdvanceUtil.isDev()) {//todo 测试逻辑，正式上线需移除
-//                        cpm = 600;
-//                    }
-                    updateBidding(cpm);
+                    cpm = mercurySplash.getEcpm();
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
-                handleSucceed(mercurySplash);
+                handleSucceed(cpm);
             }
 
             @Override

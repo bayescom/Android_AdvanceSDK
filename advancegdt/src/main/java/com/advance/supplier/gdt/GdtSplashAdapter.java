@@ -8,20 +8,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.advance.AdvanceSetting;
-
-import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.splash.SplashAD;
 import com.qq.e.ads.splash.SplashADListener;
 import com.qq.e.comm.util.AdError;
 
-import java.lang.ref.SoftReference;
 import java.util.Map;
 
 public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
@@ -64,7 +57,6 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
 
-
     //调用展示方法
     @Override
     public void adPrepared() {
@@ -78,77 +70,11 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
 
     }
 
-    private void initVis() {
-        //特殊处理布局展示效果
-        try {
-            if (splashSetting != null) {
-//                if (skipView != null) {
-//                    skipView.setVisibility(View.GONE);
-//                    if (setting.isGdtCustomSkipHide()) {
-//                        skipView.setVisibility(View.GONE);
-//                    } else {
-//                        skipView.setVisibility(View.VISIBLE);
-//                    }
-//                }
-//                if (setting.getGdtSkipContainer() != null) {
-//                    setting.getGdtSkipContainer().setVisibility(View.VISIBLE);
-//                }
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
-
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        GdtUtil.initAD(this, new BYBaseCallBack() {
-//            @Override
-//            public void call() {
-//                loadAd();
-//            }
-//        });
-//
-//    }
-//    private void loadAd() {
-//
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtSplashAdapter.class, new BYAbsCallBack<GdtSplashAdapter>() {
-//            @Override
-//            public void invoke(GdtSplashAdapter cacheAdapter) {
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.splashAD.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-
-        initVis();
-
-
         int timeout = sdkSupplier.timeout <= 0 ? 5000 : sdkSupplier.timeout;
 
 
         SplashADListener listener = new SplashADListener() {
-//            SplashADZoomOutListener listener = new SplashADZoomOutListener() {
-//            @Override
-//            public void onZoomOut() {
-//                LogUtil.simple(TAG + "onZoomOut ");
-//                zoomOut();
-//            }
-//
-//            @Override
-//            public void onZoomOutPlayFinish() {
-//                LogUtil.simple(TAG + "onZoomOutPlayFinish ");
-//
-//            }
-//
-//            @Override
-//            public boolean isSupportZoomOut() {
-//                LogUtil.simple(TAG + "isSupportZoomOut ");
-//                return true;
-//            }
 
             @Override
             public void onADDismissed() {
@@ -230,9 +156,11 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
             public void onADLoaded(long expireTimestamp) {
                 try {
                     LogUtil.simple(TAG + "onADLoaded expireTimestamp:" + expireTimestamp);
+                    double ecpm = 0;
+
                     if (splashAD != null) {
                         LogUtil.devDebug(TAG + "getECPMLevel = " + splashAD.getECPMLevel() + ", getECPM = " + splashAD.getECPM());
-                        updateBidding(splashAD.getECPM());
+                        ecpm = (splashAD.getECPM());
 
 //                        if (AdvanceUtil.isDev()) {//测试bidding
 //                            sdkSupplier.price = 700;
@@ -240,7 +168,8 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
 //                        }
                     }
 
-                    handleSucceed(GdtSplashAdapter.this);
+                    handleSucceed(ecpm);
+
                     long rt = SystemClock.elapsedRealtime();
                     long expire = expireTimestamp - rt;
                     LogUtil.high(TAG + "ad will expired in :" + expire + " ms");
@@ -262,28 +191,6 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-//    private void zoomOut() {
-//        try {
-//            if (splashSetting == null) {
-//                return;
-//            }
-//            Activity adAct = getRealActivity(splashSetting.getAdContainer());
-//
-//            SplashZoomOutManager zoomOutManager = SplashZoomOutManager.getInstance();
-//            zoomOutManager.initSize(adAct);
-//            zoomOutManager.setSplashInfo(splashAD, splashSetting.getAdContainer().getChildAt(0),
-//                    adAct.getWindow().getDecorView());
-//
-//            checkAndReview();
-//            if (splashSetting.isShowInSingleActivity()) {
-//                new GdtUtil().zoomOut(adAct);
-//            } else {
-//                AdvanceSetting.getInstance().isSplashSupportZoomOut = true;
-//            }
-//        } catch (Throwable e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     //检查是否需要对holder进行遮罩图层赋值
     private void checkAndReview() {
@@ -318,7 +225,7 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
         if (splashAD != null) {
             return splashAD.isValid();
         }
-           return true;
+        return true;
     }
 
     @Override

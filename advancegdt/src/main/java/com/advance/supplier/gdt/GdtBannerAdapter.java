@@ -7,11 +7,8 @@ import android.widget.RelativeLayout;
 
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.banner2.UnifiedBannerADListener;
 import com.qq.e.ads.banner2.UnifiedBannerView;
 import com.qq.e.comm.util.AdError;
@@ -65,10 +62,11 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
                     refreshing = true;
                 }
             }
+            double ecpm = 0;
             if (bv != null) {
-                updateBidding(bv.getECPM());
+                ecpm = (bv.getECPM());
             }
-            handleSucceed(this);
+            handleSucceed(ecpm);
         } catch (Throwable e) {
             e.printStackTrace();
             doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
@@ -166,7 +164,7 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
         if (bv != null) {
             return bv.isValid();
         }
-           return true;
+        return true;
     }
 
     @Override

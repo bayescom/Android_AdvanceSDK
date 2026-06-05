@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ITanxAd;
@@ -18,7 +17,6 @@ import com.alimm.tanx.core.ad.listener.ITanxAdLoader;
 import com.alimm.tanx.core.request.TanxAdSlot;
 import com.alimm.tanx.core.request.TanxError;
 import com.alimm.tanx.ui.TanxSdk;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
 import java.util.List;
 import java.util.Map;
@@ -55,36 +53,6 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
-//            @Override
-//            public void success() {
-//                // TODO: 2023/9/5 测试开启线程池来加载广告请求方法
-//                startLoadAD();
-//            }
-//
-//            @Override
-//            public void fail(int code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//    }
-//
-//    private void startLoadAD() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxSplashExpressAd.class, new BYAbsCallBack<ITanxSplashExpressAd>() {
-//            @Override
-//            public void invoke(ITanxSplashExpressAd cacheAD) {
-//                iTanxSplashExpressAd = cacheAD;
-//
-//                updateBidding(cacheAD.getBidInfo().getBidPrice());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-
-        
         TanxAdSlot adSlot = new TanxAdSlot.Builder()
                 .adCount(sdkSupplier.adCount)
                 .pid(sdkSupplier.adspotid)
@@ -121,9 +89,13 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
                     }
                     LogUtil.simple(TAG + "onLoaded");
                     iTanxSplashExpressAd = adList.get(0);
-                    updateBidding(iTanxSplashExpressAd.getBidInfo().getBidPrice());
-                    handleSucceed(iTanxSplashExpressAd);
 
+                    long ecpm = 0;
+                    try {
+                        ecpm =(iTanxSplashExpressAd.getBidInfo().getBidPrice());
+                    } catch (Throwable e) {
+                    }
+                    handleSucceed(ecpm);
                 } catch (Throwable e) {
                     e.printStackTrace();
                     handleFailed(AdvanceError.ERROR_EXCEPTION_LOAD, "");

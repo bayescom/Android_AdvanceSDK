@@ -7,7 +7,6 @@ import com.advance.AdvanceConfig;
 import com.advance.AdvanceSetting;
 import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvancePrivacyController;
-import com.advance.itf.AdvanceSupplierBridge;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;

@@ -3,13 +3,9 @@ package com.advance.supplier.tap;
 import android.app.Activity;
 import android.content.Context;
 
-import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.tapsdk.tapad.AdRequest;
 import com.tapsdk.tapad.TapAdNative;
 import com.tapsdk.tapad.TapInterstitialAd;
@@ -99,30 +95,7 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        TapUtil.initAD(this, new BYBaseCallBack() {
-//            @Override
-//            public void call() {
-//                loadAD();
-//            }
-//        });
-//
-//    }
-//    private void loadAD() {
         try {
-            //检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TapInterstitialAd.class, new BYAbsCallBack<TapInterstitialAd>() {
-//                @Override
-//                public void invoke(TapInterstitialAd cacheAD) {
-//                    adData = cacheAD;
-//
-//                    updateBidding(TapUtil.getBiddingPrice(cacheAD.getMediaExtraInfo()));
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-            
-//            tapAdNative = TapAdManager.get().createAdNative(getRealContext());
             tapAdNative = TapUtil.getTapADManger(getRealContext());
 
             int spaceId = TapUtil.getPlaceId(getPosID());
@@ -140,10 +113,7 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                             return;
                         }
                         adData = tapInterstitialAd;
-
-                        updateBidding(TapUtil.getBiddingPrice(adData.getMediaExtraInfo()));
-
-                        handleSucceed(adData);
+                        handleSucceed(TapUtil.getBiddingPrice(adData.getMediaExtraInfo()));
 
                     } catch (Throwable e) {
                         e.printStackTrace();

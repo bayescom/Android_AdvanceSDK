@@ -2,11 +2,8 @@ package com.advance.supplier.gdt;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFConstant;
 import com.advance.core.srender.AdvanceRFDownloadListener;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
@@ -17,10 +14,7 @@ import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.nativ.MediaView;
 import com.qq.e.ads.nativ.NativeADEventListener;
@@ -61,30 +55,8 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        GdtUtil.initAD(this, new BYBaseCallBack() {
-//            @Override
-//            public void call() {
-//                loadAd();
-//            }
-//        });
-//    }
-//    private void loadAd() {
         try {
             LogUtil.simple(TAG + "call load start ");
-
-//            //检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtRenderFeedAdapter.class, new BYAbsCallBack<GdtRenderFeedAdapter>() {
-//                @Override
-//                public void invoke(GdtRenderFeedAdapter cacheAdapter) {
-//
-//                    //更新缓存广告得价格
-//                    updateBidding(cacheAdapter.mRenderAD.getECPM());
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-
 
             NativeUnifiedAD mAdManager = new NativeUnifiedAD(getRealActivity(null), sdkSupplier.adspotid, new NativeADUnifiedListener() {
                 @Override
@@ -99,14 +71,12 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                             handleFailed(AdvanceError.ERROR_DATA_NULL, "mRenderAD null");
                             return;
                         }
-                        //更新ecpm价格信息
-                        updateBidding(mRenderAD.getECPM());
 
                         //转换返回广告model为聚合通用model
                         dataConverter = new GdtRenderDataConverter(mRenderAD, sdkSupplier);
 
                         //标记广告成功
-                        handleSucceed(GdtRenderFeedAdapter.this);
+                        handleSucceed(mRenderAD.getECPM());
                         //通知广告成功
 //                        mAdvanceRFBridge.adapterDidLoaded(dataConverter);
                     } catch (Throwable e) {

@@ -1,10 +1,11 @@
 package com.advance.core.srender.widget;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 //用来渲染视频得view，主要优量汇、mercury 需要用到特定的view来包裹
 public class AdvRFVideoView extends FrameLayout {

@@ -5,14 +5,10 @@ import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.tapsdk.tapad.AdRequest;
 import com.tapsdk.tapad.TapAdNative;
 import com.tapsdk.tapad.TapBannerAd;
@@ -105,34 +101,7 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        TapUtil.initAD(this, new BYBaseCallBack() {
-//            @Override
-//            public void call() {
-//                loadAD();
-//            }
-//        });
-//
-//    }
-//
-//    private void loadAD() {
         try {
-//
-//
-//
-//            //检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TapBannerAd.class, new BYAbsCallBack<TapBannerAd>() {
-//                @Override
-//                public void invoke(TapBannerAd cacheAD) {
-//                    adData = cacheAD;
-//
-//                    updateBidding(TapUtil.getBiddingPrice(cacheAD.getMediaExtraInfo()));
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-            
-//            tapAdNative = TapAdManager.get().createAdNative(getRealContext());
             tapAdNative = TapUtil.getTapADManger(getRealContext());
 
             int spaceId = TapUtil.getPlaceId(getPosID());
@@ -151,9 +120,7 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
                         }
                         adData = tapBannerAd;
 
-                        updateBidding(TapUtil.getBiddingPrice(adData.getMediaExtraInfo()));
-
-                        handleSucceed(adData);
+                        handleSucceed(TapUtil.getBiddingPrice(adData.getMediaExtraInfo()));
 
                     } catch (Throwable e) {
                         e.printStackTrace();

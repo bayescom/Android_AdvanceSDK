@@ -16,28 +16,7 @@ import java.util.Map;
 
 public class FLInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     FLInterstitial flAd;
-
-    
-    
-
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        FLUtil.initAD(this);
-//        loadAd();
-//    }
-//
-//    private void loadAd() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, FLInterstitialAdapter.class, new BYAbsCallBack<FLInterstitialAdapter>() {
-//            @Override
-//            public void invoke(FLInterstitialAdapter cacheAdapter) {
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.flAd.getEcpm());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
         flAd = new FLInterstitial.Builder(getRealContext())
                 .setKey(getPosID())
                 .setInterstitialListener(new AdViewInterstitialListener() {
@@ -45,9 +24,7 @@ public class FLInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                     public void onAdReady() {
                         LogUtil.simple(TAG + "onAdReady  ");
 //请求成功时回调。可以在此处调用展示
-                        updateBidding(flAd.getEcpm());
-
-                        handleSucceed(FLInterstitialAdapter.this);
+                        handleSucceed(flAd.getEcpm());
                     }
 
                     @Override

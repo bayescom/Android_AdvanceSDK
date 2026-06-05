@@ -32,30 +32,9 @@ public class OppoBannerAdapter extends AdvanceBannerCustomAdapter {
 
     }
 
-    
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        OppoUtil.initAD(this);
-//        startLoad();
-//    }
-//
-//    private void startLoad() {
         try {
-
-
-//检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoBannerAdapter.class, new BYAbsCallBack<OppoBannerAdapter>() {
-//                @Override
-//                public void invoke(OppoBannerAdapter cacheAdapter) {
-//
-//                    //更新缓存广告得价格
-//                    updateBidding(cacheAdapter.mBannerAd.getECPM());
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-//
             mBannerAd = new BannerAd(getRealActivity(null), sdkSupplier.adspotid);
             /**
              * 设置Banner广告行为监听器
@@ -65,16 +44,15 @@ public class OppoBannerAdapter extends AdvanceBannerCustomAdapter {
                 public void onAdReady() {
                     LogUtil.simple(TAG + "onAdReady ");
 
-                    updateBidding(mBannerAd.getECPM());
-
-                    handleSucceed(OppoBannerAdapter.this);
+                    int ecpm = mBannerAd == null ? 0 : mBannerAd.getECPM();
+                    handleSucceed(ecpm);
                 }
 
                 @Override
                 public void onAdClose() {
                     LogUtil.simple(TAG + " onAdClose");
 
-                   handleClose();
+                    handleClose();
                 }
 
                 @Override

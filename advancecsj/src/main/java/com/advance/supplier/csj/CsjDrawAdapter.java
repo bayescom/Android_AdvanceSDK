@@ -7,10 +7,7 @@ import android.view.View;
 import com.advance.AdvanceConfig;
 import com.advance.custom.AdvanceDrawCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.util.BYUtil;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.bytedance.sdk.openadsdk.TTAdNative;
@@ -28,30 +25,6 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
     TTNativeExpressAd ad;
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        CsjUtil.initCsj(this, new CsjUtil.InitListener() {
-//            @Override
-//            public void success() {
-//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-//                startLoad();
-//
-//            }
-//
-//            @Override
-//            public void fail(int code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTNativeExpressAd.class, new BYAbsCallBack<TTNativeExpressAd>() {
-//            @Override
-//            public void invoke(TTNativeExpressAd cacheAD) {
-//                ad = cacheAD;
-//                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         //step1:初始化sdk
         TTAdManager ttAdManager = TTAdSdk.getAdManager();
@@ -82,7 +55,6 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
     public void destroyAd() {
 
     }
-
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
@@ -124,9 +96,6 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
             if (isADViewAdded(ad.getExpressAdView())) {
                 ad.render();
             }
-//            if (isADViewAdded(newAD.getAdView())) {
-//                newAD.render();
-//            }
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
@@ -135,40 +104,6 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
     }
 
 
-    private void startLoad() {
-
-    }
-
-    private MediationExpressRenderListener getExpressAdInteractionListener() {
-        return new MediationExpressRenderListener() {
-            @Override
-            public void onRenderFail(View view, String msg, int code) {
-                String log = "onRenderFail : code = " + code + ",msg =" + msg;
-                LogUtil.simple(TAG + "onRenderFail, log = " + log);
-
-                handleFailed(AdvanceError.ERROR_RENDER_FAILED, log);
-            }
-
-            @Override
-            public void onAdClick() {
-                LogUtil.simple(TAG + "onAdClicked, ");
-
-                handleClick();
-            }
-
-            @Override
-            public void onAdShow() {
-                LogUtil.simple(TAG + "onAdShow ");
-
-                handleShow();
-            }
-
-            @Override
-            public void onRenderSuccess(View view, float width, float height, boolean isExpress) {
-                LogUtil.simple(TAG + "onRenderSuccess, width = " + width + ",height = " + height + ", isExpress = " + isExpress);
-            }
-        };
-    }
 
     @Override
     public void onError(int code, String message) {
@@ -193,11 +128,8 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
                 runParaFailed(error);
                 return;
             }
-            updateBidding(CsjUtil.getEcpmValue(TAG, ad.getMediaExtraInfo()));
 
-//            ad.setCanInterruptVideoPlay(false);
-
-            handleSucceed(ad);
+            handleSucceed(CsjUtil.getEcpmValue(TAG, ad.getMediaExtraInfo()));
 
         } catch (Throwable e) {
             e.printStackTrace();

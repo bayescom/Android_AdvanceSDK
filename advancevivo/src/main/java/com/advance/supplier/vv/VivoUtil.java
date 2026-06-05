@@ -1,28 +1,12 @@
 package com.advance.supplier.vv;
 
-import android.app.Application;
-import android.location.Location;
-
 import com.advance.AdvanceSetting;
 import com.advance.BaseParallelAdapter;
-import com.advance.itf.AdvanceADNInitResult;
-import com.advance.itf.AdvancePrivacyController;
-import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
-import com.advance.utils.AdvanceInitManger;
-import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
-import com.bayes.sdk.basic.util.BYUtil;
-import com.vivo.mobilead.manager.VInitCallback;
-import com.vivo.mobilead.manager.VivoAdManager;
-import com.vivo.mobilead.model.VAdConfig;
-import com.vivo.mobilead.model.VCustomController;
-import com.vivo.mobilead.model.VLocation;
 import com.vivo.mobilead.unified.IBidding;
 import com.vivo.mobilead.unified.base.AdParams;
 import com.vivo.mobilead.unified.base.VivoAdError;
-import com.vivo.mobilead.unified.base.annotation.NonNull;
 
 public class VivoUtil {
     public static final String TAG = "[VivoUtil] ";

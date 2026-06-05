@@ -21,8 +21,6 @@ import java.util.Map;
 public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
     SplashExpressAd mSplashExpressAd;
 
-
-
     @Override
     protected void adPrepared() {
 
@@ -132,24 +130,6 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        loadAd();
-//    }
-//    private void loadAd() {
-//        HonorUtil.initAD(this);
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SplashExpressAd.class, new BYAbsCallBack<SplashExpressAd>() {
-//            @Override
-//            public void invoke(SplashExpressAd cacheAD) {
-//                mSplashExpressAd = cacheAD;
-//
-//                updateBidding(HonorUtil.getECPM(mSplashExpressAd));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()
                 .setSlotId(sdkSupplier.adspotid) // 必传,设置您的广告位ID。
@@ -165,9 +145,7 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
 
                         mSplashExpressAd = splashExpressAd;
 
-                        updateBidding(HonorUtil.getECPM(mSplashExpressAd));
-
-                        handleSucceed(mSplashExpressAd);
+                        handleSucceed(HonorUtil.getECPM(mSplashExpressAd));
                     }
 
                     @Override

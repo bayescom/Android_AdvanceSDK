@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
 import com.advance.core.srender.AdvanceRFUtil;
 import com.advance.core.srender.AdvanceRFVideoEventListener;
@@ -23,15 +21,9 @@ import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
-import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.device.BYDevice;
 import com.bayes.sdk.basic.device.BYDisplay;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.util.BYCacheUtil;
 import com.bayes.sdk.basic.util.BYStringUtil;
-import com.bayes.sdk.basic.util.BYUtil;
 import com.bayes.sdk.basic.widget.BYViewUtil;
 import com.mercury.sdk.core.config.VideoOption;
 import com.mercury.sdk.core.nativ.NativeAD;
@@ -82,26 +74,6 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        doStart();
-//    }
-//
-//    private void doStart() {
-//        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
-//
-////检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, NativeADData.class, new BYAbsCallBack<NativeADData>() {
-//            @Override
-//            public void invoke(NativeADData cacheAD) {
-//                mRenderAD = cacheAD;
-//                //自渲染需要转换返回广告model为聚合通用model
-//                dataConverter = new MercuryRenderDataConverter(cacheAD, sdkSupplier);
-//
-//                updateBidding(cacheAD.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
         nativeAD = new NativeAD(getRealActivity(null), sdkSupplier.adspotid, new NativeADListener() {
             @Override
             public void onADLoaded(List<NativeADData> list) {
@@ -116,14 +88,11 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                         return;
                     }
 
-                    //更新ecpm价格信息
-                    updateBidding(mRenderAD.getECPM());
-
                     //转换返回广告model为聚合通用model
                     dataConverter = new MercuryRenderDataConverter(mRenderAD, sdkSupplier);
 
                     //标记广告成功
-                    handleSucceed(mRenderAD);
+                    handleSucceed(mRenderAD.getECPM());
                     //通知广告成功
 //                    mAdvanceRFBridge.adapterDidLoaded(mDataConverter);
                 } catch (Throwable e) {

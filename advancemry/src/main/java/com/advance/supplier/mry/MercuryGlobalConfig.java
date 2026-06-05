@@ -5,7 +5,6 @@ import android.location.Location;
 
 import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvancePrivacyController;
-import com.advance.itf.AdvanceSupplierBridge;
 import com.bayes.sdk.basic.core.BYConstants;
 import com.mercury.sdk.core.config.AdConfigManager;
 import com.mercury.sdk.core.config.MercuryAD;

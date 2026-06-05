@@ -3,10 +3,8 @@ package com.advance.supplier.tanx;
 import android.app.Activity;
 import android.content.Context;
 
-import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ITanxAd;
 import com.alimm.tanx.core.ad.ad.template.rendering.table.screen.ITanxTableScreenExpressAd;
@@ -16,7 +14,6 @@ import com.alimm.tanx.core.ad.view.TanxAdView;
 import com.alimm.tanx.core.request.TanxAdSlot;
 import com.alimm.tanx.core.request.TanxError;
 import com.alimm.tanx.ui.TanxSdk;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
 import java.util.List;
 import java.util.Map;
@@ -126,35 +123,7 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
-//            @Override
-//            public void success() {
-//                loadOnly();
-//
-//            }
-//
-//            @Override
-//            public void fail(int code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//    }
-//
-//
-//    private void loadOnly() {
         try {
-            //检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxTableScreenExpressAd.class, new BYAbsCallBack<ITanxTableScreenExpressAd>() {
-//                @Override
-//                public void invoke(ITanxTableScreenExpressAd cacheAD) {
-//                    interExpressAD = cacheAD;
-//                    updateBidding(cacheAD.getBidInfo().getBidPrice());
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-
 
             iTanxAdLoader = TanxSdk.getSDKManager().createAdLoader(getRealContext());
 
@@ -175,9 +144,13 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                             }
                             LogUtil.simple(TAG + "onLoaded");
                             interExpressAD = adList.get(0);
-                            updateBidding(interExpressAD.getBidInfo().getBidPrice());
 
-                            handleSucceed(interExpressAD);
+                            long ecpm = 0;
+                            try {
+                                ecpm =(interExpressAD.getBidInfo().getBidPrice());
+                            } catch (Throwable e) {
+                            }
+                            handleSucceed(ecpm);
 
                         } catch (Throwable e) {
                             e.printStackTrace();

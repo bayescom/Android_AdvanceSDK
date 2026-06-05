@@ -2,7 +2,6 @@ package com.advance;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.LayoutRes;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,19 +11,21 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+
 import com.advance.core.splash.AdvanceSplashRenderListener;
 import com.advance.itf.AdvanceLifecycleCallback;
-import com.advance.itf.SplashJumpType;
-import com.bayes.sdk.basic.device.BYDisplay;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.SplashGMCallBack;
 import com.advance.itf.SplashJumpListener;
+import com.advance.itf.SplashJumpType;
 import com.advance.model.AdStatus;
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceLoader;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.device.BYDisplay;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 
 import java.lang.ref.SoftReference;

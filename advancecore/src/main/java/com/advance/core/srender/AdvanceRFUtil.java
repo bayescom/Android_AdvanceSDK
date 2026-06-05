@@ -4,8 +4,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.advance.BaseParallelAdapter;
-import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;

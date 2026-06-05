@@ -5,12 +5,9 @@ import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
 import android.app.Activity;
 import android.content.Context;
 
-import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.heytap.msp.mobad.api.ad.NativeTempletAd;
 import com.heytap.msp.mobad.api.listener.INativeTempletAdListener;
 import com.heytap.msp.mobad.api.params.INativeTempletAdView;
@@ -25,7 +22,6 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
     NativeTempletAd mNativeTempletAd;
     INativeTempletAdView adView;
 
-
     @Override
     public boolean isValid() {
         return true;
@@ -35,14 +31,9 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
     public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
 
     }
-    
+
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        OppoUtil.initAD(this);
-//        loadAd();
-//    }
-//
-//    void loadAd() {
         try {
             /**
              * 通过构造NativeAdSize对象，在NativeTempletAd初始化时传入、可以指定原生模板广告的大小，单位为dp
@@ -50,20 +41,6 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
              * 确定最佳尺寸后，应该把这个ADSize固定下来，并在构造NativeExpressAD的时候传入
              * 也可以传入null，展示默认的大小
              */
-
-//检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoNativeExpressAdapter.class, new BYAbsCallBack<OppoNativeExpressAdapter>() {
-//                @Override
-//                public void invoke(OppoNativeExpressAdapter cacheAdapter) {
-//                    //更新缓存广告得价格
-//                    updateBidding(cacheAdapter.adView.getECPM());
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-
-
             //  2025/2/21 测试高度为0时表现？？？  测试看下来设置宽高信息，广告不会根据设置的值来渲染。。。。
             int width = nativeExpressSetting.getExpressViewWidth();
             int height = nativeExpressSetting.getExpressViewHeight();
@@ -81,13 +58,14 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
                         handleFailed(ERROR_DATA_NULL, "");
                     } else {
                         adView = list.get(0);
+                        int ecpm = 0;
                         try {
-                            updateBidding(adView.getECPM());
+                            ecpm = (adView.getECPM());
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
                         nativeExpressADView = adView.getAdView();
-                        handleSucceed(OppoNativeExpressAdapter.this);
+                        handleSucceed(ecpm);
                     }
                 }
 
@@ -136,7 +114,7 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
                 public void onRenderFailed(NativeAdError nativeAdError, INativeTempletAdView iNativeTempletAdView) {
                     LogUtil.simple(TAG + "onRenderFailed  ");
 
-                    handleRenderFailed(nativeExpressADView,AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED));
+                    handleRenderFailed(nativeExpressADView, AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED));
                 }
             });
 

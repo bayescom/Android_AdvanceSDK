@@ -7,17 +7,13 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
-import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.BaiduNativeManager;
 import com.baidu.mobads.sdk.api.ExpressResponse;
 import com.baidu.mobads.sdk.api.RequestParameters;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -93,16 +89,16 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
             } else {
                 //赋值item信息
                 nativeResponse = ads.get(0);
-
+                double ecpm = 0;
                 try { //避免方法有异常，catch一下，不影响success逻辑
                     if (nativeResponse != null) {
-                        updateBidding(BDUtil.getEcpmValue(nativeResponse.getECPMLevel()));
+                        ecpm =(BDUtil.getEcpmValue(nativeResponse.getECPMLevel()));
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
 
-                handleSucceed(this);
+                handleSucceed(ecpm);
             }
         } catch (Throwable e) {
             e.printStackTrace();

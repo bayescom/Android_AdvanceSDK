@@ -3,13 +3,11 @@ package com.advance.supplier.ks;
 import android.app.Activity;
 import android.content.Context;
 
-import com.advance.InterstitialSetting;
+import androidx.annotation.Nullable;
+
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
-import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYUtil;
 import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsInterstitialAd;
@@ -18,10 +16,6 @@ import com.kwad.sdk.api.KsScene;
 
 import java.util.List;
 import java.util.Map;
-
-import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
-
-import androidx.annotation.Nullable;
 
 public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter implements KsInterstitialAd.AdInteractionListener {
     KsInterstitialAd interstitialAD;
@@ -51,33 +45,6 @@ public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        KSUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-//                startLoad();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//
-//    }
-//
-//    private void startLoad() {
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsInterstitialAd.class, new BYAbsCallBack<KsInterstitialAd>() {
-//            @Override
-//            public void invoke(KsInterstitialAd cacheAD) {
-//                interstitialAD = cacheAD;
-//                updateBidding(cacheAD.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         //场景设置
         long adid = KSUtil.getADID(sdkSupplier);
@@ -112,8 +79,7 @@ public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
                             } else {
                                 interstitialAD = list.get(0);
 
-                                updateBidding(interstitialAD.getECPM());
-                                handleSucceed(interstitialAD);
+                                handleSucceed(interstitialAD.getECPM());
                             }
                         } catch (Throwable e) {
                             e.printStackTrace();

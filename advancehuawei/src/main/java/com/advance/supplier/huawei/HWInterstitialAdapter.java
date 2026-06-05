@@ -65,25 +65,6 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        loadAd();
-//    }
-//    private void loadAd() {
-//        //先执行SDK初始化
-//        HWUtil.initAD(this);
-//
-//
-////检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, HWInterstitialAdapter.class, new BYAbsCallBack<HWInterstitialAdapter>() {
-//            @Override
-//            public void invoke(HWInterstitialAdapter cacheAdapter) {
-//
-//                //更新缓存广告得价格
-//                updateBidding(HWUtil.getPrice(cacheAdapter.interstitialAd.getBiddingInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         interstitialAd = new InterstitialAd(getRealContext());
         interstitialAd.setAdId(sdkSupplier.adspotid);
@@ -93,11 +74,13 @@ public class HWInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                 // Called when an ad is loaded successfully.
                 LogUtil.simple(TAG + "Ad loaded.");
 
+                double ecpm = 0;
+
                 if (interstitialAd != null) {
-                    updateBidding(HWUtil.getPrice(interstitialAd.getBiddingInfo()));
+                    ecpm =(HWUtil.getPrice(interstitialAd.getBiddingInfo()));
                 }
 
-                handleSucceed(HWInterstitialAdapter.this);
+                handleSucceed(ecpm);
             }
 
             @Override

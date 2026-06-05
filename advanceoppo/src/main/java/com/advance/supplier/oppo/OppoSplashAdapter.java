@@ -7,9 +7,7 @@ import android.os.Handler;
 
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.heytap.msp.mobad.api.ad.HotSplashAd;
 import com.heytap.msp.mobad.api.listener.IHotSplashListener;
 import com.heytap.msp.mobad.api.params.SplashAdParams;
@@ -20,7 +18,6 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
     private final String TAG = "[OppoSplashAdapter] ";
     private HotSplashAd splashAd;
 
-
     @Override
     public boolean isValid() {
         return true;
@@ -30,7 +27,6 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
     public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
 
     }
-
 
 
     @Override
@@ -64,24 +60,7 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        OppoUtil.initAD(this);
-//        startLoad();
-//    }
-//    private void startLoad() {
         try {
-
-//检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoSplashAdapter.class, new BYAbsCallBack<OppoSplashAdapter>() {
-//                @Override
-//                public void invoke(OppoSplashAdapter cacheAdapter) {
-//
-//                    //更新缓存广告得价格
-//                    updateBidding(cacheAdapter.splashAd.getECPM());
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
 
             //可以自定义跳过按钮样式结束
             SplashAdParams.Builder builder = new SplashAdParams.Builder()
@@ -97,9 +76,8 @@ public class OppoSplashAdapter extends AdvanceSplashCustomAdapter {
                 public void onAdReady() {
                     LogUtil.simple(TAG + " onAdReady ");
 
-                    updateBidding(splashAd.getECPM());
-
-                    handleSucceed(OppoSplashAdapter.this);
+                    int ecpm = splashAd == null ? 0 : splashAd.getECPM();
+                    handleSucceed(ecpm);
                 }
 
                 @Override

@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
-
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
@@ -20,29 +19,14 @@ import java.util.Map;
 
 public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements SplashInteractionListener {
     private SplashAd splashAd;
-    private   RequestParameters parameters;
+    private RequestParameters parameters;
 
     private final String TAG = "[BDSplashAdapter] ";
 
 
-    
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        BDUtil.initBDAccount(this);
 
         parameters = AdvanceBDManager.getInstance().splashParameters;
-
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDSplashAdapter.class, new BYAbsCallBack<BDSplashAdapter>() {
-//            @Override
-//            public void invoke(BDSplashAdapter cacheAdapter) {
-//
-//                //更新缓存广告得价格
-//                updateBidding(BDUtil.getEcpmValue(cacheAdapter.splashAd.getECPMLevel()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
 
         splashAd = new SplashAd(BYUtil.getCtx(), sdkSupplier.adspotid, parameters, this);
@@ -56,14 +40,6 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
 
     @Override
     protected void adPrepared() {
-//        if (null != setting) {
-//            setting.adapterDidSucceed(sdkSupplier);
-//        }
-
-//使用百度自己的skipview，自定义view隐藏
-//        if (null != skipView) {
-//            skipView.setVisibility(View.INVISIBLE);
-//        }
 
     }
 
@@ -81,6 +57,9 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
 
     @Override
     public boolean isValid() {
+        if (splashAd != null) {
+            return splashAd.isReady();
+        }
         return true;
     }
 
@@ -104,19 +83,6 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
     public void onAdPresent() {
         LogUtil.simple(TAG + "onAdPresent");
 
-//        //进行辅助判断倒计时操作的定时任务
-//        try {
-//            handleShow();
-//
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    isCountingEnd = true;
-//                }
-//            }, 4800);
-//        } catch (Throwable e) {
-//            e.printStackTrace();
-//        }
 
     }
 
@@ -142,9 +108,10 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
     @Override
     public void onADLoaded() {
         LogUtil.simple(TAG + "onADLoaded , isParallel = " + isParallel);
+        double ecpm = 0;
         try { //避免方法有异常，catch一下，不影响success逻辑
             if (splashAd != null) {
-                updateBidding(BDUtil.getEcpmValue(splashAd.getECPMLevel()));
+                ecpm = (BDUtil.getEcpmValue(splashAd.getECPMLevel()));
 
                 if (BYUtil.isDev()) {//测试bidding
                     //                sdkSupplier.price = 2700;
@@ -154,7 +121,7 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        handleSucceed(this);
+        handleSucceed(ecpm);
     }
 
     @Override
@@ -206,14 +173,6 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
         handleFailed(AdvanceError.ERROR_BD_FAILED, s);
     }
 
-
-//    @Override
-//    public boolean isValid() {
-//        if (splashAd != null) {
-//            return splashAd.isReady();
-//        }
-//        return super.isValid();
-//    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {

@@ -6,7 +6,6 @@ import android.content.Context;
 import com.advance.RewardServerCallBackInf;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ad.reward.ITanxRewardVideoAd;
 import com.alimm.tanx.core.ad.ad.reward.model.VideoParam;
@@ -18,7 +17,6 @@ import com.alimm.tanx.core.request.TanxAdSlot;
 import com.alimm.tanx.core.request.TanxError;
 import com.alimm.tanx.core.request.TanxPlayerError;
 import com.alimm.tanx.ui.TanxSdk;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
 
 import java.util.List;
@@ -173,34 +171,7 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        TanxUtil.initTanx(this, new TanxUtil.InitListener() {
-//            @Override
-//            public void success() {
-//                startLoadAD();
-//            }
-//
-//            @Override
-//            public void fail(int code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//    }
-//
-//    private void startLoadAD() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, ITanxRewardExpressAd.class, new BYAbsCallBack<ITanxRewardExpressAd>() {
-//            @Override
-//            public void invoke(ITanxRewardExpressAd cacheAD) {
-//                iTanxRewardVideoExpressAd = cacheAD;
-//
-//                updateBidding(cacheAD.getBidInfo().getBidPrice());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-        
+
         //获取用户id，首先检查tanx通用配置
         String uid = AdvanceTanxSetting.getInstance().mediaUID;
         //为空则获取广告位上配置的uid
@@ -231,9 +202,12 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
                     }
                     LogUtil.simple(TAG + "onLoaded");
                     iTanxRewardVideoExpressAd = adList.get(0);
-                    updateBidding(iTanxRewardVideoExpressAd.getBidInfo().getBidPrice());
-                    handleSucceed(iTanxRewardVideoExpressAd);
-
+                    long ecpm = 0;
+                    try {
+                        ecpm =(iTanxRewardVideoExpressAd.getBidInfo().getBidPrice());
+                    } catch (Throwable e) {
+                    }
+                    handleSucceed(ecpm);
                 } catch (Throwable e) {
                     e.printStackTrace();
                     handleFailed(AdvanceError.ERROR_EXCEPTION_LOAD, "");

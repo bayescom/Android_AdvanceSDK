@@ -8,14 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.tapsdk.tapad.AdRequest;
 import com.tapsdk.tapad.TapAdNative;
 import com.tapsdk.tapad.TapSplashAd;
@@ -36,6 +32,7 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
     public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
 
     }
+
     @Override
     protected void adPrepared() {
 
@@ -139,33 +136,7 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        TapUtil.initAD(this, new BYBaseCallBack() {
-//            @Override
-//            public void call() {
-//                loadAD();
-//            }
-//        });
-//    }
-//
-//
-//
-//    private void loadAD() {
         try {
-
-            //检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TapSplashAd.class, new BYAbsCallBack<TapSplashAd>() {
-//                @Override
-//                public void invoke(TapSplashAd cacheAD) {
-//                    adData = cacheAD;
-//
-//                    updateBidding(TapUtil.getBiddingPrice(cacheAD.getMediaExtraInfo()));
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-
-
             //不支持使用applicationContext属性，必须为activity实例，否则报错
             //tapAdNative = TapAdManager.get().createAdNative(getRealContext());
             tapAdNative = TapUtil.getTapADManger(getRealContext());
@@ -202,9 +173,7 @@ public class TapSplashAdapter extends AdvanceSplashCustomAdapter {
                         }
                         adData = tapSplashAd;
 
-                        updateBidding(TapUtil.getBiddingPrice(tapSplashAd.getMediaExtraInfo()));
-
-                        handleSucceed(adData);
+                        handleSucceed(TapUtil.getBiddingPrice(adData.getMediaExtraInfo()));
                     } catch (Throwable e) {
                         e.printStackTrace();
                         runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));

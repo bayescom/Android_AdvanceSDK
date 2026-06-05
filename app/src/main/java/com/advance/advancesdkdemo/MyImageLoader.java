@@ -3,9 +3,10 @@ package com.advance.advancesdkdemo;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.alimm.tanx.core.image.ILoader;
 import com.alimm.tanx.core.image.util.GifConfig;

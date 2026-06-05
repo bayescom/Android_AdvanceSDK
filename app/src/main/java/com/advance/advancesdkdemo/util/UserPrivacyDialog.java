@@ -2,9 +2,10 @@ package com.advance.advancesdkdemo.util;
 
 import android.app.Dialog;
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.advance.advancesdkdemo.Constants;
 import com.advance.advancesdkdemo.MyApplication;

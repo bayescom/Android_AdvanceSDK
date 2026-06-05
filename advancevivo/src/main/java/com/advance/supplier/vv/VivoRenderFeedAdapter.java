@@ -374,39 +374,6 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        VivoUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                loadAd();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//
-//    }
-//    private void loadAd() {
-//
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoRenderFeedAdapter.class, new BYAbsCallBack<VivoRenderFeedAdapter>() {
-//            @Override
-//            public void invoke(VivoRenderFeedAdapter cacheAdapter) {
-//
-//                //更新缓存广告得价格
-//                if (usePro) {
-//                    updateBidding(VivoUtil.getPrice(cacheAdapter.adDataPro));
-//                } else {
-//                    updateBidding(VivoUtil.getPrice(cacheAdapter.adData));
-//
-//                }
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         if (sdkSupplier.versionTag == 1) {
             usePro = false;
@@ -436,8 +403,8 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
                 dataConverter = new VivoRenderDataConverter(usePro, VivoRenderFeedAdapter.this, adData, null);
 
-                updateBidding(VivoUtil.getPrice(adData));
-                handleSucceed(VivoRenderFeedAdapter.this);
+                handleSucceed(VivoUtil.getPrice(adData));
+
             }
 
             @Override
@@ -501,8 +468,7 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 adDataPro = list.get(0);
                 dataConverter = new VivoRenderDataConverter(usePro, VivoRenderFeedAdapter.this, null, adDataPro);
 
-                updateBidding(VivoUtil.getPrice(adDataPro));
-                handleSucceed(VivoRenderFeedAdapter.this);
+                handleSucceed(VivoUtil.getPrice(adDataPro));
             }
 
             @Override

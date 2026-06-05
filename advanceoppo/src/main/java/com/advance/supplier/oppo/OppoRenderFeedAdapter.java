@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
 import com.advance.core.srender.AdvanceRFUtil;
 import com.advance.core.srender.AdvanceRFVideoEventListener;
@@ -21,10 +20,8 @@ import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.heytap.msp.mobad.api.ad.NativeAdvanceAd;
 import com.heytap.msp.mobad.api.listener.INativeAdvanceInteractListener;
@@ -42,7 +39,6 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     NativeAdvanceAd mNativeAdvanceAd;
     INativeAdvanceData mRenderAD;
 
-
     @Override
     public boolean isValid() {
         return true;
@@ -54,27 +50,7 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        OppoUtil.initAD(this);
-//        startLoad();
-//    }
-//
-//    private void startLoad() {
         try {
-//检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoRenderFeedAdapter.class, new BYAbsCallBack<OppoRenderFeedAdapter>() {
-//                @Override
-//                public void invoke(OppoRenderFeedAdapter cacheAdapter) {
-//
-//                    dataConverter = new OppoRenderDataConverter(getRealContext(), cacheAdapter.mRenderAD, sdkSupplier);
-//
-//                    //更新缓存广告得价格
-//                    updateBidding(cacheAdapter.mRenderAD.getECPM());
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-            
             /**
              * 通过构造NativeAdSize对象，在NativeTempletAd初始化时传入、可以指定原生模板广告的大小，单位为dp
              * 也可以传入null，展示默认的大小
@@ -95,14 +71,11 @@ public class OppoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                             return;
                         }
 
-                        //更新ecpm价格信息
-                        updateBidding(mRenderAD.getECPM());
-
                         //转换返回广告model为聚合通用model
                         dataConverter = new OppoRenderDataConverter(getRealContext(), mRenderAD, sdkSupplier);
 
                         //标记广告成功
-                        handleSucceed(OppoRenderFeedAdapter.this);
+                        handleSucceed(mRenderAD.getECPM());
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }

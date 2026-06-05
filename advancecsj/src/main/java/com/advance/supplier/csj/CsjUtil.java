@@ -2,40 +2,21 @@ package com.advance.supplier.csj;
 
 
 import android.app.Activity;
-import android.content.Context;
-import android.os.Looper;
-import android.text.TextUtils;
 
-import com.advance.AdvanceConfig;
-import com.advance.AdvanceSetting;
-import com.advance.BaseParallelAdapter;
-import com.advance.itf.AdvancePrivacyController;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
-import com.advance.model.AdvanceError;
 import com.advance.utils.AdvanceSplashPlusManager;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.util.BYThreadUtil;
-import com.bayes.sdk.basic.util.BYUtil;
-import com.bayes.sdk.basic.widget.BYScheduleTimer;
-import com.bytedance.sdk.openadsdk.LocationProvider;
-import com.bytedance.sdk.openadsdk.TTAdConfig;
-import com.bytedance.sdk.openadsdk.TTAdConstant;
-import com.bytedance.sdk.openadsdk.TTAdSdk;
-import com.bytedance.sdk.openadsdk.TTCustomController;
 
-import java.util.Arrays;
 import java.util.Map;
 
 public class CsjUtil implements AdvanceSplashPlusManager.ZoomCall {
 
-    /**
-     * 穿山甲3450以后版本初始化方法，支持异步初始化以及对应回调方法
-     *
-     * @param adapter  渠道基础适配器
-     * @param listener 初始化回调
-     */
+//    /**
+//     * 穿山甲3450以后版本初始化方法，支持异步初始化以及对应回调方法
+//     *
+//     * @param adapter  渠道基础适配器
+//     * @param listener 初始化回调
+//     */
 //    public static synchronized void initCsj(final BaseParallelAdapter adapter, final InitListener listener) {
 //        try {
 //            final String tag = "[CsjUtil.initCsj] ";

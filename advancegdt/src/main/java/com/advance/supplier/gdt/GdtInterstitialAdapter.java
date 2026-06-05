@@ -3,13 +3,9 @@ package com.advance.supplier.gdt;
 import android.app.Activity;
 import android.content.Context;
 
-import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialAD;
 import com.qq.e.ads.interstitial2.UnifiedInterstitialADListener;
 import com.qq.e.comm.constants.AdPatternType;
@@ -40,15 +36,16 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
     }
 
 
-
     @Override
     public void onADReceive() {
         try {
             LogUtil.simple(TAG + "onADReceive");
+            double ecpm = 0;
+
             if (interstitialAD != null) {
-                updateBidding(interstitialAD.getECPM());
+                ecpm = (interstitialAD.getECPM());
             }
-            handleSucceed(this);
+            handleSucceed(ecpm);
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
@@ -123,27 +120,6 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        GdtUtil.initAD(this, new BYBaseCallBack() {
-//            @Override
-//            public void call() {
-//                loadAd();
-//            }
-//        });
-//    }
-//    public void loadAd() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtInterstitialAdapter.class, new BYAbsCallBack<GdtInterstitialAdapter>() {
-//            @Override
-//            public void invoke(GdtInterstitialAdapter cacheAdapter) {
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.interstitialAD.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-
         interstitialAD = new UnifiedInterstitialAD(activity, sdkSupplier.adspotid, this);
         interstitialAD.loadAD();
     }
@@ -163,7 +139,7 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter imp
         if (interstitialAD != null) {
             return interstitialAD.isValid();
         }
-           return true;
+        return true;
     }
 
     @Override

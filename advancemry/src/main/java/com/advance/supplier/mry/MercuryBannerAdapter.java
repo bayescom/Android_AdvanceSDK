@@ -7,14 +7,11 @@ import android.widget.RelativeLayout;
 
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.mercury.sdk.core.banner.BannerAD;
 import com.mercury.sdk.core.banner.BannerADListener;
 import com.mercury.sdk.util.ADError;
-
 
 import java.util.Map;
 
@@ -38,13 +35,13 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
 
 
             //旧版本SDK中不包含价格返回方法，catch住
+            int cpm = 0;
             try {
-                int cpm = mercuryBanner.getEcpm();
-                updateBidding(cpm);
+                  cpm = mercuryBanner.getEcpm();
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            handleSucceed(this);
+            handleSucceed(cpm);
         } catch (Throwable e) {
             e.printStackTrace();
             doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
@@ -106,22 +103,6 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
-//
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryBannerAdapter.class, new BYAbsCallBack<MercuryBannerAdapter>() {
-//            @Override
-//            public void invoke(MercuryBannerAdapter cacheAdapter) {
-//
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.mercuryBanner.getEcpm());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-        
         if (mercuryBanner != null) {
             mercuryBanner.destroy();
         }

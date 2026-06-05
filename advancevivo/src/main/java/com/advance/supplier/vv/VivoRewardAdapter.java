@@ -55,36 +55,6 @@ public class VivoRewardAdapter extends AdvanceRewardCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        VivoUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                loadAd();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//
-//    }
-//
-//    private void loadAd() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoRewardAdapter.class, new BYAbsCallBack<VivoRewardAdapter>() {
-//            @Override
-//            public void invoke(VivoRewardAdapter cacheAdapter) {
-//
-//                //更新缓存广告得价格
-//                updateBidding(VivoUtil.getPrice(cacheAdapter.rewardVideoAd));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-
-
         AdParams adParams = null;
         AdParams.Builder builder = VivoUtil.getAdParamsBuilder(this);
         if (builder != null) {
@@ -95,8 +65,7 @@ public class VivoRewardAdapter extends AdvanceRewardCustomAdapter {
             public void onAdReady() {
                 LogUtil.simple(TAG + "onAdReady...");
 
-                updateBidding(VivoUtil.getPrice(rewardVideoAd));
-                handleSucceed(VivoRewardAdapter.this);
+                handleSucceed(VivoUtil.getPrice(rewardVideoAd));
             }
 
             @Override

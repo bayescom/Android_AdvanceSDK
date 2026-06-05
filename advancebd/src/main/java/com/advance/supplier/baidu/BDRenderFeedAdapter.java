@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
 import com.advance.core.srender.AdvanceRFUtil;
 import com.advance.core.srender.AdvanceRFVideoEventListener;
@@ -18,17 +17,14 @@ import com.advance.core.srender.AdvanceRFVideoOption;
 import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.BaiduNativeManager;
-import com.baidu.mobads.sdk.api.ExpressResponse;
 import com.baidu.mobads.sdk.api.INativeVideoListener;
 import com.baidu.mobads.sdk.api.NativeResponse;
 import com.baidu.mobads.sdk.api.RequestParameters;
 import com.baidu.mobads.sdk.api.XAdNativeResponse;
 import com.baidu.mobads.sdk.api.XNativeView;
 import com.bayes.sdk.basic.device.BYDisplay;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.mercury.sdk.util.MercuryTool;
 
@@ -44,23 +40,6 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         parameters = AdvanceBDManager.getInstance().nativeCustomParameters;
-
-//        BDUtil.initBDAccount(this);
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDRenderFeedAdapter.class, new BYAbsCallBack<BDRenderFeedAdapter>() {
-//            @Override
-//            public void invoke(BDRenderFeedAdapter cacheAdapter) {
-//
-//                dataConverter = new BDRenderDataConverter(cacheAdapter.nativeResponseAD, sdkSupplier);
-//
-//                //更新缓存广告得价格
-//                updateBidding(BDUtil.getEcpmValue(cacheAdapter.nativeResponseAD.getECPMLevel()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         if (sdkSupplier != null) {
 
@@ -90,18 +69,10 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
                             nativeResponseAD = list.get(0);
 
-//                            if (BYUtil.isDev()) {
-//                                for (NativeResponse response : list) {
-//                                    if (response != nativeResponseAD) {
-//                                        LogUtil.devDebug("test print all response ad");
-//                                        new BDRenderDataConverter(nativeResponseAD, sdkSupplier);
-//                                    }
-//                                }
-//                            }
-
+                            double ecpm = 0;
                             try { //避免方法有异常，catch一下，不影响success逻辑
                                 if (nativeResponseAD != null) {
-                                    updateBidding(BDUtil.getEcpmValue(nativeResponseAD.getECPMLevel()));
+                                    ecpm=(BDUtil.getEcpmValue(nativeResponseAD.getECPMLevel()));
                                 }
 
                                 dataConverter = new BDRenderDataConverter(nativeResponseAD, sdkSupplier);
@@ -110,7 +81,7 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                                 e.printStackTrace();
                             }
 
-                            handleSucceed(BDRenderFeedAdapter.this);
+                            handleSucceed(ecpm);
                         }
                     } catch (Throwable e) {
                         e.printStackTrace();

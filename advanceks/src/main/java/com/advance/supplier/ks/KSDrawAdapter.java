@@ -1,19 +1,14 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
-
-import androidx.annotation.Nullable;
-
 import android.content.Context;
 import android.view.View;
 
-import com.advance.AdvanceDrawSetting;
+import androidx.annotation.Nullable;
+
 import com.advance.custom.AdvanceDrawCustomAdapter;
-import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsDrawAd;
 import com.kwad.sdk.api.KsLoadManager;
@@ -36,35 +31,7 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
 
     }
 
-
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        KSUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-//                startLoad();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//
-//    }
-//
-//    private void startLoad() {
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, KsDrawAd.class, new BYAbsCallBack<KsDrawAd>() {
-//            @Override
-//            public void invoke(KsDrawAd cacheAD) {
-//                drawAD = cacheAD;
-//                updateBidding(cacheAD.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         //场景设置
         KsScene scene = new KsScene.Builder(KSUtil.getADID(sdkSupplier)).build();
@@ -86,9 +53,7 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
                     } else {
                         drawAD = list.get(0);
 
-                        updateBidding(drawAD.getECPM());
-
-                        handleSucceed(drawAD);
+                        handleSucceed(drawAD.getECPM());
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();

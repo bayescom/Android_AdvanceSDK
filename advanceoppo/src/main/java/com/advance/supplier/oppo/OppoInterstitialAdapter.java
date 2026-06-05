@@ -28,26 +28,8 @@ public class OppoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        OppoUtil.initAD(this);
-//        startLoad();
-//    }
-//
-//    private void startLoad() {
         try {
 
-//检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, OppoInterstitialAdapter.class, new BYAbsCallBack<OppoInterstitialAdapter>() {
-//                @Override
-//                public void invoke(OppoInterstitialAdapter cacheAdapter) {
-//
-//                    //更新缓存广告得价格
-//                    updateBidding(cacheAdapter.mInterstitialAd.getECPM());
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
-            
             /**
              * 构造 InterstitialAd.
              */
@@ -60,9 +42,8 @@ public class OppoInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                 public void onAdReady() {
                     LogUtil.simple(TAG + "onAdReady ");
 
-                    updateBidding(mInterstitialAd.getECPM());
-
-                    handleSucceed(OppoInterstitialAdapter.this);
+                    int ecpm = mInterstitialAd == null ? 0 : mInterstitialAd.getECPM();
+                    handleSucceed(ecpm);
                 }
 
                 @Override

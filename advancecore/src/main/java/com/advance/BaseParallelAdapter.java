@@ -955,18 +955,19 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     }
 
 
-    //统一处理广告成功，并传入实时获取到的广告对象，用来进行缓存
-    // TODO: 2026/5/28 移除此方法
-    @Deprecated
-    public void handleSucceed(Object realtimeAD) {
+    //统一处理广告成功，并传入实时获取到的广告价格
+    public void handleSucceed(double price) {
+        //尝试更新bidding价格
+        updateBidding(price);
+
         handleSucceed();
     }
 
-    // TODO: 2026/6/4 和updateBidding方法合并
     public void handleSucceed() {
         try {
             //执行缓存
             AdvanceCacheUtil.cacheSDK(this);
+
 
             isSuccess = true;
             if (baseSetting == null) {

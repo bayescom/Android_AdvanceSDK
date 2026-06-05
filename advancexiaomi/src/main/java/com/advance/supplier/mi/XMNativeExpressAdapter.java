@@ -84,32 +84,6 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        XMUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                loadAd();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//    }
-//    private void loadAd() {
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TemplateAd.class, new BYAbsCallBack<TemplateAd>() {
-//            @Override
-//            public void invoke(TemplateAd cacheAD) {
-//                templateAd = cacheAD;
-//
-//                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-        
         templateAd = new TemplateAd();
 
         int width = nativeExpressSetting.getExpressViewWidth();
@@ -127,9 +101,8 @@ public class XMNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
                 // 加载成功, 在需要的时候在此处展示广告
                 LogUtil.d(TAG+"onAdLoaded");
 
-                updateBidding(XMUtil.getPrice(templateAd.getMediaExtraInfo()));
+                handleSucceed(templateAd == null ? 0 : XMUtil.getPrice(templateAd.getMediaExtraInfo()));
 
-                handleSucceed(templateAd);
             }
 
             @Override

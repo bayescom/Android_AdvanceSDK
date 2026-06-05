@@ -31,7 +31,6 @@ public class XMGlobalConfig extends AdvanceCustomInit {
 
             @Override
             public void fail(int code, String msg) {
-                AdvanceXMManager.getInstance().hasInit = false;
                 String eMsg = "小米初始化失败，code：" + code + " , msg: " + msg;
                 LogUtil.simple(" MimoSdk.init fail :" + eMsg);
 

@@ -1,29 +1,9 @@
 package com.advance.supplier.sigmob;
 
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.location.Location;
-
-import com.advance.AdvanceSetting;
 import com.advance.BaseParallelAdapter;
-import com.advance.itf.AdvanceADNInitResult;
-import com.advance.itf.AdvancePrivacyController;
-import com.advance.model.AdvanceError;
-import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceUtil;
-import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.device.BYDevice;
 import com.bayes.sdk.basic.util.BYStringUtil;
-import com.sigmob.windad.OnInitializationListener;
-import com.sigmob.windad.OnStartListener;
 import com.sigmob.windad.WindAdError;
-import com.sigmob.windad.WindAdOptions;
-import com.sigmob.windad.WindAds;
-import com.sigmob.windad.WindCustomController;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SigmobUtil {
 //    public static synchronized void initAD(BaseParallelAdapter adapter, final AdvanceADNInitResult initResult) {

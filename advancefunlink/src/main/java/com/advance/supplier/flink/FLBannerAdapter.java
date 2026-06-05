@@ -23,27 +23,9 @@ public class FLBannerAdapter extends AdvanceBannerCustomAdapter {
     FLBanner flAd;
     View adView;
 
-    
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        FLUtil.initAD(this);
-//        loadAd();
-//    }
-
-//    private void loadAd() {
-
-        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, FLBannerAdapter.class, new BYAbsCallBack<FLBannerAdapter>() {
-//            @Override
-//            public void invoke(FLBannerAdapter cacheAdapter) {
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.flAd.getEcpm());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-       flAd = new FLBanner.Builder(getRealContext())
+        flAd = new FLBanner.Builder(getRealContext())
                 .setKey(getPosID())
 // 设置banner的宽度，单位dp，默认值为屏幕宽度，采用默认值时可不用设置
 // .setExpressWidth(int)
@@ -62,9 +44,8 @@ public class FLBannerAdapter extends AdvanceBannerCustomAdapter {
                         }
                         adView = view;
 
-                        updateBidding(flAd.getEcpm());
 
-                        handleSucceed(FLBannerAdapter.this);
+                        handleSucceed(flAd.getEcpm());
                     }
 
                     @Override
@@ -99,7 +80,7 @@ public class FLBannerAdapter extends AdvanceBannerCustomAdapter {
                     }
                 })
                 .build();
-flAd.requestBanner();
+        flAd.requestBanner();
 
 
     }
@@ -119,7 +100,7 @@ flAd.requestBanner();
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            ViewGroup adContainer =  getAdContainer();
+            ViewGroup adContainer = getAdContainer();
             RelativeLayout.LayoutParams rbl = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             rbl.addRule(RelativeLayout.CENTER_HORIZONTAL);
             boolean add = AdvanceUtil.addADView(adContainer, adView, rbl);

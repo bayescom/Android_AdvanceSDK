@@ -177,21 +177,6 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
      public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        HonorUtil.initAD(this);
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, PictureTextExpressAd.class, new BYAbsCallBack<PictureTextExpressAd>() {
-//            @Override
-//            public void invoke(PictureTextExpressAd cacheAD) {
-//                mExpressAd = cacheAD;
-//                dataConverter = new HonorRenderDataConverter(mExpressAd, HonorRenderFeedAdapter.this);
-//
-//                updateBidding(HonorUtil.getECPM(mExpressAd));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         // 创建广告请求参数对象（AdSlot）
         AdSlot adSlot = new AdSlot.Builder()
@@ -210,11 +195,9 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                         } else {
                             mExpressAd = list.get(0);
 
-                            updateBidding(HonorUtil.getECPM(mExpressAd));
-
                             dataConverter = new HonorRenderDataConverter(mExpressAd, HonorRenderFeedAdapter.this);
 
-                            handleSucceed(mExpressAd);
+                            handleSucceed(HonorUtil.getECPM(mExpressAd));
                         }
                     }
 

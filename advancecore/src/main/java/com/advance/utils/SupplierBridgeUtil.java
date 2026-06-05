@@ -2,7 +2,6 @@ package com.advance.utils;
 
 import com.advance.AdvanceConfig;
 import com.advance.custom.AdvanceCustomInit;
-import com.advance.itf.AdvanceSupplierBridge;
 import com.advance.model.AdvanceCustomADNModel;
 import com.advance.model.AdvanceSupConfigModel;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;

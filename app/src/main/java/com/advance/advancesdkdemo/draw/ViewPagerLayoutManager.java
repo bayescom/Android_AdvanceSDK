@@ -1,11 +1,12 @@
 package com.advance.advancesdkdemo.draw;
 
 import android.content.Context;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
 
 public class ViewPagerLayoutManager extends LinearLayoutManager
     implements RecyclerView.OnChildAttachStateChangeListener {

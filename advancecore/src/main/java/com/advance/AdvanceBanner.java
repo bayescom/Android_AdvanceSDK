@@ -3,10 +3,10 @@ package com.advance;
 import android.app.Activity;
 import android.view.ViewGroup;
 
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceLoader;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 
 

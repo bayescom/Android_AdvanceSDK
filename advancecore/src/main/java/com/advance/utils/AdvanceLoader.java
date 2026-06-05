@@ -1,6 +1,5 @@
 package com.advance.utils;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.advance.AdvanceDrawSetting;
@@ -15,7 +14,6 @@ import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvanceSupplierBridge;
 
-import java.lang.ref.SoftReference;
 import java.lang.reflect.Constructor;
 
 /**

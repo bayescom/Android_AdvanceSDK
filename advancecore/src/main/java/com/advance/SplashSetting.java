@@ -1,15 +1,9 @@
 package com.advance;
 
 import android.graphics.drawable.Drawable;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.advance.model.AdvanceError;
-import com.advance.model.AdvanceReportModel;
-
-import java.util.ArrayList;
 
 public interface SplashSetting extends BaseAdEventListener {
 

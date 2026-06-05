@@ -116,31 +116,6 @@ public class XMInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        XMUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                loadAd();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//    }
-//    private void loadAd() {
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, InterstitialAd.class, new BYAbsCallBack<InterstitialAd>() {
-//            @Override
-//            public void invoke(InterstitialAd cacheAD) {
-//                interstitialAd = cacheAD;
-//
-//                updateBidding(XMUtil.getPrice(cacheAD.getMediaExtraInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         interstitialAd = new InterstitialAd();
         //(5.3.4新增接口) 请使用最新接口集成
@@ -151,10 +126,7 @@ public class XMInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             public void onAdRequestSuccess() {
                 //广告请求成功
                 LogUtil.d(TAG+"onAdRequestSuccess");
-
-                updateBidding(XMUtil.getPrice(interstitialAd.getMediaExtraInfo()));
-
-                handleSucceed(interstitialAd);
+                handleSucceed(interstitialAd == null ? 0 : XMUtil.getPrice(interstitialAd.getMediaExtraInfo()));
             }
 
             @Override

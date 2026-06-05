@@ -106,7 +106,7 @@ public class OppoGlobalConfig extends AdvanceCustomInit {
         MobAdManager.getInstance().init(context, getAppID(), builder.build(), new IInitListener() {
             @Override
             public void onSuccess() {
-                LogUtil.simple("[OppoUtil] init onSuccess");
+                LogUtil.simple("[OppoGlobalConfig] init onSuccess");
 
                 callInitSuccess();
                 //  2025/2/19  测试不在成功回调后调用广告展示，是否会有什么问题。
@@ -115,12 +115,12 @@ public class OppoGlobalConfig extends AdvanceCustomInit {
 
             @Override
             public void onFailed(String s) {
-                LogUtil.e("[OppoUtil] init onFailed , " + s);
+                LogUtil.e("[OppoGlobalConfig] init onFailed , " + s);
 
                 callInitFail(AdvanceError.ERROR_INIT_DEFAULT+"", s);
             }
         });
-        LogUtil.simple("[OppoUtil] init end");
+        LogUtil.simple("[OppoGlobalConfig] init end");
     }
 
     @Override

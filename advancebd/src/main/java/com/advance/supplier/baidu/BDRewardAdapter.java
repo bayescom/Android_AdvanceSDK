@@ -7,10 +7,8 @@ import android.content.Context;
 import com.advance.RewardServerCallBackInf;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.RewardVideoAd;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
 import java.util.Map;
 
@@ -22,20 +20,6 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        BDUtil.initBDAccount(this);
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDRewardAdapter.class, new BYAbsCallBack<BDRewardAdapter>() {
-//            @Override
-//            public void invoke(BDRewardAdapter cacheAdapter) {
-//
-//                //更新缓存广告得价格
-//                updateBidding(BDUtil.getEcpmValue(cacheAdapter.mRewardVideoAd.getECPMLevel()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         mRewardVideoAd = new RewardVideoAd(getRealContext(), sdkSupplier.adspotid, this, AdvanceBDManager.getInstance().rewardUseSurfaceView);
         //服务端校验透传参数
@@ -48,7 +32,7 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
         if (bidFloor > 0) {
             mRewardVideoAd.setBidFloor(bidFloor);
         }
-        mRewardVideoAd.setDownloadAppConfirmPolicy(AdvanceBDManager.getInstance().rewardDownloadAppConfirmPolicy);
+//        mRewardVideoAd.setDownloadAppConfirmPolicy(AdvanceBDManager.getInstance().rewardDownloadAppConfirmPolicy);
         mRewardVideoAd.load();
 
     }
@@ -64,6 +48,9 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
 
     @Override
     public boolean isValid() {
+        if (mRewardVideoAd != null) {
+            return mRewardVideoAd.isReady();
+        }
         return true;
     }
 
@@ -159,14 +146,15 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
     @Override
     public void onAdLoaded() {
         LogUtil.simple(TAG + "onAdLoaded");
+        double ecpm = 0;
         try { //避免方法有异常，catch一下，不影响success逻辑
             if (mRewardVideoAd != null) {
-                updateBidding(BDUtil.getEcpmValue(mRewardVideoAd.getECPMLevel()));
+                ecpm = (BDUtil.getEcpmValue(mRewardVideoAd.getECPMLevel()));
             }
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        handleSucceed(this);
+        handleSucceed(ecpm);
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {

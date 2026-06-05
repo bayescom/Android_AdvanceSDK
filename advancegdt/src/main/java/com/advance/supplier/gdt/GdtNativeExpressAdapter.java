@@ -1,15 +1,14 @@
 package com.advance.supplier.gdt;
 
+import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.qq.e.ads.cfg.VideoOption;
 import com.qq.e.ads.nativ.ADSize;
 import com.qq.e.ads.nativ.NativeExpressAD;
@@ -19,35 +18,10 @@ import com.qq.e.comm.util.AdError;
 import java.util.List;
 import java.util.Map;
 
-import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
-
 public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     String TAG = "[GdtNativeExpressAdapter] ";
     NativeExpressADView adView;
-
-
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        GdtUtil.initAD(this, new BYBaseCallBack() {
-//            @Override
-//            public void call() {
-//                loadAd();
-//            }
-//        });
-//    }
-//    public void loadAd() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtNativeExpressAdapter.class, new BYAbsCallBack<GdtNativeExpressAdapter>() {
-//            @Override
-//            public void invoke(GdtNativeExpressAdapter cacheAdapter) {
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.adView.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-
         int width = nativeExpressSetting.getExpressViewWidth();
         int height = nativeExpressSetting.getExpressViewHeight();
         if (height <= 0) {
@@ -142,9 +116,8 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             runParaFailed(AdvanceError.parseErr(ERROR_DATA_NULL));
             return;
         }
-        updateBidding(adView.getECPM());
 
-        handleSucceed(this);
+        handleSucceed(adView.getECPM());
     }
 
 

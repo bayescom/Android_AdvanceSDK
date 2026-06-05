@@ -8,9 +8,6 @@ import androidx.annotation.Keep;
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceSetting;
 import com.advance.custom.AdvanceCustomInit;
-import com.advance.itf.AdvancePrivacyController;
-import com.advance.itf.AdvanceSupplierBridge;
-import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.SdkConstant;
 import com.alimm.tanx.core.TanxInitListener;
@@ -98,12 +95,8 @@ public class TanxGlobalConfig extends AdvanceCustomInit {
     }
 
 
+    @Deprecated
     public static void setImgLoader(ILoader loader) {
-        try {
-            AdvanceTanxSetting.getInstance().iLoader = loader;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     //激励视频-必须！！！！：   媒体的用户id，激励广告任务完成后用于用户关联，当前媒体内需保证id的唯一性，防止奖励发放偏差。（必传）

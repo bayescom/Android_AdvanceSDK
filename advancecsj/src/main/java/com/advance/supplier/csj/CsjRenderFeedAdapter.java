@@ -7,16 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.advance.AdvanceConfig;
-import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFConstant;
 import com.advance.core.srender.AdvanceRFDownloadListener;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
 import com.advance.core.srender.AdvanceRFVideoEventListener;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdDislike;
 import com.bytedance.sdk.openadsdk.TTAdManager;
@@ -58,36 +55,7 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//
-//        CsjUtil.initCsj(this, new CsjUtil.InitListener() {
-//            @Override
-//            public void success() {
-//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-//                startLoad();
-//
-//            }
-//
-//            @Override
-//            public void fail(int code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-
         try {
-            //检查是否命中使用缓存逻辑
-//            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTFeedAd.class, new BYAbsCallBack<TTFeedAd>() {
-//                @Override
-//                public void invoke(TTFeedAd cacheAD) {
-//                     mRenderAD = cacheAD;
-//                    //转换穿山甲返回广告model为聚合通用model
-//                    dataConverter = new CsjRenderDataConverter(mRenderAD, sdkSupplier);
-//
-//                    updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
-//                }
-//            });
-//            if (hitCache) {
-//                return;
-//            }
 
             //step1:初始化sdk
             final TTAdManager ttAdManager = TTAdSdk.getAdManager();
@@ -124,13 +92,11 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                             handleFailed(AdvanceError.ERROR_DATA_NULL, "mRenderAD null");
                             return;
                         }
-                        //更新ecpm价格信息
-                        updateBidding(CsjUtil.getEcpmValue(TAG, mRenderAD.getMediaExtraInfo()));
 
                         //转换穿山甲返回广告model为聚合通用model
                         dataConverter = new CsjRenderDataConverter(mRenderAD, sdkSupplier);
                         //标记广告成功
-                        handleSucceed(mRenderAD);
+                        handleSucceed(CsjUtil.getEcpmValue(TAG, mRenderAD.getMediaExtraInfo()));
                         //通知广告成功
 //                        mAdvanceRFBridge.adapterDidLoaded(dataConverter);
                     } catch (Throwable e) {

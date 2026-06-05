@@ -5,12 +5,9 @@ import android.content.Context;
 import android.content.res.Configuration;
 
 import com.advance.AdvanceConfig;
-import com.advance.FullScreenVideoSetting;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdConstant;
 import com.bytedance.sdk.openadsdk.TTAdManager;
@@ -27,33 +24,6 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
    
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        CsjUtil.initCsj(this, new CsjUtil.InitListener() {
-//            @Override
-//            public void success() {
-//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-//                startLoad();
-//
-//            }
-//
-//            @Override
-//            public void fail(int code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//    }
-//
-//    private void startLoad() {
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTFullScreenVideoAd.class, new BYAbsCallBack<TTFullScreenVideoAd>() {
-//            @Override
-//            public void invoke(TTFullScreenVideoAd cacheAD) {
-//                ttFullScreenVideoAd = cacheAD;
-//                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         //step1:初始化sdk
         TTAdManager ttAdManager = TTAdSdk.getAdManager();
@@ -119,9 +89,7 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
                 runParaFailed(error);
                 return;
             }
-            updateBidding(CsjUtil.getEcpmValue(TAG, ttFullScreenVideoAd.getMediaExtraInfo()));
-
-            handleSucceed(ttFullScreenVideoAd);
+            handleSucceed(CsjUtil.getEcpmValue(TAG, ttFullScreenVideoAd.getMediaExtraInfo()));
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));

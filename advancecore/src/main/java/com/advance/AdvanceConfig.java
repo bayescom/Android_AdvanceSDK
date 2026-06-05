@@ -9,16 +9,11 @@ import android.text.TextUtils;
 import android.webkit.WebView;
 
 import com.advance.custom.AdvanceCustomInit;
-import com.advance.itf.AdvanceSupplierBridge;
 import com.advance.model.AdvanceCustomADNModel;
-import com.advance.model.AdvanceSupConfigModel;
 import com.advance.model.CacheMode;
-import com.advance.utils.AdvanceLoader;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.advance.utils.SupplierBridgeUtil;
 import com.bayes.sdk.basic.BYBasicSDK;
-import com.bayes.sdk.basic.device.BYDevice;
 import com.bayes.sdk.basic.util.BYCacheUtil;
 import com.bayes.sdk.basic.util.BYThreadPoolUtil;
 import com.mercury.sdk.core.config.AdConfig;

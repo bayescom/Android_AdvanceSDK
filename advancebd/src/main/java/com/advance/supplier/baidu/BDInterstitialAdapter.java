@@ -1,19 +1,15 @@
 package com.advance.supplier.baidu;
 
-import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_SHOW;
 
 import android.app.Activity;
 import android.content.Context;
 
-import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.ExpressInterstitialAd;
 import com.baidu.mobads.sdk.api.ExpressInterstitialListener;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 
 import java.util.Map;
 
@@ -22,8 +18,6 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
     private String TAG = "[BDInterstitialAdapter] ";
 
 
-
-    
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 //        BDUtil.initBDAccount(this);
 //
@@ -90,6 +84,9 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
 
     @Override
     public boolean isValid() {
+        if (mInterAd != null) {
+            return mInterAd.isReady();
+        }
         return true;
     }
 
@@ -103,14 +100,15 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
     @Override
     public void onADLoaded() {
         LogUtil.simple(TAG + "onADLoaded");
+        double ecpm = 0;
         try { //避免方法有异常，catch一下，不影响success逻辑
             if (mInterAd != null) {
-                updateBidding(BDUtil.getEcpmValue(mInterAd.getECPMLevel()));
+               ecpm= (BDUtil.getEcpmValue(mInterAd.getECPMLevel()));
             }
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        handleSucceed(this);
+        handleSucceed(ecpm);
     }
 
     @Override

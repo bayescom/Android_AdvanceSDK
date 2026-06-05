@@ -2,28 +2,12 @@ package com.advance.supplier.tap;
 
 import android.app.Activity;
 import android.content.Context;
-import android.location.Location;
-import android.os.Handler;
-import android.os.Looper;
 
-import com.advance.AdvanceSetting;
-import com.advance.BaseParallelAdapter;
-import com.advance.itf.AdvancePrivacyController;
-import com.advance.model.AdvanceError;
-import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.device.BYDevice;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
-import com.bayes.sdk.basic.util.BYUtil;
-import com.tapsdk.tapad.CustomUser;
-import com.tapsdk.tapad.TapAdConfig;
-import com.tapsdk.tapad.TapAdCustomController;
-import com.tapsdk.tapad.TapAdLocation;
 import com.tapsdk.tapad.TapAdManager;
 import com.tapsdk.tapad.TapAdNative;
-import com.tapsdk.tapad.TapAdSdk;
 
 import java.util.Map;
 

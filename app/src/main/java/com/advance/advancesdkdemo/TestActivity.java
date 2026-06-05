@@ -4,13 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-//import com.polygamma.ogm.OriginMobile;
-//import com.polygamma.ogm.antifraud.AntiFraudDescriptor;
-//import com.polygamma.ogm.antifraud.AntiFraudModule;
-
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
 
 public class TestActivity extends Activity {
 

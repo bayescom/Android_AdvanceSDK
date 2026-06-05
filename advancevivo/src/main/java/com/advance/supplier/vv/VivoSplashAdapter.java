@@ -40,11 +40,8 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
 
     }
 
-
-
     @Override
     protected void adPrepared() {
-
     }
 
     @Override
@@ -54,8 +51,6 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
             vivoSplashAd.destroy();
         }
     }
-
-    
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
@@ -115,39 +110,6 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        VivoUtil.initAD(this, new AdvanceADNInitResult() {
-//            @Override
-//            public void success() {
-//                loadAd();
-//            }
-//
-//            @Override
-//            public void fail(String code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-//
-//    }
-//    private void loadAd() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, VivoSplashAdapter.class, new BYAbsCallBack<VivoSplashAdapter>() {
-//            @Override
-//            public void invoke(VivoSplashAdapter cacheAdapter) {
-//
-//                if (usePro){
-//                    //更新缓存广告得价格
-//                    updateBidding(VivoUtil.getPrice(cacheAdapter.splashPro));
-//                }else {
-//                    //更新缓存广告得价格
-//                    updateBidding(VivoUtil.getPrice(cacheAdapter.vivoSplashAd));
-//                }
-//
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
         if (sdkSupplier.versionTag == 1) {
             usePro = false;
         }
@@ -182,8 +144,8 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
                 LogUtil.simple(TAG + "onAdLoadSuccess...");
 
                 splashPro = vSplashAd;
-                updateBidding(VivoUtil.getPrice(splashPro));
-                handleSucceed(VivoSplashAdapter.this);
+                handleSucceed(VivoUtil.getPrice(splashPro));
+
             }
         }, adParams);
         vivoSplashAd2.loadAd();
@@ -210,8 +172,7 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
             public void onAdReady(View view) {
                 LogUtil.simple(TAG + "onAdReady...");
                 adView = view;
-                updateBidding(VivoUtil.getPrice(vivoSplashAd));
-                handleSucceed(VivoSplashAdapter.this);
+                handleSucceed(VivoUtil.getPrice(splashPro));
             }
 
             @Override

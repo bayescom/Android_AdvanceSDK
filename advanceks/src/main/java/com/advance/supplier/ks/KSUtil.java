@@ -1,28 +1,9 @@
 package com.advance.supplier.ks;
 
 import android.app.Activity;
-import android.content.Context;
-import android.location.Location;
-import android.text.TextUtils;
 
-import com.advance.AdvanceConfig;
-import com.advance.AdvanceSetting;
-import com.advance.BaseParallelAdapter;
-import com.advance.itf.AdvanceADNInitResult;
-import com.advance.itf.AdvancePrivacyController;
-import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceSplashPlusManager;
-import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.util.BYUtil;
-import com.bayes.sdk.basic.widget.BYScheduleTimer;
-import com.kwad.sdk.api.KsAdSDK;
-import com.kwad.sdk.api.KsCustomController;
-import com.kwad.sdk.api.KsInitCallback;
-import com.kwad.sdk.api.SdkConfig;
-
-import java.util.List;
 
 public class KSUtil implements AdvanceSplashPlusManager.ZoomCall {
 

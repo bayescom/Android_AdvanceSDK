@@ -6,12 +6,9 @@ import android.os.Bundle;
 
 import com.advance.AdvanceConfig;
 import com.advance.RewardServerCallBackInf;
-import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bytedance.sdk.openadsdk.AdSlot;
 import com.bytedance.sdk.openadsdk.TTAdManager;
 import com.bytedance.sdk.openadsdk.TTAdNative;
@@ -36,17 +33,6 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     @Override
     public void onRewardVideoAdLoad(final TTRewardVideoAd ttRewardVideoAd) {
         try {
-            //本地mock 较久未返回广告场景
-//            if (BYUtil.isDev()) {
-//                LogUtil.devDebug("模拟延迟返回广告");
-//                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        adSuccess(ttRewardVideoAd);
-//                    }
-//                }, 3000);
-//                return;
-//            }
 
             adSuccess(ttRewardVideoAd);
         } catch (Throwable e) {
@@ -66,10 +52,7 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         }
         this.ttRewardVideoAd = ttRewardVideoAd;
 
-
-        updateBidding(CsjUtil.getEcpmValue(TAG, ttRewardVideoAd.getMediaExtraInfo()));
-
-        handleSucceed(ttRewardVideoAd);
+        handleSucceed(CsjUtil.getEcpmValue(TAG, ttRewardVideoAd.getMediaExtraInfo()));
     }
 
     @Override

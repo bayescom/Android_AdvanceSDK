@@ -2,10 +2,8 @@ package com.advance.supplier.gdt;
 
 import android.content.Context;
 
-import com.advance.AdvanceSetting;
 import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvancePrivacyController;
-import com.advance.itf.AdvanceSupplierBridge;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.qq.e.comm.managers.GDTAdSdk;
@@ -35,7 +33,6 @@ public class GdtGlobalConfig extends AdvanceCustomInit {
             GlobalSetting.setEnableCollectAppInstallStatus(controller.alist());
 
 
-//                GlobalSetting.setExtraUserData(controller.isCanUsePhoneState());
         }
 
         //使用新初始化方法
