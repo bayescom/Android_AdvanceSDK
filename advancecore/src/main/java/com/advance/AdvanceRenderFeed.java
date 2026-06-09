@@ -8,6 +8,7 @@ import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFEventListener;
 import com.advance.core.srender.AdvanceRFLoadListener;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
+import com.advance.model.AdvanceAdType;
 import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceLoader;
@@ -25,6 +26,7 @@ public class AdvanceRenderFeed extends AdvanceBaseAdspot implements AdvanceRFBri
 
     public AdvanceRenderFeed(Context context, String adspotid) {
         super(context, adspotid);
+        adType = AdvanceAdType.NATIVECUSTOM;
 
     }
 

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.ViewGroup;
 
 import com.advance.custom.AdvanceRewardCustomAdapter;
+import com.advance.model.AdvanceAdType;
 import com.advance.model.AdvanceSDKCacheModel;
 import com.advance.model.ServerRewardModel;
 import com.advance.net.AdvanceReport;
@@ -53,11 +54,15 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
     public AdvanceRewardVideo(Activity activity, String adspotId) {
         super(activity, "", adspotId);
         isReard = true;
+        adType = AdvanceAdType.REWARD;
+
     }
 
     public AdvanceRewardVideo(String adspotId) {
         super(adspotId);
         isReard = true;
+        adType = AdvanceAdType.REWARD;
+
     }
 
     public void show(Activity activity) {

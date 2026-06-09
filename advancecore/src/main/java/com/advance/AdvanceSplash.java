@@ -19,6 +19,7 @@ import com.advance.itf.SplashGMCallBack;
 import com.advance.itf.SplashJumpListener;
 import com.advance.itf.SplashJumpType;
 import com.advance.model.AdStatus;
+import com.advance.model.AdvanceAdType;
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
 import com.advance.model.SdkSupplier;
@@ -71,7 +72,9 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
 
     public AdvanceSplash(Activity activity, String adspotId, ViewGroup adContainer, TextView skipView) {
         super(new SoftReference<>(activity), "", adspotId);
+        adType = AdvanceAdType.SPLASH;
         initSplash(adContainer, skipView);
+
     }
 
     //     分离模式优化新增内容 ------------start -----------  todo 后续可能需要废弃掉旧接口方法，全部改用新接口方法
@@ -84,6 +87,8 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
 
     public AdvanceSplash(String adspotId) {
         super(adspotId);
+        adType = AdvanceAdType.SPLASH;
+
         initSplash(null, null);
     }
 

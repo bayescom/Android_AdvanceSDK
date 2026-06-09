@@ -3,6 +3,7 @@ package com.advance;
 import android.app.Activity;
 import android.view.ViewGroup;
 
+import com.advance.model.AdvanceAdType;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.InterstitialGMCallBack;
 import com.advance.model.AdvanceError;
@@ -22,10 +23,14 @@ public class AdvanceInterstitial extends AdvanceBaseAdspot implements Interstiti
     @Deprecated
     public AdvanceInterstitial(Activity activity, String mediaId, String adspotId) {
         super(activity, mediaId, adspotId);
+        adType = AdvanceAdType.INTERSTITIAL;
+
     }
 
     public AdvanceInterstitial(Activity activity, String adspotId) {
         super(activity, "", adspotId);
+        adType = AdvanceAdType.INTERSTITIAL;
+
     }
 
 

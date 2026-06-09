@@ -3,6 +3,7 @@ package com.advance;
 import android.app.Activity;
 import android.view.ViewGroup;
 
+import com.advance.model.AdvanceAdType;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
@@ -24,10 +25,12 @@ public class AdvanceFullScreenVideo extends AdvanceBaseAdspot implements FullScr
     @Deprecated
     public AdvanceFullScreenVideo(Activity activity, String mediaId, String adspotId) {
         super(activity, mediaId, adspotId);
+        adType = AdvanceAdType.FULLVIDEO;
     }
 
     public AdvanceFullScreenVideo(Activity activity, String adspotId) {
         super(activity, "", adspotId);
+        adType = AdvanceAdType.FULLVIDEO;
     }
 
     public void setAdListener(AdvanceFullScreenVideoListener listener) {

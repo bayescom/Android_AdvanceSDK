@@ -17,5 +17,5 @@ public class AdvanceCustomADNModel extends BYBaseModel {
     public String interstitialClzName = "";
     public String rewardClzName = "";
     public String nativeExpressClzName = "";
-    public String nativeClzName = "";
+    public String nativeCustomClzName = "";
 }

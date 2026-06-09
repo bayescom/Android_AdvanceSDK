@@ -1,4 +1,4 @@
-package com.advance.supplier.gdt;
+package com.advance.supplier.custom;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,9 +15,9 @@ import com.qq.e.comm.util.AdError;
 
 import java.util.Map;
 
-public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements UnifiedBannerADListener {
+public class CustomADNYLHBannerAdapter extends AdvanceBannerCustomAdapter implements UnifiedBannerADListener {
     private UnifiedBannerView bv;
-    String TAG = "[GdtBannerAdapter] ";
+    String TAG = "[CustomADNYLHBannerAdapter] ";
 
     @Override
     public void destroyAd() {
@@ -113,9 +113,9 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
 //    public void loadAd() {
 //
 //        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtBannerAdapter.class, new BYAbsCallBack<GdtBannerAdapter>() {
+//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, CustomADNYLHBannerAdapter.class, new BYAbsCallBack<CustomADNYLHBannerAdapter>() {
 //            @Override
-//            public void invoke(GdtBannerAdapter cacheAdapter) {
+//            public void invoke(CustomADNYLHBannerAdapter cacheAdapter) {
 //                //更新缓存广告得价格
 //                updateBidding(cacheAdapter.bv.getECPM());
 //            }

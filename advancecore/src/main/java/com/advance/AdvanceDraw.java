@@ -3,6 +3,7 @@ package com.advance;
 import android.app.Activity;
 import android.view.ViewGroup;
 
+import com.advance.model.AdvanceAdType;
 import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceLoader;
@@ -19,6 +20,8 @@ public class AdvanceDraw extends AdvanceBaseAdspot implements AdvanceDrawSetting
 
     public AdvanceDraw(Activity activity, String adspotId) {
         super(activity, "", adspotId);
+        adType = AdvanceAdType.DRAW;
+
         try {
             csjExpressWidth = BYDisplay.px2dp(BYDisplay.getScreenWPx());
             csjExpressHeight = BYDisplay.px2dp(BYDisplay.getScreenHPx());

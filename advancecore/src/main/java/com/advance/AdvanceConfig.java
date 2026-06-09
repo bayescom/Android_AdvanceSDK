@@ -12,6 +12,7 @@ import com.advance.custom.AdvanceCustomInit;
 import com.advance.model.AdvanceCustomADNModel;
 import com.advance.model.CacheMode;
 import com.advance.utils.AdvanceUtil;
+import com.advance.utils.CustomADNUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.BYBasicSDK;
 import com.bayes.sdk.basic.util.BYCacheUtil;
@@ -30,6 +31,9 @@ public class AdvanceConfig {
     public static final String AdvanceSdkRequestUrlHttps = "https://cruiser.bayescom.cn/cruiser";
     public static final String SDK_ERR_REPORT_URL = "http://cruiser.bayescom.cn/sdkevent";
     public static final String SDK_ERR_REPORT_URL_HTTPS = "https://cruiser.bayescom.cn/sdkevent";
+    public static final String ADN_REQ_URL_HTTPS = "https://cruiser.bayescom.cn/adn";
+//    public static final String ADN_REQ_URL_HTTP = "http://cruiser.bayescom.cn/adn";
+    public static final String ADN_REQ_URL_HTTP = "https://m1.apifoxmock.com/m2/1960156-1383344-default/470877995";
 
 
 
@@ -104,7 +108,7 @@ public class AdvanceConfig {
     }
 
     //todo 整理优化此处初始化调用，合并倍业SDK后，将不再多次初始化基础库SDK，也无需关心版本适配问题
-    public AdvanceConfig initSDKs(final Context context) {
+    public AdvanceConfig initSDKs(final Context context, final String appID) {
         try {
             //初始化基础库SDK
             BYBasicSDK.init(context);
@@ -137,6 +141,8 @@ public class AdvanceConfig {
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
+//                        拉取adn配置信息
+                        CustomADNUtil.initCustomInf(appID);
                         //尝试获取oaid
 //                        BYDevice.getOaidValue();
 

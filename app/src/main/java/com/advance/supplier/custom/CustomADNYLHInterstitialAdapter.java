@@ -1,4 +1,4 @@
-package com.advance.supplier.gdt;
+package com.advance.supplier.custom;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,10 +13,10 @@ import com.qq.e.comm.util.AdError;
 
 import java.util.Map;
 
-public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter implements UnifiedInterstitialADListener {
+public class CustomADNYLHInterstitialAdapter extends AdvanceInterstitialCustomAdapter implements UnifiedInterstitialADListener {
     private UnifiedInterstitialAD interstitialAD;
 
-    String TAG = "[GdtInterstitialAdapter] ";
+    String TAG = "[CustomADNYLHInterstitialAdapter] ";
 
     @Override
     public void destroyAd() {

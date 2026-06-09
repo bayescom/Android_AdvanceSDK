@@ -1,4 +1,4 @@
-package com.advance.supplier.gdt;
+package com.advance.supplier.custom;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,12 +14,12 @@ import com.qq.e.comm.util.AdError;
 
 import java.util.Map;
 
-public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements UnifiedInterstitialADListener {
+public class CustomADNYLHFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements UnifiedInterstitialADListener {
 
     private UnifiedInterstitialAD iad;
     private long videoDuration;
     private long videoStartTime;
-    String TAG = "[GdtFullScreenVideoAdapter] ";
+    String TAG = "[CustomADNYLHFullScreenVideoAdapter] ";
 
 
     @Override

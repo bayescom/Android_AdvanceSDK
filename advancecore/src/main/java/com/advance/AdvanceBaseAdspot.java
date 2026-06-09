@@ -21,6 +21,8 @@ import com.advance.itf.BaseGMCallBackListener;
 import com.advance.itf.RenderEvent;
 import com.advance.itf.StrategyListener;
 import com.advance.model.AdStatus;
+import com.advance.model.AdvanceAdType;
+import com.advance.model.AdvanceCustomADNModel;
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
 import com.advance.model.AdvanceReqModel;
@@ -35,6 +37,7 @@ import com.advance.model.ValueDataModel;
 import com.advance.net.AdvanceNetManger;
 import com.advance.net.AdvanceReport;
 import com.advance.utils.AdvanceUtil;
+import com.advance.utils.CustomADNUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
@@ -133,6 +136,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
 
     //用来传递给adn使用得自定义数据参数
     Map<String, Object> mCustomData = new HashMap<>();
+    AdvanceAdType adType;
 
     public AdvanceBaseAdspot(Activity activity, String mediaId, String adspotId) {
         try {
@@ -730,37 +734,38 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
 
     @Deprecated
     public void addCustomSupplier(String sdkID, AdvanceBaseCustomAdapter adapter) {
-        try {
-            String clz = "";
-            if (adapter != null && adapter.getClass() != null) {
-                clz = adapter.getClass().getName();
-            }
-            addCustomSupplier(sdkID, clz);
-        } catch (Throwable e) {
-//            e.printStackTrace();
-        }
+//        try {
+//            String clz = "";
+//            if (adapter != null && adapter.getClass() != null) {
+//                clz = adapter.getClass().getName();
+//            }
+//            addCustomSupplier(sdkID, clz);
+//        } catch (Throwable e) {
+////            e.printStackTrace();
+//        }
     }
 
+    @Deprecated
     public void addCustomSupplier(String sdkID, String adapterClzName) {
         try {
-            if (TextUtils.isEmpty(adapterClzName)) {
-                LogUtil.e("该sdkID：" + sdkID + " 配置的自定义adapter为空，请检查参数设置");
-                return;
-            }
-            if (customAdapterInf == null) {
-                customAdapterInf = new HashMap<>();
-            }
-            if (supportAdapterInf == null) {
-                supportAdapterInf = new HashMap<>();
-            }
-            String adapterSaved = customAdapterInf.get(sdkID);
-            String adapterSaved2 = supportAdapterInf.get(sdkID);
-//校验自定义和已有adapter中是否已经定义过adapter。
-            if (TextUtils.equals(adapterSaved, adapterClzName) || TextUtils.equals(adapterSaved2, adapterClzName)) {
-                LogUtil.simple("该sdkID：" + sdkID + "下已存在渠道adapter，无法重复添加");
-            } else {
-                customAdapterInf.put(sdkID, adapterClzName);
-            }
+//            if (TextUtils.isEmpty(adapterClzName)) {
+//                LogUtil.e("该sdkID：" + sdkID + " 配置的自定义adapter为空，请检查参数设置");
+//                return;
+//            }
+//            if (customAdapterInf == null) {
+//                customAdapterInf = new HashMap<>();
+//            }
+//            if (supportAdapterInf == null) {
+//                supportAdapterInf = new HashMap<>();
+//            }
+//            String adapterSaved = customAdapterInf.get(sdkID);
+//            String adapterSaved2 = supportAdapterInf.get(sdkID);
+////校验自定义和已有adapter中是否已经定义过adapter。
+//            if (TextUtils.equals(adapterSaved, adapterClzName) || TextUtils.equals(adapterSaved2, adapterClzName)) {
+//                LogUtil.simple("该sdkID：" + sdkID + "下已存在渠道adapter，无法重复添加");
+//            } else {
+//                customAdapterInf.put(sdkID, adapterClzName);
+//            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -838,6 +843,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
             if (paraInitStatus != null)
                 paraInitStatus.clear();
             initSdkSupplier();
+            initCustomADNClz();
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -894,6 +900,51 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
             }
         }
 
+    }
+
+    //初始化自定义adn广告类对象
+    private void initCustomADNClz() {
+//        首先获取到自定义adn对应广告位类型的类名配置信息
+        try {
+            ArrayList<AdvanceCustomADNModel> customADNModels = CustomADNUtil.getCustomADNModels();
+
+            if (customADNModels == null || customADNModels.isEmpty() || adType == null) {
+                LogUtil.simple(BTAG + "initCustomADNClz empty");
+                return;
+            }
+
+            LogUtil.simple(BTAG + "start initCustomADNClz : " + adType);
+
+            for (AdvanceCustomADNModel adnModel : customADNModels) {
+                String clzName = "";
+                String sdkID = adnModel.sdkID;
+                switch (adType) {
+                    case SPLASH:
+                        clzName = adnModel.splashClzName;
+                        break;
+                    case BANNER:
+                        clzName = adnModel.bannerClzName;
+                        break;
+                    case INTERSTITIAL:
+                        clzName = adnModel.interstitialClzName;
+                        break;
+                    case REWARD:
+                        clzName = adnModel.rewardClzName;
+                        break;
+                    case NATIVEEXPRESS:
+                        clzName = adnModel.nativeExpressClzName;
+                        break;
+                    case NATIVECUSTOM:
+                        clzName = adnModel.nativeCustomClzName;
+                        break;
+                }
+                LogUtil.devDebug(BTAG + " initAdapterFullPath ,sdkID = " + sdkID + " , clzName = " + clzName);
+                //填入完整类名
+                initAdapterFullPath(sdkID, clzName);
+            }
+        } catch (Throwable e) {
+
+        }
     }
 
     //上报代码中执行的异常信息
@@ -2030,7 +2081,10 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                     //parallelAdapter 会处理串并行得展示
                     callSDKSelected(succSupplier);
                     //如果此时广告已经成功，会执行广告成功回调
-                    parallelAdapter.prepareShow();
+                    parallelAdapter.callLoaded();
+
+                    //通知竞胜/败结果
+                    notifyBidResult(succSupplier);
                     //如果已经进行或show方法调用，这里直接继续show逻辑，需要验证渲染失败
                     //  2024/5/28 激励视频位置，因为新引入了可多次展示逻辑（tanx特殊场景下需要多次show），存在执行上逻辑异常
                     //  当广告最优已选出时，且调用过show方法，但是接着又有某一个广告返回了，重新执行了此处的命中逻辑
@@ -2058,6 +2112,41 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
             e.printStackTrace();
         }
 
+    }
+
+    private void notifyBidResult(SdkSupplier winSDK) {
+        try {
+            Map<String, Object> referBidInfo = new HashMap<>();
+            double winPrice = 0;
+            String winID = "";
+
+            if (winSDK != null) {
+                winID = winSDK.id;
+                referBidInfo.put(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_ID, winID);
+                winPrice = winSDK.price;
+            }
+
+            ArrayList<SdkSupplier> paraSupplierMembers = currentGroupInf.paraSupplierMembers;
+            if (paraSupplierMembers != null && !paraSupplierMembers.isEmpty()) {
+                for (SdkSupplier supplier : paraSupplierMembers) {
+                    if (supplier != null) {
+                        int resultStatus = supplier.resultStatus;
+                        //只需通知广告返回成功的渠道
+                        if (resultStatus == AdvanceConstant.SDK_RESULT_CODE_SUCC) {
+                            int pri = supplier.priority;
+                            BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                            if (parallelAdapter != null) {
+                                boolean isWin = BYStringUtil.isEqual(winID, supplier.id);
+
+                                LogUtil.simple(BTAG + "发起竞价结果通知。pri = " + pri);
+                                parallelAdapter.notifyBiddingResult(isWin, winPrice, referBidInfo);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Throwable e) {
+        }
     }
 
 

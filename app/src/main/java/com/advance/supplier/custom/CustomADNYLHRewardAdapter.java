@@ -1,4 +1,4 @@
-package com.advance.supplier.gdt;
+package com.advance.supplier.custom;
 
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 import static com.advance.model.AdvanceError.ERROR_EXCEPTION_SHOW;
@@ -18,10 +18,10 @@ import com.qq.e.comm.util.AdError;
 
 import java.util.Map;
 
-public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements RewardVideoADListener {
+public class CustomADNYLHRewardAdapter extends AdvanceRewardCustomAdapter implements RewardVideoADListener {
 
     public RewardVideoAD rewardVideoAD;
-    String TAG = "[GdtRewardVideoAdapter] ";
+    String TAG = "[CustomADNYLHRewardAdapter] ";
 
 
 

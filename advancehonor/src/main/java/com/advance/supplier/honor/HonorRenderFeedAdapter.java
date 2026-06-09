@@ -50,7 +50,7 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     }
 
     @Override
-    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+    public void notifyBiddingResult(boolean isWin, double price, Map<String, Object> referBidInfo) {
 
     }
 

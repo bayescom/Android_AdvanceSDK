@@ -1,4 +1,4 @@
-package com.advance.supplier.gdt;
+package com.advance.supplier.custom;
 
 import static com.advance.model.AdvanceError.ERROR_DATA_NULL;
 
@@ -18,8 +18,8 @@ import com.qq.e.comm.util.AdError;
 import java.util.List;
 import java.util.Map;
 
-public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
-    String TAG = "[GdtNativeExpressAdapter] ";
+public class CustomADNYLHNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
+    String TAG = "[CustomADNYLHNativeExpressAdapter] ";
     NativeExpressADView adView;
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         int width = nativeExpressSetting.getExpressViewWidth();

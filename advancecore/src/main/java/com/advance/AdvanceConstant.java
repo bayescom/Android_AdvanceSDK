@@ -68,7 +68,10 @@ public class AdvanceConstant {
     //摇一摇开关存储标记
     public static final String SP_SETTING_SHAKE = "sp_setting_shake";;
 
+    //自定义adn配置详情（列表）
     public static final String CACHED_CUSTOM_ADN_SETTING = "cached_custom_adn_setting";
+//    自定义adn配置版本号
+    public static final String CACHED_CUSTOM_ADN_VERSION = "cached_custom_adn_version";
 
 
 
@@ -87,4 +90,6 @@ public class AdvanceConstant {
     public static final int SDK_RESULT_CODE_TIMEOUT = 4;
 
     public static final int SDK_DEFAULT_CACHE_TIME_SEC = 1800;
+
+    public static final String BID_RESULT_KEY_WIN_SDK_ID = "winSDK_ID";
 }

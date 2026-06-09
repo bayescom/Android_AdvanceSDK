@@ -201,7 +201,7 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
     }
 
     @Override
-    public void notifyBiddingResult(boolean isWin, String price, Map<String, Object> referBidInfo) {
+    public void notifyBiddingResult(boolean isWin, double price, Map<String, Object> referBidInfo) {
 
     }
 }

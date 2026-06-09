@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.advance.model.AdvanceAdType;
 import com.bayes.sdk.basic.device.BYDisplay;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.NativeExpressGMCallBack;
@@ -36,10 +37,14 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
     @Deprecated
     public AdvanceNativeExpress(Activity activity, String mediaId, String adspotId) {
         super(activity, mediaId, adspotId);
+        adType = AdvanceAdType.NATIVEEXPRESS;
+
     }
 
     public AdvanceNativeExpress(Activity activity, String adspotId) {
         this(activity, "", adspotId);
+        adType = AdvanceAdType.NATIVEEXPRESS;
+
     }
 
 

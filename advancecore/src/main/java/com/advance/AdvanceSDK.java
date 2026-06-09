@@ -81,7 +81,7 @@ public class AdvanceSDK {
             } else {
                 AdvanceConfig.getInstance().setMercuryMediaId(appId);
             }
-            AdvanceConfig.getInstance().initSDKs(context);
+            AdvanceConfig.getInstance().initSDKs(context,appId);
 
             //初始化引入的渠道配置
             SupplierBridgeUtil.initSup();

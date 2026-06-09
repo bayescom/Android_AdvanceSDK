@@ -2,10 +2,16 @@ package com.advance.utils;
 
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceConstant;
+import com.advance.AdvanceSetting;
 import com.advance.custom.AdvanceCustomInit;
 import com.advance.model.AdvanceCustomADNModel;
 import com.advance.model.SdkSupplier;
+import com.bayes.sdk.basic.net.BYNetRequest;
+import com.bayes.sdk.basic.net.BYReqCallBack;
+import com.bayes.sdk.basic.net.BYReqModel;
+import com.bayes.sdk.basic.util.BYCache;
 import com.bayes.sdk.basic.util.BYCacheUtil;
+import com.bayes.sdk.basic.util.BYLog;
 import com.bayes.sdk.basic.util.BYStringUtil;
 
 import org.json.JSONArray;
@@ -19,6 +25,63 @@ import java.util.List;
 import java.util.Map;
 
 public class CustomADNUtil {
+
+    //从服务端获取SDK自定义adn配置信息
+    public synchronized static void initCustomInf(String appID) {
+        try {
+            BYReqModel reqModel = new BYReqModel();
+            String reqOption = "?os=2&appid=" + appID; //如果不为空，添加请求版本号信息
+            final String cachedADNVersion = BYCacheUtil.getCacheStringValue(AdvanceConstant.CACHED_CUSTOM_ADN_VERSION);
+            if (BYStringUtil.isNotEmpty(cachedADNVersion)) {
+                reqOption = reqOption + "&version=" + cachedADNVersion;
+            }
+            reqModel.reqUrl = getCustomSettingUrl() + reqOption;
+            BYNetRequest.get(reqModel, new BYReqCallBack() {
+                @Override
+                public void onSuccess(String s) {
+                    try {
+                        JSONObject json = new JSONObject(s);
+
+                        String version = json.optString("version");
+                        if (BYStringUtil.isNotEmpty(version)) {
+                            boolean isDiffVersion = BYStringUtil.isNotEqual(version, cachedADNVersion);
+                            BYCache byCache = BYCacheUtil.byCache();
+                            //版本不一致，需更新缓存version以及返回string
+                            if (isDiffVersion && byCache != null) {
+                                LogUtil.simple("initCustomInf  cache adn  v");
+
+                                byCache.put(AdvanceConstant.CACHED_CUSTOM_ADN_VERSION, version);
+                                //缓存整个返回串
+                                JSONArray adnList = json.optJSONArray("custom_adn_list");
+                                if (adnList != null && adnList.length() > 0) {
+                                    LogUtil.simple("initCustomInf  cache adn  list");
+                                    byCache.put(AdvanceConstant.CACHED_CUSTOM_ADN_SETTING, s);
+                                }
+//                                availableAdapterConfigMap \availableInitClassMap 加入
+                            }
+                        }
+                    } catch (Throwable e) {
+                    }
+                }
+
+                @Override
+                public void onFailed(int i, String s) {
+                    LogUtil.simple("initCustomInf onFailed ");
+
+                }
+            });
+        } catch (Exception e) {
+        }
+    }
+
+    private static String getCustomSettingUrl() {
+        String url = AdvanceConfig.ADN_REQ_URL_HTTP;
+        if (AdvanceSetting.getInstance().useHttps) {
+            url = AdvanceConfig.ADN_REQ_URL_HTTPS;
+        }
+        return url;
+
+    }
 
     public synchronized static AdvanceCustomInit getCustomInitClass(SdkSupplier supplier) {
         AdvanceCustomInit result = null;
@@ -80,14 +143,36 @@ public class CustomADNUtil {
         ArrayList<AdvanceCustomADNModel> customADNModels = new ArrayList<>();
         try {
             String savedAdnSetting = BYCacheUtil.getCacheStringValue(AdvanceConstant.CACHED_CUSTOM_ADN_SETTING);
-            try {
-                JSONObject jsonObject = new JSONObject(savedAdnSetting);
-                JSONArray jsonArray = jsonObject.optJSONArray("custom_adn");
-                AdvanceCustomADNModel adn = new AdvanceCustomADNModel();
-            } catch (JSONException e) {
-
+            if (BYStringUtil.isEmpty(savedAdnSetting)){
+                LogUtil.simple("savedAdnSetting empty");
+                return customADNModels;
             }
-        } catch (Exception e) {
+            JSONObject jsonObject = new JSONObject(savedAdnSetting);
+            JSONArray jsonArray = jsonObject.optJSONArray("custom_adn_list");
+            if (jsonArray != null) {
+                int length = jsonArray.length();
+                for (int i = 0; i < length; i++) {
+                    JSONObject custom = jsonArray.getJSONObject(i);
+                    if (custom != null) {
+                        AdvanceCustomADNModel adn = new AdvanceCustomADNModel();
+                        adn.sdkID = custom.optString("id");
+                        adn.sdkName = custom.optString("name");
+
+                        adn.initClzName = custom.optString("custom_config_adapter");
+                        adn.splashClzName = custom.optString("custom_splash_adapter");
+                        adn.bannerClzName = custom.optString("custom_banner_adapter");
+                        adn.interstitialClzName = custom.optString("custom_interstitial_adapter");
+                        adn.rewardClzName = custom.optString("custom_rewardvideo_adapter");
+                        adn.nativeExpressClzName = custom.optString("custom_nativeexpress_adapter");
+                        adn.nativeCustomClzName = custom.optString("custom_renderfeed_adapter");
+
+                        customADNModels.add(adn);
+                        LogUtil.d("【获取自定义ADN】：" + adn.sdkID);
+                    }
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
         return customADNModels;
 
@@ -98,7 +183,7 @@ public class CustomADNUtil {
     public static Map<String, Object> getServerCustomExtData(String json) {
         Map<String, Object> result = new HashMap<>();
         try {
-            if (BYStringUtil.isNotEmpty(json)){
+            if (BYStringUtil.isNotEmpty(json)) {
                 JSONObject jsonObject = new JSONObject(json);
                 result = toMap(jsonObject);
             }
@@ -106,10 +191,10 @@ public class CustomADNUtil {
         } catch (JSONException e) {
         }
 
-        return  result;
+        return result;
     }
 
-    public static Map<String, Object> toMap(JSONObject object)  {
+    public static Map<String, Object> toMap(JSONObject object) {
         Map<String, Object> map = new HashMap<>();
         try {
             Iterator<String> keys = object.keys();
@@ -129,7 +214,7 @@ public class CustomADNUtil {
         return map;
     }
 
-    public static List<Object> toList(JSONArray array)  {
+    public static List<Object> toList(JSONArray array) {
         List<Object> list = new ArrayList<>();
         try {
             for (int i = 0; i < array.length(); i++) {

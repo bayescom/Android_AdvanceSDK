@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceConstant;
 import com.advance.AdvanceSetting;
+import com.advance.model.AdvanceCustomADNModel;
 import com.advance.model.AdvanceReqModel;
 import com.advance.model.ElevenModel;
 import com.advance.model.GMParams;
@@ -19,6 +20,7 @@ import com.advance.model.SdkSupplier;
 import com.advance.model.ServerRewardModel;
 import com.advance.model.SupplierSettingModel;
 import com.advance.utils.AdvanceSecurityCore;
+import com.advance.utils.CustomADNUtil;
 import com.advance.utils.LogUtil;
 import com.advance.utils.SupplierBridgeUtil;
 import com.bayes.sdk.basic.device.BYDevice;
@@ -216,19 +218,30 @@ public class AdvanceNetManger {
                 try {
                     extJsonObj.putOpt("mry_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_MERCURY));
 
-                    putADNVersion(extJsonObj,"csj_v",AdvanceConfig.SDK_ID_CSJ);
-                    putADNVersion(extJsonObj,"gdt_v",AdvanceConfig.SDK_ID_GDT);
-                    putADNVersion(extJsonObj,"bd_v",AdvanceConfig.SDK_ID_BAIDU);
-                    putADNVersion(extJsonObj,"ks_v",AdvanceConfig.SDK_ID_KS);
-                    putADNVersion(extJsonObj,"tanx_v",AdvanceConfig.SDK_ID_TANX);
-                    putADNVersion(extJsonObj,"tap_v",AdvanceConfig.SDK_ID_TAP);
-                    putADNVersion(extJsonObj,"oppo_v",AdvanceConfig.SDK_ID_OPPO);
-                    putADNVersion(extJsonObj,"sig_v",AdvanceConfig.SDK_ID_SIG);
-                    putADNVersion(extJsonObj,"hw_v",AdvanceConfig.SDK_ID_HW);
-                    putADNVersion(extJsonObj,"xm_v",AdvanceConfig.SDK_ID_XIAOMI);
-                    putADNVersion(extJsonObj,"vivo_v",AdvanceConfig.SDK_ID_VIVO);
-                    putADNVersion(extJsonObj,"honor_v",AdvanceConfig.SDK_ID_HONOR);
-                    putADNVersion(extJsonObj,"flink_v",AdvanceConfig.SDK_ID_FLINK);
+                    putADNVersion(extJsonObj, "csj_v", AdvanceConfig.SDK_ID_CSJ);
+                    putADNVersion(extJsonObj, "gdt_v", AdvanceConfig.SDK_ID_GDT);
+                    putADNVersion(extJsonObj, "bd_v", AdvanceConfig.SDK_ID_BAIDU);
+                    putADNVersion(extJsonObj, "ks_v", AdvanceConfig.SDK_ID_KS);
+                    putADNVersion(extJsonObj, "tanx_v", AdvanceConfig.SDK_ID_TANX);
+                    putADNVersion(extJsonObj, "tap_v", AdvanceConfig.SDK_ID_TAP);
+                    putADNVersion(extJsonObj, "oppo_v", AdvanceConfig.SDK_ID_OPPO);
+                    putADNVersion(extJsonObj, "sig_v", AdvanceConfig.SDK_ID_SIG);
+                    putADNVersion(extJsonObj, "hw_v", AdvanceConfig.SDK_ID_HW);
+                    putADNVersion(extJsonObj, "xm_v", AdvanceConfig.SDK_ID_XIAOMI);
+                    putADNVersion(extJsonObj, "vivo_v", AdvanceConfig.SDK_ID_VIVO);
+                    putADNVersion(extJsonObj, "honor_v", AdvanceConfig.SDK_ID_HONOR);
+                    putADNVersion(extJsonObj, "flink_v", AdvanceConfig.SDK_ID_FLINK);
+
+                    //添加自定义adn得版本号
+                    ArrayList<AdvanceCustomADNModel> adnModels = CustomADNUtil.getCustomADNModels();
+                    if (adnModels != null && !adnModels.isEmpty()) {
+                        for (AdvanceCustomADNModel adnModel : adnModels) {
+                            if (adnModel != null && BYStringUtil.isNotEmpty(adnModel.sdkID)) {
+                                String adnKey = adnModel.sdkID + "_v";
+                                putADNVersion(extJsonObj, adnKey, adnModel.sdkID);
+                            }
+                        }
+                    }
 //
 //
 //                    extJsonObj.putOpt("csj_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_CSJ));
@@ -245,7 +258,7 @@ public class AdvanceNetManger {
 //                    extJsonObj.putOpt("honor_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_HONOR));
 //                    extJsonObj.putOpt("flink_v", SupplierBridgeUtil.getSupVersion(AdvanceConfig.SDK_ID_FLINK));
 
-                    //todo 如何增加自定义渠道方式得版本号采集
+
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -266,7 +279,7 @@ public class AdvanceNetManger {
         return jsonObject;
     }
 
-    private static void putADNVersion(JSONObject extJsonObj,String key,String sdkID){
+    private static void putADNVersion(JSONObject extJsonObj, String key, String sdkID) {
         try {
             String adn_v = SupplierBridgeUtil.getSupVersion(sdkID);
             if (BYStringUtil.isNotEmpty(adn_v)) {
@@ -461,10 +474,10 @@ public class AdvanceNetManger {
                     ss.failedtk = convertJsonArrayToArrayList(failedJsonArray);
                     ss.loadedtk = convertJsonArrayToArrayList(loadedJsonArray);
                     ss.wintk = convertJsonArrayToArrayList(job.optJSONArray("wintk"));
-                    ss.starttk= convertJsonArrayToArrayList(job.optJSONArray("loadendtk"));
+                    ss.starttk = convertJsonArrayToArrayList(job.optJSONArray("loadendtk"));
                     ss.unitKey = job.optString("sdk_id");
-                    ss.cacheMaxSec = job.optLong("cache_timeout",AdvanceConstant.SDK_DEFAULT_CACHE_TIME_SEC);
-                    ss.enableCache = job.optInt("enable_cache",0) == 1;
+                    ss.cacheMaxSec = job.optLong("cache_timeout", AdvanceConstant.SDK_DEFAULT_CACHE_TIME_SEC);
+                    ss.enableCache = job.optInt("enable_cache", 0) == 1;
                     ss.ext = ext;
                     ss.serverReqID = elevenModel.reqid;
                     al.add(ss);

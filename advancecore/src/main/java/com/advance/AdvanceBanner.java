@@ -3,6 +3,7 @@ package com.advance;
 import android.app.Activity;
 import android.view.ViewGroup;
 
+import com.advance.model.AdvanceAdType;
 import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceLoader;
@@ -33,12 +34,14 @@ public class AdvanceBanner extends AdvanceBaseAdspot implements BannerSetting {
     public AdvanceBanner(Activity activity, ViewGroup adContainer, String mediaId, String adspotId) {
         super(activity, mediaId, adspotId);
         this.adContainer = adContainer;
+        adType = AdvanceAdType.BANNER;
         initListener();
     }
 
     public AdvanceBanner(Activity activity, ViewGroup adContainer, String adspotId) {
         super(activity, "", adspotId);
         this.adContainer = adContainer;
+        adType = AdvanceAdType.BANNER;
         initListener();
     }
 

@@ -1,18 +1,11 @@
-package com.advance.supplier.mry;
+package com.advance.supplier.custom;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
+import com.advance.core.srender.AdvanceRFConstant;
+import com.advance.core.srender.AdvanceRFDownloadListener;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
 import com.advance.core.srender.AdvanceRFUtil;
 import com.advance.core.srender.AdvanceRFVideoEventListener;
@@ -22,31 +15,22 @@ import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.device.BYDisplay;
-import com.bayes.sdk.basic.util.BYStringUtil;
-import com.bayes.sdk.basic.widget.BYViewUtil;
-import com.mercury.sdk.core.config.VideoOption;
-import com.mercury.sdk.core.nativ.NativeAD;
-import com.mercury.sdk.core.nativ.NativeADData;
-import com.mercury.sdk.core.nativ.NativeADEventListener;
-import com.mercury.sdk.core.nativ.NativeADListener;
-import com.mercury.sdk.core.nativ.NativeADMediaListener;
-import com.mercury.sdk.core.widget.MediaView;
-import com.mercury.sdk.core.widget.NativeAdContainer;
-import com.mercury.sdk.util.ADError;
-import com.mercury.sdk.util.MercuryTool;
+import com.qq.e.ads.cfg.VideoOption;
+import com.qq.e.ads.nativ.MediaView;
+import com.qq.e.ads.nativ.NativeADEventListener;
+import com.qq.e.ads.nativ.NativeADMediaListener;
+import com.qq.e.ads.nativ.NativeADUnifiedListener;
+import com.qq.e.ads.nativ.NativeUnifiedAD;
+import com.qq.e.ads.nativ.NativeUnifiedADData;
+import com.qq.e.ads.nativ.widget.NativeAdContainer;
+import com.qq.e.comm.util.AdError;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
-    boolean hasPicExpose = false;
+public class CustomADNYLHRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
+    NativeUnifiedADData mRenderAD;
 
-    NativeADData mRenderAD;
-    NativeAD nativeAD;
-
-    
 
     @Override
     protected void adPrepared() {
@@ -60,9 +44,6 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             if (mRenderAD != null) {
                 mRenderAD.destroy();
             }
-            if (nativeAD != null) {
-                nativeAD.destroy();
-            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -74,56 +55,72 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        nativeAD = new NativeAD(getRealActivity(null), sdkSupplier.adspotid, new NativeADListener() {
-            @Override
-            public void onADLoaded(List<NativeADData> list) {
-                try {
-                    if (list == null || list.size() == 0) {
-                        handleFailed(AdvanceError.ERROR_DATA_NULL, "ads empty");
-                        return;
+        try {
+            LogUtil.simple(TAG + "call load start ");
+
+            NativeUnifiedAD mAdManager = new NativeUnifiedAD(getRealActivity(null), sdkSupplier.adspotid, new NativeADUnifiedListener() {
+                @Override
+                public void onADLoaded(List<NativeUnifiedADData> list) {
+                    try {
+                        if (list == null || list.size() == 0) {
+                            handleFailed(AdvanceError.ERROR_DATA_NULL, "ads empty");
+                            return;
+                        }
+                        mRenderAD = list.get(0);
+                        if (mRenderAD == null) {
+                            handleFailed(AdvanceError.ERROR_DATA_NULL, "mRenderAD null");
+                            return;
+                        }
+
+                        //转换返回广告model为聚合通用model
+                        dataConverter = new GdtRenderDataConverter(mRenderAD, sdkSupplier);
+
+                        //标记广告成功
+                        handleSucceed(mRenderAD.getECPM());
+                        //通知广告成功
+//                        mAdvanceRFBridge.adapterDidLoaded(dataConverter);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
                     }
-                    mRenderAD = list.get(0);
-                    if (mRenderAD == null) {
-                        handleFailed(AdvanceError.ERROR_DATA_NULL, "mRenderAD null");
-                        return;
+
+                }
+
+                @Override
+                public void onNoAD(AdError adError) {
+                    try {
+                        int code = -1;
+                        String msg = "default onNoAD";
+                        if (adError != null) {
+                            code = adError.getErrorCode();
+                            msg = adError.getErrorMsg();
+                        }
+                        LogUtil.simple(TAG + " onNoAD");
+                        handleFailed(code, msg);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
                     }
-
-                    //转换返回广告model为聚合通用model
-                    dataConverter = new MercuryRenderDataConverter(mRenderAD, sdkSupplier);
-
-                    //标记广告成功
-                    handleSucceed(mRenderAD.getECPM());
-                    //通知广告成功
-//                    mAdvanceRFBridge.adapterDidLoaded(mDataConverter);
-                } catch (Throwable e) {
-                    e.printStackTrace();
                 }
-            }
+            });
+            mAdManager.loadData(1);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
 
-            @Override
-            public void onNoAD(ADError adError) {
-                int code = -1;
-                String msg = "default onNoAD";
-                if (adError != null) {
-                    code = adError.code;
-                    msg = adError.msg;
-                }
-                LogUtil.simple(TAG + "onAdFailed");
-                handleFailed(code, msg);
-            }
-        });
-        nativeAD.loadAD(1);
     }
 
     private void doShow() {
         try {
             LogUtil.simple(TAG + "call show ");
-            if ( mRenderAD == null) {
+            if (mRenderAD == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "advanceRFBridge or mRenderAD null");
                 return;
             }
-
-            final AdvanceRFMaterialProvider rfMaterialProvider =  getMaterialProvider();
+            //无效广告不展示
+            if (!mRenderAD.isValid()) {
+                handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "ad invalid");
+                return;
+            }
+            final AdvanceRFMaterialProvider rfMaterialProvider = getMaterialProvider();
 
             if (rfMaterialProvider == null) {
                 handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "getMaterialProvider  null");
@@ -136,9 +133,8 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
 //            需要先拿到根布局信息
             AdvRFRootView rootView = rfMaterialProvider.rootView;
-            Activity activity = getRealActivity(rfMaterialProvider.rootView);
             //添加root根布局到 广点通自定义根布局。
-            final NativeAdContainer adContainer = new NativeAdContainer(activity);
+            final NativeAdContainer adContainer = new NativeAdContainer(getRealActivity(rfMaterialProvider.rootView));
 
 //            -----------方案A 替换根布局 (坏处是，当广告view上下均有内容时，会导致布局位置错乱)
             //将根布局添加至广点通承载布局，并删除旧根布局
@@ -151,7 +147,7 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 //            if (rootParent != null)
 //                rootParent.addView(adContainer);
 
-//            -----------方案B copy全部子布局，复制子控件至新布局，并将新布局添加至旧父布局中
+//            -----------方案B copy全部子布局
             AdvanceRFUtil.copyChild(rootView, adContainer);
 //            int childSize = rootView.getChildCount();
 //            LogUtil.devDebug(TAG + "  childSize = " + childSize);
@@ -171,78 +167,8 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 LogUtil.devDebug(TAG + "contains rootView");
                 rfMaterialProvider.clickViews.add(adContainer);
             }
-            //将创意view添加至可点击view中
-            for (View v : rfMaterialProvider.creativeViews) {
-                if (!rfMaterialProvider.clickViews.contains(v)) {
-                    rfMaterialProvider.clickViews.add(v);
-                }
-            }
 
-
-            mRenderAD.bindAdToView(activity, adContainer, rfMaterialProvider.clickViews);
-
-            //新增创意按钮绑定方法
-            ArrayList<View> creativeViews = rfMaterialProvider.creativeViews;
-            if (creativeViews != null && creativeViews.size() > 0) {
-                mRenderAD.bindCreativeView(creativeViews);
-            }
-
-
-//添加广告logo标识
-            if (rfMaterialProvider.logoView != null) {
-                try {
-                    LinearLayout logoLayout = new LinearLayout(getRealContext());
-                    logoLayout.setOrientation(LinearLayout.HORIZONTAL);
-                    logoLayout.setGravity(Gravity.CENTER_VERTICAL);
-                    //设置背景
-                    GradientDrawable gd = new GradientDrawable();
-                    gd.setColor(Color.GRAY);
-                    gd.setCornerRadius(BYDisplay.dp2px(3));
-                    gd.setAlpha(100);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        logoLayout.setBackground(gd);
-                    } else {
-                        logoLayout.setBackgroundDrawable(gd);
-                    }
-                    int lrPadding = BYDisplay.dp2px(3);
-                    int tbPadding = BYDisplay.dp2px(2);
-                    logoLayout.setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
-
-                    String sourceLogoUrl = mRenderAD.getADSourceLogo();
-                    String sourceText = mRenderAD.getADSource();
-
-//                    if (BYUtil.isDev()) {
-//                        sourceLogoUrl = "https://img0.baidu.com/it/u=4252001042,1570788180&fm=253&fmt=auto&app=138&f=JPEG?w=1540&h=500";
-//                        sourceText = "广告";
-//                    }
-                    //logo 图标
-                    if (!BYStringUtil.isEmpty(sourceLogoUrl)) {
-                        ImageView recLogo = new ImageView(getRealContext());
-                        int maxW = BYDisplay.dp2px((25));
-                        int h = BYDisplay.dp2px((12));
-                        recLogo.setMaxWidth(maxW);
-                        recLogo.setAdjustViewBounds(true);
-                        //调用渲染图片方法
-                        MercuryTool.renderNetImg(sourceLogoUrl, recLogo);
-                        LinearLayout.LayoutParams imgLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, h);
-                        imgLp.setMargins(0, 0, BYDisplay.dp2px(3), 0);
-                        logoLayout.addView(recLogo, imgLp);
-                    }
-                    //文字一般是"广告"二字
-                    TextView tv = new TextView(getRealContext());
-                    tv.setText(sourceText);
-                    tv.setTextColor(Color.WHITE);
-                    tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8);
-
-                    LinearLayout.LayoutParams txtLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    logoLayout.addView(tv, txtLp);
-
-                    rfMaterialProvider.logoView.addView(logoLayout);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-
+            mRenderAD.bindAdToView(getRealActivity(rfMaterialProvider.rootView), adContainer, null, rfMaterialProvider.clickViews, rfMaterialProvider.creativeViews);
 
             mRenderAD.setNativeAdEventListener(new NativeADEventListener() {
                 @Override
@@ -259,15 +185,14 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                     handleClick();
                 }
 
-
                 @Override
-                public void onADError(ADError error) {
+                public void onADError(AdError adError) {
                     try {
                         int code = -1;
                         String msg = "default render err";
-                        if (error != null) {
-                            code = error.code;
-                            msg = error.msg;
+                        if (adError != null) {
+                            code = adError.getErrorCode();
+                            msg = adError.getErrorMsg();
                         }
                         LogUtil.simple(TAG + "onADError, render err");
                         handleFailed(code, msg);
@@ -275,8 +200,58 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                         e.printStackTrace();
                     }
                 }
-            });
 
+                @Override
+                public void onADStatusChanged() {
+
+                    try {
+                        //主要是更新下载状态
+                        final AdvanceRFDownloadListener downloadListener = rfMaterialProvider.downloadListener;
+                        if (mRenderAD.isAppAd() && downloadListener != null) {
+                            String appName = "";
+                            if (mRenderAD.getAppMiitInfo() != null) {
+                                appName = mRenderAD.getAppMiitInfo().getAppName();
+                            }
+                            AdvanceRFDownloadListener.AdvanceRFDownloadInf downloadInf = new AdvanceRFDownloadListener.AdvanceRFDownloadInf();
+                            downloadInf.appName = appName;
+
+//                            getAppStatus()	获取应用状态，0:未开始下载；1:已安装；2:需要更新；4:下载中；8:下载完成；16:下载失败；32:下载暂停；64:下载删除
+                            switch (mRenderAD.getAppStatus()) {
+                                case 0:
+                                    downloadListener.onIdle(dataConverter);
+                                    break;
+
+                                case 1:
+                                    downloadListener.onInstalled(dataConverter, appName);
+                                    break;
+
+                                case 4:
+                                    downloadInf.downloadStatus = AdvanceRFConstant.AD_DOWNLOAD_STATUS_ACTIVE;
+                                    downloadInf.downloadPercent = mRenderAD.getProgress();
+                                    downloadListener.onDownloadStatusUpdate(dataConverter, downloadInf);
+                                    break;
+                                case 8:
+                                    downloadInf.downloadStatus = AdvanceRFConstant.AD_DOWNLOAD_STATUS_FINISHED;
+                                    downloadListener.onDownloadStatusUpdate(dataConverter, downloadInf);
+                                    break;
+
+                                case 16:
+                                    downloadInf.downloadStatus = AdvanceRFConstant.AD_DOWNLOAD_STATUS_FAILED;
+                                    downloadListener.onDownloadStatusUpdate(dataConverter, downloadInf);
+                                    break;
+
+                                case 32:
+                                    downloadInf.downloadStatus = AdvanceRFConstant.AD_DOWNLOAD_STATUS_PAUSED;
+                                    downloadListener.onDownloadStatusUpdate(dataConverter, downloadInf);
+                                    break;
+
+                            }
+                        }
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
             //关闭广告事件绑定
             View dislikeView = rfMaterialProvider.disLikeView;
@@ -296,16 +271,22 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 });
             }
 
+            //视频类广告额外处理
             if (dataConverter != null && dataConverter.isVideo()) {
-//设置播放相关配置
+                //设置播放相关配置
                 AdvanceRFVideoOption advanceRFVideoOption = rfMaterialProvider.videoOption;
                 VideoOption.Builder builder = new VideoOption.Builder();
-                builder.setAutoPlayPolicy(advanceRFVideoOption.autoPlayNetStatus);
-                builder.setAutoPlayMuted(advanceRFVideoOption.isMute);
+                if (advanceRFVideoOption != null) {
+                    builder.setAutoPlayPolicy(advanceRFVideoOption.autoPlayNetStatus);
+                    builder.setAutoPlayMuted(advanceRFVideoOption.isMute);
+                    builder.setDetailPageMuted(advanceRFVideoOption.isMute);
+                }
+
 
                 //添加自定义播放view
                 AdvRFVideoView videoView = rfMaterialProvider.videoView;
                 MediaView mediaView = new MediaView(getRealContext());
+//                mediaView.addView(videoView);
                 videoView.addView(mediaView);
                 final AdvanceRFVideoEventListener videoEventListener = rfMaterialProvider.videoEventListener;
                 mRenderAD.bindMediaView(mediaView, builder.build(), new NativeADMediaListener() {
@@ -354,10 +335,10 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                     public void onVideoResume() {
                         LogUtil.simple(TAG + "onVideoResume: ");
                         if (videoEventListener != null)
+
                             videoEventListener.onResume(dataConverter);
 
                     }
-
 
                     @Override
                     public void onVideoCompleted() {
@@ -369,14 +350,14 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                     }
 
                     @Override
-                    public void onVideoError(ADError error) {
+                    public void onVideoError(AdError error) {
                         LogUtil.simple(TAG + "onVideoError, error: " + error);
                         int code = -1;
                         String msg = "default video err";
 
                         if (error != null) {
-                            code = error.code;
-                            msg = error.msg;
+                            code = error.getErrorCode();
+                            msg = error.getErrorMsg();
                         }
                         handleFailed(code, msg);
 
@@ -384,39 +365,32 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                             videoEventListener.onError(dataConverter, AdvanceError.parseErr(code, msg));
                     }
 
+                    @Override
+                    public void onVideoStop() {
+                        LogUtil.simple(TAG + "onVideoStop");
+                    }
 
+                    @Override
+                    public void onVideoClicked() {
+                        LogUtil.simple(TAG + "onVideoClicked");
+                    }
                 });
-            } else {
-                //图片需要在view可见时自动调用曝光
-                checkExpose(adContainer);
             }
+
         } catch (Throwable e) {
             e.printStackTrace();
-            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
+            handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "catch err，请检查log输出了解更多");
         }
-    }
 
-
-    private void checkExpose(View view) {
-        //监听布局可见性，并设置是否监听摇一摇
-        new BYViewUtil().onVisibilityChange(view, new BYViewUtil.VisChangeListener() {
-            @Override
-            public void onChange(View view, boolean isVisible) {
-                if (isVisible && !hasPicExpose && mRenderAD != null) {
-                    mRenderAD.onPicADExposure();
-                    hasPicExpose = true;
-                }
-            }
-        });
 
     }
 
     @Override
     public boolean isValid() {
-        if (nativeAD != null) {
-            return nativeAD.isValid();
+        if (mRenderAD != null) {
+            return mRenderAD.isValid();
         }
-           return true;
+        return true;
     }
 
     @Override

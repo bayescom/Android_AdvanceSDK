@@ -31,7 +31,6 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     public String TAG = "[" + this.getClass().getSimpleName() + "] ";
@@ -661,10 +660,17 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
         }
     }
 
+    String logTag = "ad win";
+
+//    protected void callWin() {
+//
+//    }
+
+
     /**
      * 广告展示方法，串并行均可调用，不支持并行时自动转为串行加载
      */
-    protected void prepareShow() {
+    protected void callLoaded() {
         try {
             String logMsg = TAG + " adStatus ==  " + adStatus;
             String devMsg = "";
