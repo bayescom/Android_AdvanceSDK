@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.ViewGroup;
 
 import com.advance.model.AdvanceAdType;
+import com.advance.utils.AdvanceUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
@@ -64,7 +65,7 @@ public class AdvanceFullScreenVideo extends AdvanceBaseAdspot implements FullScr
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getFullVideoAdapter(clzName, getRealContext(), this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getFullVideoAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }

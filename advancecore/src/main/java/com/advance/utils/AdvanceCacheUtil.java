@@ -5,7 +5,6 @@ import com.advance.AdvanceSetting;
 import com.advance.BaseParallelAdapter;
 import com.advance.model.AdvanceSDKCacheModel;
 import com.advance.model.SdkSupplier;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.util.BYStringUtil;
 
 
@@ -259,8 +258,6 @@ public class AdvanceCacheUtil {
 //        }
 //        return result;
 //    }
-
-
     public static boolean loadWithCacheAdapter(BaseParallelAdapter adapter) {
         boolean result = false;
         try {
@@ -286,7 +283,7 @@ public class AdvanceCacheUtil {
                                 //置换桥接类
                                 cacheValue.baseSetting = adapter.baseSetting;
                                 //置换实现adapter
-                                adapter.baseSetting.replaceCacheAdapter(adapter.sdkSupplier.priority + "", cacheValue);
+                                adapter.baseSetting.replaceCacheAdapter(AdvanceUtil.getAdapterMapKey(adapter.sdkSupplier), cacheValue);
                             }
 
                         } catch (Exception e) {

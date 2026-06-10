@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.ViewGroup;
 
 import com.advance.model.AdvanceAdType;
+import com.advance.utils.AdvanceUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.InterstitialGMCallBack;
 import com.advance.model.AdvanceError;
@@ -93,7 +94,7 @@ public class AdvanceInterstitial extends AdvanceBaseAdspot implements Interstiti
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getInterstitialAdapter(clzName, getRealContext(), this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getInterstitialAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }

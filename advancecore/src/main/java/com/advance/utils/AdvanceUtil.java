@@ -21,6 +21,7 @@ import com.advance.AdvanceSetting;
 import com.advance.model.AdvanceReqModel;
 import com.advance.model.CacheMode;
 import com.advance.model.ElevenModel;
+import com.advance.model.SdkSupplier;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYCache;
 import com.bayes.sdk.basic.util.BYCacheUtil;
@@ -546,6 +547,14 @@ public class AdvanceUtil {
         }
         return result;
 
+    }
+
+    //广告adapter实例存储key，需要优先级+SDKid+广告位id 来保证唯一性，旧逻辑仅优先级逻辑不对
+    public static String getAdapterMapKey(SdkSupplier supplier) {
+        if (supplier != null) {
+            return supplier.priority + "-" + supplier.id + "-" + supplier.adspotid;
+        }
+        return "";
     }
 
 }

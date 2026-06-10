@@ -89,7 +89,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     HashMap<String, String> supportAdapterInf = new HashMap<>();
     //    自定义的adapter列表
     HashMap<String, String> customAdapterInf = new HashMap<>();
-    private HashMap<Integer, Boolean> paraInitStatus = new HashMap<>();
+    private HashMap<String, Boolean> paraInitStatus = new HashMap<>();
     private ArrayList<ArrayList<String>> savedDelayReportList = new ArrayList<>();
     private boolean isReportDelay = false;//是否进行延迟上报，上报时机为：广告展示以后或者渠道全部失败
     private static String BTAG = "[AdvanceBaseAdspot] ";
@@ -572,11 +572,11 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                 LogUtil.e(BTAG + "-isValid- 未找到当前执行渠道");
                 return false;
             }
-            String priority = currentSdkSupplier.priority + "";
-            final BaseParallelAdapter adapter = supplierAdapters.get(priority);
+            String adapterMapKey = AdvanceUtil.getAdapterMapKey(currentSdkSupplier);
+            final BaseParallelAdapter adapter = supplierAdapters.get(adapterMapKey);
 
             if (adapter == null) {
-                LogUtil.e(BTAG + "-isValid- 未找到当前渠道下adapter，渠道id：" + currentSDKId + ", priority = " + priority);
+                LogUtil.e(BTAG + "-isValid- 未找到当前渠道下adapter，渠道id：" + currentSDKId + ", adapterMapKey = " + adapterMapKey);
                 return false;
             }
             if (adapter.isDestroy) {
@@ -608,10 +608,10 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                 LogUtil.e(BTAG + "未找到当前执行渠道");
                 return;
             }
-            String priority = currentSdkSupplier.priority + "";
-            final BaseParallelAdapter adapter = supplierAdapters.get(priority);
+            String adapterMapKey = AdvanceUtil.getAdapterMapKey(currentSdkSupplier);
+            final BaseParallelAdapter adapter = supplierAdapters.get(adapterMapKey);
             if (adapter == null) {
-                LogUtil.e(BTAG + "未找到当前渠道下adapter，渠道id：" + currentSDKId + ", priority = " + priority);
+                LogUtil.e(BTAG + "未找到当前渠道下adapter，渠道id：" + currentSDKId + ", adapterMapKey = " + adapterMapKey);
                 return;
             }
             if (adapter.isDestroy) {
@@ -1497,8 +1497,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
             adStatus = AdStatus.SUCCESS;
 
             if (supplierAdapters != null && supplier != null) {
-                int pri = supplier.priority;
-                BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                BaseParallelAdapter parallelAdapter = supplierAdapters.get(AdvanceUtil.getAdapterMapKey(supplier));
                 if (parallelAdapter != null && !parallelAdapter.supportPara) {
 
 //            标记结果状态
@@ -1544,8 +1543,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
 
 
             if (supplierAdapters != null && supplier != null) {
-                int pri = supplier.priority;
-                BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                BaseParallelAdapter parallelAdapter = supplierAdapters.get(AdvanceUtil.getAdapterMapKey(supplier));
                 if (parallelAdapter != null) {
                     AdvanceReport.replaceReportWin(supplier, parallelAdapter);
                 }
@@ -1559,8 +1557,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
         boolean result = false;
         try {
             if (supplierAdapters != null && supplier != null) {
-                int pri = supplier.priority;
-                BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                BaseParallelAdapter parallelAdapter = supplierAdapters.get(AdvanceUtil.getAdapterMapKey(supplier));
                 if (parallelAdapter != null) {
                     result = parallelAdapter.supportPara;
                 }
@@ -1587,8 +1584,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
 //            }
 
             if (supplierAdapters != null && supplier != null) {
-                int pri = supplier.priority;
-                BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                BaseParallelAdapter parallelAdapter = supplierAdapters.get(AdvanceUtil.getAdapterMapKey(supplier));
                 //发起曝光上报
                 AdvanceReport.replaceReportImp(supplier, parallelAdapter);
             }
@@ -1622,8 +1618,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
             if (supplier != null) {
                 ArrayList<String> clicktk = supplier.clicktk;
                 if (clicktk != null && !clicktk.isEmpty() && supplierAdapters != null) {
-                    int pri = supplier.priority;
-                    BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                    BaseParallelAdapter parallelAdapter = supplierAdapters.get(AdvanceUtil.getAdapterMapKey(supplier));
                     for (String tk : clicktk) {
                         //发起上报
                         AdvanceReport.reportReplacedCommon(tk, parallelAdapter, "点击");
@@ -1975,9 +1970,9 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                     sizeCount--;
                     continue;
                 }
-                int pri = succSupplier.priority;
+                String pri = AdvanceUtil.getAdapterMapKey(succSupplier);
                 LogUtil.devDebug(BTAG + tag + "check sdk :" + succSupplier.name + "(" + pri + ")");
-                BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri);
                 if (parallelAdapter == null) {
                     LogUtil.high(BTAG + tag + "未定义该渠道并行方法，跳过");
                     sizeCount--;
@@ -2129,19 +2124,22 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
             ArrayList<SdkSupplier> paraSupplierMembers = currentGroupInf.paraSupplierMembers;
             if (paraSupplierMembers != null && !paraSupplierMembers.isEmpty()) {
                 for (SdkSupplier supplier : paraSupplierMembers) {
-                    if (supplier != null) {
-                        int resultStatus = supplier.resultStatus;
-                        //只需通知广告返回成功的渠道
-                        if (resultStatus == AdvanceConstant.SDK_RESULT_CODE_SUCC) {
-                            int pri = supplier.priority;
-                            BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
-                            if (parallelAdapter != null) {
-                                boolean isWin = BYStringUtil.isEqual(winID, supplier.id);
+                    try {
+                        if (supplier != null) {
+                            int resultStatus = supplier.resultStatus;
+                            //只需通知广告返回成功的渠道
+                            if (resultStatus == AdvanceConstant.SDK_RESULT_CODE_SUCC) {
+                                String pri =AdvanceUtil.getAdapterMapKey(supplier) ;
+                                BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri);
+                                if (parallelAdapter != null) {
+                                    boolean isWin = BYStringUtil.isEqual(winID, supplier.id);
 
-                                LogUtil.simple(BTAG + "发起竞价结果通知。pri = " + pri);
-                                parallelAdapter.notifyBiddingResult(isWin, winPrice, referBidInfo);
+                                    LogUtil.simple(BTAG + "notifyBiddingResult。pri = " + pri);
+                                    parallelAdapter.notifyBiddingResult(isWin, winPrice, referBidInfo);
+                                }
                             }
                         }
+                    } catch (Exception e) {
                     }
                 }
             }
@@ -2168,8 +2166,8 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                 LogUtil.high(BTAG + "未找到渠道信息，跳过");
                 return -1;
             }
-            int pri = paraSupplier.priority;
-            BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+            String pri = AdvanceUtil.getAdapterMapKey(paraSupplier);
+            BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri);
             if (parallelAdapter == null) {
                 LogUtil.high(BTAG + "未定义该渠道并行方法，跳过");
                 return -2;

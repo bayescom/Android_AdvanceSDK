@@ -27,7 +27,7 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
     }
 
     @Override
-    public void notifyBiddingResult(boolean isWin, double price, Map<String, Object> referBidInfo) {
+    public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
 
     }
 

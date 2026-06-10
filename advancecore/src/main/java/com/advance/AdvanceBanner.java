@@ -7,6 +7,7 @@ import com.advance.model.AdvanceAdType;
 import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceLoader;
+import com.advance.utils.AdvanceUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 
@@ -126,7 +127,7 @@ public class AdvanceBanner extends AdvanceBaseAdspot implements BannerSetting {
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getBannerAdapter(clzName, getRealContext(), this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getBannerAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }

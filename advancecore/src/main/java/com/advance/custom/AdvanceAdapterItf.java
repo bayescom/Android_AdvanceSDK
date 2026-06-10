@@ -14,6 +14,6 @@ public interface AdvanceAdapterItf {
 
     void destroyAd();
 
-    void notifyBiddingResult(boolean isWin, double price, Map<String, Object> referBidInfo);
+    void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo);
 
 }

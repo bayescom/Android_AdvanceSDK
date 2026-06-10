@@ -122,7 +122,7 @@ public class FLBannerAdapter extends AdvanceBannerCustomAdapter {
     }
 
     @Override
-    public void notifyBiddingResult(boolean isWin, double price, Map<String, Object> referBidInfo) {
+    public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
 
     }
 }

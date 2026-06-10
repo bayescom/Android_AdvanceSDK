@@ -1,14 +1,12 @@
 package com.advance;
 
 import android.app.Activity;
-import android.text.TextUtils;
 import android.view.ViewGroup;
 
-import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceAdType;
 import com.advance.model.AdvanceSDKCacheModel;
 import com.advance.model.ServerRewardModel;
-import com.advance.net.AdvanceReport;
+import com.advance.utils.AdvanceUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.RewardGMCallBack;
 import com.advance.model.AdvanceError;
@@ -84,37 +82,37 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
         }
     }
 
-    @Override
-    public boolean isValid() {
-        try {
-            if (TextUtils.isEmpty(currentSDKId)) {
-                LogUtil.e(TAG + "未选中任何SDK");
-                return false;
-            }
-            if (supplierAdapters == null || supplierAdapters.size() == 0) {
-                LogUtil.e(TAG + "无可用渠道");
-                return false;
-            }
-            if (currentSdkSupplier == null) {
-                LogUtil.e(TAG + "未找到当前执行渠道");
-                return false;
-            }
-            String priority = currentSdkSupplier.priority + "";
-            final BaseParallelAdapter adapter = supplierAdapters.get(priority);
-            if (adapter == null) {
-                LogUtil.e(TAG + "未找到当前渠道下adapter，渠道id：" + currentSDKId + ", priority = " + priority);
-                return false;
-            }
-            //转换为
-            if (adapter instanceof AdvanceRewardCustomAdapter) {
-                AdvanceRewardCustomAdapter rewardCustomAdapter = (AdvanceRewardCustomAdapter) adapter;
-                return rewardCustomAdapter.isValid();
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+//    @Override
+//    public boolean isValid() {
+//        try {
+//            if (TextUtils.isEmpty(currentSDKId)) {
+//                LogUtil.e(TAG + "未选中任何SDK");
+//                return false;
+//            }
+//            if (supplierAdapters == null || supplierAdapters.size() == 0) {
+//                LogUtil.e(TAG + "无可用渠道");
+//                return false;
+//            }
+//            if (currentSdkSupplier == null) {
+//                LogUtil.e(TAG + "未找到当前执行渠道");
+//                return false;
+//            }
+//            String priority = currentSdkSupplier.priority + "";
+//            final BaseParallelAdapter adapter = supplierAdapters.get(priority);
+//            if (adapter == null) {
+//                LogUtil.e(TAG + "未找到当前渠道下adapter，渠道id：" + currentSDKId + ", priority = " + priority);
+//                return false;
+//            }
+//            //转换为
+//            if (adapter instanceof AdvanceRewardCustomAdapter) {
+//                AdvanceRewardCustomAdapter rewardCustomAdapter = (AdvanceRewardCustomAdapter) adapter;
+//                return rewardCustomAdapter.isValid();
+//            }
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 
 
     //设置gm监听回调
@@ -259,7 +257,7 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getRewardAdapter(clzName, getRealContext(), this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getRewardAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -405,8 +403,7 @@ public class AdvanceRewardVideo extends AdvanceBaseAdspot implements RewardVideo
 
                         //如果当前播放得为缓存广告，需增加相关埋点信息通知
                         if (supplierAdapters != null && currentSupplier != null) {
-                            int pri = currentSupplier.priority;
-                            BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri + "");
+                            BaseParallelAdapter parallelAdapter = supplierAdapters.get(AdvanceUtil.getAdapterMapKey(currentSupplier));
                             if (parallelAdapter != null) {
                                 AdvanceSDKCacheModel cacheModel = parallelAdapter.getCacheModel();
                                 if (cacheModel != null) {

@@ -24,6 +24,7 @@ import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceLoader;
+import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
@@ -417,7 +418,7 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
     @Override
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getSplashAdapter(clzName, getRealContext(), this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getSplashAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }

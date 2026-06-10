@@ -216,7 +216,7 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
     }
 
     @Override
-    public void notifyBiddingResult(boolean isWin, double price, Map<String, Object> referBidInfo) {
+    public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
 
     }
 }

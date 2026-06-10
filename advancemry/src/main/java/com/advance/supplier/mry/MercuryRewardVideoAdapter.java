@@ -174,15 +174,12 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
     }
 
     @Override
-    public void notifyBiddingResult(boolean isWin, double price, Map<String, Object> referBidInfo) {
+    public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + ", referBidInfo = " + referBidInfo);
 
+        if (rewardVideoAD != null && !isWin) {
+            rewardVideoAD.sendLossWin(winPrice);
+        }
     }
 
-//    @Override
-//    public boolean isValid() {
-//        if (rewardVideoAD == null) {
-//            return false;
-//        }
-//        return rewardVideoAD.isValid();
-//    }
 }

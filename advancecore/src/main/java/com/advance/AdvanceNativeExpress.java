@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.advance.model.AdvanceAdType;
+import com.advance.utils.AdvanceUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.NativeExpressGMCallBack;
@@ -14,7 +15,6 @@ import com.advance.utils.AdvanceLoader;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 
-import java.util.List;
 
 public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExpressSetting {
     private AdvanceNativeExpressListener listener;
@@ -198,7 +198,7 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getNativeAdapter(clzName, getRealContext(), this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getNativeAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }
