@@ -40,7 +40,11 @@ public class HWRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+        if (mNativeAd != null) {
+            HWUtil.notifyBid(mNativeAd.getBiddingInfo(), isWin, winPrice, referBidInfo);
+        }
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {

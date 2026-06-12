@@ -33,7 +33,11 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+        if (mNativeAd != null) {
+            HWUtil.notifyBid(mNativeAd.getBiddingInfo(), isWin, winPrice, referBidInfo);
+        }
     }
 
     @Override

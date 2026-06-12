@@ -15,6 +15,7 @@ import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsRewardVideoAd;
 import com.kwad.sdk.api.KsScene;
+import com.kwad.sdk.api.model.AdExposureFailureCode;
 import com.kwad.sdk.api.model.KsExtraRewardType;
 
 import java.util.HashMap;
@@ -222,6 +223,12 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+        if (isWin){
+            ad.setBidEcpm((long) winPrice,0);
+        }else {
+            ad.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice,referBidInfo));
+        }
     }
 }

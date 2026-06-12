@@ -6,8 +6,10 @@ import android.content.Context;
 import com.advance.custom.AdvanceFullScreenCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
+import com.baidu.mobads.sdk.api.BiddingListener;
 import com.baidu.mobads.sdk.api.FullScreenVideoAd;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements FullScreenVideoAd.FullScreenVideoAdListener {
@@ -155,6 +157,21 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+        if (isWin) {
+            mFullScreenVideoAd.biddingSuccess(null, new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        } else {
+            // 调用反馈竞价失败及原因
+            mFullScreenVideoAd.biddingFail(BDUtil.getFailedObj(winPrice, referBidInfo), new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        }
     }
 }

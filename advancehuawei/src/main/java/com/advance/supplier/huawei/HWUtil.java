@@ -8,14 +8,119 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 
+import com.advance.AdvanceConfig;
+import com.advance.AdvanceConstant;
+import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.net.BYNetRequest;
+import com.bayes.sdk.basic.net.BYReqCallBack;
+import com.bayes.sdk.basic.net.BYReqModel;
+import com.bayes.sdk.basic.util.BYStringUtil;
 import com.huawei.hms.ads.BiddingInfo;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 public class HWUtil {
+    public static final String TAG = "[HWUtil] ";
+
+    public static void notifyBid(BiddingInfo biddingInfo, boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        try {
+            if (biddingInfo != null) {
+                BYReqModel reqModel = new BYReqModel();
+                boolean report = false;
+                if (isWin) {
+                    String win = biddingInfo.getNurl();
+                    if (BYStringUtil.isNotEmpty(win)) {
+                        report = true;
+
+                        reqModel.reqUrl = win;
+                        LogUtil.simple(TAG + "notifyBid win start ");
+//若鲸鸿动能广告竞胜，调用getNurl() 竞价成功通知URL，URL中含有宏替换 SECOND_PRICE、AUCTION_CURRENCY，通知SDK竞胜结果；
+                    }
+
+                } else {
+                    String loss = biddingInfo.getLurl();
+
+                    if (BYStringUtil.isNotEmpty(loss)) {
+                        report = true;
+
+                        LogUtil.simple(TAG + "notifyBid loss start ");
+
+                        //进行宏替换
+//若广告竞败，调用getLurl() 获取竞价失败通知其他成功的URL，URL中含有宏替换（具体宏：AUCTION_LOSS、AUCTION_PRICE、AUCTION_CURRENCY、AUCTION_APP_PKG、AUCTION_APP_NAME、AUCTION_CP_ID）传入竞败原因，
+                        loss = loss.replace("AUCTION_LOSS", "102");
+                        loss = loss.replace("AUCTION_PRICE", "" + winPrice);
+                        loss = loss.replace("AUCTION_CURRENCY", "CNY");
+
+                        String winID = "";
+                        if (referBidInfo != null) {
+                            winID = (String) referBidInfo.get(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_ID);
+                        }
+                        String cpID = getString(winID);
+                        loss = loss.replace("AUCTION_CP_ID", cpID);
+
+                        reqModel.reqUrl = loss;
+                    }
+                }
+
+                if (report)
+                    BYNetRequest.get(reqModel, new BYReqCallBack() {
+                        @Override
+                        public void onSuccess(String s) {
+                            LogUtil.simple(TAG + "notifyBid success");
+
+                        }
+
+                        @Override
+                        public void onFailed(int i, String s) {
+                            LogUtil.simple(TAG + "notifyBid failed");
+
+                        }
+                    });
+
+
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    private static String getString(String winID) {
+        String cpID = "100";
+        if (BYStringUtil.isNotEmpty(winID)) {
+            switch (winID) {
+                case AdvanceConfig.SDK_ID_GDT:
+                    cpID = "1";
+                    break;
+                case AdvanceConfig.SDK_ID_CSJ:
+                    cpID = "2";
+                    break;
+                case AdvanceConfig.SDK_ID_BAIDU:
+                    cpID = "3";
+                    break;
+                case AdvanceConfig.SDK_ID_KS:
+                    cpID = "4";
+                    break;
+                case AdvanceConfig.SDK_ID_TANX:
+                    cpID = "6";
+                    break;
+                case AdvanceConfig.SDK_ID_VIVO:
+                    cpID = "7";
+                    break;
+                case AdvanceConfig.SDK_ID_OPPO:
+                    cpID = "8";
+                    break;
+                case AdvanceConfig.SDK_ID_XIAOMI:
+                    cpID = "9";
+                    break;
+            }
+        }
+        return cpID;
+    }
+
 //    public static synchronized void initAD(BaseParallelAdapter adapter) {
 //        try {
 //            final String tag = "[HWUtil.initAD] ";

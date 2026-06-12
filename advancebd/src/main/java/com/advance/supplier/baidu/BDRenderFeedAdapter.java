@@ -19,6 +19,7 @@ import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.BaiduNativeManager;
+import com.baidu.mobads.sdk.api.BiddingListener;
 import com.baidu.mobads.sdk.api.INativeVideoListener;
 import com.baidu.mobads.sdk.api.NativeResponse;
 import com.baidu.mobads.sdk.api.RequestParameters;
@@ -28,6 +29,7 @@ import com.bayes.sdk.basic.device.BYDisplay;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.mercury.sdk.util.MercuryTool;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -149,7 +151,22 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+        if (isWin) {
+            nativeResponseAD.biddingSuccess(null, new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        } else {
+            // 调用反馈竞价失败及原因
+            nativeResponseAD.biddingFail(BDUtil.getFailedObj(winPrice, referBidInfo), new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        }
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {

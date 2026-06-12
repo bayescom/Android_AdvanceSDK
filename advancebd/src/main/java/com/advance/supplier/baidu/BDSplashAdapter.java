@@ -7,14 +7,18 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
+import com.advance.AdvanceConstant;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
+import com.baidu.mobads.sdk.api.BiddingListener;
 import com.baidu.mobads.sdk.api.RequestParameters;
 import com.baidu.mobads.sdk.api.SplashAd;
 import com.baidu.mobads.sdk.api.SplashInteractionListener;
 import com.bayes.sdk.basic.util.BYUtil;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements SplashInteractionListener {
@@ -65,7 +69,22 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter implements Splas
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
 
+        if (isWin) {
+            splashAd.biddingSuccess(null, new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        } else {
+            // 调用反馈竞价失败及原因
+            splashAd.biddingFail(BDUtil.getFailedObj(winPrice, referBidInfo), new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        }
     }
 
 

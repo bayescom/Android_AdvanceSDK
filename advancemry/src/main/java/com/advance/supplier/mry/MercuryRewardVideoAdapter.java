@@ -175,7 +175,7 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + ", referBidInfo = " + referBidInfo);
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
         if (rewardVideoAD != null && !isWin) {
             rewardVideoAD.sendLossWin(winPrice);

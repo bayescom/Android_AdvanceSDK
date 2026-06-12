@@ -190,6 +190,8 @@ public class CustomADNYLHNativeExpressAdapter extends AdvanceNativeExpressCustom
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+        
 
     }
 }

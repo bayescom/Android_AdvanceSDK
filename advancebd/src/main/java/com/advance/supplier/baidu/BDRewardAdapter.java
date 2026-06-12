@@ -8,8 +8,10 @@ import com.advance.RewardServerCallBackInf;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
+import com.baidu.mobads.sdk.api.BiddingListener;
 import com.baidu.mobads.sdk.api.RewardVideoAd;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -56,7 +58,22 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+        if (isWin) {
+            mRewardVideoAd.biddingSuccess(null, new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        } else {
+            // 调用反馈竞价失败及原因
+            mRewardVideoAd.biddingFail(BDUtil.getFailedObj(winPrice, referBidInfo), new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        }
     }
 
 

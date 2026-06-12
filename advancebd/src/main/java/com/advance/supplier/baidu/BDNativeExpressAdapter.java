@@ -11,9 +11,11 @@ import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.baidu.mobads.sdk.api.BaiduNativeManager;
+import com.baidu.mobads.sdk.api.BiddingListener;
 import com.baidu.mobads.sdk.api.ExpressResponse;
 import com.baidu.mobads.sdk.api.RequestParameters;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -156,7 +158,22 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+        if (isWin) {
+            nativeResponse.biddingSuccess(null, new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        } else {
+            // 调用反馈竞价失败及原因
+            nativeResponse.biddingFail(BDUtil.getFailedObj(winPrice, referBidInfo), new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        }
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {

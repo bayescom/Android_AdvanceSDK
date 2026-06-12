@@ -36,7 +36,6 @@ public class AdvanceConfig {
     public static final String ADN_REQ_URL_HTTP = "https://m1.apifoxmock.com/m2/1960156-1383344-default/470877995";
 
 
-
     private static AdvanceConfig instance;
     public static final int DEFAULT_AD_COUNT = 1;
     @Deprecated

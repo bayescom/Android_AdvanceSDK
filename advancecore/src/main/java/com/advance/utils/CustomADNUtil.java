@@ -11,7 +11,6 @@ import com.bayes.sdk.basic.net.BYReqCallBack;
 import com.bayes.sdk.basic.net.BYReqModel;
 import com.bayes.sdk.basic.util.BYCache;
 import com.bayes.sdk.basic.util.BYCacheUtil;
-import com.bayes.sdk.basic.util.BYLog;
 import com.bayes.sdk.basic.util.BYStringUtil;
 
 import org.json.JSONArray;
@@ -30,7 +29,7 @@ public class CustomADNUtil {
     public synchronized static void initCustomInf(String appID) {
         try {
             BYReqModel reqModel = new BYReqModel();
-            String reqOption = "?os=2&appid=" + appID; //如果不为空，添加请求版本号信息
+            String reqOption = "?appid=" + appID; //如果不为空，添加请求版本号信息
             final String cachedADNVersion = BYCacheUtil.getCacheStringValue(AdvanceConstant.CACHED_CUSTOM_ADN_VERSION);
             if (BYStringUtil.isNotEmpty(cachedADNVersion)) {
                 reqOption = reqOption + "&version=" + cachedADNVersion;

@@ -2118,6 +2118,11 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
             if (winSDK != null) {
                 winID = winSDK.id;
                 referBidInfo.put(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_ID, winID);
+                int winType = AdvanceConstant.BID_WIN_SDK_TYPE_NORMAL;
+                if (winSDK.useBidding()){
+                    winType = AdvanceConstant.BID_WIN_SDK_TYPE_BIDDING;
+                }
+                referBidInfo.put(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_TYPE, winType);
                 winPrice = winSDK.price;
             }
 

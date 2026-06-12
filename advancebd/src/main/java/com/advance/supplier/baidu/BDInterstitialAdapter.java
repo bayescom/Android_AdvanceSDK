@@ -8,9 +8,11 @@ import android.content.Context;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
+import com.baidu.mobads.sdk.api.BiddingListener;
 import com.baidu.mobads.sdk.api.ExpressInterstitialAd;
 import com.baidu.mobads.sdk.api.ExpressInterstitialListener;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter implements ExpressInterstitialListener {
@@ -92,7 +94,22 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+        if (isWin) {
+            mInterAd.biddingSuccess(null, new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        } else {
+            // 调用反馈竞价失败及原因
+            mInterAd.biddingFail(BDUtil.getFailedObj(winPrice, referBidInfo), new BiddingListener() {
+                @Override
+                public void onBiddingResult(boolean result, String message, HashMap<String, Object> ext) {
+                }
+            });
+        }
     }
 
 

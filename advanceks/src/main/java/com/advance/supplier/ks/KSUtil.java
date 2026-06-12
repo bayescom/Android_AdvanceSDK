@@ -2,11 +2,53 @@ package com.advance.supplier.ks;
 
 import android.app.Activity;
 
+import com.advance.AdvanceConfig;
+import com.advance.AdvanceConstant;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceSplashPlusManager;
+import com.bayes.sdk.basic.util.BYStringUtil;
+import com.kwad.sdk.api.model.AdExposureFailedReason;
+import com.kwad.sdk.api.model.AdnName;
+import com.kwad.sdk.api.model.AdnType;
+
+import java.util.Map;
 
 public class KSUtil implements AdvanceSplashPlusManager.ZoomCall {
 
+    public static AdExposureFailedReason getFailedReason(double winPrice, Map<String, Object> referBidInfo) {
+        AdExposureFailedReason reason = new AdExposureFailedReason();
+        try {
+            @AdnType int adnType = AdnType.THIRD_PARTY_AD;
+            String winID = "";
+            if (referBidInfo != null) {
+                winID = (String) referBidInfo.get(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_ID);
+            }
+
+            if (BYStringUtil.isEqual(AdvanceConfig.SDK_ID_KS, winID)) {
+                adnType = AdnType.KS_AD;
+            }
+            reason.setWinEcpm((int) winPrice)
+                    .setAdnType(adnType);
+            if (adnType == AdnType.THIRD_PARTY_AD && BYStringUtil.isNotEmpty(winID)) {
+                @AdnName String adnName = AdnName.OTHER;
+                switch (winID) {
+                    case AdvanceConfig.SDK_ID_CSJ:
+                        adnName = AdnName.CHUANSHANJIA;
+                        break;
+                    case AdvanceConfig.SDK_ID_BAIDU:
+                        adnName = AdnName.BAIDU;
+                        break;
+                    case AdvanceConfig.SDK_ID_GDT:
+                        adnName = AdnName.GUANGDIANTONG;
+                        break;
+                }
+                reason.setAdnName(adnName);
+            }
+        } catch (Exception e) {
+        }
+
+        return reason;
+    }
 //    public static synchronized void initAD(BaseParallelAdapter adapter, final AdvanceADNInitResult initResult) {
 //        try {
 //            final String tag = "[KSUtil.initAD] ";

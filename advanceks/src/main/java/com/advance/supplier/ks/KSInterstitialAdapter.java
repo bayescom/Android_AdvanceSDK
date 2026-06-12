@@ -13,6 +13,7 @@ import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsInterstitialAd;
 import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsScene;
+import com.kwad.sdk.api.model.AdExposureFailureCode;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,14 @@ public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+
+        if (isWin){
+            interstitialAD.setBidEcpm((long) winPrice,0);
+        }else {
+            interstitialAD.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice,referBidInfo));
+        }
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {

@@ -4,12 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
-import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.huawei.hms.ads.AdParam;
 import com.huawei.hms.ads.reward.Reward;
 import com.huawei.hms.ads.reward.RewardAd;
@@ -29,7 +26,11 @@ public class HWRewardAdapter extends AdvanceRewardCustomAdapter {
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+        if (rewardedAd != null) {
+            HWUtil.notifyBid(rewardedAd.getBiddingInfo(), isWin, winPrice, referBidInfo);
+        }
     }
 
     @Override

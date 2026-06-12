@@ -14,6 +14,10 @@ import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsScene;
 import com.kwad.sdk.api.KsSplashScreenAd;
+import com.kwad.sdk.api.model.AdExposureFailedReason;
+import com.kwad.sdk.api.model.AdExposureFailureCode;
+import com.kwad.sdk.api.model.AdnName;
+import com.kwad.sdk.api.model.AdnType;
 
 import java.util.Map;
 
@@ -217,6 +221,12 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+        
+        if (isWin){
+            splashAd.setBidEcpm((long) winPrice,0);
+        }else {
+            splashAd.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice,referBidInfo));
+        }
     }
 }

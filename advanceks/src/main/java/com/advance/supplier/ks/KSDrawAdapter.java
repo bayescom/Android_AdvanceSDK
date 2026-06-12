@@ -13,6 +13,7 @@ import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsDrawAd;
 import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsScene;
+import com.kwad.sdk.api.model.AdExposureFailureCode;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,13 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+        if (isWin){
+            drawAD.setBidEcpm((long) winPrice,0);
+        }else {
+            drawAD.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice,referBidInfo));
+        }
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {

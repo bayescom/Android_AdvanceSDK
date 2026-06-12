@@ -13,6 +13,7 @@ import com.kwad.sdk.api.KsAdSDK;
 import com.kwad.sdk.api.KsFullScreenVideoAd;
 import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsScene;
+import com.kwad.sdk.api.model.AdExposureFailureCode;
 
 import java.util.List;
 import java.util.Map;
@@ -157,6 +158,13 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+
+        if (isWin){
+            ad.setBidEcpm((long) winPrice,0);
+        }else {
+            ad.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice,referBidInfo));
+        }
     }
 }

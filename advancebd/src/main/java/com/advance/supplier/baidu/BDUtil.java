@@ -4,10 +4,50 @@ import android.app.Activity;
 import android.text.TextUtils;
 
 import com.advance.AdvanceConfig;
+import com.advance.AdvanceConstant;
 import com.advance.utils.AdvanceSplashPlusManager;
+import com.baidu.mobads.sdk.api.BiddingListener;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class BDUtil implements AdvanceSplashPlusManager.ZoomCall {
 
+    public static LinkedHashMap<String, Object> getFailedObj(double winPrice, Map<String, Object> referBidInfo){
+        int bitT = 2;
+        try {
+            int winType = (int) referBidInfo.get(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_TYPE);
+            if (winType == AdvanceConstant.BID_WIN_SDK_TYPE_BIDDING){
+                bitT = 3;
+            }
+        } catch (Exception e) {
+        }
+
+        // 竞胜方信息
+        LinkedHashMap<String, Object> winInfo = new LinkedHashMap<>();
+        try {
+            // 竞胜方出价
+            winInfo.put("ecpm", winPrice);
+            // 竞胜方的DSP id，参考文档获取
+            winInfo.put("adn", 1);
+            // 竞胜方的物料类型，参考文档获取
+//        winInfo.put("ad_t", 3);
+            // 竞价时间，秒级时间戳
+//        winInfo.put("ad_time", System.currentTimeMillis() / 1000);
+            // 竞价类型，（百度竞价结果参数：1：分层保价；2：广告价格（单位：分）；3：bidding；4：其他)
+            winInfo.put("bid_t", bitT);
+            // 竞价失败原因，203：输给其他竞价方，其他见联盟文档附录
+            String biddingFailResult = "203";
+            winInfo.put("reason", biddingFailResult);
+//        winInfo.put("is_s", 是否曝光);
+//        winInfo.put("is_c", 是否点击);
+        } catch (Exception e) {
+        }
+
+        return  winInfo;
+
+    }
     //根据百度返回的string类型的ecpm信息，解析成double类型，（单位：分）
     public static double getEcpmValue(String oriEcpm) {
         double result = 0;

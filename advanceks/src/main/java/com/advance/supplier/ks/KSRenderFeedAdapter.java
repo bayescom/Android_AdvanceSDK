@@ -34,6 +34,7 @@ import com.kwad.sdk.api.KsApkDownloadListener;
 import com.kwad.sdk.api.KsLoadManager;
 import com.kwad.sdk.api.KsNativeAd;
 import com.kwad.sdk.api.KsScene;
+import com.kwad.sdk.api.model.AdExposureFailureCode;
 import com.kwad.sdk.api.model.AdSourceLogoType;
 import com.kwad.sdk.api.model.KsNativeConvertType;
 
@@ -55,7 +56,14 @@ public class KSRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
+
+        if (isWin){
+            nativeAd.setBidEcpm((long) winPrice,0);
+        }else {
+            nativeAd.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice,referBidInfo));
+        }
     }
 
 
