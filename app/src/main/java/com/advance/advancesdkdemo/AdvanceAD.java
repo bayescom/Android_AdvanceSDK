@@ -113,7 +113,8 @@ public class AdvanceAD {
 
             @Override
             public boolean canUseOaid() {
-                return super.canUseOaid();
+                return false;
+//                return super.canUseOaid();
             }
 
             @Override
