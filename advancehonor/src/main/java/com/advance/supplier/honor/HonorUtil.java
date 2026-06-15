@@ -1,22 +1,68 @@
 package com.advance.supplier.honor;
 
-import android.content.Context;
 import android.location.Location;
 
+import com.advance.AdvanceConfig;
+import com.advance.AdvanceConstant;
 import com.advance.AdvanceSetting;
-import com.advance.BaseParallelAdapter;
 import com.advance.itf.AdvancePrivacyController;
-import com.advance.model.SdkSupplier;
-import com.advance.utils.AdvanceInitManger;
-import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
-import com.bayes.sdk.basic.util.BYUtil;
-import com.hihonor.adsdk.base.HnAds;
+import com.bayes.sdk.basic.util.BYStringUtil;
 import com.hihonor.adsdk.base.api.BaseExpressAd;
-import com.hihonor.adsdk.base.init.HnAdConfig;
+import com.hihonor.adsdk.base.api.bid.BiddingLossReason;
+import com.hihonor.adsdk.base.api.bid.BiddingSrc;
+import com.hihonor.adsdk.base.api.bid.HnClientBidding;
 import com.hihonor.adsdk.base.init.HnCustomController;
 
+import java.util.Map;
+
 public class HonorUtil {
+
+    public static void sendBidResult(HnClientBidding clientBidding,boolean isWin, double winPrice, Map<String, Object> referBidInfo){
+        try {
+            if (clientBidding!=null){
+                if (isWin){
+                    clientBidding.sendWinNotification((long) winPrice,-1);
+                }else {
+                    String winID = "";
+                    if (referBidInfo != null) {
+                        winID = (String) referBidInfo.get(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_ID);
+                    }
+                    clientBidding.sendLossNotification((long) winPrice, BiddingLossReason.LOW_PRICE, getString(winID),"");
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+
+    private static @BiddingSrc String getString(String winID) {
+        @BiddingSrc String cpID = BiddingSrc.OTHERS;
+
+        if (BYStringUtil.isNotEmpty(winID)) {
+            switch (winID) {
+                case AdvanceConfig.SDK_ID_GDT:
+                    cpID = BiddingSrc.YLH;
+                    break;
+                case AdvanceConfig.SDK_ID_CSJ:
+                    cpID = BiddingSrc.CSJ;
+                    break;
+                case AdvanceConfig.SDK_ID_KS:
+                    cpID = BiddingSrc.KS;
+                    break;
+                case AdvanceConfig.SDK_ID_VIVO:
+                    cpID = BiddingSrc.VIVO;
+                    break;
+                case AdvanceConfig.SDK_ID_OPPO:
+                    cpID = BiddingSrc.OPPO;
+                    break;
+                case AdvanceConfig.SDK_ID_XIAOMI:
+                    cpID = BiddingSrc.XIAOMI;
+                    break;
+            }
+        }
+        return cpID;
+    }
+
 //    public static void initAD(BaseParallelAdapter adapter) {
 //
 //        try {

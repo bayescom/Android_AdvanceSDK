@@ -47,8 +47,8 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
 
+        HonorUtil.sendBidResult(mBannerExpressAd, isWin, winPrice, referBidInfo);
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {

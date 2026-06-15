@@ -6,6 +6,7 @@ import android.location.Location;
 import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvancePrivacyController;
 import com.bayes.sdk.basic.core.BYConstants;
+import com.bayes.sdk.basic.util.BYStringUtil;
 import com.mercury.sdk.core.config.AdConfigManager;
 import com.mercury.sdk.core.config.MercuryAD;
 import com.mercury.sdk.core.config.MercuryPrivacyController;
@@ -56,7 +57,6 @@ public class MercuryGlobalConfig extends AdvanceCustomInit {
     }
 
 
-
     public static void initMercuryPrivacy(final AdvancePrivacyController controller) {
         try {
             if (controller != null) {
@@ -93,10 +93,10 @@ public class MercuryGlobalConfig extends AdvanceCustomInit {
 
                     @Override
                     public boolean isCanUseWifiState() {
-                        if (!controller.canUseMacAddress()){
+                        if (!controller.canUseMacAddress()) {
                             return false;
                         }
-                        if (!controller.isCanUseWifiState()){
+                        if (!controller.isCanUseWifiState()) {
                             return false;
                         }
                         return true;
@@ -105,8 +105,8 @@ public class MercuryGlobalConfig extends AdvanceCustomInit {
 
                     @Override
                     public String getDevOaid() {
-                        //不允许获取oaid时，传入约定枚举值
-                        if (!controller.canUseOaid()){
+                        //不允许获取oaid时,且赋值为空时，传入约定枚举值
+                        if (!controller.canUseOaid() && BYStringUtil.isEmpty(controller.getDevOaid())) {
                             return BYConstants.OAID_VALUE_TYPE_DENY;
                         }
                         return controller.getDevOaid();
@@ -128,7 +128,6 @@ public class MercuryGlobalConfig extends AdvanceCustomInit {
             e.printStackTrace();
         }
     }
-
 
 
 }

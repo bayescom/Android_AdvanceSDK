@@ -6,10 +6,8 @@ import android.view.View;
 
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.hihonor.adsdk.base.AdSlot;
 import com.hihonor.adsdk.base.api.splash.SplashAdLoadListener;
 import com.hihonor.adsdk.base.api.splash.SplashExpressAd;
@@ -44,8 +42,9 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
+
+        HonorUtil.sendBidResult(mSplashExpressAd, isWin, winPrice, referBidInfo);
 
     }
 
