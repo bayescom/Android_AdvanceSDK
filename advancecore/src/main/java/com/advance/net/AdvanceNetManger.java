@@ -237,7 +237,7 @@ public class AdvanceNetManger {
                     if (adnModels != null && !adnModels.isEmpty()) {
                         for (AdvanceCustomADNModel adnModel : adnModels) {
                             if (adnModel != null && BYStringUtil.isNotEmpty(adnModel.sdkID)) {
-                                String adnKey = adnModel.sdkID + "_v";
+                                String adnKey = "custom_"+adnModel.sdkID + "_v";
                                 putADNVersion(extJsonObj, adnKey, adnModel.sdkID);
                             }
                         }

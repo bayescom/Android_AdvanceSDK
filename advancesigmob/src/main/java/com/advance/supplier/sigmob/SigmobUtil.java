@@ -1,11 +1,39 @@
 package com.advance.supplier.sigmob;
 
+import com.advance.AdvanceConfig;
+import com.advance.AdvanceConstant;
 import com.advance.BaseParallelAdapter;
 import com.advance.utils.AdvanceUtil;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.sigmob.windad.WindAdError;
 
+import java.util.Map;
+
 public class SigmobUtil {
+    public static final String getLossPlatform(Map<String, Object> referBidInfo){
+        String result = "10001";//默认其他
+        String winID = "";
+        if (referBidInfo != null) {
+            winID = (String) referBidInfo.get(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_ID);
+        }
+        switch (winID){
+            case AdvanceConfig.SDK_ID_SIG:
+                result = "1";
+            case AdvanceConfig.SDK_ID_GDT:
+                result = "3";
+                break;
+            case AdvanceConfig.SDK_ID_CSJ:
+                result = "2";
+                break;
+            case AdvanceConfig.SDK_ID_KS:
+                result = "4";
+                break;
+            case AdvanceConfig.SDK_ID_BAIDU:
+                result = "5";
+                break;
+        }
+        return  result;
+    }
 //    public static synchronized void initAD(BaseParallelAdapter adapter, final AdvanceADNInitResult initResult) {
 //        final boolean[] hasCallBack = {false};
 //        try {

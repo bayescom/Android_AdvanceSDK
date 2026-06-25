@@ -145,13 +145,14 @@ public class AdvanceAD {
             }
         });
 
+//        开发者模式打印日志更丰富
+        BYBasicSDK.setDev(true);
 
         //必要配置：初始化聚合SDK，三个参数依次为context上下文，appId媒体id，isDebug调试模式开关
         AdvanceSDK.initSDK(context, Constants.APP_ID, BuildConfig.DEBUG);
 
 //        AdvanceSDK.disableShake(true);
-//        开发者模式打印日志更丰富
-        BYBasicSDK.setDev(true);
+
 
 
     }

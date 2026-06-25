@@ -35,6 +35,7 @@ public class CustomADNUtil {
                 reqOption = reqOption + "&version=" + cachedADNVersion;
             }
             reqModel.reqUrl = getCustomSettingUrl() + reqOption;
+            LogUtil.devDebug("initCustomInf , req url : "+reqModel.reqUrl);
             BYNetRequest.get(reqModel, new BYReqCallBack() {
                 @Override
                 public void onSuccess(String s) {

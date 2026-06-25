@@ -12,7 +12,6 @@ import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ITanxAd;
 import com.alimm.tanx.core.ad.ad.template.rendering.splash.ITanxSplashExpressAd;
-import com.alimm.tanx.core.ad.bean.TanxBiddingInfo;
 import com.alimm.tanx.core.ad.listener.ITanxAdLoader;
 import com.alimm.tanx.core.request.TanxAdSlot;
 import com.alimm.tanx.core.request.TanxError;
@@ -35,7 +34,8 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+
+        TanxUtil.bid(iTanxSplashExpressAd, isWin, winPrice);
 
     }
 
@@ -117,10 +117,10 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
         try {
 //            iTanxAdLoader = TanxSdk.getSDKManager().createAdLoader(BYUtil.getActivityFromView(setting.getAdContainer()));
 
-            TanxBiddingInfo biddingResult = new TanxBiddingInfo();
-            biddingResult.setBidResult(true);
+//            TanxBiddingInfo biddingResult = new TanxBiddingInfo();
+//            biddingResult.setBidResult(true);
             //上报竞价成功
-            iTanxSplashExpressAd.setBiddingResult(biddingResult);
+//            iTanxSplashExpressAd.setBiddingResult(biddingResult);
             iTanxSplashExpressAd.setOnSplashAdListener(new ITanxSplashExpressAd.OnSplashAdListener() {
                 @Override
                 public void onAdRender(ITanxSplashExpressAd iTanxSplashExpressAd) {

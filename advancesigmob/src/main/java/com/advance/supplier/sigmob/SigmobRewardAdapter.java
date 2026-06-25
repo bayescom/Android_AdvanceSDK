@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
-import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
-import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
+import com.sigmob.windad.WindAdBiddingLossReason;
 import com.sigmob.windad.WindAdError;
 import com.sigmob.windad.WindAds;
 import com.sigmob.windad.rewardVideo.WindRewardAdRequest;
@@ -27,8 +24,18 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
 
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(WindAds.AUCTION_PRICE, winPrice);//获胜价格，建议 Sigmob 渠道胜出后回传 Sigmob 原始出价。其他价格可能会影响实际的结算价格。
+        map.put(WindAds.CURRENCY, WindAds.CNY);//汇率
+        if (isWin){
+            windRewardVideoAd.sendWinNotificationWithInfo(map);
+        }else {
+            map.put(WindAds.LOSS_REASON, WindAdBiddingLossReason.LOSS_REASON_LOW_PRICE.getCode()); // 竞败原因
+            map.put(WindAds.ADN_ID, SigmobUtil.getLossPlatform(referBidInfo)); // 竞败平台
+            windRewardVideoAd.sendLossNotificationWithInfo(map);
+        }
     }
 
     @Override

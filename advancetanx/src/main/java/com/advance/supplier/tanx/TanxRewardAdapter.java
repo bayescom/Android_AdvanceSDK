@@ -10,7 +10,6 @@ import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ad.reward.ITanxRewardVideoAd;
 import com.alimm.tanx.core.ad.ad.reward.model.VideoParam;
 import com.alimm.tanx.core.ad.ad.template.rendering.reward.ITanxRewardExpressAd;
-import com.alimm.tanx.core.ad.bean.TanxBiddingInfo;
 import com.alimm.tanx.core.ad.listener.ITanxAdLoader;
 import com.alimm.tanx.core.ad.view.TanxAdView;
 import com.alimm.tanx.core.request.TanxAdSlot;
@@ -34,7 +33,8 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+
+        TanxUtil.bid(iTanxRewardVideoExpressAd, isWin, winPrice);
 
     }
 
@@ -60,10 +60,10 @@ public class TanxRewardAdapter extends AdvanceRewardCustomAdapter {
             return;
         }
         try {
-            TanxBiddingInfo biddingResult = new TanxBiddingInfo();
-            biddingResult.setBidResult(true);
-            //上报竞价成功
-            iTanxRewardVideoExpressAd.setBiddingResult(biddingResult);
+//            TanxBiddingInfo biddingResult = new TanxBiddingInfo();
+//            biddingResult.setBidResult(true);
+//            //上报竞价成功
+//            iTanxRewardVideoExpressAd.setBiddingResult(biddingResult);
 
             VideoParam videoParam = new VideoParam();
             videoParam.mute = rewardSetting.isMute();

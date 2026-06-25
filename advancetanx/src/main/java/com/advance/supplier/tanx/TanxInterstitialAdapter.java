@@ -8,7 +8,6 @@ import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ITanxAd;
 import com.alimm.tanx.core.ad.ad.template.rendering.table.screen.ITanxTableScreenExpressAd;
-import com.alimm.tanx.core.ad.bean.TanxBiddingInfo;
 import com.alimm.tanx.core.ad.listener.ITanxAdLoader;
 import com.alimm.tanx.core.ad.view.TanxAdView;
 import com.alimm.tanx.core.request.TanxAdSlot;
@@ -30,9 +29,9 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
 
+        TanxUtil.bid(interExpressAD, isWin, winPrice);
     }
 
     @Override
@@ -57,10 +56,7 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "  interExpressAD null"));
                 return;
             }
-            TanxBiddingInfo biddingResult = new TanxBiddingInfo();
-            biddingResult.setBidResult(true);
-            //上报竞价成功
-            interExpressAD.setBiddingResult(biddingResult);
+
             interExpressAD.setOnTableScreenAdListener(new ITanxTableScreenExpressAd.OnTableScreenAdListener() {
                 @Override
                 public void onError(TanxError tanxError) {
@@ -149,7 +145,7 @@ public class TanxInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
                             long ecpm = 0;
                             try {
-                                ecpm =(interExpressAD.getBidInfo().getBidPrice());
+                                ecpm = (interExpressAD.getBidInfo().getBidPrice());
                             } catch (Throwable e) {
                             }
                             handleSucceed(ecpm);

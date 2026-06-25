@@ -105,9 +105,12 @@ public class MercuryGlobalConfig extends AdvanceCustomInit {
 
                     @Override
                     public String getDevOaid() {
-                        //不允许获取oaid时,且赋值为空时，传入约定枚举值
-                        if (!controller.canUseOaid() && BYStringUtil.isEmpty(controller.getDevOaid())) {
-                            return BYConstants.OAID_VALUE_TYPE_DENY;
+                        try {
+                            //不允许获取oaid时,且赋值为空时，传入约定枚举值
+                            if (!controller.canUseOaid() && BYStringUtil.isEmpty(controller.getDevOaid())) {
+                                return BYConstants.OAID_VALUE_TYPE_DENY;
+                            }
+                        } catch (Throwable e) {
                         }
                         return controller.getDevOaid();
                     }

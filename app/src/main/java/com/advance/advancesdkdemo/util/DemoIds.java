@@ -165,6 +165,16 @@ public class DemoIds {
                 result.fullscreen = "";
                 result.draw = "";
                 break;
+            case "customADN":
+                result.banner = "10015412";
+                result.splash = "10015409";
+                result.reward = "10015414";
+                result.interstitial = "10015413";
+                result.nativeExpress = "10015410";
+                result.nativeCustom = "10015411";
+                result.fullscreen = "";
+                result.draw = "";
+                break;
         }
         return result;
     }

@@ -14,6 +14,7 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.sigmob.windad.Splash.WindSplashAD;
 import com.sigmob.windad.Splash.WindSplashADListener;
 import com.sigmob.windad.Splash.WindSplashAdRequest;
+import com.sigmob.windad.WindAdBiddingLossReason;
 import com.sigmob.windad.WindAdError;
 import com.sigmob.windad.WindAds;
 
@@ -34,8 +35,17 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
 
+        Map<String, Object> map = new HashMap<>();
+        map.put(WindAds.AUCTION_PRICE, winPrice);//获胜价格，建议 Sigmob 渠道胜出后回传 Sigmob 原始出价。其他价格可能会影响实际的结算价格。
+        map.put(WindAds.CURRENCY, WindAds.CNY);//汇率
+        if (isWin){
+            splashAd.sendWinNotificationWithInfo(map);
+        }else {
+            map.put(WindAds.LOSS_REASON, WindAdBiddingLossReason.LOSS_REASON_LOW_PRICE.getCode()); // 竞败原因
+            map.put(WindAds.ADN_ID, SigmobUtil.getLossPlatform(referBidInfo)); // 竞败平台
+            splashAd.sendLossNotificationWithInfo(map);
+        }
     }
 
 

@@ -1,20 +1,20 @@
 package com.advance.supplier.tanx;
 
-import android.app.Application;
-
-import com.advance.AdvanceConfig;
-import com.advance.AdvanceSetting;
-import com.advance.BaseParallelAdapter;
-import com.advance.model.AdvanceError;
-import com.advance.utils.LogUtil;
-import com.alimm.tanx.core.TanxInitListener;
-import com.alimm.tanx.core.config.TanxConfig;
-import com.alimm.tanx.core.image.ILoader;
-import com.alimm.tanx.ui.TanxSdk;
-import com.bayes.sdk.basic.device.BYDevice;
-import com.bayes.sdk.basic.util.BYUtil;
+import com.alimm.tanx.core.ad.ITanxAdBidding;
+import com.alimm.tanx.core.ad.bean.TanxBiddingInfo;
 
 public class TanxUtil {
+    public static final void bid(ITanxAdBidding adBidding, boolean isWin, double winPrice) {
+        if (adBidding == null) {
+            return;
+        }
+        TanxBiddingInfo biddingResult = new TanxBiddingInfo();
+        biddingResult.setBidResult(isWin);
+        biddingResult.setWinPrice(winPrice);
+        //上报竞价成功
+        adBidding.setBiddingResult(biddingResult);
+    }
+
 //    public synchronized static void initTanx(final BaseParallelAdapter adapter, final InitListener listener) {
 //
 //        try {

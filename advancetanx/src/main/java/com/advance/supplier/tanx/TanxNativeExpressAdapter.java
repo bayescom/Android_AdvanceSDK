@@ -4,20 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
-import com.advance.NativeExpressSetting;
 import com.advance.custom.AdvanceNativeExpressCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
 import com.alimm.tanx.core.ad.ITanxAd;
 import com.alimm.tanx.core.ad.ad.template.rendering.feed.ITanxFeedExpressAd;
-import com.alimm.tanx.core.ad.bean.TanxBiddingInfo;
 import com.alimm.tanx.core.ad.listener.ITanxAdLoader;
 import com.alimm.tanx.core.request.TanxAdSlot;
 import com.alimm.tanx.core.request.TanxError;
 import com.alimm.tanx.ui.TanxSdk;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
-import com.bayes.sdk.basic.util.BYUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +29,8 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+
+        TanxUtil.bid(iTanxFeedExpressAd, isWin, winPrice);
 
     }
 
@@ -56,9 +52,9 @@ public class TanxNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            TanxBiddingInfo biddingResult = new TanxBiddingInfo();
-            biddingResult.setBidResult(true);
-            iTanxFeedExpressAd.setBiddingResult(biddingResult);
+//            TanxBiddingInfo biddingResult = new TanxBiddingInfo();
+//            biddingResult.setBidResult(true);
+//            iTanxFeedExpressAd.setBiddingResult(biddingResult);
             iTanxFeedExpressAd.setOnFeedAdListener(new ITanxFeedExpressAd.OnFeedAdListener() {
                 @Override
                 public void onAdClose(ITanxAd iTanxAd) {

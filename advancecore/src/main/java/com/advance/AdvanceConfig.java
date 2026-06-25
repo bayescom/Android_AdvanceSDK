@@ -31,9 +31,9 @@ public class AdvanceConfig {
     public static final String AdvanceSdkRequestUrlHttps = "https://cruiser.bayescom.cn/cruiser";
     public static final String SDK_ERR_REPORT_URL = "http://cruiser.bayescom.cn/sdkevent";
     public static final String SDK_ERR_REPORT_URL_HTTPS = "https://cruiser.bayescom.cn/sdkevent";
-    public static final String ADN_REQ_URL_HTTPS = "https://cruiser.bayescom.cn/adn";
-//    public static final String ADN_REQ_URL_HTTP = "http://cruiser.bayescom.cn/adn";
-    public static final String ADN_REQ_URL_HTTP = "https://m1.apifoxmock.com/m2/1960156-1383344-default/470877995";
+    public static final String ADN_REQ_URL_HTTPS = "https://cruiser.bayescom.cn/custom_adn";
+    public static final String ADN_REQ_URL_HTTP = "http://cruiser.bayescom.cn/custom_adn";
+//    public static final String ADN_REQ_URL_HTTP = "https://m1.apifoxmock.com/m2/1960156-1383344-default/470877995";
 
 
     private static AdvanceConfig instance;
