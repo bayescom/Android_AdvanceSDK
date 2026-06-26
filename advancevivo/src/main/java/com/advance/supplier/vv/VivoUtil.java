@@ -1,5 +1,7 @@
 package com.advance.supplier.vv;
 
+import com.advance.AdvanceConfig;
+import com.advance.AdvanceConstant;
 import com.advance.AdvanceSetting;
 import com.advance.BaseParallelAdapter;
 import com.advance.model.SdkSupplier;
@@ -7,9 +9,83 @@ import com.bayes.sdk.basic.util.BYStringUtil;
 import com.vivo.mobilead.unified.IBidding;
 import com.vivo.mobilead.unified.base.AdParams;
 import com.vivo.mobilead.unified.base.VivoAdError;
+import com.vivo.mobilead.unified.bidding.AdnId;
+import com.vivo.mobilead.unified.bidding.LossReason;
+
+import java.util.Map;
 
 public class VivoUtil {
     public static final String TAG = "[VivoUtil] ";
+
+    public static final void bid(IBidding bidding, boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+
+        if (bidding != null) {
+            if (isWin) {
+                /**
+                 * 竞胜
+                 * 若本轮 vivo 广告胜出，请务必调此接口通知 SDK 竞胜结果，参数为二价计费的结算价（一价计费传 0
+                 即可）。
+                 * 注：二价计费广告一定要调此接口传入计费价格，否则广告无法计费，曝光无效！！！
+                 * 注：要在广告曝光前先调用此接口。
+                 */
+                bidding.sendWinNotification(0);
+            } else {
+                /**
+                 * 竞败
+                 * 如本轮 vivo 广告竞败，需调此接口通知 SDK 竞败的结果；
+                 * 第一个参数传入竞败原因，枚举值可见 LossReason
+                 * 10001-其他原因。
+                 * 第二个参数传入竞胜方的出价。
+                 */
+                int adnID = getAdnID(referBidInfo);
+                bidding.sendLossNotification(LossReason.LOW_PRICE, (int) winPrice, adnID, "");
+            }
+        }
+    }
+
+    public static  int getAdnID(Map<String, Object> referBidInfo) {
+        int adnID = AdnId.OTHER;
+        try {
+            String winID = "";
+            if (referBidInfo != null) {
+                winID = (String) referBidInfo.get(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_ID);
+            }
+            switch (winID) {
+                case AdvanceConfig.SDK_ID_VIVO:
+                    adnID = AdnId.VIVO;
+                case AdvanceConfig.SDK_ID_GDT:
+                    adnID = AdnId.GDT;
+
+                    break;
+                case AdvanceConfig.SDK_ID_CSJ:
+                    adnID = AdnId.CSJ;
+
+                    break;
+                case AdvanceConfig.SDK_ID_KS:
+                    adnID = AdnId.KS;
+
+                    break;
+                case AdvanceConfig.SDK_ID_BAIDU:
+                    adnID = AdnId.BAIDU;
+
+                    break;
+                case AdvanceConfig.SDK_ID_HW:
+                    adnID = AdnId.HUAWEI;
+
+                    break;
+                case AdvanceConfig.SDK_ID_XIAOMI:
+                    adnID = AdnId.XIAOMI;
+
+                    break;
+                case AdvanceConfig.SDK_ID_OPPO:
+                    adnID = AdnId.OPPO;
+                    break;
+            }
+        } catch (Exception e) {
+        }
+        return adnID;
+    }
+
 //
 //    public static void initAD(BaseParallelAdapter adapter, AdvanceADNInitResult initResult) {
 //        String eMsg;

@@ -1,4 +1,9 @@
-//package com.advance.supplier.oppo;
+package com.advance.supplier.oppo;
+
+import com.heytap.msp.mobad.api.ad.IBidding;
+
+import java.util.Map;
+
 //
 //import com.advance.AdvanceSetting;
 //import com.advance.BaseParallelAdapter;
@@ -11,7 +16,19 @@
 //import com.heytap.msp.mobad.api.MobCustomController;
 //import com.heytap.msp.mobad.api.listener.IInitListener;
 //
-//public class OppoUtil {
+public class OppoUtil {
+    public static final void bid(IBidding bidding, boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        try {
+            if (bidding != null) {
+                if (isWin) {
+                    bidding.notifyRankWin((int) winPrice);
+                } else {
+                    bidding.notifyRankLoss((int) winPrice, "", 0);
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
 ////    public static synchronized void initAD(BaseParallelAdapter adapter) {
 ////        try {
 ////            if (adapter == null) {
@@ -140,4 +157,4 @@
 ////            e.printStackTrace();
 ////        }
 ////    }
-//}
+}

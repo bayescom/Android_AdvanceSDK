@@ -28,7 +28,8 @@ public class XMRewardAdapter extends AdvanceRewardCustomAdapter {
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+
+        XMUtil.bid(rewardVideoAd,isWin,winPrice);
 
     }
     @Override

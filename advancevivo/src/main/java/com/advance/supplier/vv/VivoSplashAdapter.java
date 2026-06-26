@@ -5,12 +5,10 @@ import android.content.Context;
 import android.view.View;
 
 import com.advance.custom.AdvanceSplashCustomAdapter;
-import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
+import com.vivo.mobilead.unified.IBidding;
 import com.vivo.mobilead.unified.base.AdParams;
 import com.vivo.mobilead.unified.base.VivoAdError;
 import com.vivo.mobilead.unified.splash.UnifiedVivoSplashAd;
@@ -38,8 +36,14 @@ public class VivoSplashAdapter extends AdvanceSplashCustomAdapter {
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
 
+        IBidding bidding;
+        if (usePro) {
+            bidding = splashPro;
+        } else {
+            bidding = vivoSplashAd;
+        }
+        VivoUtil.bid(bidding, isWin, winPrice, referBidInfo);
     }
 
     @Override

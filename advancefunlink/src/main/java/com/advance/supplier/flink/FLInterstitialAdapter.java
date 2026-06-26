@@ -3,11 +3,8 @@ package com.advance.supplier.flink;
 import android.app.Activity;
 import android.content.Context;
 
-import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.fl.saas.adx.api.FLInterstitial;
 import com.fl.saas.adx.base.exception.FLError;
 import com.fl.saas.adx.base.interfaces.AdViewInterstitialListener;
@@ -92,7 +89,10 @@ public class FLInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
 
+
+        if (flAd!=null){
+            flAd.biddingResultUpload(isWin, (int) winPrice,0);
+        }
     }
 }

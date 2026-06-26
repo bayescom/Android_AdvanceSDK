@@ -28,6 +28,7 @@ import com.vivo.ad.nativead.NativeAdListener;
 import com.vivo.ad.nativead.NativeResponse;
 import com.vivo.mobilead.nativead.NativeAdParams;
 import com.vivo.mobilead.nativead.VivoNativeAd;
+import com.vivo.mobilead.unified.IBidding;
 import com.vivo.mobilead.unified.base.AdParams;
 import com.vivo.mobilead.unified.base.VivoAdError;
 import com.vivo.mobilead.unified.base.callback.MediaListener;
@@ -60,8 +61,15 @@ public class VivoRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
+
+        IBidding bidding;
+        if (usePro) {
+            bidding = adDataPro;
+        } else {
+            bidding = adData;
+        }
+        VivoUtil.bid(bidding, isWin, winPrice, referBidInfo);
 
     }
 

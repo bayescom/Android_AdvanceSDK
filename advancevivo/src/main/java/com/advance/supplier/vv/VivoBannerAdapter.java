@@ -30,7 +30,8 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+
+//        VivoUtil.bid(vivoBannerAd,isWin,winPrice,referBidInfo);
 
     }
 

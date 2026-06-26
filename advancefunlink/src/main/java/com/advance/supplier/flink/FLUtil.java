@@ -1,14 +1,6 @@
 package com.advance.supplier.flink;
 
-import android.location.Location;
-
-import com.advance.AdvanceSetting;
 import com.advance.BaseParallelAdapter;
-import com.advance.itf.AdvancePrivacyController;
-import com.advance.utils.LogUtil;
-import com.fl.saas.adx.api.FLConfig;
-import com.fl.saas.adx.api.FLParamConfig;
-import com.fl.saas.adx.base.bean.CustomLocation;
 import com.fl.saas.adx.base.exception.FLError;
 
 public class FLUtil {

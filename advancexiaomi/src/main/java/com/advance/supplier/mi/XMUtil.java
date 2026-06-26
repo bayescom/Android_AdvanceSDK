@@ -5,10 +5,29 @@ import com.advance.AdvanceSetting;
 import com.advance.itf.AdvancePrivacyController;
 import com.miui.zeus.mimo.sdk.MimoCustomController;
 import com.miui.zeus.mimo.sdk.MimoLocation;
+import com.miui.zeus.mimo.sdk.base.BaseAd;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class XMUtil {
+
+    public static void bid(BaseAd baseAd, boolean isWin, double winPrice){
+
+        if (isWin){
+            //竞价成功时候上报win
+            Map<String, Long> auctionBidInfo = new HashMap<>();
+            auctionBidInfo.put(BaseAd.IBidding.EXPECT_COST_PRICE, (long)winPrice);
+            baseAd.win(auctionBidInfo);
+        } else {
+            //竞价失败的时候上报loss
+            Map<String, Object> lossReasonInfo = new HashMap<>();
+            lossReasonInfo.put(BaseAd.IBidding.WIN_PRICE, (long)winPrice);
+            lossReasonInfo.put(BaseAd.IBidding.LOSS_REASON, BaseAd.LossReason.TYPE_LOWER_OTHER_BIDDER_PRICE);
+            lossReasonInfo.put(BaseAd.IBidding.ADN_ID, 1);
+            baseAd.loss(lossReasonInfo);
+        }
+    }
 
 //    public static void initAD(BaseParallelAdapter adapter, final AdvanceADNInitResult initResult) {
 //
