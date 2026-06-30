@@ -32,10 +32,6 @@ public class CustomADNYLHRenderFeedAdapter extends AdvanceSelfRenderCustomAdapte
     NativeUnifiedADData mRenderAD;
 
 
-    @Override
-    protected void adPrepared() {
-
-    }
 
     @Override
     public void destroyAd() {
@@ -72,13 +68,8 @@ public class CustomADNYLHRenderFeedAdapter extends AdvanceSelfRenderCustomAdapte
                             return;
                         }
 
-                        //转换返回广告model为聚合通用model
-                        dataConverter = new GdtRenderDataConverter(mRenderAD, sdkSupplier);
-
-                        //标记广告成功
-                        handleSucceed(mRenderAD.getECPM());
-                        //通知广告成功
-//                        mAdvanceRFBridge.adapterDidLoaded(dataConverter);
+                        //标记广告成功，注意自渲染使用特殊得成功回调事件，需传递实现了AdvanceRFADData接口的数据类
+                        handleSucceed(new GdtRenderDataConverter(mRenderAD, sdkSupplier), mRenderAD.getECPM());
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
@@ -136,32 +127,9 @@ public class CustomADNYLHRenderFeedAdapter extends AdvanceSelfRenderCustomAdapte
             //添加root根布局到 广点通自定义根布局。
             final NativeAdContainer adContainer = new NativeAdContainer(getRealActivity(rfMaterialProvider.rootView));
 
-//            -----------方案A 替换根布局 (坏处是，当广告view上下均有内容时，会导致布局位置错乱)
-            //将根布局添加至广点通承载布局，并删除旧根布局
-//            ViewGroup rootParent = (ViewGroup) rfMaterialProvider.rootView.getParent();
-//            if (rootParent != null) {
-//                rootParent.removeView(rfMaterialProvider.rootView);
-//            }
-//            adContainer.addView(rootView);
-////            将广点通布局添加至旧layout布局上
-//            if (rootParent != null)
-//                rootParent.addView(adContainer);
 
 //            -----------方案B copy全部子布局
             AdvanceRFUtil.copyChild(rootView, adContainer);
-//            int childSize = rootView.getChildCount();
-//            LogUtil.devDebug(TAG + "  childSize = " + childSize);
-//            if (childSize > 0) {
-//                for (int i = 0; i < childSize; i++) {
-//                    View child = rootView.getChildAt(0);
-//                    rootView.removeView(child);
-//                    if (child != null) {
-//                        adContainer.addView(child, i);
-//                    }
-//                    LogUtil.devDebug(TAG + "  adContainer.addView  i= " + i + " child = " + child);
-//                }
-//            }
-//            rootView.addView(adContainer);
 
             if (rfMaterialProvider.clickViews.contains(rootView)) {
                 LogUtil.devDebug(TAG + "contains rootView");
@@ -395,8 +363,8 @@ public class CustomADNYLHRenderFeedAdapter extends AdvanceSelfRenderCustomAdapte
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
+
 
     }
 }

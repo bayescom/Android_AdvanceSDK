@@ -28,7 +28,13 @@ public class CustomADNYLHInterstitialAdapter extends AdvanceInterstitialCustomAd
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            interstitialAD.show();
+            if (null != interstitialAD) {
+                // onADReceive之后才能调用getAdPatternType()
+                if (interstitialSetting != null && interstitialAD.getAdPatternType() == AdPatternType.NATIVE_VIDEO) {
+                    interstitialAD.setMediaListener(interstitialSetting.getGdtMediaListener());
+                }
+                interstitialAD.show();
+            }
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
@@ -124,15 +130,6 @@ public class CustomADNYLHInterstitialAdapter extends AdvanceInterstitialCustomAd
         interstitialAD.loadAD();
     }
 
-    @Override
-    protected void adPrepared() {
-        if (null != interstitialSetting) {
-            // onADReceive之后才能调用getAdPatternType()
-            if (interstitialAD != null && interstitialAD.getAdPatternType() == AdPatternType.NATIVE_VIDEO) {
-                interstitialAD.setMediaListener(interstitialSetting.getGdtMediaListener());
-            }
-        }
-    }
 
     @Override
     public boolean isValid() {
@@ -144,8 +141,8 @@ public class CustomADNYLHInterstitialAdapter extends AdvanceInterstitialCustomAd
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
+
 
     }
 }

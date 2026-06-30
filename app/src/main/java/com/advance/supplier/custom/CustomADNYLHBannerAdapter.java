@@ -103,27 +103,6 @@ public class CustomADNYLHBannerAdapter extends AdvanceBannerCustomAdapter implem
 
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        GdtUtil.initAD(this, new BYBaseCallBack() {
-//            @Override
-//            public void call() {
-//                loadAd();
-//            }
-//        });
-//    }
-//    public void loadAd() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, CustomADNYLHBannerAdapter.class, new BYAbsCallBack<CustomADNYLHBannerAdapter>() {
-//            @Override
-//            public void invoke(CustomADNYLHBannerAdapter cacheAdapter) {
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.bv.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
-
         bv = new UnifiedBannerView(activity, sdkSupplier.adspotid, this);
         if (bannerSetting != null) {
             int refreshValue = bannerSetting.getRefreshInterval();
@@ -133,17 +112,6 @@ public class CustomADNYLHBannerAdapter extends AdvanceBannerCustomAdapter implem
         bv.loadAD();
     }
 
-    @Override
-    protected void adPrepared() {
-
-//        if (null != advanceBanner) {
-//            ViewGroup adContainer = advanceBanner.getContainer();
-//            if (adContainer != null) {
-//                adContainer.removeAllViews();
-//                adContainer.addView(bv, new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//            }
-//        }
-    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {

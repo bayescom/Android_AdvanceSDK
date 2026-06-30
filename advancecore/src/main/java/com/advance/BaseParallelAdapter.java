@@ -961,6 +961,11 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     }
 
 
+    public void handleSucceed(AdvanceRFADData dataConverter,double price) {
+        this.dataConverter = dataConverter;
+        handleSucceed(price);
+    }
+
     //统一处理广告成功，并传入实时获取到的广告价格
     public void handleSucceed(double price) {
         //尝试更新bidding价格

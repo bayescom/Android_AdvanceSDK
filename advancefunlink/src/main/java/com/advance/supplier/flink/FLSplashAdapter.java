@@ -77,7 +77,14 @@ public class FLSplashAdapter extends AdvanceSplashCustomAdapter {
 // 广告关闭时回调该方法
                         LogUtil.simple(TAG + "onAdClose  ");
 
-                        handleClose();
+                        if (splashSetting != null) {
+                            if (isCountingEnd) {
+                                splashSetting.adapterDidTimeOver();
+                            } else {
+                                splashSetting.adapterDidSkip();
+                            }
+                        }
+//                        handleClose();
                     }
                 });
 

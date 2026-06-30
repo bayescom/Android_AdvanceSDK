@@ -6,13 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.fl.saas.adx.api.FLBanner;
 import com.fl.saas.adx.base.exception.FLError;
 import com.fl.saas.adx.base.interfaces.AdViewBannerListener;

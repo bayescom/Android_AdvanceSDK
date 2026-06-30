@@ -92,9 +92,9 @@ public class AdvanceConstant {
     public static final int SDK_DEFAULT_CACHE_TIME_SEC = 1800;
 
     //胜出SDK ，id
-    public static final String BID_RESULT_KEY_WIN_SDK_ID = "winSDK_ID";
+    public static final String BID_RESULT_KEY_WIN_SDK_ID = "winsdk_id";
     //胜出SDK类型 ，1代表bidding，0代表正常固价
-    public static final String BID_RESULT_KEY_WIN_SDK_TYPE = "winSDK_TYPE";
+    public static final String BID_RESULT_KEY_WIN_SDK_TYPE = "winsdk_type";
     public static final int BID_WIN_SDK_TYPE_NORMAL = 0;
     public static final int BID_WIN_SDK_TYPE_BIDDING = 1;
 

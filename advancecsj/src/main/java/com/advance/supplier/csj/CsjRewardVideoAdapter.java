@@ -310,23 +310,8 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+
+       CsjUtil.bid(ttRewardVideoAd,isWin,winPrice);
 
     }
-
-//    @Override
-//    public boolean isValid() {
-//        try {
-//            if (ttRewardVideoAd == null) {
-//                return false;
-//            }
-//            long expirationTime = ttRewardVideoAd.getExpirationTimestamp();
-//            long currentTime = System.currentTimeMillis();
-//            LogUtil.devDebug(TAG + "isReady check:expirationTime = " + expirationTime + ", currentTime = " + currentTime);
-//            return expirationTime > currentTime;
-//        } catch (Throwable e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
 }

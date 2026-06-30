@@ -6,10 +6,25 @@ import android.app.Activity;
 import com.advance.utils.AdvanceSplashPlusManager;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bytedance.sdk.openadsdk.TTClientBidding;
 
 import java.util.Map;
 
 public class CsjUtil implements AdvanceSplashPlusManager.ZoomCall {
+
+    public static void bid(TTClientBidding bidding,boolean isWin, double winPrice){
+        try {
+            if (bidding !=null){
+                if (isWin){
+                    bidding.win(winPrice);
+                }else {
+                    bidding.loss(winPrice,"102", "");
+                }
+            }
+        } catch (Exception e) {
+
+        }
+    }
 
 //    /**
 //     * 穿山甲3450以后版本初始化方法，支持异步初始化以及对应回调方法

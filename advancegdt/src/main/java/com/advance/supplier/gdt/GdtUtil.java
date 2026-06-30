@@ -7,11 +7,6 @@ import com.qq.e.comm.pi.IBidding;
 import java.util.HashMap;
 import java.util.Map;
 
-//
-//import android.app.Activity;
-//
-//import com.advance.utils.AdvanceSplashPlusManager;
-//
 public class GdtUtil {
 
     public static void notifyBid(IBidding bidding, boolean isWin, double winPrice, Map<String, Object> referBidInfo) {

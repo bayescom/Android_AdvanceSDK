@@ -27,9 +27,6 @@ public class CustomADNYLHNativeExpressAdapter extends AdvanceNativeExpressCustom
         if (height <= 0) {
             height = ADSize.AUTO_HEIGHT;
         }
-//        if (width <= 0) {
-//            width = ADSize.FULL_WIDTH;
-//        }
 
 
         ADSize adSize = new ADSize(width, height);
@@ -81,13 +78,7 @@ public class CustomADNYLHNativeExpressAdapter extends AdvanceNativeExpressCustom
                 .build();
         nativeExpressAd.setVideoOption(option);
         nativeExpressAd.setMaxVideoDuration(nativeExpressSetting.getGdtMaxVideoDuration());
-//        nativeExpressAd.setDownAPPConfirmPolicy(DownAPPConfirmPolicy.NOConfirm);
         nativeExpressAd.loadAD(sdkSupplier.adCount);
-
-    }
-
-    @Override
-    protected void adPrepared() {
 
     }
 

@@ -195,9 +195,6 @@ public class CustomADNYLHRewardAdapter extends AdvanceRewardCustomAdapter implem
     }
 
 
-    @Override
-    protected void adPrepared() {
-    }
 
     @Override
     public void destroyAd() {

@@ -31,8 +31,6 @@ public class CustomADNYLHInit extends AdvanceCustomInit {
             GlobalSetting.setAgreeReadPrivacyInfo(params);
 
             GlobalSetting.setEnableCollectAppInstallStatus(controller.alist());
-
-
         }
 
         //使用新初始化方法
