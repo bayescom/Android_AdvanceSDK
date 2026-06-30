@@ -1,6 +1,7 @@
 package com.advance.supplier.sigmob;
 
 import android.app.Activity;
+import android.content.Context;
 
 
 import com.advance.SplashSetting;
@@ -13,6 +14,7 @@ import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.sigmob.windad.Splash.WindSplashAD;
 import com.sigmob.windad.Splash.WindSplashADListener;
 import com.sigmob.windad.Splash.WindSplashAdRequest;
+import com.sigmob.windad.WindAdBiddingLossReason;
 import com.sigmob.windad.WindAdError;
 import com.sigmob.windad.WindAds;
 
@@ -25,49 +27,31 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
 
     private boolean isSkip = false;
 
-    public SigmobSplashAdapter(SoftReference<Activity> softReferenceActivity, SplashSetting setting) {
-        super(softReferenceActivity, setting);
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(WindAds.AUCTION_PRICE, winPrice);//获胜价格，建议 Sigmob 渠道胜出后回传 Sigmob 原始出价。其他价格可能会影响实际的结算价格。
+        map.put(WindAds.CURRENCY, WindAds.CNY);//汇率
+        if (isWin){
+            splashAd.sendWinNotificationWithInfo(map);
+        }else {
+            map.put(WindAds.LOSS_REASON, WindAdBiddingLossReason.LOSS_REASON_LOW_PRICE.getCode()); // 竞败原因
+            map.put(WindAds.ADN_ID, SigmobUtil.getLossPlatform(referBidInfo)); // 竞败平台
+            splashAd.sendLossNotificationWithInfo(map);
+        }
     }
 
-    @Override
-    protected void paraLoadAd() {
-        SigmobUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                //只有在成功初始化以后才能调用load方法
-                startLoad();
 
-                reportStart();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
-
-    private void startLoad() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
 
-//检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, SigmobSplashAdapter.class, new BYAbsCallBack<SigmobSplashAdapter>() {
-                @Override
-                public void invoke(SigmobSplashAdapter cacheAdapter) {
-
-                    //更新缓存广告得价格
-                    updateBidding(SigmobUtil.getEcpmNumber(cacheAdapter.splashAd.getEcpm()));
-                }
-            });
-            if (hitCache) {
-                return;
-            }
-            
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
             options.put("user_id", userId);
@@ -87,10 +71,7 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
                 public void onSplashAdLoadSuccess(String placementId) {
                     LogUtil.simple(TAG + "onSplashAdLoadSuccess");
 
-                    if (splashAd != null)
-                        updateBidding(SigmobUtil.getEcpmNumber(splashAd.getEcpm()));
-
-                    handleSucceed(SigmobSplashAdapter.this);
+                    handleSucceed(splashAd == null ? 0 : SigmobUtil.getEcpmNumber(splashAd.getEcpm()));
                 }
 
                 @Override
@@ -119,12 +100,10 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
                 @Override
                 public void onSplashAdClose(String placementId) {
                     LogUtil.simple(TAG + "onSplashAdClose");
-                    if (splashSetting != null) {
-                        if (isSkip) {
-                            splashSetting.adapterDidSkip();
-                        } else {
-                            splashSetting.adapterDidTimeOver();
-                        }
+                    if (isSkip) {
+                        handleSkip();
+                    } else {
+                        handleTimeOver();
                     }
                 }
 
@@ -146,12 +125,12 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (splashAd != null) {
                 splashAd.destroy();
@@ -161,11 +140,10 @@ public class SigmobSplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (splashAd != null) {
-                splashAd.show(splashSetting.getAdContainer());
+                splashAd.show(getAdContainer());
             }
         } catch (Exception e) {
             e.printStackTrace();

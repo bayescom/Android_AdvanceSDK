@@ -1,17 +1,10 @@
 package com.advance.custom;
 
-import android.app.Activity;
-
 import com.advance.RewardServerCallBackInf;
-import com.advance.RewardVideoSetting;
 
 public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapter {
-    public RewardVideoSetting setting;
 
-    public AdvanceRewardCustomAdapter(Activity activity, RewardVideoSetting setting) {
-        super(activity, setting);
-        this.setting = setting;
-    }
+
 
     public void handleCached() {
         try {
@@ -20,8 +13,8 @@ public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapte
                     parallelListener.onCached();
                 }
             } else {
-                if (null != setting) {
-                    setting.adapterVideoCached();
+                if (null != rewardSetting) {
+                    rewardSetting.adapterVideoCached();
                 }
             }
         } catch (Throwable e) {
@@ -32,8 +25,8 @@ public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapte
 
     public void handleClose() {
         try {
-            if (null != setting) {
-                setting.adapterAdClose();
+            if (null != rewardSetting) {
+                rewardSetting.adapterAdClose();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -42,8 +35,8 @@ public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapte
 
     public void handleComplete() {
         try {
-            if (null != setting) {
-                setting.adapterVideoComplete();
+            if (null != rewardSetting) {
+                rewardSetting.adapterVideoComplete();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,8 +45,8 @@ public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapte
 
     public void handleSkip() {
         try {
-            if (null != setting) {
-                setting.adapterVideoSkipped();
+            if (null != rewardSetting) {
+                rewardSetting.adapterVideoSkipped();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,8 +55,8 @@ public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapte
 
     public void handleReward() {
         try {
-            if (null != setting) {
-                setting.adapterAdReward();
+            if (null != rewardSetting) {
+                rewardSetting.adapterAdReward();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,11 +65,11 @@ public abstract class AdvanceRewardCustomAdapter extends AdvanceBaseCustomAdapte
 
     public void handleRewardInf(RewardServerCallBackInf serverCallBackInf) {
         try {
-            if (null != setting) {
+            if (null != rewardSetting) {
                 if (sdkSupplier != null && serverCallBackInf != null) {
                     serverCallBackInf.supId = sdkSupplier.id;
                 }
-                setting.postRewardServerInf(serverCallBackInf);
+                rewardSetting.postRewardServerInf(serverCallBackInf);
             }
         } catch (Exception e) {
             e.printStackTrace();

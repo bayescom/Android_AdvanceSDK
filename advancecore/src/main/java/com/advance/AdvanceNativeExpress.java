@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.advance.model.AdvanceAdType;
+import com.advance.utils.AdvanceUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.NativeExpressGMCallBack;
@@ -13,7 +15,6 @@ import com.advance.utils.AdvanceLoader;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 
-import java.util.List;
 
 public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExpressSetting {
     private AdvanceNativeExpressListener listener;
@@ -36,10 +37,14 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
     @Deprecated
     public AdvanceNativeExpress(Activity activity, String mediaId, String adspotId) {
         super(activity, mediaId, adspotId);
+        adType = AdvanceAdType.NATIVEEXPRESS;
+
     }
 
     public AdvanceNativeExpress(Activity activity, String adspotId) {
         this(activity, "", adspotId);
+        adType = AdvanceAdType.NATIVEEXPRESS;
+
     }
 
 
@@ -184,6 +189,7 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
 
             initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorNativeExpressAdapter");
             initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoNativeExpressAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_FLINK, "flink.FLNativeExpressAdapter");
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -192,7 +198,7 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getNativeAdapter(clzName, getADActivity(), this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getNativeAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -276,13 +282,13 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
 
     }
 
-    public void adapterAdDidLoaded(final List<AdvanceNativeExpressAdItem> advanceNativeExpressAdItemList, SdkSupplier supplier) {
+    public void adapterAdDidLoaded( SdkSupplier supplier) {
         reportAdSucceed(supplier);
         BYThreadUtil.switchMainThread(new BYBaseCallBack() {
             @Override
             public void call() {
                 if (null != listener) {
-                    listener.onAdLoaded(advanceNativeExpressAdItemList);
+                    listener.onAdLoaded();
                 }
 
                 if (expressGMCallBack != null) {

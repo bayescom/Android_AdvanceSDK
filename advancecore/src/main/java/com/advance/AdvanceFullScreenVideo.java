@@ -1,7 +1,10 @@
 package com.advance;
 
 import android.app.Activity;
+import android.view.ViewGroup;
 
+import com.advance.model.AdvanceAdType;
+import com.advance.utils.AdvanceUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
@@ -23,10 +26,12 @@ public class AdvanceFullScreenVideo extends AdvanceBaseAdspot implements FullScr
     @Deprecated
     public AdvanceFullScreenVideo(Activity activity, String mediaId, String adspotId) {
         super(activity, mediaId, adspotId);
+        adType = AdvanceAdType.FULLVIDEO;
     }
 
     public AdvanceFullScreenVideo(Activity activity, String adspotId) {
         super(activity, "", adspotId);
+        adType = AdvanceAdType.FULLVIDEO;
     }
 
     public void setAdListener(AdvanceFullScreenVideoListener listener) {
@@ -60,7 +65,7 @@ public class AdvanceFullScreenVideo extends AdvanceBaseAdspot implements FullScr
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getFullVideoAdapter(clzName, getADActivity(), this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getFullVideoAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -129,6 +134,11 @@ public class AdvanceFullScreenVideo extends AdvanceBaseAdspot implements FullScr
         }
     }
 
+    @Override
+    public ViewGroup getAdContainer() {
+        return null;
+    }
+
     public void adapterDidClicked(SdkSupplier supplier) {
         try {
             reportAdClicked(supplier);
@@ -140,14 +150,14 @@ public class AdvanceFullScreenVideo extends AdvanceBaseAdspot implements FullScr
         }
     }
 
-    public void adapterAdDidLoaded(final AdvanceFullScreenItem advanceFullScreenItem, SdkSupplier supplier) {
+    public void adapterAdDidLoaded( SdkSupplier supplier) {
         try {
             reportAdSucceed(supplier);
             BYThreadUtil.switchMainThread(new BYBaseCallBack() {
                 @Override
                 public void call() {
                     if (null != listener) {
-                        listener.onAdLoaded(advanceFullScreenItem);
+                        listener.onAdLoaded();
                     }
                 }
             });

@@ -8,15 +8,13 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.webkit.WebView;
 
-import com.advance.itf.AdvanceSupplierBridge;
-import com.advance.model.AdvanceSupConfigModel;
+import com.advance.custom.AdvanceCustomInit;
+import com.advance.model.AdvanceCustomADNModel;
 import com.advance.model.CacheMode;
-import com.advance.utils.AdvanceLoader;
 import com.advance.utils.AdvanceUtil;
+import com.advance.utils.CustomADNUtil;
 import com.advance.utils.LogUtil;
-import com.advance.utils.SupplierBridgeUtil;
 import com.bayes.sdk.basic.BYBasicSDK;
-import com.bayes.sdk.basic.device.BYDevice;
 import com.bayes.sdk.basic.util.BYCacheUtil;
 import com.bayes.sdk.basic.util.BYThreadPoolUtil;
 import com.mercury.sdk.core.config.AdConfig;
@@ -33,7 +31,9 @@ public class AdvanceConfig {
     public static final String AdvanceSdkRequestUrlHttps = "https://cruiser.bayescom.cn/cruiser";
     public static final String SDK_ERR_REPORT_URL = "http://cruiser.bayescom.cn/sdkevent";
     public static final String SDK_ERR_REPORT_URL_HTTPS = "https://cruiser.bayescom.cn/sdkevent";
-
+    public static final String ADN_REQ_URL_HTTPS = "https://cruiser.bayescom.cn/custom_adn";
+    public static final String ADN_REQ_URL_HTTP = "http://cruiser.bayescom.cn/custom_adn";
+//    public static final String ADN_REQ_URL_HTTP = "https://m1.apifoxmock.com/m2/1960156-1383344-default/470877995";
 
 
     private static AdvanceConfig instance;
@@ -61,6 +61,7 @@ public class AdvanceConfig {
     public static final String SDK_ID_XIAOMI = "13";
     public static final String SDK_ID_VIVO = "14";
     public static final String SDK_ID_HONOR = "15";
+    public static final String SDK_ID_FLINK = "19";
 
 
     static final String NOT_SUPPORT_SUPPLIER_TIPS = "不支持的SDK渠道，跳过该渠道加载。如需加载此渠道，请查看文档使用自定义渠道或者自定义广告来完成广告展示";
@@ -88,8 +89,11 @@ public class AdvanceConfig {
     private CacheMode defaultStrategyCacheTime; //如果后台未下发策略缓存时长，本地的默认的策略缓存时间
 
     //有效的渠道config配置信息，一般有此信息代表引入了对应的adapter库。 key为SDKid信息，value为config实例。
-    public HashMap<String, AdvanceSupplierBridge> availableAdapterConfigMap = new HashMap<>();
+    public HashMap<String, AdvanceCustomInit> availableAdapterConfigMap = new HashMap<>();
+    //可用的初始化类， key为SDKid信息，value为类名
+    public HashMap<String,String> availableInitClassMap = new HashMap<>();
     public boolean hasInitConfig = false;
+    public ArrayList<AdvanceCustomADNModel> customADNList = new ArrayList<>();
 
     private AdvanceConfig() {
         LogUtil.simple(" advance config start");
@@ -103,7 +107,7 @@ public class AdvanceConfig {
     }
 
     //todo 整理优化此处初始化调用，合并倍业SDK后，将不再多次初始化基础库SDK，也无需关心版本适配问题
-    public AdvanceConfig initSDKs(final Context context) {
+    public AdvanceConfig initSDKs(final Context context, final String appID) {
         try {
             //初始化基础库SDK
             BYBasicSDK.init(context);
@@ -136,6 +140,8 @@ public class AdvanceConfig {
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
+//                        拉取adn配置信息
+                        CustomADNUtil.initCustomInf(appID);
                         //尝试获取oaid
 //                        BYDevice.getOaidValue();
 

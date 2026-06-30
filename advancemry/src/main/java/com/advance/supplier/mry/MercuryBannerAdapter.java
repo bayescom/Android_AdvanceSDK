@@ -1,47 +1,30 @@
 package com.advance.supplier.mry;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.advance.BannerSetting;
 import com.advance.custom.AdvanceBannerCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.mercury.sdk.core.banner.BannerAD;
 import com.mercury.sdk.core.banner.BannerADListener;
 import com.mercury.sdk.util.ADError;
 
-import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
+import java.util.Map;
 
 public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements BannerADListener {
-    private BannerSetting advanceBanner;
     private BannerAD mercuryBanner;
     String TAG = "[MercuryBannerAdapter] ";
-
-    public MercuryBannerAdapter(Activity activity, BannerSetting advanceBanner) {
-        super(activity, advanceBanner);
-        this.advanceBanner = advanceBanner;
-    }
-
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(ERROR_EXCEPTION_LOAD, " orderLoadAd Throwable"));
-        }
-    }
 
     @Override
     public void onADReceived() {
         try {
             LogUtil.simple(TAG + "onADReceived");
-            if (advanceBanner != null) {
-                int refreshValue = advanceBanner.getRefreshInterval();
+            if (bannerSetting != null) {
+                int refreshValue = bannerSetting.getRefreshInterval();
                 LogUtil.high(TAG + "refreshValue == " + refreshValue);
 
                 if (refreshValue > 0) {
@@ -52,18 +35,16 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
 
 
             //旧版本SDK中不包含价格返回方法，catch住
+            int cpm = 0;
             try {
-                int cpm = mercuryBanner.getEcpm();
-                updateBidding(cpm);
+                  cpm = mercuryBanner.getEcpm();
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            handleSucceed(this);
+            handleSucceed(cpm);
         } catch (Throwable e) {
             e.printStackTrace();
             doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-//            if (advanceBanner != null)
-//                advanceBanner.adapterDidFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
         }
     }
 
@@ -71,9 +52,7 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
     public void onADClosed() {
         LogUtil.simple(TAG + "onADClosed");
 
-        if (null != advanceBanner) {
-            advanceBanner.adapterDidDislike();
-        }
+        handleClose();
     }
 
     @Override
@@ -114,7 +93,7 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
 
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         try {
             if (mercuryBanner != null)
                 mercuryBanner.destroy();
@@ -123,48 +102,17 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
         }
     }
 
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
-    public void loadAd() {
-        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
-
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryBannerAdapter.class, new BYAbsCallBack<MercuryBannerAdapter>() {
-            @Override
-            public void invoke(MercuryBannerAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                updateBidding(cacheAdapter.mercuryBanner.getEcpm());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
-        
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         if (mercuryBanner != null) {
             mercuryBanner.destroy();
         }
         mercuryBanner = new BannerAD(activity, sdkSupplier.adspotid, this);
-        try {
-            if (null != advanceBanner) {
-                if (advanceBanner.getRefreshInterval() > 0) {
-                    mercuryBanner.setRefresh(advanceBanner.getRefreshInterval());
-                }
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-            LogUtil.e("当前版本Mercury SDK不支持banner自动刷新，请更新Mercury版本至3.2.1以上");
-        }
 
         mercuryBanner.loadOnly();
     }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 //        if (null != advanceBanner) {
 //            ViewGroup adContainer = advanceBanner.getContainer();
 //            if (adContainer != null) {
@@ -176,10 +124,9 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
 //        }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            ViewGroup adContainer = advanceBanner.getContainer();
+            ViewGroup adContainer = getAdContainer();
             RelativeLayout.LayoutParams rbl = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             rbl.addRule(RelativeLayout.CENTER_HORIZONTAL);
             boolean add = AdvanceUtil.addADView(adContainer, mercuryBanner, rbl);
@@ -201,6 +148,15 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
         if (mercuryBanner != null) {
             return mercuryBanner.isValid();
         }
-        return super.isValid();
+           return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+
+        if (mercuryBanner != null && !isWin) {
+            mercuryBanner.sendLossWin(winPrice);
+        }
     }
 }

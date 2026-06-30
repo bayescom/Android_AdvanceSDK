@@ -4,7 +4,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.advance.BaseParallelAdapter;
+import com.advance.custom.AdvanceSelfRenderCustomAdapter;
 import com.advance.model.AdvanceError;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.device.BYDisplay;
@@ -16,8 +16,12 @@ import com.mercury.sdk.util.MercuryTool;
 public class AdvanceRFUtil {
     public static final String TAG = "[AdvanceRFUtil] ";
 
-    //复制子控件至新布局，并将新布局添加至旧父布局中，等于在中间插入一层
     public static void copyChild(final ViewGroup oriParent, final ViewGroup toParent) {
+        copyChild(oriParent,toParent,true);
+    }
+
+    //复制子控件至新布局，并将新布局添加至旧父布局中，等于在中间插入一层
+    public static void copyChild(final ViewGroup oriParent, final ViewGroup toParent, final boolean addOri) {
         try {
             BYThreadUtil.switchMainThread(new BYBaseCallBack() {
                 @Override
@@ -34,13 +38,14 @@ public class AdvanceRFUtil {
                             LogUtil.devDebug(TAG + "  toParent.addView  i= " + i + " child = " + child);
                         }
                     }
-                    oriParent.addView(toParent);
+                    if (addOri) {
+                        oriParent.addView(toParent);
+                    }
                 }
             });
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -49,18 +54,14 @@ public class AdvanceRFUtil {
      * @param adapter
      * @return
      */
-    public static boolean skipRender(BaseParallelAdapter adapter) {
+    public static boolean skipRender(AdvanceSelfRenderCustomAdapter adapter) {
         boolean result = false;
 
         if (adapter == null) {
             return true;
         }
-        if (adapter.mAdvanceRFBridge == null) {
-            adapter.handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "advanceRFBridge  null");
-            return true;
-        }
 
-        final AdvanceRFMaterialProvider rfMaterialProvider = adapter.mAdvanceRFBridge.getMaterialProvider();
+        final AdvanceRFMaterialProvider rfMaterialProvider = adapter.getMaterialProvider();
 
         if (rfMaterialProvider == null) {
             adapter.handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, "getMaterialProvider  null");

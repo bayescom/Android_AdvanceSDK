@@ -5,15 +5,19 @@ import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.advance.core.srender.AdvanceRFADData;
 import com.advance.core.srender.AdvanceRFBridge;
+import com.advance.custom.AdvanceAdapterItf;
+import com.advance.custom.AdvanceCustomInit;
+import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceSDKCacheModel;
 import com.advance.net.AdvanceReport;
 import com.advance.utils.ActivityTracker;
 import com.advance.utils.AdvanceCacheUtil;
+import com.advance.utils.CustomADNUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
-import com.advance.itf.RenderEvent;
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
 import com.advance.model.SdkSupplier;
@@ -25,9 +29,10 @@ import com.bayes.sdk.basic.util.BYUtil;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAdapterListener, DestroyListener, RenderEvent {
+public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     public String TAG = "[" + this.getClass().getSimpleName() + "] ";
 
     protected Activity activity;
@@ -35,9 +40,22 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
     protected SoftReference<Activity> softReferenceActivity;
 
     public BaseSetting baseSetting;
+    //各个广告位内部传递setting
+    protected SplashSetting splashSetting;
+    protected BannerSetting bannerSetting;
+    protected InterstitialSetting interstitialSetting;
+    protected RewardVideoSetting rewardSetting;
+    protected FullScreenVideoSetting fullScreenVideoSetting;
+    protected NativeExpressSetting nativeExpressSetting;
+    protected AdvanceRFBridge nativeSetting;
+    protected AdvanceDrawSetting drawSetting;
+    Map<String, Object> localExtra = new HashMap<>();
+    Map<String, Object> serverExtra = new HashMap<>();
+
+
     public SdkSupplier sdkSupplier;
     //是否为异步请求
-    public boolean isParallel = false;
+    public boolean isParallel = true;
     public boolean hasOrderRun = false;
 
     public int adStatus = AdvanceConstant.AD_STATUS_DEFAULT; //AdvanceConstant.AD_STATUS_DEFAULT 初始值
@@ -57,11 +75,8 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
 
     //回调所需参数
     public View nativeExpressADView;
-    public AdvanceRewardVideoItem rewardVideoItem;
-    public AdvanceFullScreenItem fullScreenItem;
-    public List<AdvanceNativeExpressAdItem> nativeExpressAdItemList;
     //获取聚合具体设置项
-    public AdvanceRFBridge mAdvanceRFBridge;
+//    public AdvanceRFBridge mAdvanceRFBridge;
     //   基础数据信息
     public AdvanceRFADData dataConverter;
 
@@ -93,11 +108,29 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
     }
 
     //获取activity信息新方法，首先通过view寻找activity信息（可能为空），然后再通过传递参数获取
+    public Activity getRealActivity() {
+        return getRealActivity(null);
+    }
+
     public Activity getRealActivity(View adContainerView) {
         Activity result = null;
         try {
+            if (rewardSetting != null && rewardSetting.getShowActivity() != null) {
+                activity = rewardSetting.getShowActivity();
+            }
             if (adContainerView != null) {
                 result = AdvanceUtil.getActivityFromView(adContainerView);
+            } else {
+                ViewGroup adContainer = null;
+                if (splashSetting != null) {
+                    adContainer = splashSetting.getAdContainer();
+                }
+                if (adContainer == null && nativeExpressSetting != null) {
+                    adContainer = nativeExpressSetting.getAdContainer();
+                }
+                if (adContainer != null) {
+                    result = AdvanceUtil.getActivityFromView(adContainer);
+                }
             }
             LogUtil.devDebug(TAG + " getActivityFromView result = " + result);
             if (result == null) {
@@ -114,6 +147,9 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         Context result = null;
         try {
             result = getADActivity();
+            if (mContext != null) {
+                result = mContext;
+            }
             if (result == null) {
                 result = BYUtil.getCtx();
             }
@@ -123,23 +159,81 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         return result;
     }
 
-    public BaseParallelAdapter(SoftReference<Activity> softReferenceActivity, final BaseSetting baseSetting) {
-        this.softReferenceActivity = softReferenceActivity;
-        this.baseSetting = baseSetting;
-        initPara();
+    public BaseParallelAdapter() {
+        LogUtil.d("init adapter:" + this);
     }
 
-    public BaseParallelAdapter(Activity activity, final BaseSetting baseSetting) {
-        this.activity = activity;
-        this.baseSetting = baseSetting;
-        initPara();
+    public void initContext(Context context) {
+        try {
+            LogUtil.devDebug("initContext:" + context);
+
+            this.mContext = context;
+            this.activity = AdvanceUtil.getActivityFromCtx(context);
+
+            initPara();
+        } catch (Exception e) {
+
+        }
     }
 
-    public BaseParallelAdapter(Context context, final BaseSetting baseSetting) {
-        this.mContext = context;
-        this.baseSetting = baseSetting;
-        initPara();
+    public void initSplashSetting(SplashSetting setting) {
+        this.baseSetting = setting;
+        this.splashSetting = setting;
     }
+
+    public void initBannerSetting(BannerSetting setting) {
+        this.baseSetting = setting;
+        this.bannerSetting = setting;
+    }
+
+    public void initInterstitialSetting(InterstitialSetting setting) {
+        this.baseSetting = setting;
+        this.interstitialSetting = setting;
+    }
+
+    public void initRewardSetting(RewardVideoSetting setting) {
+        this.baseSetting = setting;
+        this.rewardSetting = setting;
+    }
+
+    public void initFullScreenVideoSetting(FullScreenVideoSetting setting) {
+        this.baseSetting = setting;
+        this.fullScreenVideoSetting = setting;
+    }
+
+    public void initNativeExpressSetting(NativeExpressSetting setting) {
+        this.baseSetting = setting;
+        this.nativeExpressSetting = setting;
+    }
+
+    public void initNativeSetting(AdvanceRFBridge setting) {
+        this.baseSetting = setting;
+        this.nativeSetting = setting;
+    }
+
+    public void initDrawerSetting(AdvanceDrawSetting setting) {
+        this.baseSetting = setting;
+        this.drawSetting = setting;
+    }
+
+
+//    public BaseParallelAdapter(SoftReference<Activity> softReferenceActivity, final BaseSetting baseSetting) {
+//        this.softReferenceActivity = softReferenceActivity;
+//        this.baseSetting = baseSetting;
+//        initPara();
+//    }
+//
+//    public BaseParallelAdapter(Activity activity, final BaseSetting baseSetting) {
+//        this.activity = activity;
+//        this.baseSetting = baseSetting;
+//        initPara();
+//    }
+//
+//    public BaseParallelAdapter(Context context, final BaseSetting baseSetting) {
+//        this.mContext = context;
+//        this.baseSetting = baseSetting;
+//        initPara();
+//    }
 
     private void initPara() {
         adStatus = AdvanceConstant.AD_STATUS_DEFAULT;
@@ -175,7 +269,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
                         //如果是等待中发起了展示需求，直接展示，否则标记为1 成功获得广告
                         if (adStatus == AdvanceConstant.AD_STATUS_LOADING_SHOW) {
                             adStatus = AdvanceConstant.AD_STATUS_LOADED_SHOW;
-                            doMainLoad();
+                            callbackLoad();
                         } else {
                             adStatus = AdvanceConstant.AD_STATUS_LOAD_SUCCESS;
                         }
@@ -185,7 +279,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
                     //并行上报广告加载成功
                     if (sdkSupplier != null) {
 
-                        AdvanceReport.replaceReportSuccess(sdkSupplier,BaseParallelAdapter.this);
+                        AdvanceReport.replaceReportSuccess(sdkSupplier, BaseParallelAdapter.this);
 
 //                        String reqid = baseSetting == null ? "" : baseSetting.getAdvanceId();
 //                        ArrayList<String> succTk;
@@ -281,25 +375,27 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         cacheModel = AdvanceCacheUtil.getCachedSDKInf(sdkSupplier);
     }
 
-    /**
-     * 并行请求广告。并行请求拿到广告信息后，会存储结果状态。
-     *
-     * @see AdvanceBaseAdapter#orderLoadAd() 串行请求广告方法
-     */
-    protected abstract void paraLoadAd();
+//    /**
+//     * 并行请求广告。并行请求拿到广告信息后，会存储结果状态。
+//     *
+//     * @see AdvanceBaseAdapter#orderLoadAd() 串行请求广告方法
+//     */
+////    protected abstract void paraLoadAd();
 
     //广告就绪，可以进行后续广告展示方法，串行or并行均会执行到此方法，区别是串行是广告加载成功后立即执行到此方法，并行时广告成功，也要等到选中改广告才执行此方法。
-    protected abstract void adReady();
+    protected void adPrepared() {
+    }
+
 
     //销毁广告
-    public abstract void doDestroy();
+//    public   void doDestroy(){};
 
-    public void destroy() {
+    protected void destroy() {
         try {
             isDestroy = true;
             adStatus = AdvanceConstant.AD_STATUS_DEFAULT;
             parallelListener = null;
-            doDestroy();
+            destroyAd();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -309,41 +405,110 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         return cacheModel;
     }
 
-    public void startOrderLoad() {
-        ++adNum;
-        isParallel = false;
-        BYThreadUtil.switchMainThread(new BYBaseCallBack() {
-            @Override
-            public void call() {
-                orderLoadAd();
+//    public void startOrderLoad() {
+//        ++adNum;
+//        isParallel = false;
+//        BYThreadUtil.switchMainThread(new BYBaseCallBack() {
+//            @Override
+//            public void call() {
+//                orderLoadAd();
+//            }
+//        });
+//    }
+
+    //策略层发起的广告请求
+    protected void load() {
+        try {
+
+//           初始化前进行启动上报
+            reportLoaded();
+
+            //获取初始化类
+            AdvanceCustomInit init = CustomADNUtil.getCustomInitClass(sdkSupplier);
+            if (init == null) {
+                runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_INIT_DEFAULT, "未获取到初始化类"));
+                return;
             }
-        });
+            init.addSdkSupplier(sdkSupplier);
+            init.addInitListener(new AdvanceADNInitResult() {
+                @Override
+                public void success() {
+                    callADNLoad();
+                }
+
+                @Override
+                public void fail(String code, String msg) {
+
+                    runParaFailed(AdvanceError.parseErr(code, msg));
+                }
+            });
+            init.innerInitSDK(getRealContext());
+        } catch (Throwable e) {
+            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD, "BaseParallelAdapter load init Throwable"));
+//            advanceError =
+//            reportFailed();
+//            //标记为失败
+//            adStatus = AdvanceConstant.AD_STATUS_LOAD_FAILED;
+            e.printStackTrace();
+        }
     }
 
-    public void load() {
+    private void callADNLoad() {
         try {
             ++adNum;
-            isParallel = true;
             adStatus = AdvanceConstant.AD_STATUS_LOADING;
-            reportLoaded();
+
+            //统一进行缓存adapter检查
+            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this);
+            if (hitCache) {
+                return;
+            }
+
 //            根据设置，选择不进入主线程load
             if (baseSetting != null && baseSetting.isLoadAsync()) {
-                paraLoadAd();
+                loadAd(getRealContext(), getLocalExtra(), getServerExtra());
+                reportStart();
                 return;
             }
             BYThreadUtil.switchMainThread(new BYBaseCallBack() {
                 @Override
                 public void call() {
-                    paraLoadAd();
+                    try {
+                        loadAd(getRealContext(), getLocalExtra(), getServerExtra());
+                        reportStart();
+                    } catch (Throwable e) {
+                        runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD, "BaseParallelAdapter main load init Throwable"));
+                        e.printStackTrace();
+                    }
                 }
             });
         } catch (Throwable e) {
+            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD, "BaseParallelAdapter load init Throwable"));
             e.printStackTrace();
-            advanceError = AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD, "BaseParallelAdapter load Throwable");
-            reportFailed();
-            //标记为失败
-            adStatus = AdvanceConstant.AD_STATUS_LOAD_FAILED;
         }
+    }
+
+    // TODO: 2026/5/27 添加获取逻辑，从本地、后端服务器返回的json对象中解析转换成map结构
+    private Map<String, Object> getLocalExtra() {
+        try {
+            if (localExtra != null && localExtra.isEmpty() && baseSetting != null) {
+                localExtra = baseSetting.getCustomData();
+            }
+        } catch (Exception e) {
+
+        }
+        return localExtra;
+    }
+
+    private Map<String, Object> getServerExtra() {
+        try {
+            if (serverExtra != null && serverExtra.isEmpty() && sdkSupplier != null) {
+                serverExtra = CustomADNUtil.getServerCustomExtData(sdkSupplier.ext);
+            }
+        } catch (Exception e) {
+
+        }
+        return serverExtra;
     }
 
     // TODO: 2022/7/18 超时问题待验证及确定解决思路，问题1：并行组执行超时后，回调事件依然在进行，可能会影响下一组执行  问题2：此处的判断会不会受下一组数据影响
@@ -358,7 +523,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
     /**
      * 保证在主线程执行广告展示
      */
-    private void doMainLoad() {
+    private void callbackLoad() {
         if (isTimeOut("doMainLoad")) {
             return;
         }
@@ -379,24 +544,15 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
 //                    setting.adapterDidSucceed(sdkSupplier);
                 } else if (baseSetting instanceof RewardVideoSetting) {
                     RewardVideoSetting setting = (RewardVideoSetting) baseSetting;
-                    if (rewardVideoItem == null) {
-                        LogUtil.devDebug("未定义 rewardVideoItem，需要在调用 handleSucceed() 方法前赋值为基于 AdvanceRewardVideoItem 的广告渲染处理类");
-                    }
-                    setting.adapterAdDidLoaded(rewardVideoItem, sdkSupplier);
+                    setting.adapterAdDidLoaded(sdkSupplier);
                 } else if (baseSetting instanceof FullScreenVideoSetting) {
                     FullScreenVideoSetting setting = (FullScreenVideoSetting) baseSetting;
-                    if (fullScreenItem == null) {
-                        LogUtil.devDebug("未定义 fullScreenItem，需要在调用 handleSucceed() 方法前赋值为基于 AdvanceFullScreenItem 的广告渲染处理类");
-                    }
-                    setting.adapterAdDidLoaded(fullScreenItem, sdkSupplier);
+                    setting.adapterAdDidLoaded(sdkSupplier);
                 } else if (baseSetting instanceof NativeExpressSetting) {
                     NativeExpressSetting setting = (NativeExpressSetting) baseSetting;
-                    if (nativeExpressAdItemList == null) {
-                        LogUtil.devDebug("未定义 nativeExpressAdItemList，需要在调用 handleSucceed() 方法前赋值为基于 AdvanceNativeExpressAdItem 的广告渲染处理类列表");
-                    }
-                    setting.adapterAdDidLoaded(nativeExpressAdItemList, sdkSupplier);
+                    setting.adapterAdDidLoaded(sdkSupplier);
                 }
-                adReady();
+                adPrepared();
             }
         });
     }
@@ -420,7 +576,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
     }
 
     //SDK渠道执行完广告load以后，调用埋点starttk埋点上报
-    public void reportStart() {
+    private void reportStart() {
         try {
             if (sdkSupplier != null) {
                 ArrayList<String> startTKS = sdkSupplier.starttk;
@@ -504,10 +660,17 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         }
     }
 
+    String logTag = "ad win";
+
+//    protected void callWin() {
+//
+//    }
+
+
     /**
      * 广告展示方法，串并行均可调用，不支持并行时自动转为串行加载
      */
-    public void prepareShow() {
+    protected void callLoaded() {
         try {
             String logMsg = TAG + " adStatus ==  " + adStatus;
             String devMsg = "";
@@ -519,26 +682,26 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
             if (isTimeOut("prepareShow")) {
                 return;
             }
-            if (!supportPara) {
-                if (hasOrderRun) {
-                    LogUtil.high("已串行执行过");
-                    return;
-                }
-                //如果当前不支持并行，自动改用串行的加载方式
-                LogUtil.high("当前不支持并行，自动转串行");
-                isParallel = false;
-                if (null != baseSetting) {
-                    baseSetting.paraEvent(AdvanceConstant.EVENT_TYPE_ORDER, null, sdkSupplier);
-                }
-                reportLoaded();
-                orderLoadAd();
-                hasOrderRun = true;
-                return;
-            }
+//            if (!supportPara) {
+//                if (hasOrderRun) {
+//                    LogUtil.high("已串行执行过");
+//                    return;
+//                }
+//                //如果当前不支持并行，自动改用串行的加载方式
+//                LogUtil.high("当前不支持并行，自动转串行");
+//                isParallel = false;
+//                if (null != baseSetting) {
+//                    baseSetting.paraEvent(AdvanceConstant.EVENT_TYPE_ORDER, null, sdkSupplier);
+//                }
+//                reportLoaded();
+//                orderLoadAd();
+//                hasOrderRun = true;
+//                return;
+//            }
             //加载成功了，需要回调loaded信息
             if (adStatus == AdvanceConstant.AD_STATUS_LOAD_SUCCESS) {
                 LogUtil.simple(TAG + "加载成功，回调成功信息");
-                doMainLoad();
+                callbackLoad();
                 adStatus = AdvanceConstant.AD_STATUS_LOADED_SHOW;
             } else if (adStatus == AdvanceConstant.AD_STATUS_LOADING) {
                 LogUtil.high(TAG + "广告请求中，成功后自动回调");
@@ -584,6 +747,22 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         }
     }
 
+    //聚合策略层调用的show方法
+    protected void show() {
+        if (!isSuccess) {
+            LogUtil.e(TAG + "广告未成功返回，无法show");
+            return;
+        }
+        //若广告无效，直接回调失败
+        if (!isValid()) {
+            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW, "BaseParallelAdapter show ad invalid"));
+            return;
+        }
+
+        showAd(getRealActivity(), getLocalExtra(), getServerExtra());
+    }
+
+
     private void doFailed() {
         try {
             //避免重复执行失败任务
@@ -602,7 +781,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
         if (isBannerFailed()) {
             runParaFailed(advanceError);
             //广告失败并进行销毁
-            doDestroy();
+            destroyAd();
         }
     }
 
@@ -782,18 +961,25 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
     }
 
 
-    //统一处理广告成功，并传入实时获取到的广告对象，用来进行缓存
-    public void handleSucceed(Object realtimeAD) {
-        if (realtimeAD != null) {
-            //执行缓存
-            AdvanceCacheUtil.cacheSDK(this, realtimeAD);
-        }
+    public void handleSucceed(AdvanceRFADData dataConverter,double price) {
+        this.dataConverter = dataConverter;
+        handleSucceed(price);
+    }
+
+    //统一处理广告成功，并传入实时获取到的广告价格
+    public void handleSucceed(double price) {
+        //尝试更新bidding价格
+        updateBidding(price);
 
         handleSucceed();
     }
 
     public void handleSucceed() {
         try {
+            //执行缓存
+            AdvanceCacheUtil.cacheSDK(this);
+
+
             isSuccess = true;
             if (baseSetting == null) {
                 return;
@@ -804,7 +990,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
                     parallelListener.onSucceed();
                 }
             } else {
-                doMainLoad();
+                callbackLoad();
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -852,7 +1038,7 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
     }
 
     //对支持bidding的渠道进行比价逻辑
-    protected void updateBidding(double price) {
+    public void updateBidding(double price) {
         try {
             LogUtil.devDebug(TAG + "result price = " + price + ", need update bidding price : " + sdkSupplier.enableBidding);
             if (sdkSupplier.enableBidding) {//如果是竞价开启状态，才会执行
@@ -890,10 +1076,10 @@ public abstract class BaseParallelAdapter implements AdvanceBaseAdapter, ParaAda
 
 
     //大部分adn可能并不支持所有广告位可用性检查api，所以默认广告成功后即有效
-    @Override
-    public boolean isValid() {
-        return isSuccess;
-    }
+//    @Override
+//    public boolean isValid() {
+//        return isSuccess;
+//    }
 
     /**
      * --------- 以上是公共处理核心回调事件方法  ----------

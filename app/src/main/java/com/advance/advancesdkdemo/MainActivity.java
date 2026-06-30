@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceRewardVideo;
-import com.advance.AdvanceRewardVideoItem;
 import com.advance.AdvanceRewardVideoListener;
 import com.advance.RewardServerCallBackInf;
 import com.advance.advancesdkdemo.custom.SelfRenderActivity;
@@ -232,7 +231,7 @@ public class MainActivity extends Activity {
         //设置通用事件监听器
         advanceRewardVideo.setAdListener(new AdvanceRewardVideoListener() {
             @Override
-            public void onAdLoaded(AdvanceRewardVideoItem advanceRewardVideoItem) {
+            public void onAdLoaded() {
                 logAndToast("广告加载成功");
                 hasRewardShow = false;
             }

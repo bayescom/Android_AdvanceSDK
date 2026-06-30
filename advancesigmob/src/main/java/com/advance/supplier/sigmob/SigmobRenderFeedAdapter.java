@@ -6,17 +6,15 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
 import com.advance.core.srender.AdvanceRFUtil;
 import com.advance.core.srender.AdvanceRFVideoEventListener;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
-import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
+import com.sigmob.windad.WindAdBiddingLossReason;
 import com.sigmob.windad.WindAdError;
+import com.sigmob.windad.WindAds;
 import com.sigmob.windad.natives.NativeADEventListener;
 import com.sigmob.windad.natives.WindNativeAdData;
 import com.sigmob.windad.natives.WindNativeAdRequest;
@@ -31,40 +29,38 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     WindNativeAdData mRenderAD;
     AdvanceRFMaterialProvider rfMaterialProvider;
 
-    public SigmobRenderFeedAdapter(Context context, AdvanceRFBridge mAdvanceRFBridge) {
-        super(context, mAdvanceRFBridge);
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(WindAds.AUCTION_PRICE, winPrice);//获胜价格，建议 Sigmob 渠道胜出后回传 Sigmob 原始出价。其他价格可能会影响实际的结算价格。
+        map.put(WindAds.CURRENCY, WindAds.CNY);//汇率
+        if (isWin){
+            windNativeUnifiedAd.sendWinNotificationWithInfo(map);
+        }else {
+            map.put(WindAds.LOSS_REASON, WindAdBiddingLossReason.LOSS_REASON_LOW_PRICE.getCode()); // 竞败原因
+            map.put(WindAds.ADN_ID, SigmobUtil.getLossPlatform(referBidInfo)); // 竞败平台
+            windNativeUnifiedAd.sendLossNotificationWithInfo(map);
+        }
     }
 
-    @Override
-    protected void paraLoadAd() {
-        SigmobUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                //只有在成功初始化以后才能调用load方法
-                startLoad();
 
-                reportStart();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
         try {
             if (windNativeUnifiedAd!=null){
@@ -78,23 +74,9 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    private void startLoad() {
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
 
-//检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SigmobRenderFeedAdapter.class, new BYAbsCallBack<SigmobRenderFeedAdapter>() {
-                @Override
-                public void invoke(SigmobRenderFeedAdapter cacheAdapter) {
-                    dataConverter = new SigmobRenderDataConverter(cacheAdapter.mRenderAD, sdkSupplier);
-
-                    //更新缓存广告得价格
-                    updateBidding(SigmobUtil.getEcpmNumber(cacheAdapter.windNativeUnifiedAd.getEcpm()));
-                }
-            });
-            if (hitCache) {
-                return;
-            }
-            
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
             options.put("user_id", userId);
@@ -121,15 +103,12 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                         return;
                     }
 
-                    if (windNativeUnifiedAd != null)
-                        //更新ecpm价格信息
-                        updateBidding(SigmobUtil.getEcpmNumber(windNativeUnifiedAd.getEcpm()));
-
                     //转换返回广告model为聚合通用model
                     dataConverter = new SigmobRenderDataConverter(mRenderAD, sdkSupplier);
 
                     //标记广告成功
-                    handleSucceed(SigmobRenderFeedAdapter.this);
+                    handleSucceed(windNativeUnifiedAd == null ? 0 : SigmobUtil.getEcpmNumber(windNativeUnifiedAd.getEcpm()));
+
                 }
             });
             windNativeUnifiedAd.loadAd(1);
@@ -138,8 +117,7 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         try {
             if (AdvanceRFUtil.skipRender(this)) {
@@ -152,7 +130,7 @@ public class SigmobRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW, "广告对象为空"));
                 return;
             }
-            rfMaterialProvider = mAdvanceRFBridge.getMaterialProvider();
+            rfMaterialProvider = getMaterialProvider();
             //必要事件
             bindCoreView();
             //视频内容

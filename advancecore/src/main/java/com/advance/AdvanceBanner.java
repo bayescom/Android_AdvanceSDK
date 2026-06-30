@@ -3,10 +3,12 @@ package com.advance;
 import android.app.Activity;
 import android.view.ViewGroup;
 
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
+import com.advance.model.AdvanceAdType;
 import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceLoader;
+import com.advance.utils.AdvanceUtil;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 
 
@@ -33,12 +35,14 @@ public class AdvanceBanner extends AdvanceBaseAdspot implements BannerSetting {
     public AdvanceBanner(Activity activity, ViewGroup adContainer, String mediaId, String adspotId) {
         super(activity, mediaId, adspotId);
         this.adContainer = adContainer;
+        adType = AdvanceAdType.BANNER;
         initListener();
     }
 
     public AdvanceBanner(Activity activity, ViewGroup adContainer, String adspotId) {
         super(activity, "", adspotId);
         this.adContainer = adContainer;
+        adType = AdvanceAdType.BANNER;
         initListener();
     }
 
@@ -62,7 +66,8 @@ public class AdvanceBanner extends AdvanceBaseAdspot implements BannerSetting {
         this.adContainer = adContainer;
     }
 
-    public ViewGroup getContainer() {
+    @Override
+    public ViewGroup getAdContainer() {
         return adContainer;
     }
 
@@ -112,6 +117,7 @@ public class AdvanceBanner extends AdvanceBaseAdspot implements BannerSetting {
             initAdapter(AdvanceConfig.SDK_ID_XIAOMI, "mi.XMBannerAdapter");
             initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorBannerAdapter");
             initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoBannerAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_FLINK, "flink.FLBannerAdapter");
 
         } catch (Throwable e) {
             e.printStackTrace();
@@ -121,7 +127,7 @@ public class AdvanceBanner extends AdvanceBaseAdspot implements BannerSetting {
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getBannerAdapter(clzName, getADActivity(), this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getBannerAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }

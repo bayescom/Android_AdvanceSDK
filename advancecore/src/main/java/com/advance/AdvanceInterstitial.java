@@ -1,7 +1,10 @@
 package com.advance;
 
 import android.app.Activity;
+import android.view.ViewGroup;
 
+import com.advance.model.AdvanceAdType;
+import com.advance.utils.AdvanceUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.InterstitialGMCallBack;
 import com.advance.model.AdvanceError;
@@ -21,10 +24,14 @@ public class AdvanceInterstitial extends AdvanceBaseAdspot implements Interstiti
     @Deprecated
     public AdvanceInterstitial(Activity activity, String mediaId, String adspotId) {
         super(activity, mediaId, adspotId);
+        adType = AdvanceAdType.INTERSTITIAL;
+
     }
 
     public AdvanceInterstitial(Activity activity, String adspotId) {
         super(activity, "", adspotId);
+        adType = AdvanceAdType.INTERSTITIAL;
+
     }
 
 
@@ -79,6 +86,7 @@ public class AdvanceInterstitial extends AdvanceBaseAdspot implements Interstiti
 
             initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorInterstitialAdapter");
             initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoInterstitialAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_FLINK, "flink.FLInterstitialAdapter");
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -86,7 +94,7 @@ public class AdvanceInterstitial extends AdvanceBaseAdspot implements Interstiti
 
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getInterstitialAdapter(clzName, getADActivity(), this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getInterstitialAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -171,5 +179,10 @@ public class AdvanceInterstitial extends AdvanceBaseAdspot implements Interstiti
     @Deprecated
     public void setCsjNew(boolean csjNew) {
         isCsjNew = csjNew;
+    }
+
+    @Override
+    public ViewGroup getAdContainer() {
+        return null;
     }
 }

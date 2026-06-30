@@ -176,6 +176,7 @@ dependencies {
             force = true
         }
     }
-//    implementation("com.poly-gamma:pg-ogm-core:[0.4.5, 2.0.0[")
+    def libVersionName = "4.690.1560"
+    api "com.qq.e.union:union:${libVersionName}"
 
 }

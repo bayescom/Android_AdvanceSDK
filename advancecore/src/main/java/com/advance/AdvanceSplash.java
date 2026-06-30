@@ -2,7 +2,6 @@ package com.advance;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.LayoutRes;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,19 +11,23 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+
 import com.advance.core.splash.AdvanceSplashRenderListener;
 import com.advance.itf.AdvanceLifecycleCallback;
-import com.advance.itf.SplashJumpType;
-import com.bayes.sdk.basic.device.BYDisplay;
-import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.advance.itf.SplashGMCallBack;
 import com.advance.itf.SplashJumpListener;
+import com.advance.itf.SplashJumpType;
 import com.advance.model.AdStatus;
+import com.advance.model.AdvanceAdType;
 import com.advance.model.AdvanceError;
 import com.advance.model.AdvanceReportModel;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceLoader;
+import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.device.BYDisplay;
+import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 
 import java.lang.ref.SoftReference;
@@ -70,7 +73,9 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
 
     public AdvanceSplash(Activity activity, String adspotId, ViewGroup adContainer, TextView skipView) {
         super(new SoftReference<>(activity), "", adspotId);
+        adType = AdvanceAdType.SPLASH;
         initSplash(adContainer, skipView);
+
     }
 
     //     分离模式优化新增内容 ------------start -----------  todo 后续可能需要废弃掉旧接口方法，全部改用新接口方法
@@ -83,6 +88,8 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
 
     public AdvanceSplash(String adspotId) {
         super(adspotId);
+        adType = AdvanceAdType.SPLASH;
+
         initSplash(null, null);
     }
 
@@ -318,6 +325,7 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
 
             initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorSplashAdapter");
             initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoSplashAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_FLINK, "flink.FLSplashAdapter");
         } catch (Throwable e) {
 //            e.printStackTrace();
         }
@@ -410,7 +418,7 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
     @Override
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getSplashAdapter(clzName, softReferenceActivity, this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getSplashAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }

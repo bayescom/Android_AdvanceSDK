@@ -1,74 +1,43 @@
 package com.advance.supplier.mry;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.advance.RewardServerCallBackInf;
-import com.advance.RewardVideoSetting;
 import com.advance.custom.AdvanceRewardCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
-import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.mercury.sdk.core.rewardvideo.MercuryRewardOptions;
 import com.mercury.sdk.core.rewardvideo.MercuryRewardResult;
 import com.mercury.sdk.core.rewardvideo.RewardVideoAD;
 import com.mercury.sdk.core.rewardvideo.RewardVideoADListener;
 import com.mercury.sdk.util.ADError;
 
+import java.util.Map;
+
 public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implements RewardVideoADListener {
-    private RewardVideoSetting advanceRewardVideo;
     String TAG = "[MercuryRewardVideoAdapter] ";
     RewardVideoAD rewardVideoAD;
-
-    public MercuryRewardVideoAdapter(Activity activity, RewardVideoSetting advanceRewardVideo) {
-        super(activity, advanceRewardVideo);
-        this.advanceRewardVideo = advanceRewardVideo;
-
-    }
-
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runBaseFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-
-    }
-
 
     @Override
     public void onADLoad() {
         LogUtil.simple(TAG + "onADLoad");
 
-
         //旧版本SDK中不包含价格返回方法，catch住
+        int cpm = 0;
         try {
-            int cpm = rewardVideoAD.getEcpm();
-            updateBidding(cpm);
+            cpm = rewardVideoAD.getEcpm();
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
-        handleSucceed(this);
-
-
+        handleSucceed(cpm);
     }
 
     @Override
     public void onVideoCached() {
         LogUtil.simple(TAG + "onVideoCached");
 
-        if (isParallel) {
-            if (parallelListener != null) {
-                parallelListener.onCached();
-            }
-        } else {
-            if (null != advanceRewardVideo) {
-                advanceRewardVideo.adapterVideoCached();
-            }
-        }
+        handleCached();
 
     }
 
@@ -109,7 +78,9 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
                 msg = "奖励发放异常, errCode = " + result.errCode + " , errMsg = " + result.errMsg;
             } else {
                 msg = "奖励正常发放";
+                handleReward();
             }
+            LogUtil.d("reward msg = "+msg);
 
             RewardServerCallBackInf inf = new RewardServerCallBackInf();
             if (result != null) {
@@ -120,19 +91,13 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
                 inf.errMsg = result.errMsg;
             }
 
-            if (null != advanceRewardVideo) {
-                if (sdkSupplier != null) {
-                    inf.supId = sdkSupplier.id;
-                }
-                advanceRewardVideo.postRewardServerInf(inf);
-            }
+
+            handleRewardInf(inf);
         } catch (Throwable e) {
             e.printStackTrace();
         }
 
-        if (null != advanceRewardVideo) {
-            advanceRewardVideo.adapterAdReward();
-        }
+
 
     }
 
@@ -141,19 +106,16 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
     public void onVideoComplete() {
         LogUtil.simple(TAG + "onVideoComplete");
 
-        if (null != advanceRewardVideo) {
-            advanceRewardVideo.adapterVideoComplete();
-        }
 
+        handleComplete();
     }
 
     @Override
     public void onADClose() {
         LogUtil.simple(TAG + "onADClose");
 
-        if (null != advanceRewardVideo) {
-            advanceRewardVideo.adapterAdClose();
-        }
+
+        handleClose();
 
     }
 
@@ -171,54 +133,32 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
         handleFailed(code, msg);
     }
 
-    @Override
-    protected void paraLoadAd() {
-        loadAd();
-        reportStart();
-    }
-    public void loadAd() {
-        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
-
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, MercuryRewardVideoAdapter.class, new BYAbsCallBack<MercuryRewardVideoAdapter>() {
-            @Override
-            public void invoke(MercuryRewardVideoAdapter cacheAdapter) {
-
-                //更新缓存广告得价格
-                updateBidding(cacheAdapter.rewardVideoAD.getEcpm());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
         rewardVideoAD = new RewardVideoAD(getRealContext(), sdkSupplier.adspotid, this);
         // (可选) 激励相关参数配置
         rewardVideoAD.setRewardOptions(new MercuryRewardOptions.Builder()
-                .setUserID(advanceRewardVideo.getUserId()) //用户唯一id，服务端验证时必传
-                .setRewardName(advanceRewardVideo.getRewardName()) // 发放奖励名称
-                .setRewardAmount(advanceRewardVideo.getRewardCount()) // 发放奖励数量
-                .setExtCustomInf(advanceRewardVideo.getExtraInfo()) // 额外自定义信息
+                .setUserID(rewardSetting.getUserId()) //用户唯一id，服务端验证时必传
+                .setRewardName(rewardSetting.getRewardName()) // 发放奖励名称
+                .setRewardAmount(rewardSetting.getRewardCount()) // 发放奖励数量
+                .setExtCustomInf(rewardSetting.getExtraInfo()) // 额外自定义信息
                 .build());
-        MercuryRewardVideoAdItem mercuryRewardVideoAdItem = new MercuryRewardVideoAdItem(this, rewardVideoAD);
-        mercuryRewardVideoAdItem.loadAD();
-        rewardVideoItem = mercuryRewardVideoAdItem;
+        rewardVideoAD.loadAD();
     }
 
     @Override
-    protected void adReady() {
-
-    }
-
-    @Override
-    public void doDestroy() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void show() {
+    public void destroyAd() {
+
+    }
+
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            rewardVideoAD.showAD(setting.getShowActivity());
+            rewardVideoAD.showAD(activity);
         } catch (Throwable e) {
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_SHOW));
@@ -230,14 +170,16 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implem
         if (rewardVideoAD != null) {
             return rewardVideoAD.isValid();
         }
-        return super.isValid();
+        return true;
     }
 
-//    @Override
-//    public boolean isValid() {
-//        if (rewardVideoAD == null) {
-//            return false;
-//        }
-//        return rewardVideoAD.isValid();
-//    }
+    @Override
+    public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+
+        if (rewardVideoAD != null && !isWin) {
+            rewardVideoAD.sendLossWin(winPrice);
+        }
+    }
+
 }

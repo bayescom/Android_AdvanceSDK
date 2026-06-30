@@ -9,22 +9,23 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Process;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
+import androidx.annotation.NonNull;
 
 import com.advance.AdvanceConfig;
 import com.advance.AdvanceSetting;
 import com.advance.model.AdvanceReqModel;
 import com.advance.model.CacheMode;
 import com.advance.model.ElevenModel;
+import com.advance.model.SdkSupplier;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYCache;
 import com.bayes.sdk.basic.util.BYCacheUtil;
 import com.bayes.sdk.basic.util.BYThreadUtil;
-import com.mercury.sdk.core.config.AdConfigManager;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -262,28 +263,28 @@ public class AdvanceUtil {
      * @param mediaId  策略服务下发字段
      * @param mediaKey 策略服务下发字段
      */
-    public static void initMercuryAccount(String mediaId, String mediaKey) {
-        try {
-            String resultAppID = mediaId;
-            String resultAppKey = mediaKey;
-            String configMediaId = AdvanceConfig.getInstance().getMercuryMediaId();
-            String configMediaKey = AdvanceConfig.getInstance().getMercuryMediaKey();
-
-            if (AdvanceConfig.getInstance().forceUseLocalAppID && !TextUtils.isEmpty(configMediaId)) {
-                LogUtil.simple("强制使用本地配置的Mercury AppID");
-                resultAppID = configMediaId;
-            }
-            if (AdvanceConfig.getInstance().forceUseLocalAppID && !TextUtils.isEmpty(configMediaKey)) {
-                LogUtil.simple("强制使用本地配置的Mercury AppKey");
-                resultAppKey = configMediaKey;
-            }
-            LogUtil.high("[initMercuryAccount] Mercury AppID：" + resultAppID + "， Mercury AppKey：" + resultAppKey);
-
-            AdConfigManager.getInstance().setMediaId(resultAppID);
-            AdConfigManager.getInstance().setMediaKey(resultAppKey);
-        } catch (Exception e) {
-        }
-    }
+//    public static void initMercuryAccount(String mediaId, String mediaKey) {
+//        try {
+//            String resultAppID = mediaId;
+//            String resultAppKey = mediaKey;
+//            String configMediaId = AdvanceConfig.getInstance().getMercuryMediaId();
+//            String configMediaKey = AdvanceConfig.getInstance().getMercuryMediaKey();
+//
+//            if (AdvanceConfig.getInstance().forceUseLocalAppID && !TextUtils.isEmpty(configMediaId)) {
+//                LogUtil.simple("强制使用本地配置的Mercury AppID");
+//                resultAppID = configMediaId;
+//            }
+//            if (AdvanceConfig.getInstance().forceUseLocalAppID && !TextUtils.isEmpty(configMediaKey)) {
+//                LogUtil.simple("强制使用本地配置的Mercury AppKey");
+//                resultAppKey = configMediaKey;
+//            }
+//            LogUtil.high("[initMercuryAccount] Mercury AppID：" + resultAppID + "， Mercury AppKey：" + resultAppKey);
+//
+//            AdConfigManager.getInstance().setMediaId(resultAppID);
+//            AdConfigManager.getInstance().setMediaKey(resultAppKey);
+//        } catch (Exception e) {
+//        }
+//    }
 
 
     /**
@@ -547,4 +548,13 @@ public class AdvanceUtil {
         return result;
 
     }
+
+    //广告adapter实例存储key，需要优先级+SDKid+广告位id 来保证唯一性，旧逻辑仅优先级逻辑不对
+    public static String getAdapterMapKey(SdkSupplier supplier) {
+        if (supplier != null) {
+            return supplier.priority + "-" + supplier.id + "-" + supplier.adspotid;
+        }
+        return "";
+    }
+
 }

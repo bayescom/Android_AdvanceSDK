@@ -1,7 +1,7 @@
 package com.advance;
 
 public interface AdvanceFullScreenVideoListener extends AdvanceBaseListener {
-    void onAdLoaded(AdvanceFullScreenItem advanceFullScreenItem);
+    void onAdLoaded();
 
     void onAdClose();
 

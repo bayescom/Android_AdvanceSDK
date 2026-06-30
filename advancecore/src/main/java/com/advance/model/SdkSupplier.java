@@ -6,8 +6,6 @@ import com.advance.AdvanceConfig;
 import com.advance.AdvanceConstant;
 import com.advance.utils.LogUtil;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 
 public class SdkSupplier implements Comparable<SdkSupplier> {
@@ -30,7 +28,7 @@ public class SdkSupplier implements Comparable<SdkSupplier> {
     public ArrayList<String> starttk;
     //v4.3.0新增，sdk 竞胜上报(仅在开启竞价情况下返回)。SDK调用时机为，发起广告展现方法时
     public ArrayList<String> wintk;
-    public JSONArray ext;
+    public String ext;
     public String advanceAdspotId = "";
     public long cacheMaxSec = AdvanceConstant.SDK_DEFAULT_CACHE_TIME_SEC; //缓存秒数，根据配置下发，默认30分钟
     public boolean enableCache = false; //是否启用缓存，根据配置下发

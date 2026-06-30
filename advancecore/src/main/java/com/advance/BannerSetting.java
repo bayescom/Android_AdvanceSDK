@@ -1,6 +1,5 @@
 package com.advance;
 
-import android.view.ViewGroup;
 
 public interface BannerSetting extends BaseAdEventListener {
     void adapterDidDislike();
@@ -15,5 +14,5 @@ public interface BannerSetting extends BaseAdEventListener {
 
     int getCsjExpressViewAcceptedHeight();
 
-    ViewGroup getContainer();
+//    ViewGroup getContainer();
 }

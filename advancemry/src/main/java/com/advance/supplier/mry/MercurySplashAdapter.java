@@ -1,17 +1,13 @@
 package com.advance.supplier.mry;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
-
-import com.advance.SplashSetting;
 import com.advance.custom.AdvanceSplashCustomAdapter;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
-import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.mercury.sdk.core.model.ADClickJumpInf;
 import com.mercury.sdk.core.splash.MercurySplashData;
 import com.mercury.sdk.core.splash.MercurySplashRenderListener;
@@ -19,21 +15,14 @@ import com.mercury.sdk.core.splash.MercurySplashRequestListener;
 import com.mercury.sdk.core.splash.SplashAD;
 import com.mercury.sdk.util.ADError;
 
-import java.lang.ref.SoftReference;
-
-import static com.advance.model.AdvanceError.ERROR_EXCEPTION_LOAD;
+import java.util.Map;
 
 public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
     private long remainTime = 5000;
     private SplashAD mercurySplash;
     private String TAG = "[MercurySplashAdapter] ";
 
-    public MercurySplashAdapter(SoftReference<Activity> activity, final SplashSetting setting) {
-        super(activity, setting);
-    }
-
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 //        if (BYUtil.isDev()) {//todo 测试逻辑，正式上线需移除
 //            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
 //                @Override
@@ -49,8 +38,8 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
                 runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, "splashAd null"));
                 return;
             }
+            mercurySplash.setAdContainer(getAdContainer());
             if ((null != splashSetting)) {
-                mercurySplash.setAdContainer(splashSetting.getAdContainer());
 //                if (setting.getLogoLayoutRes() != 0) {
 //                    mercurySplash.setLogoLayout(setting.getLogoLayoutRes(), setting.getLogoLayoutHeight());
 //                }
@@ -68,18 +57,15 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
                 @Override
                 public void onSkip() {
                     LogUtil.simple(TAG + "onSkip ");
-                    if (splashSetting != null) {
-                        splashSetting.adapterDidSkip();
-                    }
+
+                    handleSkip();
                 }
 
                 @Override
                 public void onCountDown() {
                     LogUtil.simple(TAG + "onCountDown ");
 
-                    if (splashSetting != null) {
-                        splashSetting.adapterDidTimeOver();
-                    }
+                    handleTimeOver();
                 }
 
                 @Override
@@ -112,7 +98,7 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
                 }
             });
 
-            mercurySplash.showAd(getRealActivity(splashSetting.getAdContainer()), splashSetting.getAdContainer());
+            mercurySplash.showAd(activity, getAdContainer());
 
         } catch (Throwable e) {
             e.printStackTrace();
@@ -120,63 +106,22 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
         }
     }
 
-    public void orderLoadAd() {
-        try {
-            paraLoadAd();
-
-        } catch (Throwable e) {
-            e.printStackTrace();
-            String tag = "MercurySplashAdapter Throwable ";
-            runBaseFailed(AdvanceError.parseErr(ERROR_EXCEPTION_LOAD, tag));
-            String cause = e.getCause() != null ? e.getCause().toString() : "no cause";
-            reportCodeErr(tag + cause);
-        }
-    }
-
-    @Override
-    public void paraLoadAd() {
-        initAD();
-
-        reportStart();
-//        if (null != skipView) {
-//            skipView.setVisibility(View.VISIBLE);
-//        }
-
-    }
-
 
     //调用展示方法
     @Override
-    public void adReady() {
+    public void adPrepared() {
 //        if (mercurySplash != null && isParallel) {
 //            mercurySplash.showAd(adContainer);
 //        }
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
 
     }
 
 
-    private void initAD() {
-        AdvanceUtil.initMercuryAccount(sdkSupplier.mediaid, sdkSupplier.mediakey);
-        
-        //检查是否命中使用缓存逻辑
-        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, SplashAD.class, new BYAbsCallBack<SplashAD>() {
-            @Override
-            public void invoke(SplashAD cacheAD) {
-                mercurySplash = cacheAD;
-                //自渲染需要转换返回广告model为聚合通用model
-//                dataConverter = new KSRenderDataConverter(cacheAD, sdkSupplier);
-
-                updateBidding(cacheAD.getEcpm());
-            }
-        });
-        if (hitCache) {
-            return;
-        }
-
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         int timeout = sdkSupplier.timeout <= 0 ? 5000 : sdkSupplier.timeout;
 //  2023/9/5 替换为分离加载模式
         mercurySplash = new SplashAD(getRealContext(), sdkSupplier.adspotid);
@@ -186,16 +131,14 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
                 LogUtil.simple(TAG + "onAdSuccess ");
 
                 //旧版本SDK中不包含价格返回方法，catch住
+
+                int cpm = 0;
                 try {
-                    int cpm = mercurySplash.getEcpm();
-//                    if (AdvanceUtil.isDev()) {//todo 测试逻辑，正式上线需移除
-//                        cpm = 600;
-//                    }
-                    updateBidding(cpm);
+                    cpm = mercurySplash.getEcpm();
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
-                handleSucceed(mercurySplash);
+                handleSucceed(cpm);
             }
 
             @Override
@@ -216,85 +159,17 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
                 handleFailed(code, msg);
             }
         });
-//        mercurySplash = new SplashAD(getRealActivity(setting.getAdContainer()), sdkSupplier.adspotid, skipView, timeout, new SplashADListener() {
-//            @Override
-//            public void onADDismissed() {
-//                LogUtil.simple(TAG + "onADDismissed ");
 //
-//                if (null != setting) {
-//                    if (remainTime < 1000) {
-//                        setting.adapterDidTimeOver();
-//                    } else {
-//                        setting.adapterDidSkip();
-//                    }
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onADPresent() {
-//                LogUtil.simple(TAG + "onADPresent ");
-//
-//                //旧版本SDK中不包含价格返回方法，catch住
-//                try {
-//                    int cpm = mercurySplash.getEcpm();
-////                    if (AdvanceUtil.isDev()) {//todo 测试逻辑，正式上线需移除
-////                        cpm = 600;
-////                    }
-//                    updateBidding(cpm);
-//                } catch (Throwable e) {
-//                    e.printStackTrace();
-//                }
-//                handleSucceed();
-//            }
-//
-//            @Override
-//            public void onADTick(long l) {
-//                LogUtil.simple(TAG + "onADTick :" + l);
-//                remainTime = l;
-//                if (null != skipView) {
-//                    skipView.setText(String.format(skipText, Math.round(l / 1000f)));
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onADExposure() {
-//                LogUtil.simple(TAG + "onADExposure ");
-//
-//                handleShow();
-//            }
-//
-//            @Override
-//            public void onADClicked() {
-//                LogUtil.simple(TAG + "onADClicked ");
-//
-//                handleClick();
-//            }
-//
-//            @Override
-//            public void onNoAD(ADError adError) {
-//                int code = -1;
-//                String msg = "default onNoAD";
-//                if (adError != null) {
-//                    code = adError.code;
-//                    msg = adError.msg;
-//                }
-//                LogUtil.simple(TAG + "onNoAD");
-//                handleFailed(code, msg);
-//            }
-//        });
         if (mercurySplash != null) {
             mercurySplash.setRequestTimeout(timeout);
-            if (null != splashSetting) {
-                mercurySplash.setAdContainer(splashSetting.getAdContainer());
+            mercurySplash.setAdContainer(getAdContainer());
 //                if (setting.getLogoLayoutRes() != 0) {
 //                    mercurySplash.setLogoLayout(setting.getLogoLayoutRes(), setting.getLogoLayoutHeight());
 //                }
-                if (splashSetting.getHolderImage() != null) {
-                    mercurySplash.setSplashHolderImage(splashSetting.getHolderImage());
-                }
+            if (splashSetting != null && splashSetting.getHolderImage() != null) {
+                mercurySplash.setSplashHolderImage(splashSetting.getHolderImage());
             }
+
         }
         if (mercurySplash != null) {
             mercurySplash.fetchAdOnly();
@@ -311,7 +186,16 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
         if (mercurySplash != null) {
             return mercurySplash.isValid();
         }
-        return super.isValid();
+        return true;
+    }
+
+    @Override
+    public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+
+        if (mercurySplash != null && !isWin) {
+            mercurySplash.sendLossWin(winPrice);
+        }
     }
 
 }

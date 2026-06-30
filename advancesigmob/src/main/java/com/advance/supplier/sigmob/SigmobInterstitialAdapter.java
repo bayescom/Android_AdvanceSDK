@@ -1,14 +1,12 @@
 package com.advance.supplier.sigmob;
 
 import android.app.Activity;
+import android.content.Context;
 
-import com.advance.InterstitialSetting;
 import com.advance.custom.AdvanceInterstitialCustomAdapter;
-import com.advance.itf.AdvanceADNInitResult;
 import com.advance.model.AdvanceError;
-import com.advance.utils.AdvanceCacheUtil;
 import com.advance.utils.LogUtil;
-import com.bayes.sdk.basic.itf.BYAbsCallBack;
+import com.sigmob.windad.WindAdBiddingLossReason;
 import com.sigmob.windad.WindAdError;
 import com.sigmob.windad.WindAds;
 import com.sigmob.windad.newInterstitial.WindNewInterstitialAd;
@@ -21,59 +19,41 @@ import java.util.Map;
 public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     WindNewInterstitialAd windNewInterstitialAd;
 
-    public SigmobInterstitialAdapter(Activity activity, InterstitialSetting setting) {
-        super(activity, setting);
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
-    public void orderLoadAd() {
-        paraLoadAd();
+    public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(WindAds.AUCTION_PRICE, winPrice);//获胜价格，建议 Sigmob 渠道胜出后回传 Sigmob 原始出价。其他价格可能会影响实际的结算价格。
+        map.put(WindAds.CURRENCY, WindAds.CNY);//汇率
+        if (isWin){
+            windNewInterstitialAd.sendWinNotificationWithInfo(map);
+        }else {
+            map.put(WindAds.LOSS_REASON, WindAdBiddingLossReason.LOSS_REASON_LOW_PRICE.getCode()); // 竞败原因
+            map.put(WindAds.ADN_ID, SigmobUtil.getLossPlatform(referBidInfo)); // 竞败平台
+            windNewInterstitialAd.sendLossNotificationWithInfo(map);
+        }
     }
 
-    @Override
-    protected void paraLoadAd() {
-        SigmobUtil.initAD(this, new AdvanceADNInitResult() {
-            @Override
-            public void success() {
-                //只有在成功初始化以后才能调用load方法
-                startLoad();
-
-                reportStart();
-            }
-
-            @Override
-            public void fail(String code, String msg) {
-                handleFailed(code, msg);
-            }
-        });
-    }
 
     @Override
-    protected void adReady() {
+    protected void adPrepared() {
 
     }
 
     @Override
-    public void doDestroy() {
+    public void destroyAd() {
         windNewInterstitialAd.destroy();
     }
 
-    private void startLoad() {
 
+    public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-
-//检查是否命中使用缓存逻辑
-            boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, SigmobInterstitialAdapter.class, new BYAbsCallBack<SigmobInterstitialAdapter>() {
-                @Override
-                public void invoke(SigmobInterstitialAdapter cacheAdapter) {
-
-                    //更新缓存广告得价格
-                    updateBidding(SigmobUtil.getEcpmNumber(cacheAdapter.windNewInterstitialAd.getEcpm()));
-                }
-            });
-            if (hitCache) {
-                return;
-            }
 
             String userId = SigmobSetting.getInstance().userId;
             Map<String, Object> options = new HashMap<>();
@@ -88,10 +68,8 @@ public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter 
                 public void onInterstitialAdLoadSuccess(String placementId) {
                     LogUtil.simple(TAG + "onInterstitialAdLoadSuccess");
 
-                    if (windNewInterstitialAd != null)
-                        updateBidding(SigmobUtil.getEcpmNumber(windNewInterstitialAd.getEcpm()));
 
-                    handleSucceed(SigmobInterstitialAdapter.this);
+                    handleSucceed(windNewInterstitialAd == null ? 0 : SigmobUtil.getEcpmNumber(windNewInterstitialAd.getEcpm()));
                 }
 
                 @Override
@@ -150,8 +128,7 @@ public class SigmobInterstitialAdapter extends AdvanceInterstitialCustomAdapter 
         }
     }
 
-    @Override
-    public void show() {
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (windNewInterstitialAd != null) {
                 windNewInterstitialAd.show(null);

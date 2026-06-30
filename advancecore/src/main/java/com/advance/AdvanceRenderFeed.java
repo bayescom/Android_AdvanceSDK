@@ -1,15 +1,18 @@
 package com.advance;
 
 import android.content.Context;
+import android.view.ViewGroup;
 
 import com.advance.core.srender.AdvanceRFADData;
+import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFEventListener;
 import com.advance.core.srender.AdvanceRFLoadListener;
-import com.advance.core.srender.AdvanceRFBridge;
 import com.advance.core.srender.AdvanceRFMaterialProvider;
+import com.advance.model.AdvanceAdType;
 import com.advance.model.AdvanceError;
 import com.advance.model.SdkSupplier;
 import com.advance.utils.AdvanceLoader;
+import com.advance.utils.AdvanceUtil;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 
@@ -24,6 +27,7 @@ public class AdvanceRenderFeed extends AdvanceBaseAdspot implements AdvanceRFBri
 
     public AdvanceRenderFeed(Context context, String adspotid) {
         super(context, adspotid);
+        adType = AdvanceAdType.NATIVECUSTOM;
 
     }
 
@@ -64,7 +68,7 @@ public class AdvanceRenderFeed extends AdvanceBaseAdspot implements AdvanceRFBri
     @Override
     public void initAdapterData(SdkSupplier sdkSupplier, String clzName) {
         try {
-            supplierAdapters.put(sdkSupplier.priority + "", AdvanceLoader.getRenderFeedAdapter(clzName, mContext, this));
+            supplierAdapters.put(AdvanceUtil.getAdapterMapKey(sdkSupplier), AdvanceLoader.getRenderFeedAdapter(clzName, getRealContext(), this));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -88,6 +92,7 @@ public class AdvanceRenderFeed extends AdvanceBaseAdspot implements AdvanceRFBri
 
             initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorRenderFeedAdapter");
             initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoRenderFeedAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_FLINK, "flink.FLRenderFeedAdapter");
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -192,5 +197,10 @@ public class AdvanceRenderFeed extends AdvanceBaseAdspot implements AdvanceRFBri
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public ViewGroup getAdContainer() {
+        return null;
     }
 }

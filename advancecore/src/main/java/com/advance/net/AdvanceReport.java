@@ -339,8 +339,8 @@ public class AdvanceReport {
                 AdvanceReport.startReport(tk);
                 return tk;
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        }  catch (Throwable e) {
+            e.printStackTrace();
         }
         return tk;
     }
