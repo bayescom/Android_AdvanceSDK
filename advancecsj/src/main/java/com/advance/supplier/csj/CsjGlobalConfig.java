@@ -27,6 +27,10 @@ public class CsjGlobalConfig extends AdvanceCustomInit {
 
     @Override
     public void initADN(final Context context, Map<String, Object> serverExtra) {
+//        LogUtil.simple("csj force init success");
+//
+//        callInitSuccess();
+
         boolean supportMP = AdvanceConfig.getInstance().getSupportMultiProcess();
         int[] directDownloadNetworkType = AdvanceConfig.getInstance().getCsjDirectDownloadNetworkType();
 
