@@ -1,6 +1,5 @@
 package com.advance.supplier.gdt;
 
-import com.advance.core.model.AdvanceSdkSupplier;
 import com.advance.core.srender.AdvanceRFADData;
 import com.advance.core.srender.AdvanceRFDownloadElement;
 import com.advance.model.SdkSupplier;
@@ -52,19 +51,19 @@ public class GdtRenderDataConverter implements AdvanceRFADData {
 
     }
 
-    @Override
-    public AdvanceSdkSupplier getSdkSupplier() {
-        AdvanceSdkSupplier advanceSdkSupplier = new AdvanceSdkSupplier();
-        try {
-            if (mSdkSupplier != null) {
-                advanceSdkSupplier.adnId = mSdkSupplier.id;
-                advanceSdkSupplier.adspotId = mSdkSupplier.adspotid;
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return advanceSdkSupplier;
-    }
+//    @Override
+//    public AdvanceSdkSupplier getSdkSupplier() {
+//        AdvanceSdkSupplier advanceSdkSupplier = new AdvanceSdkSupplier();
+//        try {
+//            if (mSdkSupplier != null) {
+//                advanceSdkSupplier.adnId = mSdkSupplier.id;
+//                advanceSdkSupplier.adspotId = mSdkSupplier.adspotid;
+//            }
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
+//        return advanceSdkSupplier;
+//    }
 
     @Override
     public String getTitle() {

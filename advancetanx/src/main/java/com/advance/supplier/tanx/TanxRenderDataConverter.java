@@ -62,19 +62,19 @@ public class TanxRenderDataConverter implements AdvanceRFADData {
         }
     }
 
-    @Override
-    public AdvanceSdkSupplier getSdkSupplier() {
-        AdvanceSdkSupplier advanceSdkSupplier = new AdvanceSdkSupplier();
-        try {
-            if (mSdkSupplier != null) {
-                advanceSdkSupplier.adnId = mSdkSupplier.id;
-                advanceSdkSupplier.adspotId = mSdkSupplier.adspotid;
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return advanceSdkSupplier;
-    }
+//    @Override
+//    public AdvanceSdkSupplier getSdkSupplier() {
+//        AdvanceSdkSupplier advanceSdkSupplier = new AdvanceSdkSupplier();
+//        try {
+//            if (mSdkSupplier != null) {
+//                advanceSdkSupplier.adnId = mSdkSupplier.id;
+//                advanceSdkSupplier.adspotId = mSdkSupplier.adspotid;
+//            }
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
+//        return advanceSdkSupplier;
+//    }
 
 
     @Override

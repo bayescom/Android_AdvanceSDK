@@ -27,19 +27,19 @@ public class FLRenderDataConverter implements AdvanceRFADData {
         }
     }
 
-    @Override
-    public AdvanceSdkSupplier getSdkSupplier() {
-        AdvanceSdkSupplier advanceSdkSupplier = new AdvanceSdkSupplier();
-        try {
-            if (sdkSupplier != null) {
-                advanceSdkSupplier.adnId = sdkSupplier.id;
-                advanceSdkSupplier.adspotId = sdkSupplier.adspotid;
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return advanceSdkSupplier;
-    }
+//    @Override
+//    public AdvanceSdkSupplier getSdkSupplier() {
+//        AdvanceSdkSupplier advanceSdkSupplier = new AdvanceSdkSupplier();
+//        try {
+//            if (sdkSupplier != null) {
+//                advanceSdkSupplier.adnId = sdkSupplier.id;
+//                advanceSdkSupplier.adspotId = sdkSupplier.adspotid;
+//            }
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
+//        return advanceSdkSupplier;
+//    }
 
     @Override
     public String getTitle() {

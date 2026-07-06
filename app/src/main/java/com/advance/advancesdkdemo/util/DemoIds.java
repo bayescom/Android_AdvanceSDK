@@ -165,6 +165,16 @@ public class DemoIds {
                 result.fullscreen = "";
                 result.draw = "";
                 break;
+            case "汇川":
+                result.banner = "";
+                result.splash = "10015521";
+                result.reward = "10015523";
+                result.interstitial = "10015522";
+                result.nativeExpress = "10015524";
+                result.nativeCustom = "10015525";
+                result.fullscreen = "";
+                result.draw = "";
+                break;
             case "customADN":
                 result.banner = "10015412";
                 result.splash = "10015409";

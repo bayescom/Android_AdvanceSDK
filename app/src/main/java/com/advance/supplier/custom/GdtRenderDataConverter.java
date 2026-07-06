@@ -1,9 +1,7 @@
 package com.advance.supplier.custom;
 
-import com.advance.core.model.AdvanceSdkSupplier;
 import com.advance.core.srender.AdvanceRFADData;
 import com.advance.core.srender.AdvanceRFDownloadElement;
-import com.advance.model.SdkSupplier;
 import com.advance.utils.LogUtil;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
@@ -24,15 +22,13 @@ import java.util.List;
 
 public class GdtRenderDataConverter implements AdvanceRFADData {
     NativeUnifiedADData mGdtData;
-    SdkSupplier mSdkSupplier;
     public static final String TAG = "[GdtRenderDataConverter] ";
 
     GdtDownloadElement mGdtEle;
 
-    public GdtRenderDataConverter(NativeUnifiedADData gdtData, SdkSupplier sdkSupplier) {
+    public GdtRenderDataConverter(NativeUnifiedADData gdtData) {
         try {
             this.mGdtData = gdtData;
-            this.mSdkSupplier = sdkSupplier;
 
             LogUtil.devDebug(TAG + "mGdtData  inf  print start ");
             LogUtil.devDebug(TAG + getTitle());
@@ -52,19 +48,6 @@ public class GdtRenderDataConverter implements AdvanceRFADData {
 
     }
 
-    @Override
-    public AdvanceSdkSupplier getSdkSupplier() {
-        AdvanceSdkSupplier advanceSdkSupplier = new AdvanceSdkSupplier();
-        try {
-            if (mSdkSupplier != null) {
-                advanceSdkSupplier.adnId = mSdkSupplier.id;
-                advanceSdkSupplier.adspotId = mSdkSupplier.adspotid;
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return advanceSdkSupplier;
-    }
 
     @Override
     public String getTitle() {

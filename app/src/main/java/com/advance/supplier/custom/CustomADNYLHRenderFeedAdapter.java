@@ -32,7 +32,6 @@ public class CustomADNYLHRenderFeedAdapter extends AdvanceSelfRenderCustomAdapte
     NativeUnifiedADData mRenderAD;
 
 
-
     @Override
     public void destroyAd() {
         try {
@@ -69,7 +68,7 @@ public class CustomADNYLHRenderFeedAdapter extends AdvanceSelfRenderCustomAdapte
                         }
 
                         //标记广告成功，注意自渲染使用特殊得成功回调事件，需传递实现了AdvanceRFADData接口的数据类
-                        handleSucceed(new GdtRenderDataConverter(mRenderAD, sdkSupplier), mRenderAD.getECPM());
+                        handleSucceed(new GdtRenderDataConverter(mRenderAD), mRenderAD.getECPM());
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }

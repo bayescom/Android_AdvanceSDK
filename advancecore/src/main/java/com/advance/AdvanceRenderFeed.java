@@ -93,6 +93,7 @@ public class AdvanceRenderFeed extends AdvanceBaseAdspot implements AdvanceRFBri
             initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorRenderFeedAdapter");
             initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoRenderFeedAdapter");
             initAdapter(AdvanceConfig.SDK_ID_FLINK, "flink.FLRenderFeedAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_NOAH, "noah.NoahRenderFeedAdapter");
         } catch (Throwable e) {
             e.printStackTrace();
         }

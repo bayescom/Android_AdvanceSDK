@@ -28,20 +28,20 @@ public class VivoRenderDataConverter implements AdvanceRFADData {
         this.adDataPro = adDataPro;
     }
 
-    @Override
-    public AdvanceSdkSupplier getSdkSupplier() {
-        AdvanceSdkSupplier advanceSdkSupplier = new AdvanceSdkSupplier();
-        try {
-            if (adapter != null) {
-                SdkSupplier mSdkSupplier = adapter.sdkSupplier;
-                advanceSdkSupplier.adnId = mSdkSupplier.id;
-                advanceSdkSupplier.adspotId = mSdkSupplier.adspotid;
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return advanceSdkSupplier;
-    }
+//    @Override
+//    public AdvanceSdkSupplier getSdkSupplier() {
+//        AdvanceSdkSupplier advanceSdkSupplier = new AdvanceSdkSupplier();
+//        try {
+//            if (adapter != null) {
+//                SdkSupplier mSdkSupplier = adapter.sdkSupplier;
+//                advanceSdkSupplier.adnId = mSdkSupplier.id;
+//                advanceSdkSupplier.adspotId = mSdkSupplier.adspotid;
+//            }
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
+//        return advanceSdkSupplier;
+//    }
 
     @Override
     public String getTitle() {

@@ -165,6 +165,7 @@ dependencies {
     implementation project(path: ':advancevivo') // vivo广告SDK
     implementation project(path: ':advancehonor') // 荣耀广告SDK
     implementation project(path: ':advancefunlink') // funlink广告SDK
+    implementation project(path: ':advancenoah') // 汇川广告SDK
 //----------------引入方式2 end ----------------------------------------------------------------
 
 

@@ -231,6 +231,7 @@ public class AdvanceNetManger {
                     putADNVersion(extJsonObj, "vivo_v", AdvanceConfig.SDK_ID_VIVO);
                     putADNVersion(extJsonObj, "honor_v", AdvanceConfig.SDK_ID_HONOR);
                     putADNVersion(extJsonObj, "flink_v", AdvanceConfig.SDK_ID_FLINK);
+                    putADNVersion(extJsonObj, "noah_v", AdvanceConfig.SDK_ID_NOAH);
 
                     //添加自定义adn得版本号
                     ArrayList<AdvanceCustomADNModel> adnModels = CustomADNUtil.getCustomADNModels();

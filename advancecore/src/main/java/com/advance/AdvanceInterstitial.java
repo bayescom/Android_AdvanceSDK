@@ -87,6 +87,7 @@ public class AdvanceInterstitial extends AdvanceBaseAdspot implements Interstiti
             initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorInterstitialAdapter");
             initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoInterstitialAdapter");
             initAdapter(AdvanceConfig.SDK_ID_FLINK, "flink.FLInterstitialAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_NOAH, "noah.NoahInterstitialAdapter");
         } catch (Throwable e) {
             e.printStackTrace();
         }
