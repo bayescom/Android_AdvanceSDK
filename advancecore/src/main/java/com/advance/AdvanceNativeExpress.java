@@ -190,6 +190,7 @@ public class AdvanceNativeExpress extends AdvanceBaseAdspot implements NativeExp
             initAdapter(AdvanceConfig.SDK_ID_HONOR, "honor.HonorNativeExpressAdapter");
             initAdapter(AdvanceConfig.SDK_ID_VIVO, "vv.VivoNativeExpressAdapter");
             initAdapter(AdvanceConfig.SDK_ID_FLINK, "flink.FLNativeExpressAdapter");
+            initAdapter(AdvanceConfig.SDK_ID_NOAH, "noah.NoahNativeExpressAdapter");
         } catch (Throwable e) {
             e.printStackTrace();
         }

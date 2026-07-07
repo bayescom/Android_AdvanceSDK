@@ -2,7 +2,6 @@ package com.advance.core.srender;
 
 import androidx.annotation.Keep;
 
-import com.advance.core.model.AdvanceSdkSupplier;
 
 import java.util.List;
 
@@ -10,7 +9,7 @@ import java.util.List;
 public interface AdvanceRFADData {
 
     //获取当前的SDK渠道信息
-    AdvanceSdkSupplier getSdkSupplier();
+//    AdvanceSdkSupplier getSdkSupplier();
 
     String getTitle(); //获取广告标题，短文字
 

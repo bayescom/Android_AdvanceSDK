@@ -36,7 +36,7 @@ public interface AdvanceRFDownloadElement {
     String getPermissionUrl();
 
     /**
-     * 权限信息列表，如果没有url信息，使用此信息来展示权限页面、部分SDK会返回
+     * 权限信息列表，如果没有权限列表url信息，使用此信息来展示权限页面、部分SDK会返回
      */
     void getPermissionList(BYAbsCallBack<ArrayList<AdvDownloadPermissionModel>> callBack);
 
@@ -53,7 +53,7 @@ public interface AdvanceRFDownloadElement {
 
 
     /**
-     * 获取产品功能说明文字，可能为空，穿山甲、优量汇无此信息
+     * 获取产品功能说明文字，若getFunctionDescUrl为空，尝试使用此字段补充
      */
     String getFunctionDescText();
 

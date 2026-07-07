@@ -36,6 +36,7 @@ public class SupplierBridgeUtil {
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_HONOR, "honor.HonorGlobalConfig"));
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_VIVO, "vv.VivoGlobalConfig"));
             supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_FLINK, "flink.FLGlobalConfig"));
+            supportSupList.add(new AdvanceSupConfigModel(AdvanceConfig.SDK_ID_NOAH, "noah.NoahInit"));
 
             //添加自定义adn检查
             ArrayList<AdvanceCustomADNModel> adns = CustomADNUtil.getCustomADNModels();
