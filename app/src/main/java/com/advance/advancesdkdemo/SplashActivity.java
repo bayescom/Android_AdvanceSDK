@@ -54,6 +54,7 @@ public class SplashActivity extends Activity {
 //        按需：设置底部logo布局及高度值（单位px）
 //        advanceSplash.setLogoLayout(R.layout.splash_logo_layout, mActivity.getResources().getDimensionPixelSize(R.dimen.logo_layout_height));
         //必须：设置开屏核心回调事件的监听器。
+//        advanceSplash.getEcpm()
         advanceSplash.setAdListener(new AdvanceSplashListener() {
             /**
              * @param id 代表当前被选中的策略id，值为"1" 代表mercury策略 ，值为"2" 代表优量汇策略， 值为"3" 代表穿山甲策略

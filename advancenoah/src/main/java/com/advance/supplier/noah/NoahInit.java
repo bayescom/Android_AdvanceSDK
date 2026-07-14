@@ -3,11 +3,9 @@ package com.advance.supplier.noah;
 import android.app.Application;
 import android.content.Context;
 
-import com.advance.AdvanceConfig;
 import com.advance.AdvanceSetting;
 import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvancePrivacyController;
-import com.advance.utils.AdvanceUtil;
 import com.bayes.sdk.basic.device.BYDevice;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYUtil;

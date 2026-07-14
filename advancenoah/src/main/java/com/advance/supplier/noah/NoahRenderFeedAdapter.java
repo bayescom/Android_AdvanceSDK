@@ -10,13 +10,11 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.advance.core.srender.AdvanceRFMaterialProvider;
-import com.advance.core.srender.AdvanceRFUtil;
 import com.advance.core.srender.widget.AdvRFRootView;
 import com.advance.core.srender.widget.AdvRFVideoView;
 import com.advance.custom.AdvanceSelfRenderCustomAdapter;
@@ -27,10 +25,8 @@ import com.bayes.sdk.basic.util.BYStringUtil;
 import com.noah.api.AdError;
 import com.noah.api.MediaView;
 import com.noah.api.NativeAd;
-import com.noah.api.NativeAdView;
 import com.noah.api.RequestInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
