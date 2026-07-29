@@ -18,11 +18,10 @@ import com.qq.e.comm.util.AdError;
 
 import java.util.Map;
 
-public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements RewardVideoADListener {
+public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter {
 
     public RewardVideoAD rewardVideoAD;
     String TAG = "[GdtRewardVideoAdapter] ";
-
 
 
     private void rewardLoaded() {
@@ -71,14 +70,14 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
             LogUtil.simple(TAG + "rewardReward");
 
             handleReward();
-                RewardServerCallBackInf inf = new RewardServerCallBackInf();
-                inf.rewardMap = map;
-                inf.rewardVerify = true;
-                if (sdkSupplier != null) {
-                    inf.supId = sdkSupplier.id;
-                }
+            RewardServerCallBackInf inf = new RewardServerCallBackInf();
+            inf.rewardMap = map;
+            inf.rewardVerify = true;
+            if (sdkSupplier != null) {
+                inf.supId = sdkSupplier.id;
+            }
 
-                handleRewardInf(inf);
+            handleRewardInf(inf);
 
         } catch (Throwable e) {
             e.printStackTrace();
@@ -109,7 +108,7 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         try {
             LogUtil.simple(TAG + "rewardClose");
 
-           handleClose();
+            handleClose();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -132,51 +131,6 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     }
 
 
-    @Override
-    public void onADLoad() {
-        rewardLoaded();
-    }
-
-    @Override
-    public void onVideoCached() {
-        rewardCached();
-    }
-
-    @Override
-    public void onADShow() {
-        rewardShow();
-    }
-
-    @Override
-    public void onADExpose() {
-        rewardExpose();
-    }
-
-    @Override
-    public void onReward(Map<String, Object> map) {
-        rewardReward(map);
-    }
-
-    @Override
-    public void onADClick() {
-        rewardClick();
-    }
-
-    @Override
-    public void onVideoComplete() {
-        rewardComplete();
-    }
-
-    @Override
-    public void onADClose() {
-        rewardClose();
-    }
-
-    @Override
-    public void onError(AdError adError) {
-        rewardError(adError);
-    }
-
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         boolean vo = false;
         String userId = "";
@@ -187,7 +141,53 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
             userId = rewardSetting.getUserId();
             extraInfo = rewardSetting.getExtraInfo();
         }
-        rewardVideoAD = new RewardVideoAD(getRealContext(), sdkSupplier.adspotid, this, vo);
+        rewardVideoAD = new RewardVideoAD(getRealContext(), sdkSupplier.adspotid, new RewardVideoADListener() {
+
+            @Override
+            public void onADLoad() {
+                rewardLoaded();
+            }
+
+            @Override
+            public void onVideoCached() {
+                rewardCached();
+            }
+
+            @Override
+            public void onADShow() {
+                rewardShow();
+            }
+
+            @Override
+            public void onADExpose() {
+                rewardExpose();
+            }
+
+            @Override
+            public void onReward(Map<String, Object> map) {
+                rewardReward(map);
+            }
+
+            @Override
+            public void onADClick() {
+                rewardClick();
+            }
+
+            @Override
+            public void onVideoComplete() {
+                rewardComplete();
+            }
+
+            @Override
+            public void onADClose() {
+                rewardClose();
+            }
+
+            @Override
+            public void onError(AdError adError) {
+                rewardError(adError);
+            }
+        }, vo);
         if (!TextUtils.isEmpty(userId) || !TextUtils.isEmpty(extraInfo)) {
             rewardVideoAD.setServerSideVerificationOptions(new ServerSideVerificationOptions.Builder().setUserId(userId).setCustomData(extraInfo).build());
         }
@@ -236,13 +236,13 @@ public class GdtRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
         if (rewardVideoAD != null) {
             return rewardVideoAD.isValid();
         }
-           return true;
+        return true;
     }
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
+
         GdtUtil.notifyBid(rewardVideoAD, isWin, winPrice, referBidInfo);
     }
 

@@ -21,7 +21,7 @@ import com.kwad.sdk.api.model.AdnType;
 
 import java.util.Map;
 
-public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSplashScreenAd.SplashScreenAdInteractionListener {
+public class KSSplashAdapter extends AdvanceSplashCustomAdapter {
     private String TAG = "[KSSplashAdapter] ";
     private KsSplashScreenAd splashAd;
 
@@ -47,7 +47,66 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
             activity = getRealActivity(getAdContainer());
 
             //获取SplashView
-            View view = splashAd.getView(activity, this);
+            View view = splashAd.getView(activity, new KsSplashScreenAd.SplashScreenAdInteractionListener() {
+
+                //------广告回调事件------
+
+                @Override
+                public void onAdClicked() {
+                    LogUtil.simple(TAG + "onAdClicked");
+
+                    handleClick();
+                }
+
+                @Override
+                public void onAdShowError(int code, String extra) {
+                    String msg = ",开屏广告显示错误 ,code =" + code + " extra " + extra;
+                    LogUtil.e(TAG + "onAdShowError" + msg);
+
+                    //异常时不触发显示miniWindow
+                    splashAd = null;
+                    //按照渲染异常进行异常回调
+                    handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, msg);
+                }
+
+                @Override
+                public void onAdShowEnd() {
+                    LogUtil.simple(TAG + "onAdShowEnd");
+
+                    handleTimeOver();
+                }
+
+                @Override
+                public void onAdShowStart() {
+                    LogUtil.simple(TAG + "onAdShowStart");
+
+                    handleShow();
+                }
+
+                @Override
+                public void onSkippedAd() {
+                    LogUtil.simple(TAG + "onSkippedAd");
+                    handleSkip();
+                }
+
+                @Override
+                public void onDownloadTipsDialogShow() {
+                    LogUtil.simple(TAG + "onDownloadTipsDialogShow");
+
+                }
+
+                @Override
+                public void onDownloadTipsDialogDismiss() {
+                    LogUtil.simple(TAG + "onDownloadTipsDialogDismiss");
+
+                }
+
+                @Override
+                public void onDownloadTipsDialogCancel() {
+                    LogUtil.simple(TAG + "onDownloadTipsDialogCancel");
+
+                }
+            });
             //渲染之前判断activity生命周期状态
             boolean isDestroy = AdvanceUtil.isActivityDestroyed(activity);
             if (isDestroy) {
@@ -149,64 +208,6 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
     }
 
 
-    //------广告回调事件------
-
-    @Override
-    public void onAdClicked() {
-        LogUtil.simple(TAG + "onAdClicked");
-
-        handleClick();
-    }
-
-    @Override
-    public void onAdShowError(int code, String extra) {
-        String msg = ",开屏广告显示错误 ,code =" + code + " extra " + extra;
-        LogUtil.e(TAG + "onAdShowError" + msg);
-
-        //异常时不触发显示miniWindow
-        splashAd = null;
-        //按照渲染异常进行异常回调
-        handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, msg);
-    }
-
-    @Override
-    public void onAdShowEnd() {
-        LogUtil.simple(TAG + "onAdShowEnd");
-
-        handleTimeOver();
-    }
-
-    @Override
-    public void onAdShowStart() {
-        LogUtil.simple(TAG + "onAdShowStart");
-
-        handleShow();
-    }
-
-    @Override
-    public void onSkippedAd() {
-        LogUtil.simple(TAG + "onSkippedAd");
-        handleSkip();
-    }
-
-    @Override
-    public void onDownloadTipsDialogShow() {
-        LogUtil.simple(TAG + "onDownloadTipsDialogShow");
-
-    }
-
-    @Override
-    public void onDownloadTipsDialogDismiss() {
-        LogUtil.simple(TAG + "onDownloadTipsDialogDismiss");
-
-    }
-
-    @Override
-    public void onDownloadTipsDialogCancel() {
-        LogUtil.simple(TAG + "onDownloadTipsDialogCancel");
-
-    }
-
     @Override
     public boolean isValid() {
         try {
@@ -221,12 +222,12 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter implements KsSpl
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
-        if (isWin){
-            splashAd.setBidEcpm((long) winPrice,0);
-        }else {
-            splashAd.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice,referBidInfo));
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
+
+        if (isWin) {
+            splashAd.setBidEcpm((long) winPrice, 0);
+        } else {
+            splashAd.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice, referBidInfo));
         }
     }
 }

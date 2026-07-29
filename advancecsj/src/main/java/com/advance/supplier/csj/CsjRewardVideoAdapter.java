@@ -17,63 +17,12 @@ import com.bytedance.sdk.openadsdk.TTRewardVideoAd;
 
 import java.util.Map;
 
-public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements TTAdNative.RewardVideoAdListener {
+public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter   {
 
     private TTRewardVideoAd ttRewardVideoAd;
     private String TAG = "[CsjRewardVideoAdapter] ";
 
 
-    @Override
-    public void onError(int i, String s) {
-        LogUtil.simple(TAG + "onError" + i + s);
-
-        runParaFailed(AdvanceError.parseErr(i, s));
-    }
-
-    @Override
-    public void onRewardVideoAdLoad(final TTRewardVideoAd ttRewardVideoAd) {
-        try {
-
-            adSuccess(ttRewardVideoAd);
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
-
-    private void adSuccess(TTRewardVideoAd ttRewardVideoAd) {
-        LogUtil.simple(TAG + "onRewardVideoAdLoad");
-
-        if (ttRewardVideoAd == null) {
-            String nMsg = TAG + " ttRewardVideoAd null";
-            AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, nMsg);
-            runParaFailed(error);
-            return;
-        }
-        this.ttRewardVideoAd = ttRewardVideoAd;
-
-        handleSucceed(CsjUtil.getEcpmValue(TAG, ttRewardVideoAd.getMediaExtraInfo()));
-    }
-
-    @Override
-    public void onRewardVideoCached() {
-        LogUtil.simple(TAG + "onRewardVideoCached");
-
-    }
-
-    @Override
-    public void onRewardVideoCached(TTRewardVideoAd ttRewardVideoAd) {
-        try {
-            String ad = "";
-            if (ttRewardVideoAd != null) {
-                ad = ttRewardVideoAd.toString();
-            }
-            LogUtil.simple(TAG + "onRewardVideoCached( " + ad + ")");
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        handleCached();
-    }
 
 
     public void onAdFailed(AdvanceError error) {
@@ -160,32 +109,6 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
     }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        CsjUtil.initCsj(this, new CsjUtil.InitListener() {
-//            @Override
-//            public void success() {
-//                //只有在成功初始化以后才能调用load方法，否则穿山甲会抛错导致无法进行广告展示
-//                startLoad();
-//
-//            }
-//
-//            @Override
-//            public void fail(int code, String msg) {
-//                handleFailed(code, msg);
-//            }
-//        });
-////
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheData(this, TTRewardVideoAd.class, new BYAbsCallBack<TTRewardVideoAd>() {
-//            @Override
-//            public void invoke(TTRewardVideoAd cacheAD) {
-//                ttRewardVideoAd = cacheAD;
-//
-//                updateBidding(CsjUtil.getEcpmValue(TAG, cacheAD.getMediaExtraInfo()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         final TTAdManager ttAdManager = TTAdSdk.getAdManager();
         if (AdvanceConfig.getInstance().isNeedPermissionCheck()) {
@@ -228,7 +151,60 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter implements
 //                    .setDownloadType(AdvanceSetting.getInstance().csj_downloadType)
                     .build();
         }
-        ttAdNative.loadRewardVideoAd(adSlot, this);
+        ttAdNative.loadRewardVideoAd(adSlot, new TTAdNative.RewardVideoAdListener() {
+
+            @Override
+            public void onError(int i, String s) {
+                LogUtil.simple(TAG + "onError" + i + s);
+
+                runParaFailed(AdvanceError.parseErr(i, s));
+            }
+
+            @Override
+            public void onRewardVideoAdLoad(final TTRewardVideoAd ttRewardVideoAd) {
+                try {
+
+                    adSuccess(ttRewardVideoAd);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
+                }
+            }
+
+            private void adSuccess(TTRewardVideoAd rewardVideoAd) {
+                LogUtil.simple(TAG + "onRewardVideoAdLoad");
+
+                if (rewardVideoAd == null) {
+                    String nMsg = TAG + " rewardVideoAd null";
+                    AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, nMsg);
+                    runParaFailed(error);
+                    return;
+                }
+                ttRewardVideoAd = rewardVideoAd;
+
+                handleSucceed(CsjUtil.getEcpmValue(TAG, rewardVideoAd.getMediaExtraInfo()));
+            }
+
+            @Override
+            public void onRewardVideoCached() {
+                LogUtil.simple(TAG + "onRewardVideoCached");
+
+            }
+
+            @Override
+            public void onRewardVideoCached(TTRewardVideoAd ttRewardVideoAd) {
+                try {
+                    String ad = "";
+                    if (ttRewardVideoAd != null) {
+                        ad = ttRewardVideoAd.toString();
+                    }
+                    LogUtil.simple(TAG + "onRewardVideoCached( " + ad + ")");
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                handleCached();
+            }
+        });
     }
 
     @Override

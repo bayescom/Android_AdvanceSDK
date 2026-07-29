@@ -63,6 +63,9 @@ public abstract class AdvanceCustomInit implements AdvanceAdnInitItf {
             initState = State.INITIALIZING;
 
             initADN(context, serverExtra);
+        } catch (NoClassDefFoundError e) {
+            callInitFail(AdvanceError.ERROR_AD_SDK_NOT_FOUND + "", "未找到广告SDK类，请检查是否正确引入了广告SDK");
+            e.printStackTrace();
         } catch (Throwable e) {
             callInitFail(AdvanceError.ERROR_INIT_DEFAULT + "", "initADN exception");
             e.printStackTrace();

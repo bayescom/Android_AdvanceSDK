@@ -14,7 +14,7 @@ import com.qq.e.comm.util.AdError;
 
 import java.util.Map;
 
-public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements UnifiedInterstitialADListener {
+public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter {
 
     private UnifiedInterstitialAD iad;
     private long videoDuration;
@@ -22,103 +22,103 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
     String TAG = "[GdtFullScreenVideoAdapter] ";
 
 
-    @Override
-    public void onADReceive() {
-        try {
-            LogUtil.simple(TAG + "onADReceive");
-            double ecpm = 0;
-
-            if (iad != null) {
-                ecpm = (iad.getECPM());
-            }
-            handleSucceed(ecpm);
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
-
-    //虽然有此回调，但是返回该事件的时机不固定。。。
-    @Override
-    public void onVideoCached() {
-        LogUtil.simple(TAG + "onVideoCached");
-
-
-        handleCached();
-    }
-
-    @Override
-    public void onNoAD(AdError adError) {
-        try {
-            int code = -1;
-            String msg = "default onNoAD";
-            if (adError != null) {
-                code = adError.getErrorCode();
-                msg = adError.getErrorMsg();
-            }
-            LogUtil.simple(TAG + " onNoAD");
-            handleFailed(code, msg);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onADOpened() {
-        LogUtil.simple(TAG + "onADOpened");
-
-    }
-
-    @Override
-    public void onADExposure() {
-        LogUtil.simple(TAG + "onADExposure");
-
-        handleShow();
-    }
-
-    @Override
-    public void onADClicked() {
-        LogUtil.simple(TAG + "onADClicked");
-        handleClick();
-    }
-
-    @Override
-    public void onADLeftApplication() {
-        LogUtil.simple(TAG + "onADLeftApplication");
-
-
-    }
-
-    @Override
-    public void onADClosed() {
-        LogUtil.simple(TAG + "onADClosed");
-
-        long costTime = System.currentTimeMillis() - videoStartTime;
-        LogUtil.high(TAG + "costTime ==   " + costTime + " videoDuration == " + videoDuration);
-
-        if (costTime < videoDuration) {
-            LogUtil.high(TAG + " adapterVideoSkipped");
-            handleSkip();
-        }
-        LogUtil.high(TAG + " adapterClose");
-        handleClose();
-    }
-
-    @Override
-    public void onRenderSuccess() {
-        LogUtil.simple(TAG + "onRenderSuccess");
-
-    }
-
-    @Override
-    public void onRenderFail() {
-        LogUtil.simple(TAG + "onRenderFail");
-        handleFailed(AdvanceError.ERROR_RENDER_FAILED, "");
-    }
-
-
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-        iad = new UnifiedInterstitialAD(activity, sdkSupplier.adspotid, this);
+        iad = new UnifiedInterstitialAD(activity, sdkSupplier.adspotid, new UnifiedInterstitialADListener() {
+
+            @Override
+            public void onADReceive() {
+                try {
+                    LogUtil.simple(TAG + "onADReceive");
+                    double ecpm = 0;
+
+                    if (iad != null) {
+                        ecpm = (iad.getECPM());
+                    }
+                    handleSucceed(ecpm);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
+                }
+            }
+
+            //虽然有此回调，但是返回该事件的时机不固定。。。
+            @Override
+            public void onVideoCached() {
+                LogUtil.simple(TAG + "onVideoCached");
+
+
+                handleCached();
+            }
+
+            @Override
+            public void onNoAD(AdError adError) {
+                try {
+                    int code = -1;
+                    String msg = "default onNoAD";
+                    if (adError != null) {
+                        code = adError.getErrorCode();
+                        msg = adError.getErrorMsg();
+                    }
+                    LogUtil.simple(TAG + " onNoAD");
+                    handleFailed(code, msg);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onADOpened() {
+                LogUtil.simple(TAG + "onADOpened");
+
+            }
+
+            @Override
+            public void onADExposure() {
+                LogUtil.simple(TAG + "onADExposure");
+
+                handleShow();
+            }
+
+            @Override
+            public void onADClicked() {
+                LogUtil.simple(TAG + "onADClicked");
+                handleClick();
+            }
+
+            @Override
+            public void onADLeftApplication() {
+                LogUtil.simple(TAG + "onADLeftApplication");
+
+
+            }
+
+            @Override
+            public void onADClosed() {
+                LogUtil.simple(TAG + "onADClosed");
+
+                long costTime = System.currentTimeMillis() - videoStartTime;
+                LogUtil.high(TAG + "costTime ==   " + costTime + " videoDuration == " + videoDuration);
+
+                if (costTime < videoDuration) {
+                    LogUtil.high(TAG + " adapterVideoSkipped");
+                    handleSkip();
+                }
+                LogUtil.high(TAG + " adapterClose");
+                handleClose();
+            }
+
+            @Override
+            public void onRenderSuccess() {
+                LogUtil.simple(TAG + "onRenderSuccess");
+
+            }
+
+            @Override
+            public void onRenderFail() {
+                LogUtil.simple(TAG + "onRenderFail");
+                handleFailed(AdvanceError.ERROR_RENDER_FAILED, "");
+            }
+        });
         //用来获取视频时长
         iad.setMediaListener(new UnifiedInterstitialMediaListener() {
             @Override
@@ -257,8 +257,8 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
+
         GdtUtil.notifyBid(iad, isWin, winPrice, referBidInfo);
     }
 }

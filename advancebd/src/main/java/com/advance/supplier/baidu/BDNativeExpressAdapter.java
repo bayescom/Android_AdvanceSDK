@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * 模板信息流 对应了百度的智能优选信息流广告位
  */
-public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter implements BaiduNativeManager.ExpressAdListener, ExpressResponse.ExpressInteractionListener {
+public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     private BaiduNativeManager mBaiduNativeManager;
     private RequestParameters parameters;
     private List<ExpressResponse> ads;
@@ -32,21 +32,6 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         parameters = AdvanceBDManager.getInstance().nativeExpressParameters;
-//
-//        BDUtil.initBDAccount(this);
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, BDNativeExpressAdapter.class, new BYAbsCallBack<BDNativeExpressAdapter>() {
-//            @Override
-//            public void invoke(BDNativeExpressAdapter cacheAdapter) {
-//
-//                //更新缓存广告得价格
-//                updateBidding(BDUtil.getEcpmValue(cacheAdapter.nativeResponse.getECPMLevel()));
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
         if (sdkSupplier != null) {
 
@@ -64,7 +49,65 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
 //            if (parameters ==null){
 //                parameters = new RequestParameters
 //            }
-            mBaiduNativeManager.loadExpressAd(parameters, this);
+            mBaiduNativeManager.loadExpressAd(parameters, new BaiduNativeManager.ExpressAdListener() {
+
+                @Override
+                public void onNativeLoad(List<ExpressResponse> list) {
+                    LogUtil.simple(TAG + "onNativeLoad");
+                    try {
+                        ads = list;
+                        if (ads == null || ads.size() == 0) {
+                            handleFailed(AdvanceError.ERROR_DATA_NULL, "");
+                        } else {
+                            //赋值item信息
+                            nativeResponse = ads.get(0);
+                            double ecpm = 0;
+                            try { //避免方法有异常，catch一下，不影响success逻辑
+                                if (nativeResponse != null) {
+                                    ecpm = (BDUtil.getEcpmValue(nativeResponse.getECPMLevel()));
+                                }
+                            } catch (Throwable e) {
+                                e.printStackTrace();
+                            }
+
+                            handleSucceed(ecpm);
+                        }
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
+                    }
+                }
+
+                @Override
+                public void onNativeFail(int i, String s, ExpressResponse expressResponse) {
+                    handleFailed(i + "", s);
+                }
+
+                @Override
+                public void onNoAd(int i, String s, ExpressResponse expressResponse) {
+                    handleFailed(i + "", s);
+                }
+
+
+                @Override
+                public void onVideoDownloadSuccess() {
+                    LogUtil.simple(TAG + "onVideoDownloadSuccess");
+
+                }
+
+                @Override
+                public void onVideoDownloadFailed() {
+                    LogUtil.simple(TAG + "onVideoDownloadFailed");
+
+                }
+
+                @Override
+                public void onLpClosed() {
+                    LogUtil.simple(TAG + "onLpClosed");
+
+                }
+
+            });
         }
 
     }
@@ -76,64 +119,6 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
 
     @Override
     public void destroyAd() {
-
-    }
-
-
-
-    @Override
-    public void onNativeLoad(List<ExpressResponse> list) {
-        LogUtil.simple(TAG + "onNativeLoad");
-        try {
-            ads = list;
-            if (ads == null || ads.size() == 0) {
-                handleFailed(AdvanceError.ERROR_DATA_NULL, "");
-            } else {
-                //赋值item信息
-                nativeResponse = ads.get(0);
-                double ecpm = 0;
-                try { //避免方法有异常，catch一下，不影响success逻辑
-                    if (nativeResponse != null) {
-                        ecpm =(BDUtil.getEcpmValue(nativeResponse.getECPMLevel()));
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-
-                handleSucceed(ecpm);
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
-
-    @Override
-    public void onNativeFail(int i, String s, ExpressResponse expressResponse) {
-        handleFailed(i + "", s);
-    }
-
-    @Override
-    public void onNoAd(int i, String s, ExpressResponse expressResponse) {
-        handleFailed(i + "", s);
-    }
-
-
-    @Override
-    public void onVideoDownloadSuccess() {
-        LogUtil.simple(TAG + "onVideoDownloadSuccess");
-
-    }
-
-    @Override
-    public void onVideoDownloadFailed() {
-        LogUtil.simple(TAG + "onVideoDownloadFailed");
-
-    }
-
-    @Override
-    public void onLpClosed() {
-        LogUtil.simple(TAG + "onLpClosed");
 
     }
 
@@ -151,14 +136,13 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
         if (nativeResponse != null) {
             return nativeResponse.isReady(getRealContext());
         }
-        return true ;
+        return true;
     }
-
 
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
 
         if (isWin) {
             nativeResponse.biddingSuccess(null, new BiddingListener() {
@@ -193,7 +177,62 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
                 addADView(adView);
             }
 
-            nativeResponse.setInteractionListener(this);
+            nativeResponse.setInteractionListener(new ExpressResponse.ExpressInteractionListener() {
+
+                @Override
+                public void onAdClick() {
+                    handleClick();
+
+                    String title = "";
+                    try {
+                        if (nativeResponse != null) {
+                            title = nativeResponse.getAdData().getTitle();
+                        }
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                    LogUtil.simple(TAG + "onAdClick: title = " + title);
+                }
+
+                @Override
+                public void onAdExposed() {
+                    handleShow();
+
+                    String title = "";
+                    try {
+                        if (nativeResponse != null) {
+                            title = nativeResponse.getAdData().getTitle();
+                        }
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                    LogUtil.simple(TAG + "onADExposed: title = " + title);
+                }
+
+                @Override
+                public void onAdRenderFail(View view, String s, int i) {
+                    String tip = "onAdRenderFail , inf : reason = " + s + ", code =" + i;
+                    LogUtil.simple(TAG + tip);
+
+                    handleRenderFailed(view, AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, TAG + i + "， " + s));
+                }
+
+                @Override
+                public void onAdRenderSuccess(View view, float width, float height) {
+                    LogUtil.simple(TAG + "onAdRenderSuccess: " + width + ", " + height);
+
+
+                    handleRenderSuccess(view);
+                }
+
+                @Override
+                public void onAdUnionClick() {
+                    LogUtil.simple(TAG + "onADUnionClick");
+
+                    handleClick();
+                }
+
+            });
             nativeResponse.setAdDislikeListener(new ExpressResponse.ExpressDislikeListener() {
                 @Override
                 public void onDislikeWindowShow() {
@@ -228,59 +267,6 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter im
             e.printStackTrace();
             runParaFailed(AdvanceError.parseErr(ERROR_EXCEPTION_SHOW));
         }
-    }
-
-    @Override
-    public void onAdClick() {
-        handleClick();
-
-        String title = "";
-        try {
-            if (nativeResponse != null) {
-                title = nativeResponse.getAdData().getTitle();
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        LogUtil.simple(TAG + "onAdClick: title = " + title);
-    }
-
-    @Override
-    public void onAdExposed() {
-        handleShow();
-
-        String title = "";
-        try {
-            if (nativeResponse != null) {
-                title = nativeResponse.getAdData().getTitle();
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        LogUtil.simple(TAG + "onADExposed: title = " + title);
-    }
-
-    @Override
-    public void onAdRenderFail(View view, String s, int i) {
-        String tip = "onAdRenderFail , inf : reason = " + s + ", code =" + i;
-        LogUtil.simple(TAG + tip);
-
-        handleRenderFailed(view,AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, TAG + i + "， " + s));
-    }
-
-    @Override
-    public void onAdRenderSuccess(View view, float width, float height) {
-        LogUtil.simple(TAG + "onAdRenderSuccess: " + width + ", " + height);
-
-
-        handleRenderSuccess(view);
-    }
-
-    @Override
-    public void onAdUnionClick() {
-        LogUtil.simple(TAG + "onADUnionClick");
-
-        handleClick();
     }
 
 }

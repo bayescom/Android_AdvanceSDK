@@ -15,127 +15,129 @@ import com.mercury.sdk.util.ADError;
 
 import java.util.Map;
 
-public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter implements RewardVideoADListener {
+public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter   {
     String TAG = "[MercuryRewardVideoAdapter] ";
     RewardVideoAD rewardVideoAD;
 
-    @Override
-    public void onADLoad() {
-        LogUtil.simple(TAG + "onADLoad");
-
-        //旧版本SDK中不包含价格返回方法，catch住
-        int cpm = 0;
-        try {
-            cpm = rewardVideoAD.getEcpm();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        handleSucceed(cpm);
-    }
-
-    @Override
-    public void onVideoCached() {
-        LogUtil.simple(TAG + "onVideoCached");
-
-        handleCached();
-
-    }
-
-    @Override
-    public void onADShow() {
-        LogUtil.simple(TAG + "onADShow");
-
-
-    }
-
-    @Override
-    public void onADExposure() {
-        LogUtil.simple(TAG + "onADExposure");
-
-        handleShow();
-    }
-
-    @Override
-    public void onADClicked() {
-        LogUtil.simple(TAG + "onADClicked");
-
-        handleClick();
-    }
-
-    @Override
-    public void onReward() {
-        LogUtil.simple(TAG + "onReward");
-
-        try {
-            MercuryRewardResult result = null;
-            if (rewardVideoAD != null) {
-                result = rewardVideoAD.getRewardResult();
-            }
-            String msg = "";
-            //建议根据返回结果，来处理奖励发放逻辑
-            if (result != null && !result.isRewardValid) {
-                //可能是奖励验证超时或者服务端校验奖励不通过等原因
-                msg = "奖励发放异常, errCode = " + result.errCode + " , errMsg = " + result.errMsg;
-            } else {
-                msg = "奖励正常发放";
-                handleReward();
-            }
-            LogUtil.d("reward msg = "+msg);
-
-            RewardServerCallBackInf inf = new RewardServerCallBackInf();
-            if (result != null) {
-                inf.rewardVerify = result.isRewardValid;
-                inf.rewardAmount = result.rewardAmount;
-                inf.rewardName = result.rewardName;
-                inf.errorCode = result.errCode;
-                inf.errMsg = result.errMsg;
-            }
-
-
-            handleRewardInf(inf);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
-
-
-    }
-
-
-    @Override
-    public void onVideoComplete() {
-        LogUtil.simple(TAG + "onVideoComplete");
-
-
-        handleComplete();
-    }
-
-    @Override
-    public void onADClose() {
-        LogUtil.simple(TAG + "onADClose");
-
-
-        handleClose();
-
-    }
-
-
-    @Override
-    public void onNoAD(ADError adError) {
-
-        int code = -1;
-        String msg = "default onNoAD";
-        if (adError != null) {
-            code = adError.code;
-            msg = adError.msg;
-        }
-        LogUtil.simple(TAG + "onNoAD");
-        handleFailed(code, msg);
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
-        rewardVideoAD = new RewardVideoAD(getRealContext(), sdkSupplier.adspotid, this);
+        rewardVideoAD = new RewardVideoAD(getRealContext(), sdkSupplier.adspotid, new RewardVideoADListener() {
+
+            @Override
+            public void onADLoad() {
+                LogUtil.simple(TAG + "onADLoad");
+
+                //旧版本SDK中不包含价格返回方法，catch住
+                int cpm = 0;
+                try {
+                    cpm = rewardVideoAD.getEcpm();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                handleSucceed(cpm);
+            }
+
+            @Override
+            public void onVideoCached() {
+                LogUtil.simple(TAG + "onVideoCached");
+
+                handleCached();
+
+            }
+
+            @Override
+            public void onADShow() {
+                LogUtil.simple(TAG + "onADShow");
+
+
+            }
+
+            @Override
+            public void onADExposure() {
+                LogUtil.simple(TAG + "onADExposure");
+
+                handleShow();
+            }
+
+            @Override
+            public void onADClicked() {
+                LogUtil.simple(TAG + "onADClicked");
+
+                handleClick();
+            }
+
+            @Override
+            public void onReward() {
+                LogUtil.simple(TAG + "onReward");
+
+                try {
+                    MercuryRewardResult result = null;
+                    if (rewardVideoAD != null) {
+                        result = rewardVideoAD.getRewardResult();
+                    }
+                    String msg = "";
+                    //建议根据返回结果，来处理奖励发放逻辑
+                    if (result != null && !result.isRewardValid) {
+                        //可能是奖励验证超时或者服务端校验奖励不通过等原因
+                        msg = "奖励发放异常, errCode = " + result.errCode + " , errMsg = " + result.errMsg;
+                    } else {
+                        msg = "奖励正常发放";
+                        handleReward();
+                    }
+                    LogUtil.d("reward msg = "+msg);
+
+                    RewardServerCallBackInf inf = new RewardServerCallBackInf();
+                    if (result != null) {
+                        inf.rewardVerify = result.isRewardValid;
+                        inf.rewardAmount = result.rewardAmount;
+                        inf.rewardName = result.rewardName;
+                        inf.errorCode = result.errCode;
+                        inf.errMsg = result.errMsg;
+                    }
+
+
+                    handleRewardInf(inf);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+
+
+
+            }
+
+
+            @Override
+            public void onVideoComplete() {
+                LogUtil.simple(TAG + "onVideoComplete");
+
+
+                handleComplete();
+            }
+
+            @Override
+            public void onADClose() {
+                LogUtil.simple(TAG + "onADClose");
+
+
+                handleClose();
+
+            }
+
+
+            @Override
+            public void onNoAD(ADError adError) {
+
+                int code = -1;
+                String msg = "default onNoAD";
+                if (adError != null) {
+                    code = adError.code;
+                    msg = adError.msg;
+                }
+                LogUtil.simple(TAG + "onNoAD");
+                handleFailed(code, msg);
+            }
+        });
         // (可选) 激励相关参数配置
         rewardVideoAD.setRewardOptions(new MercuryRewardOptions.Builder()
                 .setUserID(rewardSetting.getUserId()) //用户唯一id，服务端验证时必传

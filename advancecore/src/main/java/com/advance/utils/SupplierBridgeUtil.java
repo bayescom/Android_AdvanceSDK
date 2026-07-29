@@ -60,12 +60,12 @@ public class SupplierBridgeUtil {
 
                     AdvanceCustomInit customInit = AdvanceLoader.getCustomInit(clzName);
                     if (customInit == null) {
-                        LogUtil.e("检测到未引入得SDK id：" + supConfigModel.sdkID);
+                        LogUtil.e("检测到adapter未引入得SDK id：" + supConfigModel.sdkID);
                         continue;
                     }
 
                     if (AdvanceConfig.getInstance().availableAdapterConfigMap != null) {
-                        LogUtil.simple("检测到已引入得SDK id：" + supConfigModel.sdkID);
+                        LogUtil.simple("检测到adapter已引入得SDK id：" + supConfigModel.sdkID);
                         //放入已生效的map
                         AdvanceConfig.getInstance().availableAdapterConfigMap.put(supConfigModel.sdkID, customInit);
                         //放入已生效的类名map

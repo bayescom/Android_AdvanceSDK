@@ -266,6 +266,7 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
                         //传递成功事件给基类，标记为成功
                         baseSetting.paraEvent(AdvanceConstant.EVENT_TYPE_SUCCEED, null, sdkSupplier);
                         LogUtil.high(TAG + "onSucceed adStatus = " + adStatus);
+                        LogUtil.devDebug(TAG + "onSucceed isValid()  = " + isValid() );
                         //如果是等待中发起了展示需求，直接展示，否则标记为1 成功获得广告
                         if (adStatus == AdvanceConstant.AD_STATUS_LOADING_SHOW) {
                             adStatus = AdvanceConstant.AD_STATUS_LOADED_SHOW;

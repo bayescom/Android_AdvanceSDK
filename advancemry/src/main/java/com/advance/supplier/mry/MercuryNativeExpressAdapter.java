@@ -18,7 +18,7 @@ import com.mercury.sdk.util.ADError;
 import java.util.List;
 import java.util.Map;
 
-public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter implements NativeExpressADListener {
+public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
     String TAG = "[MercuryNativeExpressAdapter] ";
     NativeExpressADView adView;
     NativeExpressAD nativeExpressAd;
@@ -38,7 +38,84 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
         }
         ADSize adSize = new ADSize(width, height);
 //        LogUtil.devDebug("paraLoadAd init");
-        nativeExpressAd = new NativeExpressAD(activity, sdkSupplier.adspotid, adSize, this); // 这里的Context必须为Activity
+        nativeExpressAd = new NativeExpressAD(activity, sdkSupplier.adspotid, adSize, new NativeExpressADListener() {
+
+            @Override
+            public void onADLoaded(List<NativeExpressADView> list) {
+                LogUtil.simple(TAG + "onADLoaded");
+
+                if (list == null || list.isEmpty()) {
+                    handleFailed(ERROR_DATA_NULL, "");
+                } else {
+                    adView = list.get(0);
+
+                    //旧版本SDK中不包含价格返回方法，catch住
+                    int cpm = 0;
+                    try {
+                        cpm = adView.getEcpm();
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                    handleSucceed(cpm);
+                }
+            }
+
+            @Override
+            public void onRenderFail(NativeExpressADView nativeExpressADView) {
+                LogUtil.simple(TAG + "onRenderFail");
+
+                handleRenderFailed(nativeExpressADView, AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED));
+            }
+
+            @Override
+            public void onRenderSuccess(NativeExpressADView nativeExpressADView) {
+                LogUtil.simple(TAG + "onRenderSuccess");
+
+                handleRenderSuccess(nativeExpressADView);
+
+            }
+
+            @Override
+            public void onADExposure(NativeExpressADView adView) {
+                nativeExpressADView = adView;
+                LogUtil.simple(TAG + "onADExposure");
+
+                handleShow();
+            }
+
+            @Override
+            public void onADClicked(NativeExpressADView nativeExpressADView) {
+                LogUtil.simple(TAG + "onADClicked");
+
+                handleClick();
+            }
+
+            @Override
+            public void onADClosed(NativeExpressADView nativeExpressADView) {
+                LogUtil.simple(TAG + "onADClosed");
+
+                handleClose();
+            }
+
+            @Override
+            public void onADLeftApplication(NativeExpressADView nativeExpressADView) {
+                LogUtil.simple(TAG + "onADLeftApplication");
+
+            }
+
+            @Override
+            public void onNoAD(ADError adError) {
+                int code = -1;
+                String msg = "default onNoAD";
+                if (adError != null) {
+                    code = adError.code;
+                    msg = adError.msg;
+                }
+                LogUtil.simple(TAG + "onNoAD");
+                handleFailed(code, msg);
+            }
+
+        }); // 这里的Context必须为Activity
         //设置播放属性
 //        nativeExpressAd.setVideoOption(new VideoOption.Builder().setAutoPlayMuted(nativeExpressSetting.isVideoMute()).build());
 //        LogUtil.devDebug("paraLoadAd loadAD");
@@ -52,81 +129,6 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
     protected void adPrepared() {
     }
 
-
-    @Override
-    public void onADLoaded(List<NativeExpressADView> list) {
-        LogUtil.simple(TAG + "onADLoaded");
-
-        if (list == null || list.isEmpty()) {
-            handleFailed(ERROR_DATA_NULL, "");
-        } else {
-            adView = list.get(0);
-
-            //旧版本SDK中不包含价格返回方法，catch住
-            int cpm = 0;
-            try {
-                cpm = adView.getEcpm();
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            handleSucceed(cpm);
-        }
-    }
-
-    @Override
-    public void onRenderFail(NativeExpressADView nativeExpressADView) {
-        LogUtil.simple(TAG + "onRenderFail");
-
-        handleRenderFailed(nativeExpressADView,AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED));
-    }
-
-    @Override
-    public void onRenderSuccess(NativeExpressADView nativeExpressADView) {
-        LogUtil.simple(TAG + "onRenderSuccess");
-
-        handleRenderSuccess(nativeExpressADView);
-
-    }
-
-    @Override
-    public void onADExposure(NativeExpressADView nativeExpressADView) {
-        this.nativeExpressADView = nativeExpressADView;
-        LogUtil.simple(TAG + "onADExposure");
-
-        handleShow();
-    }
-
-    @Override
-    public void onADClicked(NativeExpressADView nativeExpressADView) {
-        LogUtil.simple(TAG + "onADClicked");
-
-        handleClick();
-    }
-
-    @Override
-    public void onADClosed(NativeExpressADView nativeExpressADView) {
-        LogUtil.simple(TAG + "onADClosed");
-
-        handleClose();
-    }
-
-    @Override
-    public void onADLeftApplication(NativeExpressADView nativeExpressADView) {
-        LogUtil.simple(TAG + "onADLeftApplication");
-
-    }
-
-    @Override
-    public void onNoAD(ADError adError) {
-        int code = -1;
-        String msg = "default onNoAD";
-        if (adError != null) {
-            code = adError.code;
-            msg = adError.msg;
-        }
-        LogUtil.simple(TAG + "onNoAD");
-        handleFailed(code, msg);
-    }
 
     @Override
     public void destroyAd() {
@@ -151,12 +153,12 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
         if (nativeExpressAd != null) {
             return nativeExpressAd.isValid();
         }
-           return true;
+        return true;
     }
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
 
         if (nativeExpressAd != null && !isWin) {
             nativeExpressAd.sendLossWin(winPrice);

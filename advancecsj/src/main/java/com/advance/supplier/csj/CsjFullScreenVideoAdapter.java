@@ -17,11 +17,10 @@ import com.bytedance.sdk.openadsdk.TTFullScreenVideoAd;
 
 import java.util.Map;
 
-public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements TTAdNative.FullScreenVideoAdListener, TTFullScreenVideoAd.FullScreenVideoAdInteractionListener {
+public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter {
     private TTFullScreenVideoAd ttFullScreenVideoAd;
     private String TAG = "[CsjFullScreenVideoAdapter] ";
 
-   
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
@@ -64,56 +63,57 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
 
 
 //step5:请求广告
-        mTTAdNative.loadFullScreenVideoAd(adSlot, this);
+        mTTAdNative.loadFullScreenVideoAd(adSlot, new TTAdNative.FullScreenVideoAdListener() {
+
+            @Override
+            public void onError(int i, String s) {
+                handleFailed(i, s);
+            }
+
+            @Override
+            public void onFullScreenVideoAdLoad(TTFullScreenVideoAd screenVideoAd) {
+                try {
+                    LogUtil.simple(TAG + "onFullScreenVideoAdLoad ");
+
+                    ttFullScreenVideoAd = screenVideoAd;
+
+                    if (screenVideoAd == null) {
+                        String nMsg = TAG + "screenVideoAd  null";
+                        AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, nMsg);
+                        runParaFailed(error);
+                        return;
+                    }
+                    handleSucceed(CsjUtil.getEcpmValue(TAG, screenVideoAd.getMediaExtraInfo()));
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
+                }
+            }
+
+            @Override
+            public void onFullScreenVideoCached() {
+                LogUtil.simple(TAG + "onFullScreenVideoCached ");
+            }
+
+            @Override
+            public void onFullScreenVideoCached(TTFullScreenVideoAd ttFullScreenVideoAd) {
+                try {
+                    String ad = "";
+                    if (ttFullScreenVideoAd != null) {
+                        ad = ttFullScreenVideoAd.toString();
+                    }
+                    LogUtil.simple(TAG + "onFullScreenVideoCached( " + ad + ")");
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+
+                handleCached();
+            }
+        });
     }
 
     @Override
     protected void adPrepared() {
-    }
-
-    @Override
-    public void onError(int i, String s) {
-        handleFailed(i, s);
-    }
-
-    @Override
-    public void onFullScreenVideoAdLoad(TTFullScreenVideoAd ttFullScreenVideoAd) {
-        try {
-            LogUtil.simple(TAG + "onFullScreenVideoAdLoad ");
-
-            this.ttFullScreenVideoAd = ttFullScreenVideoAd;
-
-            if (ttFullScreenVideoAd == null) {
-                String nMsg = TAG + "ttFullScreenVideoAd  null";
-                AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, nMsg);
-                runParaFailed(error);
-                return;
-            }
-            handleSucceed(CsjUtil.getEcpmValue(TAG, ttFullScreenVideoAd.getMediaExtraInfo()));
-        } catch (Throwable e) {
-            e.printStackTrace();
-            runParaFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
-
-    @Override
-    public void onFullScreenVideoCached() {
-        LogUtil.simple(TAG + "onFullScreenVideoCached ");
-    }
-
-    @Override
-    public void onFullScreenVideoCached(TTFullScreenVideoAd ttFullScreenVideoAd) {
-        try {
-            String ad = "";
-            if (ttFullScreenVideoAd != null) {
-                ad = ttFullScreenVideoAd.toString();
-            }
-            LogUtil.simple(TAG + "onFullScreenVideoCached( " + ad + ")");
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
-        handleCached();
     }
 
 
@@ -122,9 +122,45 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
 
     }
 
-    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra){
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
-            ttFullScreenVideoAd.setFullScreenVideoAdInteractionListener(this);
+            ttFullScreenVideoAd.setFullScreenVideoAdInteractionListener(new TTFullScreenVideoAd.FullScreenVideoAdInteractionListener() {
+
+                @Override
+                public void onAdShow() {
+                    LogUtil.simple(TAG + "onFullScreenVideo onAdShow");
+                    handleShow();
+
+                }
+
+                @Override
+                public void onAdVideoBarClick() {
+                    LogUtil.simple(TAG + "onFullScreenVideo onAdVideoBarClick");
+                    handleClick();
+
+                }
+
+                @Override
+                public void onAdClose() {
+                    LogUtil.simple(TAG + "onFullScreenVideo onAdClose");
+
+                    handleClose();
+                }
+
+                @Override
+                public void onVideoComplete() {
+                    LogUtil.simple(TAG + "onFullScreenVideo onVideoComplete");
+
+                    handleComplete();
+                }
+
+                @Override
+                public void onSkippedVideo() {
+                    LogUtil.simple(TAG + "onFullScreenVideo onSkippedVideo");
+
+                    handleSkip();
+                }
+            });
             ttFullScreenVideoAd.showFullScreenVideoAd(activity, TTAdConstant.RitScenes.GAME_GIFT_BONUS, null);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -136,40 +172,6 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
      * 广告事件监听
      */
 
-    @Override
-    public void onAdShow() {
-        LogUtil.simple(TAG + "onFullScreenVideo onAdShow");
-        handleShow();
-
-    }
-
-    @Override
-    public void onAdVideoBarClick() {
-        LogUtil.simple(TAG + "onFullScreenVideo onAdVideoBarClick");
-        handleClick();
-
-    }
-
-    @Override
-    public void onAdClose() {
-        LogUtil.simple(TAG + "onFullScreenVideo onAdClose");
-
-        handleClose();
-    }
-
-    @Override
-    public void onVideoComplete() {
-        LogUtil.simple(TAG + "onFullScreenVideo onVideoComplete");
-
-        handleComplete();
-    }
-
-    @Override
-    public void onSkippedVideo() {
-        LogUtil.simple(TAG + "onFullScreenVideo onSkippedVideo");
-
-       handleSkip();
-    }
 
     @Override
     public boolean isValid() {
@@ -182,9 +184,9 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter im
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
 
-        CsjUtil.bid(ttFullScreenVideoAd,isWin,winPrice);
+        CsjUtil.bid(ttFullScreenVideoAd, isWin, winPrice);
 
     }
 }

@@ -29,6 +29,7 @@ public class AdvanceError extends BYError {
     public static final String ERROR_TAP_RENDER_ERR = "9923"; //tap sdk 广告渲染失败，无具体错误码信息
     public static final String ERROR_VIDEO_RENDER_ERR = "9924"; //视频广告渲染失败
     public static final int ERROR_CSJ_NOT_READY = 9925; //穿山甲未准备好
+    public static final int ERROR_AD_SDK_NOT_FOUND = 9926; //未找到SDK
     public static final int ERROR_REWARD_SERVER_VERIFY_EMPTY_SDK = 9930; //激励验证失败，无SDK广告信息
     public static final int ERROR_REWARD_SERVER_VERIFY_JSON_DECODE_FAILED = 9931; //服务端验证激励奖励，json结果解析失败
 

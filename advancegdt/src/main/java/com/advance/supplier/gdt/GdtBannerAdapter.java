@@ -15,7 +15,7 @@ import com.qq.e.comm.util.AdError;
 
 import java.util.Map;
 
-public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements UnifiedBannerADListener {
+public class GdtBannerAdapter extends AdvanceBannerCustomAdapter {
     private UnifiedBannerView bv;
     String TAG = "[GdtBannerAdapter] ";
 
@@ -30,101 +30,82 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
         }
     }
 
-    @Override
-    public void onNoAD(AdError adError) {
-        try {
-            int code = -1;
-            String msg = "default onNoAD";
-            if (adError != null) {
-                code = adError.getErrorCode();
-                msg = adError.getErrorMsg();
-            }
-            LogUtil.e(TAG + " onError: code = " + code + " msg = " + msg);
-            AdvanceError advanceError = AdvanceError.parseErr(code, msg);
-
-            doBannerFailed(advanceError);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onADReceive() {
-        try {
-            LogUtil.simple(TAG + "onADReceive");
-
-            if (bannerSetting != null) {
-                int refreshValue = bannerSetting.getRefreshInterval();
-                LogUtil.high("refreshValue == " + refreshValue);
-
-                if (refreshValue > 0) {
-                    //当收到广告后，且有设置刷新间隔，代表目前正在刷新中
-                    refreshing = true;
-                }
-            }
-            double ecpm = 0;
-            if (bv != null) {
-                ecpm = (bv.getECPM());
-            }
-            handleSucceed(ecpm);
-        } catch (Throwable e) {
-            e.printStackTrace();
-            doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
-
-    @Override
-    public void onADExposure() {
-        LogUtil.simple(TAG + "onADExposure");
-
-        handleShow();
-    }
-
-    @Override
-    public void onADClosed() {
-        LogUtil.simple(TAG + "onADClosed");
-
-        handleClose();
-    }
-
-    @Override
-    public void onADClicked() {
-        LogUtil.simple(TAG + "onADClicked");
-
-        handleClick();
-
-    }
-
-    @Override
-    public void onADLeftApplication() {
-        LogUtil.simple(TAG + "onADLeftApplication");
-
-    }
-
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
-//        GdtUtil.initAD(this, new BYBaseCallBack() {
-//            @Override
-//            public void call() {
-//                loadAd();
-//            }
-//        });
-//    }
-//    public void loadAd() {
-//
-//        //检查是否命中使用缓存逻辑
-//        boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this, GdtBannerAdapter.class, new BYAbsCallBack<GdtBannerAdapter>() {
-//            @Override
-//            public void invoke(GdtBannerAdapter cacheAdapter) {
-//                //更新缓存广告得价格
-//                updateBidding(cacheAdapter.bv.getECPM());
-//            }
-//        });
-//        if (hitCache) {
-//            return;
-//        }
 
-        bv = new UnifiedBannerView(activity, sdkSupplier.adspotid, this);
+        bv = new UnifiedBannerView(activity, sdkSupplier.adspotid, new UnifiedBannerADListener() {
+
+            @Override
+            public void onNoAD(AdError adError) {
+                try {
+                    int code = -1;
+                    String msg = "default onNoAD";
+                    if (adError != null) {
+                        code = adError.getErrorCode();
+                        msg = adError.getErrorMsg();
+                    }
+                    LogUtil.e(TAG + " onError: code = " + code + " msg = " + msg);
+                    AdvanceError advanceError = AdvanceError.parseErr(code, msg);
+
+                    doBannerFailed(advanceError);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onADReceive() {
+                try {
+                    LogUtil.simple(TAG + "onADReceive");
+
+                    if (bannerSetting != null) {
+                        int refreshValue = bannerSetting.getRefreshInterval();
+                        LogUtil.high("refreshValue == " + refreshValue);
+
+                        if (refreshValue > 0) {
+                            //当收到广告后，且有设置刷新间隔，代表目前正在刷新中
+                            refreshing = true;
+                        }
+                    }
+                    double ecpm = 0;
+                    if (bv != null) {
+                        ecpm = (bv.getECPM());
+                    }
+                    handleSucceed(ecpm);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
+                }
+            }
+
+            @Override
+            public void onADExposure() {
+                LogUtil.simple(TAG + "onADExposure");
+
+                handleShow();
+            }
+
+            @Override
+            public void onADClosed() {
+                LogUtil.simple(TAG + "onADClosed");
+
+                handleClose();
+            }
+
+            @Override
+            public void onADClicked() {
+                LogUtil.simple(TAG + "onADClicked");
+
+                handleClick();
+
+            }
+
+            @Override
+            public void onADLeftApplication() {
+                LogUtil.simple(TAG + "onADLeftApplication");
+
+            }
+        });
         if (bannerSetting != null) {
             int refreshValue = bannerSetting.getRefreshInterval();
             bv.setRefresh(refreshValue);
@@ -169,8 +150,8 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter implements Unif
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
-        
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
+
         GdtUtil.notifyBid(bv, isWin, winPrice, referBidInfo);
     }
 

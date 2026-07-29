@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRewardVideoAd.RewardAdInteractionListener {
+public class KSRewardAdapter extends AdvanceRewardCustomAdapter {
     private String TAG = "[KSRewardAdapter] ";
     KsRewardVideoAd ad;
 
@@ -99,106 +99,108 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
     public void destroyAd() {
     }
 
-
-    //--------广告回调--------
-
-    @Override
-    public void onAdClicked() {
-        LogUtil.simple(TAG + " onAdClicked");
-
-        handleClick();
-    }
-
-    @Override
-    public void onPageDismiss() {
-        LogUtil.simple(TAG + " onPageDismiss");
-
-        handleClose();
-    }
-
-    @Override
-    public void onVideoPlayError(int code, int extra) {
-        String msg = " onVideoPlayError,code = " + code + ",extra = " + extra;
-        LogUtil.simple(TAG + msg);
-
-        handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, msg);
-    }
-
-    @Override
-    public void onVideoPlayEnd() {
-        LogUtil.simple(TAG + " onVideoPlayEnd");
-
-        handleComplete();
-    }
-
-    @Override
-    public void onVideoSkipToEnd(long l) {
-        LogUtil.simple(TAG + " onVideoSkipToEnd，l=" + l);
-
-        handleSkip();
-    }
-
-    @Override
-    public void onVideoPlayStart() {
-        LogUtil.simple(TAG + " onVideoPlayStart");
-
-        handleShow();
-    }
-
-    @Override
-    public void onRewardVerify() {
-        LogUtil.simple(TAG + " onRewardVerify");
-        try {
-            handleReward();
-            RewardServerCallBackInf inf = new RewardServerCallBackInf();
-            inf.rewardVerify = true;
-            if (sdkSupplier != null) {
-                inf.supId = sdkSupplier.id;
-            }
-            handleRewardInf(inf);
-
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onRewardVerify(Map<String, Object> map) {
-        LogUtil.simple(TAG + " onRewardVerify -- Map");
-
-    }
-
-    /**
-     * 视频激励分阶段回调（激励广告新玩法，相关政策请联系商务或技术支持）
-     *
-     * @param taskType          当前激励视频所属任务类型
-     *                          RewardTaskType.LOOK_VIDEO 观看视频类型             属于浅度奖励类型
-     *                          RewardTaskType.LOOK_LANDING_PAGE 浏览落地⻚N秒类型  属于深度奖励类型
-     *                          RewardTaskType.USE_APP 下载使用App N秒类型          属于深度奖励类型
-     * @param currentTaskStatus 当前所完成任务类型，@RewardTaskType中之一
-     */
-    @Override
-    public void onRewardStepVerify(int taskType, int currentTaskStatus) {
-        LogUtil.simple(TAG + " onRewardStepVerify , taskType :" + taskType + "，currentTaskStatus = " + currentTaskStatus);
-
-    }
-
-    /**
-     * 额外奖励的回调，在触发激励视频的额外奖励的时候进行通知
-     * AD_3.3.25 新增
-     *
-     * @param extraRewardType 额外奖励的类型，定义在 KsExtraRewardType 中
-     */
-    @Override
-    public void onExtraRewardVerify(@KsExtraRewardType int extraRewardType) {
-        LogUtil.simple(TAG + " onExtraRewardVerify , extraRewardType :" + extraRewardType);
-    }
-    //--------广告回调 结束--------
-
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             if (isValid()) {
-                ad.setRewardAdInteractionListener(KSRewardAdapter.this);
+                ad.setRewardAdInteractionListener(new KsRewardVideoAd.RewardAdInteractionListener() {
+
+
+                    //--------广告回调--------
+
+                    @Override
+                    public void onAdClicked() {
+                        LogUtil.simple(TAG + " onAdClicked");
+
+                        handleClick();
+                    }
+
+                    @Override
+                    public void onPageDismiss() {
+                        LogUtil.simple(TAG + " onPageDismiss");
+
+                        handleClose();
+                    }
+
+                    @Override
+                    public void onVideoPlayError(int code, int extra) {
+                        String msg = " onVideoPlayError,code = " + code + ",extra = " + extra;
+                        LogUtil.simple(TAG + msg);
+
+                        handleFailed(AdvanceError.ERROR_EXCEPTION_RENDER, msg);
+                    }
+
+                    @Override
+                    public void onVideoPlayEnd() {
+                        LogUtil.simple(TAG + " onVideoPlayEnd");
+
+                        handleComplete();
+                    }
+
+                    @Override
+                    public void onVideoSkipToEnd(long l) {
+                        LogUtil.simple(TAG + " onVideoSkipToEnd，l=" + l);
+
+                        handleSkip();
+                    }
+
+                    @Override
+                    public void onVideoPlayStart() {
+                        LogUtil.simple(TAG + " onVideoPlayStart");
+
+                        handleShow();
+                    }
+
+                    @Override
+                    public void onRewardVerify() {
+                        LogUtil.simple(TAG + " onRewardVerify");
+                        try {
+                            handleReward();
+                            RewardServerCallBackInf inf = new RewardServerCallBackInf();
+                            inf.rewardVerify = true;
+                            if (sdkSupplier != null) {
+                                inf.supId = sdkSupplier.id;
+                            }
+                            handleRewardInf(inf);
+
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onRewardVerify(Map<String, Object> map) {
+                        LogUtil.simple(TAG + " onRewardVerify -- Map");
+
+                    }
+
+                    /**
+                     * 视频激励分阶段回调（激励广告新玩法，相关政策请联系商务或技术支持）
+                     *
+                     * @param taskType          当前激励视频所属任务类型
+                     *                          RewardTaskType.LOOK_VIDEO 观看视频类型             属于浅度奖励类型
+                     *                          RewardTaskType.LOOK_LANDING_PAGE 浏览落地⻚N秒类型  属于深度奖励类型
+                     *                          RewardTaskType.USE_APP 下载使用App N秒类型          属于深度奖励类型
+                     * @param currentTaskStatus 当前所完成任务类型，@RewardTaskType中之一
+                     */
+                    @Override
+                    public void onRewardStepVerify(int taskType, int currentTaskStatus) {
+                        LogUtil.simple(TAG + " onRewardStepVerify , taskType :" + taskType + "，currentTaskStatus = " + currentTaskStatus);
+
+                    }
+
+                    /**
+                     * 额外奖励的回调，在触发激励视频的额外奖励的时候进行通知
+                     * AD_3.3.25 新增
+                     *
+                     * @param extraRewardType 额外奖励的类型，定义在 KsExtraRewardType 中
+                     */
+                    @Override
+                    public void onExtraRewardVerify(@KsExtraRewardType int extraRewardType) {
+                        LogUtil.simple(TAG + " onExtraRewardVerify , extraRewardType :" + extraRewardType);
+                    }
+                    //--------广告回调 结束--------
+
+                });
                 ad.showRewardVideoAd(activity, AdvanceKSManager.getInstance().rewardVideoConfig);
             } else {
                 runParaFailed(AdvanceError.parseErr(ERROR_EXCEPTION_SHOW, "RewardNotVis"));
@@ -223,12 +225,12 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter implements KsRew
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
 
-        if (isWin){
-            ad.setBidEcpm((long) winPrice,0);
-        }else {
-            ad.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice,referBidInfo));
+        if (isWin) {
+            ad.setBidEcpm((long) winPrice, 0);
+        } else {
+            ad.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice, referBidInfo));
         }
     }
 }

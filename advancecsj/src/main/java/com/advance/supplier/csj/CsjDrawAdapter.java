@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNative.NativeExpressAdListener {
+public class CsjDrawAdapter extends AdvanceDrawCustomAdapter {
     private TTAdNative mTTAdNative;
     private String TAG = "[CsjDrawAdapter] ";
     TTNativeExpressAd ad;
@@ -43,7 +43,40 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
 //                .setAdLoadType(PRELOAD)//推荐使用，用于标注此次的广告请求用途为预加载（当做缓存）还是实时加载，方便后续为开发者优化相关策略
                 .build();
 
-        mTTAdNative.loadExpressDrawFeedAd(adSlot, this);
+        mTTAdNative.loadExpressDrawFeedAd(adSlot, new TTAdNative.NativeExpressAdListener() {
+
+            @Override
+            public void onError(int code, String message) {
+                LogUtil.simple(TAG + "onError" + code + message);
+
+                handleFailed(code, message);
+            }
+
+            @Override
+            public void onNativeExpressAdLoad(List<TTNativeExpressAd> ads) {
+                try {
+                    LogUtil.simple(TAG + "onNativeExpressAdLoad, ads = " + ads);
+
+                    if (ads == null || ads.isEmpty()) {
+                        handleFailed(AdvanceError.ERROR_DATA_NULL, "ads empty");
+                        return;
+                    }
+                    ad = ads.get(0);
+                    if (ad == null) {
+                        String nMsg = TAG + " ad null";
+                        AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, nMsg);
+                        runParaFailed(error);
+                        return;
+                    }
+
+                    handleSucceed(CsjUtil.getEcpmValue(TAG, ad.getMediaExtraInfo()));
+
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     @Override
@@ -104,39 +137,6 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
     }
 
 
-
-    @Override
-    public void onError(int code, String message) {
-        LogUtil.simple(TAG + "onError" + code + message);
-
-        handleFailed(code, message);
-    }
-
-    @Override
-    public void onNativeExpressAdLoad(List<TTNativeExpressAd> ads) {
-        try {
-            LogUtil.simple(TAG + "onNativeExpressAdLoad, ads = " + ads);
-
-            if (ads == null || ads.isEmpty()) {
-                handleFailed(AdvanceError.ERROR_DATA_NULL, "ads empty");
-                return;
-            }
-            ad = ads.get(0);
-            if (ad == null) {
-                String nMsg = TAG + " ad null";
-                AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, nMsg);
-                runParaFailed(error);
-                return;
-            }
-
-            handleSucceed(CsjUtil.getEcpmValue(TAG, ad.getMediaExtraInfo()));
-
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
-    }
-
     @Override
     public boolean isValid() {
         if (ad != null && ad.getMediationManager() != null) {
@@ -148,9 +148,9 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter implements TTAdNati
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
 
-        CsjUtil.bid(ad,isWin,winPrice);
+        CsjUtil.bid(ad, isWin, winPrice);
 
     }
 }

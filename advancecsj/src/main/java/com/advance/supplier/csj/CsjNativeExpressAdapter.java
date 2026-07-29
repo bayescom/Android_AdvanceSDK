@@ -19,7 +19,7 @@ import com.bytedance.sdk.openadsdk.TTNativeExpressAd;
 import java.util.List;
 import java.util.Map;
 
-public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter implements TTAdNative.NativeExpressAdListener {
+public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
     TTNativeExpressAd ttNativeExpressAd;
     private String TAG = "[CsjNativeExpressAdapter] ";
@@ -43,7 +43,38 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
                 .setImageAcceptedSize(nativeExpressSetting.getCsjImageWidth(), nativeExpressSetting.getCsjImageHeight())
                 .build();
         //加载广告
-        ttAdNative.loadNativeExpressAd(adSlot, this);
+        ttAdNative.loadNativeExpressAd(adSlot, new TTAdNative.NativeExpressAdListener() {
+
+            @Override
+            public void onError(int i, String s) {
+                handleFailed(i, s);
+            }
+
+            @Override
+            public void onNativeExpressAdLoad(List<TTNativeExpressAd> ads) {
+                try {
+                    LogUtil.simple(TAG + "onNativeExpressAdLoad");
+                    if (ads == null || ads.size() == 0) {
+                        handleFailed(AdvanceError.ERROR_DATA_NULL, "ads empty");
+                    } else {
+                        ttNativeExpressAd = ads.get(0);
+
+                        if (ttNativeExpressAd == null) {
+                            String nMsg = TAG + "ttNativeExpressAd  null";
+                            AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, nMsg);
+                            runParaFailed(error);
+                            return;
+                        }
+
+                        handleSucceed(CsjUtil.getEcpmValue(TAG, ttNativeExpressAd.getMediaExtraInfo()));
+
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    handleFailed(AdvanceError.ERROR_EXCEPTION_LOAD, "");
+                }
+            }
+        });
     }
 
     @Override
@@ -51,36 +82,6 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
 
     }
 
-
-    @Override
-    public void onError(int i, String s) {
-        handleFailed(i, s);
-    }
-
-    @Override
-    public void onNativeExpressAdLoad(List<TTNativeExpressAd> ads) {
-        try {
-            LogUtil.simple(TAG + "onNativeExpressAdLoad");
-            if (ads == null || ads.size() == 0) {
-                handleFailed(AdvanceError.ERROR_DATA_NULL, "ads empty");
-            } else {
-                ttNativeExpressAd = ads.get(0);
-
-                if (ttNativeExpressAd == null) {
-                    String nMsg = TAG + "ttNativeExpressAd  null";
-                    AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_DATA_NULL, nMsg);
-                    runParaFailed(error);
-                    return;
-                }
-
-                handleSucceed(CsjUtil.getEcpmValue(TAG, ttNativeExpressAd.getMediaExtraInfo()));
-
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-            handleFailed(AdvanceError.ERROR_EXCEPTION_LOAD, "");
-        }
-    }
 
     public void onAdItemShow(View view) {
         LogUtil.simple(TAG + "onAdItemShow");
@@ -99,7 +100,7 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
         LogUtil.simple(TAG + "onAdItemRenderFailed");
 
 
-        handleRenderFailed(view,AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, TAG + code + "， " + msg));
+        handleRenderFailed(view, AdvanceError.parseErr(AdvanceError.ERROR_RENDER_FAILED, TAG + code + "， " + msg));
     }
 
     public void onAdItemRenderSuccess(View view) {
@@ -194,9 +195,9 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter i
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
 
-        CsjUtil.bid(ttNativeExpressAd,isWin,winPrice);
+        CsjUtil.bid(ttNativeExpressAd, isWin, winPrice);
 
     }
 }

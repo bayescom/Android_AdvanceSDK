@@ -23,39 +23,11 @@ import java.util.Map;
 /**
  * 如果网络异常，不会进行刷新行为，且不会回调失败。当网络正常，会继续定时刷新。视为内部闭环了刷新行为，一旦失败就流转下一优先级
  */
-public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAdNative.NativeExpressAdListener {
+public class CsjBannerAdapter extends AdvanceBannerCustomAdapter {
     private long startTime = 0;
     private String TAG = "[CsjBannerAdapter] ";
     private TTNativeExpressAd ad;
 
-
-    @Override
-    public void onError(int code, String message) {
-        LogUtil.e(TAG + " onError: code = " + code + " msg = " + message);
-        handleFailed(code + "", message);
-    }
-
-    @Override
-    public void onNativeExpressAdLoad(List<TTNativeExpressAd> ads) {
-        try {
-            LogUtil.simple(TAG + "onNativeExpressAdLoad");
-            if (ads == null || ads.size() == 0) {
-                handleFailed(AdvanceError.ERROR_DATA_NULL, "广告列表数据为空");
-                return;
-            }
-            ad = ads.get(0);
-            // 加载成功的回调，接入方可在此处做广告的展示，请确保您的代码足够健壮，能够处理异常情况；
-            if (null == ad) {
-                handleFailed(AdvanceError.ERROR_DATA_NULL, "广告数据为空");
-                return;
-            }
-
-            handleSucceed(CsjUtil.getEcpmValue(TAG, ad.getMediaExtraInfo()));
-        } catch (Throwable e) {
-            e.printStackTrace();
-            doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
 
     private void bindAdListener(TTNativeExpressAd ad) {
         try {
@@ -88,15 +60,15 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
                 public void onRenderSuccess(View view, float v, float v1) {
                     LogUtil.simple(TAG + "ExpressView render suc:" + (System.currentTimeMillis() - startTime));
 
-                        ViewGroup adContainer = getAdContainer();
-                        if (adContainer != null) {
+                    ViewGroup adContainer = getAdContainer();
+                    if (adContainer != null) {
 //                            adContainer.removeAllViews();
-                            boolean add = AdvanceUtil.addADView(adContainer, view);
-                            if (!add) {
-                                doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
-                            }
-//                            adContainer.addView(view);
+                        boolean add = AdvanceUtil.addADView(adContainer, view);
+                        if (!add) {
+                            doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_ADD_VIEW));
                         }
+//                            adContainer.addView(view);
+                    }
 
                 }
             });
@@ -167,9 +139,37 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
                 //请求原生广告时候需要设置，参数为TYPE_BANNER或TYPE_INTERACTION_AD
 //                .setDownloadType(AdvanceSetting.getInstance().csj_downloadType)
                 .build();
-        ttAdNative.loadBannerExpressAd(adSlot, this);
-    }
+        ttAdNative.loadBannerExpressAd(adSlot, new TTAdNative.NativeExpressAdListener() {
 
+            @Override
+            public void onError(int code, String message) {
+                LogUtil.e(TAG + " onError: code = " + code + " msg = " + message);
+                handleFailed(code + "", message);
+            }
+
+            @Override
+            public void onNativeExpressAdLoad(List<TTNativeExpressAd> ads) {
+                try {
+                    LogUtil.simple(TAG + "onNativeExpressAdLoad");
+                    if (ads == null || ads.size() == 0) {
+                        handleFailed(AdvanceError.ERROR_DATA_NULL, "广告列表数据为空");
+                        return;
+                    }
+                    ad = ads.get(0);
+                    // 加载成功的回调，接入方可在此处做广告的展示，请确保您的代码足够健壮，能够处理异常情况；
+                    if (null == ad) {
+                        handleFailed(AdvanceError.ERROR_DATA_NULL, "广告数据为空");
+                        return;
+                    }
+
+                    handleSucceed(CsjUtil.getEcpmValue(TAG, ad.getMediaExtraInfo()));
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
+                }
+            }
+        });
+    }
 
 
     @Override
@@ -180,7 +180,7 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
 //        }
     }
 
-    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra){
+    public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             startTime = System.currentTimeMillis();
             bindAdListener(ad);
@@ -202,9 +202,9 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter implements TTAd
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
 
-        CsjUtil.bid(ad,isWin,winPrice);
+        CsjUtil.bid(ad, isWin, winPrice);
 
     }
 }

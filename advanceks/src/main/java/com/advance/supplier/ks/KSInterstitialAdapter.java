@@ -18,7 +18,7 @@ import com.kwad.sdk.api.model.AdExposureFailureCode;
 import java.util.List;
 import java.util.Map;
 
-public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter implements KsInterstitialAd.AdInteractionListener {
+public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
     KsInterstitialAd interstitialAD;
     List<KsInterstitialAd> list;
     private String TAG = "[KSInterstitialAdapter] ";
@@ -43,7 +43,67 @@ public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             //回调监听
-            interstitialAD.setAdInteractionListener(KSInterstitialAdapter.this);
+            interstitialAD.setAdInteractionListener(new KsInterstitialAd.AdInteractionListener() {
+
+                /**
+                 * 广告事件回调
+                 */
+
+                @Override
+                public void onAdClicked() {
+                    LogUtil.simple(TAG + " onAdClicked");
+                    handleClick();
+                }
+
+                @Override
+                public void onAdShow() {
+                    LogUtil.simple(TAG + " onAdShow");
+                    handleShow();
+                }
+
+                @Override
+                public void onAdClosed() {
+                    LogUtil.simple(TAG + " onAdClosed");
+
+                    handleClose();
+                }
+
+                @Override
+                public void onPageDismiss() {
+                    LogUtil.simple(TAG + " onPageDismiss");
+
+                    handleClose();
+                }
+
+                @Override
+                public void onVideoPlayError(int code, int extra) {
+                    LogUtil.e(TAG + " onVideoPlayError,code = " + code + ",extra = " + extra);
+                    try {
+                        AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_RENDER, "onVideoPlayError");
+
+                        runParaFailed(error);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onVideoPlayEnd() {
+                    LogUtil.simple(TAG + " onVideoPlayEnd");
+                }
+
+                @Override
+                public void onVideoPlayStart() {
+                    LogUtil.simple(TAG + " onVideoPlayStart");
+                }
+
+                @Override
+                public void onSkippedAd() {
+                    LogUtil.simple(TAG + " onSkippedAd");
+
+                    handleClose();
+                }
+            });
 
             interstitialAD.showInterstitialAd(activity, AdvanceKSManager.getInstance().interstitialVideoConfig);
         } catch (Throwable e) {
@@ -109,62 +169,4 @@ public class KSInterstitialAdapter extends AdvanceInterstitialCustomAdapter impl
     }
 
 
-    /**
-     * 广告事件回调
-     */
-
-    @Override
-    public void onAdClicked() {
-        LogUtil.simple(TAG + " onAdClicked");
-        handleClick();
-    }
-
-    @Override
-    public void onAdShow() {
-        LogUtil.simple(TAG + " onAdShow");
-        handleShow();
-    }
-
-    @Override
-    public void onAdClosed() {
-        LogUtil.simple(TAG + " onAdClosed");
-
-        handleClose();
-    }
-
-    @Override
-    public void onPageDismiss() {
-        LogUtil.simple(TAG + " onPageDismiss");
-
-        handleClose();
-    }
-
-    @Override
-    public void onVideoPlayError(int code, int extra) {
-        LogUtil.e(TAG + " onVideoPlayError,code = " + code + ",extra = " + extra);
-        try {
-            AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_RENDER, "onVideoPlayError");
-
-            runParaFailed(error);
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onVideoPlayEnd() {
-        LogUtil.simple(TAG + " onVideoPlayEnd");
-    }
-
-    @Override
-    public void onVideoPlayStart() {
-        LogUtil.simple(TAG + " onVideoPlayStart");
-    }
-
-    @Override
-    public void onSkippedAd() {
-        LogUtil.simple(TAG + " onSkippedAd");
-
-        handleClose();
-    }
 }

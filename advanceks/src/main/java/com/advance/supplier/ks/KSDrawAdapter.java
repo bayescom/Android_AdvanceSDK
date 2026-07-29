@@ -18,7 +18,7 @@ import com.kwad.sdk.api.model.AdExposureFailureCode;
 import java.util.List;
 import java.util.Map;
 
-public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.AdInteractionListener {
+public class KSDrawAdapter extends AdvanceDrawCustomAdapter {
     private String TAG = "[KSDrawAdapter] ";
     private KsDrawAd drawAD;
 
@@ -90,7 +90,56 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
         }
         try {
             //回调监听
-            drawAD.setAdInteractionListener(KSDrawAdapter.this);
+            drawAD.setAdInteractionListener(new KsDrawAd.AdInteractionListener() {
+
+                /**
+                 * ks回调事件
+                 */
+
+                @Override
+                public void onAdClicked() {
+                    LogUtil.simple(TAG + " onAdClicked");
+
+                    handleClick();
+                }
+
+                @Override
+                public void onAdShow() {
+                    LogUtil.simple(TAG + " onAdShow");
+
+                    handleShow();
+                }
+
+                @Override
+                public void onVideoPlayStart() {
+                    LogUtil.simple(TAG + " onVideoPlayStart");
+
+                }
+
+                @Override
+                public void onVideoPlayPause() {
+                    LogUtil.simple(TAG + " onVideoPlayPause");
+
+                }
+
+                @Override
+                public void onVideoPlayResume() {
+                    LogUtil.simple(TAG + " onVideoPlayResume");
+
+                }
+
+                @Override
+                public void onVideoPlayEnd() {
+                    LogUtil.simple(TAG + " onVideoPlayEnd");
+
+                }
+
+                @Override
+                public void onVideoPlayError() {
+                    LogUtil.simple(TAG + " onVideoPlayError");
+
+                }
+            });
 
             View drawVideoView = drawAD.getDrawView(activity);
             if (isADViewAdded(drawVideoView)) {
@@ -102,51 +151,4 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter implements KsDrawAd.
         }
     }
 
-    /**
-     * ks回调事件
-     */
-
-    @Override
-    public void onAdClicked() {
-        LogUtil.simple(TAG + " onAdClicked");
-
-        handleClick();
-    }
-
-    @Override
-    public void onAdShow() {
-        LogUtil.simple(TAG + " onAdShow");
-
-        handleShow();
-    }
-
-    @Override
-    public void onVideoPlayStart() {
-        LogUtil.simple(TAG + " onVideoPlayStart");
-
-    }
-
-    @Override
-    public void onVideoPlayPause() {
-        LogUtil.simple(TAG + " onVideoPlayPause");
-
-    }
-
-    @Override
-    public void onVideoPlayResume() {
-        LogUtil.simple(TAG + " onVideoPlayResume");
-
-    }
-
-    @Override
-    public void onVideoPlayEnd() {
-        LogUtil.simple(TAG + " onVideoPlayEnd");
-
-    }
-
-    @Override
-    public void onVideoPlayError() {
-        LogUtil.simple(TAG + " onVideoPlayError");
-
-    }
 }

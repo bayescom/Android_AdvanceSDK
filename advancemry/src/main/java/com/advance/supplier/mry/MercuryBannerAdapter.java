@@ -15,81 +15,9 @@ import com.mercury.sdk.util.ADError;
 
 import java.util.Map;
 
-public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements BannerADListener {
+public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter {
     private BannerAD mercuryBanner;
     String TAG = "[MercuryBannerAdapter] ";
-
-    @Override
-    public void onADReceived() {
-        try {
-            LogUtil.simple(TAG + "onADReceived");
-            if (bannerSetting != null) {
-                int refreshValue = bannerSetting.getRefreshInterval();
-                LogUtil.high(TAG + "refreshValue == " + refreshValue);
-
-                if (refreshValue > 0) {
-                    //当收到广告后，且有设置刷新间隔，代表目前正在刷新中
-                    refreshing = true;
-                }
-            }
-
-
-            //旧版本SDK中不包含价格返回方法，catch住
-            int cpm = 0;
-            try {
-                  cpm = mercuryBanner.getEcpm();
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            handleSucceed(cpm);
-        } catch (Throwable e) {
-            e.printStackTrace();
-            doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
-        }
-    }
-
-    @Override
-    public void onADClosed() {
-        LogUtil.simple(TAG + "onADClosed");
-
-        handleClose();
-    }
-
-    @Override
-    public void onADLeftApplication() {
-        LogUtil.simple(TAG + "onADLeftApplication");
-
-    }
-
-    @Override
-    public void onADExposure() {
-        LogUtil.simple(TAG + "onADExposure");
-
-        handleShow();
-    }
-
-    @Override
-    public void onADClicked() {
-        LogUtil.simple(TAG + "onADClicked");
-
-        handleClick();
-    }
-
-    @Override
-    public void onNoAD(ADError adError) {
-        int code = -1;
-        String msg = "default onNoAD";
-        if (adError != null) {
-            code = adError.code;
-            msg = adError.msg;
-        }
-
-        LogUtil.simple(" onError: code = " + code + " msg = " + msg);
-        AdvanceError advanceError = AdvanceError.parseErr(code, msg);
-
-        doBannerFailed(advanceError);
-
-    }
 
 
     @Override
@@ -106,7 +34,80 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
         if (mercuryBanner != null) {
             mercuryBanner.destroy();
         }
-        mercuryBanner = new BannerAD(activity, sdkSupplier.adspotid, this);
+        mercuryBanner = new BannerAD(activity, sdkSupplier.adspotid, new BannerADListener() {
+
+            @Override
+            public void onADReceived() {
+                try {
+                    LogUtil.simple(TAG + "onADReceived");
+                    if (bannerSetting != null) {
+                        int refreshValue = bannerSetting.getRefreshInterval();
+                        LogUtil.high(TAG + "refreshValue == " + refreshValue);
+
+                        if (refreshValue > 0) {
+                            //当收到广告后，且有设置刷新间隔，代表目前正在刷新中
+                            refreshing = true;
+                        }
+                    }
+
+
+                    //旧版本SDK中不包含价格返回方法，catch住
+                    int cpm = 0;
+                    try {
+                        cpm = mercuryBanner.getEcpm();
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                    handleSucceed(cpm);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    doBannerFailed(AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD));
+                }
+            }
+
+            @Override
+            public void onADClosed() {
+                LogUtil.simple(TAG + "onADClosed");
+
+                handleClose();
+            }
+
+            @Override
+            public void onADLeftApplication() {
+                LogUtil.simple(TAG + "onADLeftApplication");
+
+            }
+
+            @Override
+            public void onADExposure() {
+                LogUtil.simple(TAG + "onADExposure");
+
+                handleShow();
+            }
+
+            @Override
+            public void onADClicked() {
+                LogUtil.simple(TAG + "onADClicked");
+
+                handleClick();
+            }
+
+            @Override
+            public void onNoAD(ADError adError) {
+                int code = -1;
+                String msg = "default onNoAD";
+                if (adError != null) {
+                    code = adError.code;
+                    msg = adError.msg;
+                }
+
+                LogUtil.simple(" onError: code = " + code + " msg = " + msg);
+                AdvanceError advanceError = AdvanceError.parseErr(code, msg);
+
+                doBannerFailed(advanceError);
+
+            }
+        });
 
         mercuryBanner.loadOnly();
     }
@@ -148,12 +149,12 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter implements 
         if (mercuryBanner != null) {
             return mercuryBanner.isValid();
         }
-           return true;
+        return true;
     }
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
 
         if (mercuryBanner != null && !isWin) {
             mercuryBanner.sendLossWin(winPrice);

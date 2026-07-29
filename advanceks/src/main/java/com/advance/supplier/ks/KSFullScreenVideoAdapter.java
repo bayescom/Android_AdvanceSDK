@@ -18,7 +18,7 @@ import com.kwad.sdk.api.model.AdExposureFailureCode;
 import java.util.List;
 import java.util.Map;
 
-public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter implements KsFullScreenVideoAd.FullScreenVideoAdInteractionListener {
+public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter {
 
     private String TAG = "[KSFullScreenVideoAdapter] ";
 
@@ -83,59 +83,61 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
 
     }
 
-
-    //--------广告回调--------
-    @Override
-    public void onAdClicked() {
-        LogUtil.simple(TAG + " onAdClicked");
-        handleClick();
-    }
-
-    @Override
-    public void onPageDismiss() {
-        LogUtil.simple(TAG + " onPageDismiss");
-
-        handleClose();
-    }
-
-    @Override
-    public void onVideoPlayError(int code, int extra) {
-        String msg = " onVideoPlayError,code = " + code + ",extra = " + extra;
-        LogUtil.e(TAG + msg);
-
-        try {
-            AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_RENDER, msg);
-            runParaFailed(error);
-
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onVideoPlayEnd() {
-        LogUtil.simple(TAG + " onVideoPlayEnd");
-        handleComplete();
-    }
-
-    @Override
-    public void onVideoPlayStart() {
-        LogUtil.simple(TAG + " onVideoPlayStart");
-        handleShow();
-    }
-
-    @Override
-    public void onSkippedVideo() {
-        LogUtil.simple(TAG + " onSkippedVideo");
-
-        handleSkip();
-    }
-
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
             //回调监听
             if (ad.isAdEnable()) {
-                ad.setFullScreenVideoAdInteractionListener(KSFullScreenVideoAdapter.this);
+                ad.setFullScreenVideoAdInteractionListener(new KsFullScreenVideoAd.FullScreenVideoAdInteractionListener() {
+
+
+                    //--------广告回调--------
+                    @Override
+                    public void onAdClicked() {
+                        LogUtil.simple(TAG + " onAdClicked");
+                        handleClick();
+                    }
+
+                    @Override
+                    public void onPageDismiss() {
+                        LogUtil.simple(TAG + " onPageDismiss");
+
+                        handleClose();
+                    }
+
+                    @Override
+                    public void onVideoPlayError(int code, int extra) {
+                        String msg = " onVideoPlayError,code = " + code + ",extra = " + extra;
+                        LogUtil.e(TAG + msg);
+
+                        try {
+                            AdvanceError error = AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_RENDER, msg);
+                            runParaFailed(error);
+
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onVideoPlayEnd() {
+                        LogUtil.simple(TAG + " onVideoPlayEnd");
+                        handleComplete();
+                    }
+
+                    @Override
+                    public void onVideoPlayStart() {
+                        LogUtil.simple(TAG + " onVideoPlayStart");
+                        handleShow();
+                    }
+
+                    @Override
+                    public void onSkippedVideo() {
+                        LogUtil.simple(TAG + " onSkippedVideo");
+
+                        handleSkip();
+                    }
+
+                });
             }
             ad.showFullScreenVideoAd(activity, AdvanceKSManager.getInstance().fullScreenVideoConfig);
         } catch (Throwable e) {
@@ -158,13 +160,13 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter imp
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
-        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
+        LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " + winPrice + ", referBidInfo = " + referBidInfo);
 
 
-        if (isWin){
-            ad.setBidEcpm((long) winPrice,0);
-        }else {
-            ad.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice,referBidInfo));
+        if (isWin) {
+            ad.setBidEcpm((long) winPrice, 0);
+        } else {
+            ad.reportAdExposureFailed(AdExposureFailureCode.BID_FAILED, KSUtil.getFailedReason(winPrice, referBidInfo));
         }
     }
 }

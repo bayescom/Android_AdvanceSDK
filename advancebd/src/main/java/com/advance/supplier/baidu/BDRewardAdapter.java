@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements RewardVideoAd.RewardVideoAdListener {
+public class BDRewardAdapter extends AdvanceRewardCustomAdapter   {
     private RewardVideoAd mRewardVideoAd;
 
     private final String TAG = "[BDRewardAdapter] ";
@@ -23,7 +23,103 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
-        mRewardVideoAd = new RewardVideoAd(getRealContext(), sdkSupplier.adspotid, this, AdvanceBDManager.getInstance().rewardUseSurfaceView);
+        mRewardVideoAd = new RewardVideoAd(getRealContext(), sdkSupplier.adspotid, new RewardVideoAd.RewardVideoAdListener() {
+
+            @Override
+            public void onAdShow() {
+                LogUtil.simple(TAG + "onAdShow");
+                handleShow();
+            }
+
+            @Override
+            public void onAdClick() {
+                LogUtil.simple(TAG + "onAdClick");
+                handleClick();
+            }
+
+            @Override
+            public void onAdClose(float v) {
+                LogUtil.simple(TAG + "onAdClose " + v);
+
+                handleClose();
+
+            }
+
+            @Override
+            public void onAdFailed(String s) {
+                LogUtil.e(TAG + "onAdFailed " + s);
+                handleFailed(AdvanceError.ERROR_BD_FAILED, s);
+            }
+
+            @Override
+            public void onVideoDownloadSuccess() {
+                LogUtil.simple(TAG + "onVideoDownloadSuccess");
+
+                handleCached();
+            }
+
+            @Override
+            public void onVideoDownloadFailed() {
+                LogUtil.e(TAG + "onVideoDownloadFailed");
+                handleFailed(AdvanceError.ERROR_BD_FAILED, "onVideoDownloadFailed");
+
+            }
+
+            @Override
+            public void playCompletion() {
+                LogUtil.simple(TAG + "playCompletion");
+
+                handleComplete();
+            }
+
+            @Override
+            public void onAdSkip(float playScale) {
+                // 用户点击跳过, 展示尾帧
+                // 建议：媒体可以按照自己的设计给予奖励
+                LogUtil.simple(TAG + " onSkip: playScale = " + playScale);
+
+
+                handleSkip();
+            }
+
+            @Override
+            public void onRewardVerify(boolean rewardVerify) {
+                try {
+                    LogUtil.simple(TAG + " onRewardVerify : rewardVerify = " + rewardVerify);
+
+                    RewardServerCallBackInf inf = new RewardServerCallBackInf();
+                    inf.rewardVerify = rewardVerify;
+                    if (rewardVerify) {
+                        //激励达成回调
+                        handleReward();
+
+                    }
+
+
+                    if (sdkSupplier != null) {
+                        inf.supId = sdkSupplier.id;
+                    }
+                    handleRewardInf(inf);
+
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onAdLoaded() {
+                LogUtil.simple(TAG + "onAdLoaded");
+                double ecpm = 0;
+                try { //避免方法有异常，catch一下，不影响success逻辑
+                    if (mRewardVideoAd != null) {
+                        ecpm = (BDUtil.getEcpmValue(mRewardVideoAd.getECPMLevel()));
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                handleSucceed(ecpm);
+            }
+        }, AdvanceBDManager.getInstance().rewardUseSurfaceView);
         //服务端校验透传参数
         if (rewardSetting != null) {
             mRewardVideoAd.setUserId(rewardSetting.getUserId());
@@ -79,100 +175,6 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter implements Rewar
 
     //以下为广告回调事件
 
-    @Override
-    public void onAdShow() {
-        LogUtil.simple(TAG + "onAdShow");
-        handleShow();
-    }
-
-    @Override
-    public void onAdClick() {
-        LogUtil.simple(TAG + "onAdClick");
-        handleClick();
-    }
-
-    @Override
-    public void onAdClose(float v) {
-        LogUtil.simple(TAG + "onAdClose " + v);
-
-        handleClose();
-
-    }
-
-    @Override
-    public void onAdFailed(String s) {
-        LogUtil.e(TAG + "onAdFailed " + s);
-        handleFailed(AdvanceError.ERROR_BD_FAILED, s);
-    }
-
-    @Override
-    public void onVideoDownloadSuccess() {
-        LogUtil.simple(TAG + "onVideoDownloadSuccess");
-
-        handleCached();
-    }
-
-    @Override
-    public void onVideoDownloadFailed() {
-        LogUtil.e(TAG + "onVideoDownloadFailed");
-        handleFailed(AdvanceError.ERROR_BD_FAILED, "onVideoDownloadFailed");
-
-    }
-
-    @Override
-    public void playCompletion() {
-        LogUtil.simple(TAG + "playCompletion");
-
-        handleComplete();
-    }
-
-    @Override
-    public void onAdSkip(float playScale) {
-        // 用户点击跳过, 展示尾帧
-        // 建议：媒体可以按照自己的设计给予奖励
-        LogUtil.simple(TAG + " onSkip: playScale = " + playScale);
-
-
-        handleSkip();
-    }
-
-    @Override
-    public void onRewardVerify(boolean rewardVerify) {
-        try {
-            LogUtil.simple(TAG + " onRewardVerify : rewardVerify = " + rewardVerify);
-
-            RewardServerCallBackInf inf = new RewardServerCallBackInf();
-            inf.rewardVerify = rewardVerify;
-            if (rewardVerify) {
-                //激励达成回调
-                handleReward();
-
-            }
-
-
-            if (sdkSupplier != null) {
-                inf.supId = sdkSupplier.id;
-            }
-            handleRewardInf(inf);
-
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onAdLoaded() {
-        LogUtil.simple(TAG + "onAdLoaded");
-        double ecpm = 0;
-        try { //避免方法有异常，catch一下，不影响success逻辑
-            if (mRewardVideoAd != null) {
-                ecpm = (BDUtil.getEcpmValue(mRewardVideoAd.getECPMLevel()));
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        handleSucceed(ecpm);
-    }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
         try {
