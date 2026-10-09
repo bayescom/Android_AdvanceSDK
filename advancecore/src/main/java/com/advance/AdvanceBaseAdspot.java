@@ -1710,6 +1710,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                     e.printStackTrace();
                 }
             }
+            //todo reqid 去重
             doTrackReport(report);
         } catch (Throwable e) {
             e.printStackTrace();

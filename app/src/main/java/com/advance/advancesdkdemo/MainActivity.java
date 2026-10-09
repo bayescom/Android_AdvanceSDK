@@ -221,7 +221,9 @@ public class MainActivity extends Activity {
     boolean hasRewardShow = false;
 
     public void onRewardVideo(View view) {
-        advanceRewardVideo = new AdvanceRewardVideo(DemoManger.getInstance().currentDemoIds.reward);
+
+        String id = DemoManger.getInstance().currentDemoIds.reward;
+        advanceRewardVideo = new AdvanceRewardVideo(id);
 
         //若集成
         TanxGlobalConfig.setMediaUID("tanxMUID");
