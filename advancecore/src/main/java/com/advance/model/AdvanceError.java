@@ -33,6 +33,12 @@ public class AdvanceError extends BYError {
     public static final int ERROR_REWARD_SERVER_VERIFY_EMPTY_SDK = 9930; //激励验证失败，无SDK广告信息
     public static final int ERROR_REWARD_SERVER_VERIFY_JSON_DECODE_FAILED = 9931; //服务端验证激励奖励，json结果解析失败
 
+    // 频次控制拦截错误码（由 sdk_config 下发的 adspot_configs 触发，未下发则不报错）
+    public static final int ERROR_FREQ_REQ_LIMIT = 9940;     // 频控：日请求次数上限
+    public static final int ERROR_FREQ_REQ_INTERVAL = 9941;  // 频控：请求最小间隔受限
+    public static final int ERROR_FREQ_IMP_LIMIT = 9942;     // 频控：日曝光次数上限
+    public static final int ERROR_FREQ_CLICK_LIMIT = 9943;   // 频控：日点击次数上限
+
 
     public AdvanceError(String code, String msg) {
         super(code, msg);

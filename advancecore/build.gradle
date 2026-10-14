@@ -72,7 +72,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 
     compileOnly(name: 'oaid_sdk_1.0.25', ext: 'aar')
-//    compileOnly(name: 'mercury-sdk-4.6.4', ext: 'aar')
+//    compileOnly(name: 'mercury-sdk-5.0.0', ext: 'aar')
     //倍业SDK
     compileOnly "io.github.bayescom:mercury-sdk:${rootProject.ext.mercury_version}"
 

@@ -9,6 +9,12 @@ import com.advance.utils.LogUtil;
 import java.util.ArrayList;
 
 public class SdkSupplier implements Comparable<SdkSupplier> {
+    public String sdkSupID = ""; //渠道唯一id，用做渠道频控key
+    //渠道频控，跟随策略 request_limit 下发（device_daily_*），0 表示不限制
+    public int dailyReqLimit;
+    public int dailyImpLimit;
+    public int dailyClickLimit;
+    public int dailyReqInterval; //请求间隔，毫秒
     public String id = "0";
     public String name = "默认SDK";
     public int priority = 1;
@@ -62,6 +68,11 @@ public class SdkSupplier implements Comparable<SdkSupplier> {
     //是否能够bidding，后台开关打开+渠道可支持
     public boolean useBidding() {
         return enableBidding && isSupportBidding();
+    }
+
+    //是否配置了任一渠道频控限制（跟随策略 request_limit 下发）
+    public boolean hasAnyFreqLimit() {
+        return dailyReqLimit > 0 || dailyImpLimit > 0 || dailyClickLimit > 0 || dailyReqInterval > 0;
     }
 
 
