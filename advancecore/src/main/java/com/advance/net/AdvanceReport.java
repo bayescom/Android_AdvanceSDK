@@ -72,9 +72,12 @@ public class AdvanceReport {
      * 含 click / imp / win（或中文 点击 / 展示 / 竞胜）的"计费/对账类"事件走 L0 先落库模型（prepare/ack），
      * 其余普通事件按 L1 处理。未开启补发时 prepare/ack/onReportFailed 均为空操作，行为不变。
      */
-    public static void startReport(final String urlString, final String from) {
+    public static void startReport(  String urlString, final String from) {
         try {
             BYReqModel request = new BYReqModel();
+//            if (BYUtil.isDev()){
+//                urlString =  "http://www.测试上报异常";
+//            }
             final String finalUrl = urlString;   // 关键：宏替换在调用方已完成，此处 url 即唯一键
             request.reqUrl = finalUrl;
             request.timeoutMs = 10000;
@@ -158,6 +161,7 @@ public class AdvanceReport {
             if (req.status >= 0) {
                 object.putOpt("status", req.status);
             }
+            object.putOpt("errcode", req.errCode);
 
             int delay = AdvanceConfig.getInstance().getReportDelayTime();
             if (delay > 0 && req.needDelay) {

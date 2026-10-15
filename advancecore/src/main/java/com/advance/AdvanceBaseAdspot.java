@@ -66,7 +66,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     protected Context mContext;
     protected SoftReference<Activity> softReferenceActivity;
     protected AdvanceSelectListener advanceSelectListener;
-    public AdvanceError adError;
+//    public AdvanceError adError;
 
     AdvanceUtil advanceUtil;
     private boolean isUseCache = false;
@@ -871,6 +871,29 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
         }
         //生成当前请求的唯一id
         reqId = BYUtil.getUUID();
+
+        //+ 频次控制：请求前置判定（覆盖 req_limit / req_interval / imp_limit / click_limit 四类）
+        try {
+            BYFreqCapResult capResult = AdvanceFreqCapManager.checkRequest(advanceAdspotId);
+            if (capResult != null && capResult.isBlock()) {
+                LogUtil.w(BTAG + "[FreqCap] 请求被拦截 adspotId=" + advanceAdspotId + " ，capResult = " + capResult);
+                AdvanceError capError = new AdvanceError(String.valueOf(freqCodeOf(capResult.type)),
+                        "频控拦截：" + capResult.type);
+//                if (capResult.type == BYFreqCapType.IMP || capResult.type == BYFreqCapType.CLK) {
+                // 曝光/点击超限：不允许回退缓存广告，直接失败（防止缓存广告绕过曝光闸门继续展示）
+                onAdvanceError(advanceSelectListener, capError);
+//                } else {
+//                    advanceError = capError;
+//                    // 请求次数/间隔受限：走缓存兜底（与 mercury onNoAd 语义一致）
+//                    HandleEmptySupplier();
+//                }
+                return;
+            }
+        } catch (Throwable t) {
+            // 频控异常绝不阻塞广告链路
+            BYCatch.onCaught(t, false, BYCatch.LEVEL_WARN);
+        }
+
         if (isUseCache) {
             LogUtil.high(BTAG + "优先使用策略缓存模式");
             try {
@@ -1045,27 +1068,6 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
             reqModel.reqId = reqId;
             reqModel.requestForceTimeout = true;
 
-            //+ 频次控制：请求前置判定（覆盖 req_limit / req_interval / imp_limit / click_limit 四类）
-            try {
-                BYFreqCapResult capResult = AdvanceFreqCapManager.checkRequest(advanceAdspotId);
-                if (capResult != null && capResult.isBlock()) {
-                    LogUtil.w(BTAG + "[FreqCap] 请求被拦截 adspotId=" + advanceAdspotId + " ，capResult = " + capResult);
-                    AdvanceError capError = new AdvanceError(String.valueOf(freqCodeOf(capResult.type)),
-                            "频控拦截：" + capResult.type);
-                    if (capResult.type == BYFreqCapType.IMP || capResult.type == BYFreqCapType.CLK) {
-                        // 曝光/点击超限：不允许回退缓存广告，直接失败（防止缓存广告绕过曝光闸门继续展示）
-                        onAdvanceError(advanceSelectListener, capError);
-                    } else {
-                        advanceError = capError;
-                        // 请求次数/间隔受限：走缓存兜底（与 mercury onNoAd 语义一致）
-                        HandleEmptySupplier();
-                    }
-                    return;
-                }
-            } catch (Throwable t) {
-                // 频控异常绝不阻塞广告链路
-                BYCatch.onCaught(t, false, BYCatch.LEVEL_WARN);
-            }
 
             //todo 23-06-25 注意线程运行情况
             AdvanceNetManger.requestSupplierList(reqModel, new BYAbsCallBack<ElevenModel>() {
@@ -1788,30 +1790,31 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     /**
      * 整体失败回调，包括任意场景下的失败，方便在这里统一进行信息埋点上报\以及延迟上报的处理
      *
-     * @param listener     失败监听器
-     * @param advanceError 失败详细内容
+     * @param listener 失败监听器
+     * @param advErr   失败详细内容
      */
-    void onAdvanceError(final AdvanceErrListener listener, AdvanceError advanceError) {
+    void onAdvanceError(final AdvanceErrListener listener, AdvanceError advErr) {
         try {
             LogUtil.devDebug(BTAG + " onAdvanceError ");
             //先进行延迟上报
             startDelayReport();
+
+            if (advErr == null) {
+                LogUtil.simple("None SDK: sdk suppliers is empty, callback failed");
+                advErr = AdvanceError.parseErr(AdvanceError.ERROR_NONE_SDK);
+            }
+            LogUtil.devDebug(BTAG + " onAdFailed :  advErr = " + advErr.toString());
+
+            advanceError = advErr;
+            adStatus = AdStatus.FAILED;
             //回调开发者错误信息
             if (listener != null) {
-                if (advanceError == null) {
-                    LogUtil.simple("None SDK: sdk suppliers is empty, callback failed");
-                    advanceError = AdvanceError.parseErr(AdvanceError.ERROR_NONE_SDK);
-                }
-                LogUtil.devDebug(BTAG + " onAdFailed :  advanceError = " + advanceError.toString());
-
-                adError = advanceError;
-                adStatus = AdStatus.FAILED;
                 BYThreadUtil.switchMainThread(new BYBaseCallBack() {
                     @Override
                     public void call() {
-                        listener.onAdFailed(adError);
+                        listener.onAdFailed(advanceError);
                         if (baseGMCall != null) {
-                            baseGMCall.allFailed(adError);
+                            baseGMCall.allFailed(advanceError);
                         }
                     }
                 });
@@ -1834,16 +1837,17 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                 //SDK渠道全部加载失败了
                 report.status = 2;
             }
+            report.errCode = advanceError.code;
             //从发起请求到策略、广告失败的时间差
             long cost = System.currentTimeMillis() - requestTime;
             report.code = AdvanceConstant.TRACE_TOTAL_TIME;
             report.msg = cost + "";
 
-            if (AdvanceError.ERROR_NO_ACTIVITY.equals(advanceError.code)) {
+            if (AdvanceError.ERROR_NO_ACTIVITY.equals(advErr.code)) {
                 try {
                     JSONObject object = new JSONObject();
-                    object.putOpt("e_code", advanceError.code);
-                    object.putOpt("e_msg", advanceError.msg);
+                    object.putOpt("e_code", advErr.code);
+                    object.putOpt("e_msg", advErr.msg);
                     report.ext = object.toString();
                 } catch (Throwable e) {
                     e.printStackTrace();
