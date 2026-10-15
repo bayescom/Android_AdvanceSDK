@@ -442,6 +442,7 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
                             return;
                         }
                         hasJump = true;
+                        LogUtil.devDebug("[AdvanceSplash] doJump ,listener = "+ listener);
                         if (listener != null)
                             listener.jumpToMain();
                         //全部失败是不进行事件回调，因为gm可能并没有失败，不需要跳转主页

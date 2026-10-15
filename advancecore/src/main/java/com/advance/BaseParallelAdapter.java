@@ -24,6 +24,7 @@ import com.advance.model.SdkSupplier;
 import com.advance.model.SupplierSettingModel;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.util.BYCatch;
 import com.bayes.sdk.basic.util.BYThreadUtil;
 import com.bayes.sdk.basic.util.BYUtil;
 
@@ -216,6 +217,44 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
         this.drawSetting = setting;
     }
 
+    /**
+     * 热替换桥接类（缓存 adapter 复用时由 {@code AdvanceCacheUtil.loadWithCacheAdapter} 调用）。
+     *
+     * <p>必须成对刷新 baseSetting 与类型化 setting 字段：缓存持有的是 adapter 对象本身，
+     * 复用时若只替换 baseSetting，splashSetting 等类型化字段仍指向上一个会话的广告位实例
+     * （其 activity 可能已销毁、listener 已被置空），会导致 adapter 的 handleSkip /
+     * adapterDidSkip 等回调走到旧实例，广告事件与跳转全部失效。
+     *
+     * <p>同时失效 localExtra / serverExtra 派生缓存，使其基于新 setting 重新推导。
+     */
+    public void updateBaseSetting(BaseSetting setting) {
+        if (setting == null) {
+            return;
+        }
+        this.baseSetting = setting;
+        if (setting instanceof SplashSetting) {
+            this.splashSetting = (SplashSetting) setting;
+        } else if (setting instanceof BannerSetting) {
+            this.bannerSetting = (BannerSetting) setting;
+        } else if (setting instanceof InterstitialSetting) {
+            this.interstitialSetting = (InterstitialSetting) setting;
+        } else if (setting instanceof RewardVideoSetting) {
+            this.rewardSetting = (RewardVideoSetting) setting;
+        } else if (setting instanceof FullScreenVideoSetting) {
+            this.fullScreenVideoSetting = (FullScreenVideoSetting) setting;
+        } else if (setting instanceof NativeExpressSetting) {
+            this.nativeExpressSetting = (NativeExpressSetting) setting;
+        } else if (setting instanceof AdvanceRFBridge) {
+            this.nativeSetting = (AdvanceRFBridge) setting;
+        } else if (setting instanceof AdvanceDrawSetting) {
+            this.drawSetting = (AdvanceDrawSetting) setting;
+        }
+        //派生缓存失效：localExtra 源自 baseSetting.getCustomData()，
+        //serverExtra 源自 sdkSupplier.ext，均需基于新会话重新推导
+        this.localExtra = new HashMap<>();
+        this.serverExtra = new HashMap<>();
+    }
+
 
 //    public BaseParallelAdapter(SoftReference<Activity> softReferenceActivity, final BaseSetting baseSetting) {
 //        this.softReferenceActivity = softReferenceActivity;
@@ -239,7 +278,20 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
         adStatus = AdvanceConstant.AD_STATUS_DEFAULT;
         try {
             isDestroy = false;
-            parallelListener = new NativeParallelListener() {
+            parallelListener = createParallelListener();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            advanceError = AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD);
+            loadFailed();
+        }
+    }
+
+    /**
+     * 创建并行监听器。initPara 与 resetForReuse 共用：
+     * destroy() 会把 parallelListener 置空，缓存复用时必须重建才能继续收到成功/失败回调。
+     */
+    private NativeParallelListener createParallelListener() {
+        return new NativeParallelListener() {
                 @Override
                 public void onCached() {
                     if (cacheStatus == AdvanceConstant.STATUS_CACHED_CALL) {
@@ -300,11 +352,39 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
                     loadFailed();
 
                 }
-            };
-        } catch (Throwable e) {
-            e.printStackTrace();
-            advanceError = AdvanceError.parseErr(AdvanceError.ERROR_EXCEPTION_LOAD);
-            loadFailed();
+        };
+    }
+
+    /**
+     * 从缓存复用时的状态重置。
+     *
+     * <p>渠道 SDK 的广告对象在 destroy 之后仍可正常播放（已实测），故此处只重置聚合侧状态，
+     * 不重新加载、不调用 destroyAd。主要用于修复：缓存对象若曾被 destroy 污染
+     * （isDestroy=true、parallelListener=null、adStatus=DEFAULT），复用时将无法回调与展示，
+     * 媒体主动 show() 也会因 isDestroy 被拒。
+     */
+    public void resetForReuse() {
+        try {
+            LogUtil.devDebug(TAG + "resetForReuse ，从缓存复用重置聚合侧状态");
+            isDestroy = false;
+            //destroy 会把 parallelListener 置空，先重建再重置状态
+            initPara();
+            //缓存前的广告已加载完成，直接进入「加载成功」态，使 callLoaded 能立即回调展示
+            if (adStatus != AdvanceConstant.AD_STATUS_LOADED_SHOW) {
+                adStatus = AdvanceConstant.AD_STATUS_LOAD_SUCCESS;
+            }
+            isSuccess = true;
+        } catch (Throwable t) {
+            BYCatch.onCaught(t, false, BYCatch.LEVEL_WARN);
+        }
+    }
+
+    /** 当前 adapter 是否正是缓存中留待复用的对象（销毁时需要跳过，避免污染缓存）。 */
+    public boolean isCachedForReuse() {
+        try {
+            return AdvanceCacheUtil.isCachedAdapter(this);
+        } catch (Throwable t) {
+            return false;
         }
     }
 
@@ -393,6 +473,13 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
 
     protected void destroy() {
         try {
+            //缓存中留待后续复用的对象不销毁：否则下次命中缓存拿到的是已销毁对象，
+            //复用时无法回调、媒体主动 show() 也会因 isDestroy 被拒。
+            //（渠道 SDK 的广告对象本身在 destroy 后仍可播放，已实测）
+            if (isCachedForReuse()) {
+                LogUtil.devDebug(TAG + "当前 adapter 正处于缓存复用中，跳过销毁");
+                return;
+            }
             isDestroy = true;
             adStatus = AdvanceConstant.AD_STATUS_DEFAULT;
             parallelListener = null;
@@ -457,7 +544,11 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     private void callADNLoad() {
         try {
             ++adNum;
-            adStatus = AdvanceConstant.AD_STATUS_LOADING;
+            //仅当仍处于初始态时才置为加载中，避免把 callLoaded 预先置好的
+            //AD_STATUS_LOADING_SHOW 覆盖回 LOADING（那会重新打开同步递归的口子）
+            if (adStatus == AdvanceConstant.AD_STATUS_DEFAULT) {
+                adStatus = AdvanceConstant.AD_STATUS_LOADING;
+            }
 
             //统一进行缓存adapter检查
             boolean hitCache = AdvanceCacheUtil.loadWithCacheAdapter(this);
@@ -709,8 +800,11 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
                 adStatus = AdvanceConstant.AD_STATUS_LOADING_SHOW;
             } else if (adStatus == AdvanceConstant.AD_STATUS_DEFAULT) {
                 LogUtil.high(TAG + "广告未调用，立即调用，成功后自动回调");
-                load();
+                //先置位再 load：load() 内部在「SDK 已初始化成功 + 缓存命中」时是一条同步回调链
+                //（callInitSuccess → callADNLoad → handleSucceed → paraEvent → prepareShowAd → callLoaded），
+                //会绕回本方法。若置位晚于 load()，重入时状态仍是 DEFAULT，将形成同步递归。
                 adStatus = AdvanceConstant.AD_STATUS_LOADING_SHOW;
+                load();
             } else if (adStatus == AdvanceConstant.AD_STATUS_LOAD_FAILED) {
 
                 if (adNum > 0) {//广告加载

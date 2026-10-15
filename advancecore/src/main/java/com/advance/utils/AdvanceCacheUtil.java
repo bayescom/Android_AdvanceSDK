@@ -136,6 +136,25 @@ public class AdvanceCacheUtil {
         }
     }
 
+    /**
+     * 当前 adapter 是否正是缓存中留待复用的对象。
+     *
+     * <p>用于销毁拦截：缓存持有的是 adapter 对象本身，若放任 destroy 会把它一并销毁，
+     * 导致下次命中缓存时拿到已销毁对象（isDestroy=true、parallelListener=null）。
+     */
+    public static boolean isCachedAdapter(BaseParallelAdapter adapter) {
+        try {
+            if (adapter == null || adapter.sdkSupplier == null) {
+                return false;
+            }
+            String key = getCacheKey(adapter.sdkSupplier);
+            AdvanceSDKCacheModel cacheModel = AdvanceSetting.getInstance().cachedSDKs.get(key);
+            return cacheModel != null && cacheModel.cacheValue == adapter;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     public static void removeCache(SdkSupplier supplier) {
         try {
             String key = getCacheKey(supplier);
@@ -280,14 +299,19 @@ public class AdvanceCacheUtil {
 
                             //替换执行策略中得adapter
                             if (adapter.baseSetting != null) {
-                                //置换桥接类
-                                cacheValue.baseSetting = adapter.baseSetting;
+                                //置换桥接类：必须同步刷新类型化 setting，
+                                //否则 splashSetting 等仍指向旧会话（其 listener 可能已被置空），
+                                //复用后 adapter 的 skip/show/click 等回调会走到旧实例而全部失效
+                                cacheValue.updateBaseSetting(adapter.baseSetting);
                                 //置换实现adapter
                                 adapter.baseSetting.replaceCacheAdapter(AdvanceUtil.getAdapterMapKey(adapter.sdkSupplier), cacheValue);
                             }
 
                         } catch (Exception e) {
                         }
+                        //缓存复用：重置聚合侧状态（渠道广告对象仍可播放，不重新加载、不调 destroyAd），
+                        //必须在 adapter.handleSucceed() 之前，保证其同步回调链能正常走到展示
+                        cacheValue.resetForReuse();
                         //通知广告成功依然是由当前adapter进行，不过show时使用的adapter将由被replaceCacheAdapter操作更新后的缓存adapter进行。
                         adapter.handleSucceed();
 

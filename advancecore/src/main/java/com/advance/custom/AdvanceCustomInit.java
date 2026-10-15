@@ -111,13 +111,15 @@ public abstract class AdvanceCustomInit implements AdvanceAdnInitItf {
 
                 LogUtil.simple(TAG + "(callInitSuccess) start");
                 LogUtil.devDebug(TAG + "init success cost :" + (System.currentTimeMillis() - startInitTime));
-                for (AdvanceADNInitResult initListener : initCallbackList) {
+                //先摘出副本并清空，再执行回调：回调内部（load 的同步回调链）可能再次 addInitListener，
+                //若直接遍历原列表会构成"迭代中修改"，导致同一批 listener 被重复回调、放大递归深度
+                ArrayList<AdvanceADNInitResult> snapshot = new ArrayList<>(initCallbackList);
+                initCallbackList.clear();
+                for (AdvanceADNInitResult initListener : snapshot) {
                     if (initListener != null) {
                         initListener.success();
                     }
                 }
-
-                initCallbackList.clear();
             }
         } catch (Exception e) {
         }
