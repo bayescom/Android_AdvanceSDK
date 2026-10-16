@@ -380,8 +380,8 @@ public class AdvanceNetManger {
                 if (setting != null) {
 
                     //缓存配置类参数
-                    settingModel.enableStrategyCache = setting.optInt("use_cache", -1);
-                    settingModel.strategyCacheDuration = setting.optInt("cache_dur", -1);
+                    settingModel.enableStrategyCache = setting.optInt("enable_strategy_cache", -1);
+                    settingModel.strategyCacheDuration = setting.optInt("strategy_cache_duration", -1);
                     settingModel.delayReport = setting.optInt("report_delay", -1);
 
                     settingModel.reportVersionInf = setting.optInt("version_report", -1);

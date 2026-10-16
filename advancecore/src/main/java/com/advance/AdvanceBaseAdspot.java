@@ -1271,7 +1271,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
 
             }
             //是否延迟上报，根据后台返回的字段来判断，默认false不延迟
-            isReportDelay = elevenModel.isReportDelay();
+//            isReportDelay = elevenModel.isReportDelay();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1772,11 +1772,11 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     }
 
     private void switchReport(ArrayList<String> tk) {
-        if (isReportDelay && savedDelayReportList != null) {
-            savedDelayReportList.add(tk);
-        } else {
+//        if (isReportDelay && savedDelayReportList != null) {
+//            savedDelayReportList.add(tk);
+//        } else {
             AdvanceReport.reportToUrls(tk);
-        }
+//        }
     }
 
     void dispatchSupplierFailed(AdvanceErrListener listener) {
@@ -1797,7 +1797,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
         try {
             LogUtil.devDebug(BTAG + " onAdvanceError ");
             //先进行延迟上报
-            startDelayReport();
+//            startDelayReport();
 
             if (advErr == null) {
                 LogUtil.simple("None SDK: sdk suppliers is empty, callback failed");
@@ -1863,22 +1863,22 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     /**
      * 延迟上报在这里（全部失败时、广告曝光时）进行上报
      */
-    private void startDelayReport() {
-        try {
-            if (isReportDelay) {
-                //延迟上报执行之后需要重置状态，否则并行的后来产生的上报请求，会无法进行上报。
-                isReportDelay = false;
-
-                int size = savedDelayReportList.size();
-                LogUtil.max("delay report tkList size is " + size);
-                for (int i = 0; i < size; i++) {
-                    AdvanceReport.reportToUrls(savedDelayReportList.get(i));
-                }
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
+//    private void startDelayReport() {
+//        try {
+//            if (isReportDelay) {
+//                //延迟上报执行之后需要重置状态，否则并行的后来产生的上报请求，会无法进行上报。
+//                isReportDelay = false;
+//
+//                int size = savedDelayReportList.size();
+//                LogUtil.max("delay report tkList size is " + size);
+//                for (int i = 0; i < size; i++) {
+//                    AdvanceReport.reportToUrls(savedDelayReportList.get(i));
+//                }
+//            }
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * 统一处理渠道选择流程，支持并行、串行

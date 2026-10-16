@@ -934,15 +934,15 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
         LogUtil.devDebug(TAG + "switchReport");
 
         boolean needDelay = false;
-        if (baseSetting != null) {
-            boolean isReportDelay = baseSetting.needDelayReport();
-            ArrayList<ArrayList<String>> savedDelayReportList = baseSetting.getSavedReportUrls();
-            needDelay = isReportDelay && savedDelayReportList != null;
-
-            if (needDelay) {
-                savedDelayReportList.add(tk);
-            }
-        }
+//        if (baseSetting != null) {
+//            boolean isReportDelay = baseSetting.needDelayReport();
+//            ArrayList<ArrayList<String>> savedDelayReportList = baseSetting.getSavedReportUrls();
+//            needDelay = isReportDelay && savedDelayReportList != null;
+//
+//            if (needDelay) {
+//                savedDelayReportList.add(tk);
+//            }
+//        }
         if (!needDelay) {
             AdvanceReport.reportToUrls(tk);
         }
