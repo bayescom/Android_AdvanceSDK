@@ -55,6 +55,12 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
 
     public boolean canJump = false;
     public boolean hasJump = false;
+    /**
+     * 是否已经历过一次 onActivityResumed。
+     * 用于区分「开屏页首次 resume」与「从广告详情页/后台返回的 resume」：
+     * 前者广告可能尚未展示（尤其缓存 adapter 在 resume 前已同步加载成功），不能跳首页。
+     */
+    private boolean hasResumedOnce = false;
     public boolean immediatelyJump = false; //todo 对于点击了广告，返回开屏页面时，部分adn（穿山甲、倍业、百度、快手）可能还在倒计时状态。此时是否需要直接执行跳转首页
     private boolean showInSingleActivity = false;
     private SplashGMCallBack splashGMCallBack;
@@ -149,9 +155,15 @@ public class AdvanceSplash extends AdvanceBaseAdspot implements SplashSetting {
             ownLifecycleCallback = new AdvanceLifecycleCallback() {
                 @Override
                 public void onActivityResumed() {
-                    if (canJump) {
+                    //首次 resume 是开屏页刚创建完成：缓存广告（loadWithCacheAdapter）可能在 resume 之前
+                    //就已同步加载成功，adapterDidSucceed 会把 canJump 置 true。此时广告尚未展示，
+                    //若直接 doJump 会出现「广告还没出来就跳到首页」。
+                    //只有非首次 resume（从广告详情页/后台返回）才做补跳，同时保留
+                    //「加载成功但展示失败」时切后台再回来仍能兜底跳转的能力。
+                    if (hasResumedOnce && canJump) {
                         doJump();
                     }
+                    hasResumedOnce = true;
                     canJump = true;
                 }
 

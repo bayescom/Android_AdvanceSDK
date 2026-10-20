@@ -74,6 +74,15 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     public boolean hasShown = false;
     public int lastFailedPri = -1;
 
+    /**
+     * 预加载模式：无会话绑定（baseSetting 为 null），加载完成只写缓存，不走任何会话回调与上报。
+     */
+    protected boolean isPreload = false;
+    /**
+     * 本 adapter 实例是否已完成过一次「曝光后预加载」，用于 banner/信息流等多曝光形态防重复请求。
+     */
+    private boolean preloadOnce = false;
+
     //回调所需参数
     public View nativeExpressADView;
     //获取聚合具体设置项
@@ -419,6 +428,13 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
 
     private void loadFailed() {
         try {
+            //预加载失败：静默，不重试、不上报、不回调任何会话
+            if (isPreload) {
+                LogUtil.w(TAG + "[Preload] 预加载失败，静默忽略（不重试）");
+                adStatus = AdvanceConstant.AD_STATUS_LOAD_FAILED;
+                AdvanceCacheUtil.onPreloadFinished(sdkSupplier);
+                return;
+            }
             LogUtil.high(TAG + "loadFailed_adStatus = " + adStatus);
             reportFailed();
 
@@ -454,6 +470,40 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     //初始化获取广告缓存model信息，在基类广告load之前进行
     public void initCacheInf() {
         cacheModel = AdvanceCacheUtil.getCachedSDKInf(sdkSupplier);
+    }
+
+    // ==================== 曝光后预加载（Preload） ====================
+
+    /** 本 adapter 实例是否已完成过一次曝光后预加载（多曝光形态防重复请求）。 */
+    public boolean hasPreloadOnce() {
+        return preloadOnce;
+    }
+
+    /** 标记本 adapter 实例已完成一次曝光后预加载。 */
+    public void markPreloadOnce() {
+        this.preloadOnce = true;
+    }
+
+    /**
+     * 标记为预加载 adapter 并绑定渠道参数。
+     *
+     * <p>预加载 adapter 没有会话绑定（baseSetting 为 null），加载完成后只写缓存，
+     * 不执行任何 adapterDidShow / paraEvent 等会话回调。
+     */
+    public void markAsPreload(SdkSupplier supplier) {
+        this.isPreload = true;
+        setSDKSupplier(supplier);
+    }
+
+    /** 预加载启动入口：复用既有 load 链路，内部由 isPreload 分支保证静默。 */
+    public void startPreload() {
+        try {
+            LogUtil.devDebug(TAG + "[Preload] startPreload");
+            load();
+        } catch (Throwable t) {
+            LogUtil.w(TAG + "[Preload] startPreload 异常 " + t);
+            AdvanceCacheUtil.onPreloadFinished(sdkSupplier);
+        }
     }
 
 //    /**
@@ -651,6 +701,10 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
 
     private void reportLoaded() {
         try {
+            //预加载无策略口径，不上报 loadedtk
+            if (isPreload) {
+                return;
+            }
             if (sdkSupplier != null) {
                 ArrayList<String> tks = sdkSupplier.loadedtk;
 
@@ -670,6 +724,10 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
     //SDK渠道执行完广告load以后，调用埋点starttk埋点上报
     private void reportStart() {
         try {
+            //预加载无策略口径，不上报 starttk
+            if (isPreload) {
+                return;
+            }
             if (sdkSupplier != null) {
                 ArrayList<String> startTKS = sdkSupplier.starttk;
 
@@ -686,6 +744,10 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
 
     private void reportFailed() {
         try {
+            //预加载无策略口径，不上报 failedtk
+            if (isPreload) {
+                return;
+            }
             if (sdkSupplier != null) {
                 LogUtil.devDebug(TAG + "[reportFailed] sdkSupplier = " + sdkSupplier.toString());
                 String reqid = baseSetting == null ? "" : baseSetting.getAdvanceId();
@@ -1027,6 +1089,8 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
         try {
             //曝光后统一进行缓存移除操作了
             AdvanceCacheUtil.removeCache(sdkSupplier);
+            //曝光后预加载：渠道开启 enableCache 时立即再请求一次广告并缓存，供下次策略复用
+            AdvanceCacheUtil.preloadAfterShow(this);
 
             if (baseSetting == null) {
                 return;
@@ -1074,8 +1138,14 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
             //执行缓存
             AdvanceCacheUtil.cacheSDK(this);
 
-
             isSuccess = true;
+            //预加载完成：渠道广告对象已随 adapter 进入缓存，等待下次策略复用；
+            //无会话绑定，不执行任何 baseSetting 回调与上报
+            if (isPreload) {
+                LogUtil.devDebug(TAG + "[Preload] 预加载完成并已缓存");
+                AdvanceCacheUtil.onPreloadFinished(sdkSupplier);
+                return;
+            }
             if (baseSetting == null) {
                 return;
             }
@@ -1138,6 +1208,9 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
             LogUtil.devDebug(TAG + "result price = " + price + ", need update bidding price : " + sdkSupplier.enableBidding);
             if (sdkSupplier.enableBidding) {//如果是竞价开启状态，才会执行
                 if (price > 0) {
+                    //记录渠道原始价（未乘系数），作为缓存复用时重算展示价的幂等锚点，
+                    //避免把「已乘系数的展示价」再次乘系数（bidRatio 双乘）
+                    sdkSupplier.channelPrice = price;
                     double bidResultPrice = price * sdkSupplier.bidRatio;
                     sdkSupplier.price = bidResultPrice;
                     sdkSupplier.bidResultPrice = bidResultPrice;
