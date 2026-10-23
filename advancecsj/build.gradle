@@ -9,7 +9,7 @@ group = 'com.github.bayescom'
 
 def pomName = "csj"
 
-def libVersionName = "7.6.1.1"
+def libVersionName = "7.8.1.4"
 def advanceVersionName = "${rootProject.ext.advance_version}_" + libVersionName
 
 def advanceVersionCode = 1

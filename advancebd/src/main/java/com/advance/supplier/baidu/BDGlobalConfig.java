@@ -46,10 +46,10 @@ public class BDGlobalConfig extends AdvanceCustomInit {
             storageOn = advancePrivacyController.isCanUseWriteExternal();
             appListOn = advancePrivacyController.alist();
         }
-        MobadsPermissionSettings.setPermissionReadDeviceID(deviceOn);
+//        MobadsPermissionSettings.setPermissionReadDeviceID(deviceOn);
         MobadsPermissionSettings.setPermissionLocation(locationOn);
         MobadsPermissionSettings.setPermissionStorage(storageOn);
-        MobadsPermissionSettings.setPermissionAppList(appListOn);
+//        MobadsPermissionSettings.setPermissionAppList(appListOn);
         // 初始化成功
         callInitSuccess();
     }

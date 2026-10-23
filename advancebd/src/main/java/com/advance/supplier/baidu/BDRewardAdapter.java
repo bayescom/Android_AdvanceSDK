@@ -83,7 +83,7 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter   {
             }
 
             @Override
-            public void onRewardVerify(boolean rewardVerify) {
+            public void onRewardVerify(boolean rewardVerify,Map<String, Object> var2) {
                 try {
                     LogUtil.simple(TAG + " onRewardVerify : rewardVerify = " + rewardVerify);
 

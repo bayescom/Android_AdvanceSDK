@@ -221,6 +221,25 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
                     LogUtil.simple(TAG + "onAdUnionClick ");
 
                 }
+
+                @Override
+                public void adActRewardSuccess() {
+                    LogUtil.simple(TAG + "adActRewardSuccess ");
+
+                }
+
+                @Override
+                public void adActReward(int i) {
+                    LogUtil.simple(TAG + "adActReward ");
+
+                }
+
+                @Override
+                public void onRewardVerify(boolean b, Map<String, Object> map) {
+                    LogUtil.simple(TAG + "adActReward ");
+
+//                    NativeResponse.AdInteractionListener.super.onRewardVerify(b, map);
+                }
             });
 
 

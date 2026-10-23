@@ -9,7 +9,7 @@ group = 'com.github.bayescom'
 //maven依赖的项目名称
 def pomName = "gdt"
 def extVersionName = ""
-def libVersionName = "4.710.1580"
+def libVersionName = "4.712.1582"
 def advanceVersionName = "${rootProject.ext.advance_version}_4662"
 def advanceVersionCode = 1
 
