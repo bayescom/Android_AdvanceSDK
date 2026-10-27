@@ -217,7 +217,7 @@ public class KSSplashAdapter extends AdvanceSplashCustomAdapter {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

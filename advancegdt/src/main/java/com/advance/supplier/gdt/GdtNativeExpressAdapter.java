@@ -185,7 +185,7 @@ public class GdtNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         if (adView != null) {
             return adView.isValid();
         }
-           return true;
+           return isSuccess;
     }
 
     @Override

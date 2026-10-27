@@ -41,7 +41,7 @@ public class OppoRewardAdapter extends AdvanceRewardCustomAdapter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-           return true;
+           return isSuccess;
     }
 
     @Override

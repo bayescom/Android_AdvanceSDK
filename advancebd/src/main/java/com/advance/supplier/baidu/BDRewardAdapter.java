@@ -149,7 +149,7 @@ public class BDRewardAdapter extends AdvanceRewardCustomAdapter   {
         if (mRewardVideoAd != null) {
             return mRewardVideoAd.isReady();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

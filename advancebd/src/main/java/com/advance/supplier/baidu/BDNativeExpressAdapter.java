@@ -136,7 +136,7 @@ public class BDNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         if (nativeResponse != null) {
             return nativeResponse.isReady(getRealContext());
         }
-        return true;
+        return isSuccess;
     }
 
 

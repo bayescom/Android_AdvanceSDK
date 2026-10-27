@@ -169,7 +169,7 @@ public class BDSplashAdapter extends AdvanceSplashCustomAdapter  {
         if (splashAd != null) {
             return splashAd.isReady();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

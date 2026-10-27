@@ -252,7 +252,7 @@ public class GdtFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter {
         if (iad != null) {
             return iad.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

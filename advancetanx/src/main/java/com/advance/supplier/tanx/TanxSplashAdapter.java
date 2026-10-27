@@ -28,7 +28,7 @@ public class TanxSplashAdapter extends AdvanceSplashCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

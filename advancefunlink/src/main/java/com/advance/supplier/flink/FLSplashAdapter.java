@@ -119,7 +119,7 @@ public class FLSplashAdapter extends AdvanceSplashCustomAdapter {
         if (adData != null) {
             return adData.isAdReady();
         }
-           return true;
+           return isSuccess;
     }
 
     @Override

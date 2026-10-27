@@ -190,7 +190,7 @@ public class CsjNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
             return ttNativeExpressAd.getMediationManager().isReady();
         }
 
-        return true;
+        return isSuccess;
     }
 
     @Override

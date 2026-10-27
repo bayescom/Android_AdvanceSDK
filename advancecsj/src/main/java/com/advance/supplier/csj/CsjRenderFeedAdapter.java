@@ -328,7 +328,7 @@ public class CsjRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
             return mRenderAD.getMediationManager().isReady();
         }
 
-        return true;
+        return isSuccess;
     }
 
     @Override

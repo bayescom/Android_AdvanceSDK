@@ -24,7 +24,7 @@ public class VivoRewardAdapter extends AdvanceRewardCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

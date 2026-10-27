@@ -172,7 +172,7 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter   {
         if (rewardVideoAD != null) {
             return rewardVideoAD.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

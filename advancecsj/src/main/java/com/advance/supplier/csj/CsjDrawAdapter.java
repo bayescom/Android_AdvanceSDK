@@ -143,7 +143,7 @@ public class CsjDrawAdapter extends AdvanceDrawCustomAdapter {
             return ad.getMediationManager().isReady();
         }
 
-        return true;
+        return isSuccess;
     }
 
     @Override

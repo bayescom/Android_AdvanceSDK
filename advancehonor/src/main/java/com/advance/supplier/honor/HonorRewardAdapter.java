@@ -39,7 +39,7 @@ public class HonorRewardAdapter extends AdvanceRewardCustomAdapter {
         if (HonorUtil.isAdExpire(mRewardExpressAd)) {
             return false;
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

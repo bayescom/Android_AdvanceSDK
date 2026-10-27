@@ -41,7 +41,7 @@ public class HonorNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter
         if (HonorUtil.isAdExpire(mExpressAd)) {
             return false;
         }
-           return true;
+           return isSuccess;
     }
 
     @Override

@@ -19,7 +19,7 @@ public class TapInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

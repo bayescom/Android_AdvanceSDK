@@ -115,7 +115,7 @@ public class FLBannerAdapter extends AdvanceBannerCustomAdapter {
         if (flAd != null) {
             return flAd.isReady();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

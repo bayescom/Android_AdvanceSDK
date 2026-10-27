@@ -137,7 +137,7 @@ public class BDFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter {
 //        if (mFullScreenVideoAd != null) {
 //            return mFullScreenVideoAd.isReady();
 //        }
-        return true;
+        return isSuccess;
     }
 
     @Override

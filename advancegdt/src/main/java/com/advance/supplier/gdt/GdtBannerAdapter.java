@@ -145,7 +145,7 @@ public class GdtBannerAdapter extends AdvanceBannerCustomAdapter {
         if (bv != null) {
             return bv.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

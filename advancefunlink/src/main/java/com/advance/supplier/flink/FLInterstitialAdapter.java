@@ -83,7 +83,7 @@ public class FLInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         if (flAd != null) {
             return flAd.isReady();
         }
-           return true;
+           return isSuccess;
     }
 
     @Override

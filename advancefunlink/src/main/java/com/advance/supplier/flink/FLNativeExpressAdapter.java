@@ -168,7 +168,7 @@ public class FLNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
         if (flAd != null) {
             return flAd.isReady();
         }
-           return true;
+           return isSuccess;
     }
 
     @Override

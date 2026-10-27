@@ -38,7 +38,7 @@ public class HonorInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
         if (HonorUtil.isAdExpire(mInterstitialExpressAd)) {
             return false;
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

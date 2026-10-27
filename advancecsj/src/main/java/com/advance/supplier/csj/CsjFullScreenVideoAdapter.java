@@ -179,7 +179,7 @@ public class CsjFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter {
             return ttFullScreenVideoAd.getMediationManager().isReady();
         }
 
-        return true;
+        return isSuccess;
     }
 
     @Override

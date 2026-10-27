@@ -51,7 +51,7 @@ public class KSRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

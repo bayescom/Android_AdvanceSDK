@@ -416,7 +416,7 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         if (nativeAD != null) {
             return nativeAD.isValid();
         }
-           return true;
+           return isSuccess;
     }
 
     @Override

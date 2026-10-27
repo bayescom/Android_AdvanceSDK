@@ -153,7 +153,7 @@ public class MercuryNativeExpressAdapter extends AdvanceNativeExpressCustomAdapt
         if (nativeExpressAd != null) {
             return nativeExpressAd.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

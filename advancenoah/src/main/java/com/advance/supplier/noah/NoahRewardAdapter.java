@@ -107,7 +107,7 @@ public class NoahRewardAdapter extends AdvanceRewardCustomAdapter {
         if (noahAD != null)
             return noahAD.isValid();
 
-        return false;
+        return isSuccess;
     }
 
     @Override

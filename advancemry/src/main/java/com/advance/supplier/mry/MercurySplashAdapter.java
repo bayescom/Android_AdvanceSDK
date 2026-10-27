@@ -186,7 +186,7 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
         if (mercurySplash != null) {
             return mercurySplash.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

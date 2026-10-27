@@ -287,6 +287,9 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
         adStatus = AdvanceConstant.AD_STATUS_DEFAULT;
         try {
             isDestroy = false;
+            //每次发起请求都重置成功标记，避免同一 adapter 实例二次 load 时残留上一次的 true，
+            //导致各渠道 isValid() 以 isSuccess 兜底时误判广告仍有效（缓存复用路径 resetForReuse 会重新置 true）
+            isSuccess = false;
             parallelListener = createParallelListener();
         } catch (Throwable e) {
             e.printStackTrace();

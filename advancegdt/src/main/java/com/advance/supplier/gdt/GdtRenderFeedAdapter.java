@@ -390,7 +390,7 @@ public class GdtRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         if (mRenderAD != null) {
             return mRenderAD.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

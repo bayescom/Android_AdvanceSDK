@@ -37,7 +37,7 @@ public class HonorSplashAdapter extends AdvanceSplashCustomAdapter {
         if (HonorUtil.isAdExpire(mSplashExpressAd)) {
             return false;
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

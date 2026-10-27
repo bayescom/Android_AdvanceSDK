@@ -28,7 +28,7 @@ public class HWNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

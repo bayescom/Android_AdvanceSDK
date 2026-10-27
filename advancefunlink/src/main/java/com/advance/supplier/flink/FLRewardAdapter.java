@@ -129,7 +129,7 @@ public class FLRewardAdapter extends AdvanceRewardCustomAdapter {
         if (flAd != null) {
             return flAd.isReady();
         }
-           return true;
+           return isSuccess;
     }
 
     @Override

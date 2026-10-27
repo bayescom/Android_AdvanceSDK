@@ -197,7 +197,7 @@ public class CsjBannerAdapter extends AdvanceBannerCustomAdapter {
             return ad.getMediationManager().isReady();
         }
 
-        return true;
+        return isSuccess;
     }
 
     @Override

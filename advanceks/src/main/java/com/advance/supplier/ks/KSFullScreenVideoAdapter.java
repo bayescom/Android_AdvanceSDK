@@ -155,7 +155,7 @@ public class KSFullScreenVideoAdapter extends AdvanceFullScreenCustomAdapter {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

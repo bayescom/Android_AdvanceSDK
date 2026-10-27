@@ -149,7 +149,7 @@ public class MercuryBannerAdapter extends AdvanceBannerCustomAdapter {
         if (mercuryBanner != null) {
             return mercuryBanner.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

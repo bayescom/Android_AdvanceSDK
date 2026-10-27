@@ -24,7 +24,7 @@ public class VivoBannerAdapter extends AdvanceBannerCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

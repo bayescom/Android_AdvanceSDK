@@ -148,7 +148,7 @@ public class BDInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
 //        if (mInterAd != null) {
 //            return mInterAd.isReady();
 //        }
-        return  true;
+        return isSuccess;
     }
 
     @Override

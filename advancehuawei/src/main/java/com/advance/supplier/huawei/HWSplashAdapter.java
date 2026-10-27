@@ -23,7 +23,7 @@ public class HWSplashAdapter extends AdvanceSplashCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

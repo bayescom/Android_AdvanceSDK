@@ -155,7 +155,7 @@ public class CsjInterstitialAdapter extends AdvanceInterstitialCustomAdapter {
             return newVersionAd.getMediationManager().isReady();
         }
 
-        return true;
+        return isSuccess;
     }
 
     @Override

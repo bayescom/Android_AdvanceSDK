@@ -24,7 +24,7 @@ public class OppoNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter 
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

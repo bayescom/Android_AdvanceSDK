@@ -225,7 +225,7 @@ public class GdtSplashAdapter extends AdvanceSplashCustomAdapter {
         if (splashAD != null) {
             return splashAD.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

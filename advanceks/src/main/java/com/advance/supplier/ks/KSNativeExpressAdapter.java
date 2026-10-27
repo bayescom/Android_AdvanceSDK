@@ -27,7 +27,7 @@ public class KSNativeExpressAdapter extends AdvanceNativeExpressCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

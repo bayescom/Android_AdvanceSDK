@@ -41,7 +41,7 @@ public class HonorBannerAdapter extends AdvanceBannerCustomAdapter {
         if (HonorUtil.isAdExpire(mBannerExpressAd)) {
             return false;
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

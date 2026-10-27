@@ -24,7 +24,7 @@ public class KSDrawAdapter extends AdvanceDrawCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

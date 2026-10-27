@@ -46,7 +46,7 @@ public class HonorRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         if (HonorUtil.isAdExpire(mExpressAd)) {
             return false;
         }
-           return true;
+           return isSuccess;
     }
 
     @Override

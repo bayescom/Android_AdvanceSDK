@@ -22,7 +22,7 @@ public class TapBannerAdapter extends AdvanceBannerCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

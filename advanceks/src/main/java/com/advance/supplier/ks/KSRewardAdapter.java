@@ -220,7 +220,7 @@ public class KSRewardAdapter extends AdvanceRewardCustomAdapter {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

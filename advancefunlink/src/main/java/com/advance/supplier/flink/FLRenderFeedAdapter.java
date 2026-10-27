@@ -273,7 +273,7 @@ public class FLRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         if (flAd != null) {
             return flAd.isReady();
         }
-           return true;
+           return isSuccess;
     }
 
     @Override

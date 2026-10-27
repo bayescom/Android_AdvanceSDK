@@ -141,7 +141,7 @@ public class GdtInterstitialAdapter extends AdvanceInterstitialCustomAdapter   {
         if (interstitialAD != null) {
             return interstitialAD.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

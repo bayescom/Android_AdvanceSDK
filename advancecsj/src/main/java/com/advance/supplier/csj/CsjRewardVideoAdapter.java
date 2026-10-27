@@ -280,7 +280,7 @@ public class CsjRewardVideoAdapter extends AdvanceRewardCustomAdapter   {
             return ttRewardVideoAd.getMediationManager().isReady();
         }
 
-        return true;
+        return isSuccess;
     }
 
     @Override

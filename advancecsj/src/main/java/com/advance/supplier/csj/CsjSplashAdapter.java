@@ -197,7 +197,7 @@ public class CsjSplashAdapter extends AdvanceSplashCustomAdapter {
         if (newSplashAd != null && newSplashAd.getMediationManager() != null) {
             return newSplashAd.getMediationManager().isReady();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override

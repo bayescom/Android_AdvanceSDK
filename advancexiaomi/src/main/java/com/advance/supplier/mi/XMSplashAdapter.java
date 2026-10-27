@@ -17,7 +17,7 @@ public class XMSplashAdapter extends AdvanceSplashCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override

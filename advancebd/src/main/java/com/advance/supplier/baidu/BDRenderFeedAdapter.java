@@ -145,7 +145,7 @@ public class BDRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
         if (nativeResponseAD != null) {
             return nativeResponseAD.isReady(getRealContext());
         }
-        return true;
+        return isSuccess;
     }
 
 

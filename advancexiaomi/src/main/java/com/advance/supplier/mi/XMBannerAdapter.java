@@ -17,7 +17,7 @@ public class XMBannerAdapter extends AdvanceBannerCustomAdapter {
 
     @Override
     public boolean isValid() {
-        return true;
+        return isSuccess;
     }
 
     @Override
