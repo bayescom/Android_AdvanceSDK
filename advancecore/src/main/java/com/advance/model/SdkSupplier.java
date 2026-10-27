@@ -9,6 +9,12 @@ import com.advance.utils.LogUtil;
 import java.util.ArrayList;
 
 public class SdkSupplier implements Comparable<SdkSupplier> {
+    public String sdkSupID = ""; //渠道唯一id，用做渠道频控key
+    //渠道频控，跟随策略 request_limit 下发（device_daily_*），0 表示不限制
+    public int dailyReqLimit;
+    public int dailyImpLimit;
+    public int dailyClickLimit;
+    public int dailyReqInterval; //请求间隔，毫秒
     public String id = "0";
     public String name = "默认SDK";
     public int priority = 1;
@@ -41,6 +47,12 @@ public class SdkSupplier implements Comparable<SdkSupplier> {
     //    public int sortIndex = 1;//排序用的字段，正常情况下值和priority一样，当有bidding渠道时，会出现差异
     public double price = 0; //SDK价格，一般是手动输入，单位（分、人民币）
     public double bidResultPrice = 0; //竞价后返回的价格
+    /**
+     * 渠道返回的原始价（未乘比价系数）。
+     * 用于缓存复用时重算展示价，避免把「已乘系数的展示价」再次乘系数（bidRatio 双乘）。
+     * 该字段是幂等锚点：多次复用不会漂移，也不依赖除法，无 bidRatio=0 的边界问题。
+     */
+    public double channelPrice = 0;
     public double bidRatio = 1; //参与竞价比价系数，比价时需要乘以此系数
     public boolean isFirstGroup = false; //是否为第一优先级数组（主要是bidding逻辑中涉及判断）
     public boolean hasCallSelected = false; //是否已经回调过选中方法
@@ -62,6 +74,48 @@ public class SdkSupplier implements Comparable<SdkSupplier> {
     //是否能够bidding，后台开关打开+渠道可支持
     public boolean useBidding() {
         return enableBidding && isSupportBidding();
+    }
+
+    //是否配置了任一渠道频控限制（跟随策略 request_limit 下发）
+    public boolean hasAnyFreqLimit() {
+        return dailyReqLimit > 0 || dailyImpLimit > 0 || dailyClickLimit > 0 || dailyReqInterval > 0;
+    }
+
+    /**
+     * 生成「曝光后预加载」用的渠道参数副本。
+     *
+     * <p>只拷贝发起渠道请求与缓存定位所必需的字段；tk 上报列表（loadedtk/imptk/...）不带
+     * ——预加载无策略口径，复用时会被新策略 supplier 整体覆盖。
+     *
+     * <p>注意：{@code unitKey} 决定缓存 key（{@code getCacheKey} 优先取它），
+     * {@code enableCache}/{@code cacheMaxSec} 决定能否缓存与有效期，
+     * {@code bidRatio}/{@code channelPrice}/{@code price} 决定比价与复用时的价格重算，均不可漏。
+     */
+    public SdkSupplier copyForPreload() {
+        SdkSupplier copy = new SdkSupplier();
+        copy.id = id;
+        copy.sdkSupID = sdkSupID;
+        copy.unitKey = unitKey;
+        copy.name = name;
+        copy.adspotid = adspotid;
+        copy.mediaid = mediaid;
+        copy.mediakey = mediakey;
+        copy.mediaSecret = mediaSecret;
+        copy.sdkTag = sdkTag;
+        copy.priority = priority;
+        copy.timeout = timeout;
+        copy.adCount = adCount;
+        copy.initOpt = initOpt;
+        copy.enableCache = enableCache;
+        copy.cacheMaxSec = cacheMaxSec;
+        copy.advanceAdspotId = advanceAdspotId;
+        copy.enableBidding = enableBidding;
+        copy.ext = ext;                       //自定义渠道的请求扩展参数
+        copy.bidRatio = bidRatio;
+        copy.price = price;
+        copy.bidResultPrice = bidResultPrice;
+        copy.channelPrice = channelPrice;
+        return copy;
     }
 
 

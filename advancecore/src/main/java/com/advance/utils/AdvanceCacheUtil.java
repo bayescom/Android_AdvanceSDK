@@ -3,9 +3,15 @@ package com.advance.utils;
 
 import com.advance.AdvanceSetting;
 import com.advance.BaseParallelAdapter;
+import com.advance.freqcap.AdvanceAdnFreqCapManager;
 import com.advance.model.AdvanceSDKCacheModel;
 import com.advance.model.SdkSupplier;
 import com.bayes.sdk.basic.util.BYStringUtil;
+import com.bayes.sdk.basic.util.BYUtil;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -20,6 +26,99 @@ import com.bayes.sdk.basic.util.BYStringUtil;
 public class AdvanceCacheUtil {
 
     public static final String TAG = "[AdvanceCacheUtil] ";
+
+    /** 正在预加载的 cacheKey，防重复发起（同一 key 同一时刻只允许一个预加载请求）。 */
+    private static final Set<String> PRELOADING_KEYS =
+            Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+
+    /** 该渠道当前是否存在未过期的缓存。 */
+    public static boolean hasAliveCache(SdkSupplier supplier) {
+        return getCachedSDKInf(supplier) != null;
+    }
+
+    /**
+     * 曝光后预加载入口（由 {@link BaseParallelAdapter#handleShow()} 触发）。
+     *
+     * <p>触发条件（全部满足）：
+     * <ol>
+     *   <li>渠道开启缓存 {@code sdkSupplier.enableCache}（唯一开关，不设全局开关）</li>
+     *   <li>当前 adapter 实例未预加载过（多曝光形态防重复请求）</li>
+     *   <li>该 key 当前无存活缓存</li>
+     *   <li>该 key 不在预加载中</li>
+     *   <li>渠道级频控放行（预加载直连 load()，不经过 dispatchSuppliers 的闸门）</li>
+     * </ol>
+     *
+     * <p>加载成功由 {@link com.advance.BaseParallelAdapter#handleSucceed()} 内的 isPreload 分支
+     * 直接写入缓存；失败静默，不重试。
+     */
+    public static void preloadAfterShow(BaseParallelAdapter shownAdapter) {
+        if (shownAdapter == null) {
+            return;
+        }
+        String key = null;
+        try {
+            SdkSupplier supplier = shownAdapter.sdkSupplier;
+            if (supplier == null) {
+                return;
+            }
+            //① 唯一开关：渠道级缓存开关
+            if (!supplier.enableCache) {
+                return;
+            }
+            //② 同一 adapter 实例只预加载一次（banner/信息流多次刷新时避免请求量被放大）
+            if (shownAdapter.hasPreloadOnce()) {
+                return;
+            }
+            key = getCacheKey(supplier);
+            //④ 并发防重
+            if (!PRELOADING_KEYS.add(key)) {
+                return;
+            }
+            //③ 已有存活缓存则不预载
+            if (hasAliveCache(supplier)) {
+                PRELOADING_KEYS.remove(key);
+                return;
+            }
+            //⑤ 渠道级频控
+            if (AdvanceAdnFreqCapManager.isRequestBlocked(supplier)) {
+                LogUtil.w(TAG + "[Preload] 渠道频控拦截，跳过预加载 sdkSupID=" + supplier.sdkSupID);
+                PRELOADING_KEYS.remove(key);
+                return;
+            }
+
+            //反射创建同类 adapter（与 initAdapterData 相同的无参构造方式）
+            BaseParallelAdapter preload = AdvanceLoader.getAdapter(shownAdapter.getClass().getName());
+            if (preload == null) {
+                LogUtil.w(TAG + "[Preload] 创建预加载 adapter 失败，class=" + shownAdapter.getClass().getName());
+                PRELOADING_KEYS.remove(key);
+                return;
+            }
+
+            shownAdapter.markPreloadOnce();
+            preload.initContext(BYUtil.getCtx());
+            //必须绑定桥接类：各渠道 loadAd() 内部会读取 splashSetting/bannerSetting 等类型化字段
+            //（如尺寸、模板开关），不绑定会直接 NPE。updateBaseSetting 会成对刷新 baseSetting 与全部类型化字段。
+            preload.updateBaseSetting(shownAdapter.baseSetting);
+            preload.markAsPreload(supplier.copyForPreload());
+            LogUtil.devDebug(TAG + "[Preload] 发起曝光后预加载 key=" + key);
+            preload.startPreload();
+        } catch (Throwable t) {
+            LogUtil.w(TAG + "[Preload] 发起异常 " + t);
+            if (key != null) {
+                PRELOADING_KEYS.remove(key);
+            }
+        }
+    }
+
+    /** 预加载结束（成功/失败）时调用，释放防重标记。 */
+    public static void onPreloadFinished(SdkSupplier supplier) {
+        try {
+            if (supplier != null) {
+                PRELOADING_KEYS.remove(getCacheKey(supplier));
+            }
+        } catch (Throwable ignored) {
+        }
+    }
 
     //直接获取可用的缓存model
     public static AdvanceSDKCacheModel getCachedSDKInf(SdkSupplier supplier) {
@@ -133,6 +232,25 @@ public class AdvanceCacheUtil {
             AdvanceSetting.getInstance().cachedSDKs.put(key, cacheModel);
         } catch (Exception e) {
 
+        }
+    }
+
+    /**
+     * 当前 adapter 是否正是缓存中留待复用的对象。
+     *
+     * <p>用于销毁拦截：缓存持有的是 adapter 对象本身，若放任 destroy 会把它一并销毁，
+     * 导致下次命中缓存时拿到已销毁对象（isDestroy=true、parallelListener=null）。
+     */
+    public static boolean isCachedAdapter(BaseParallelAdapter adapter) {
+        try {
+            if (adapter == null || adapter.sdkSupplier == null) {
+                return false;
+            }
+            String key = getCacheKey(adapter.sdkSupplier);
+            AdvanceSDKCacheModel cacheModel = AdvanceSetting.getInstance().cachedSDKs.get(key);
+            return cacheModel != null && cacheModel.cacheValue == adapter;
+        } catch (Throwable t) {
+            return false;
         }
     }
 
@@ -272,22 +390,32 @@ public class AdvanceCacheUtil {
                         adapter.sdkSupplier.useCachedSDK = true;
                         try {
                             //更新价格
-                            //将当前adapter得渠道信息里的价格，赋值为缓存广告的价格，这样在下一步进行sdkSupplier完整覆盖时保证价格是已缓存的广告价格
-                            adapter.updateBidding(cacheValue.sdkSupplier.price);
+                            //用缓存广告的「渠道原始价」重算展示价：避免把已乘系数的展示价再次乘系数（bidRatio 双乘）
+                            double cachedOriginPrice = cacheValue.sdkSupplier.channelPrice;
+                            if (cachedOriginPrice <= 0) {
+                                //兼容：无 channelPrice 的旧缓存（内存缓存，进程重启即失效，概率极低）退化为原行为
+                                cachedOriginPrice = cacheValue.sdkSupplier.price;
+                            }
+                            adapter.updateBidding(cachedOriginPrice);
 
                             //替换缓存adapter得渠道参数信息为新的，这样在收到回调事件时上报时会使用新tk地址
                             cacheValue.sdkSupplier = adapter.sdkSupplier;
 
                             //替换执行策略中得adapter
                             if (adapter.baseSetting != null) {
-                                //置换桥接类
-                                cacheValue.baseSetting = adapter.baseSetting;
+                                //置换桥接类：必须同步刷新类型化 setting，
+                                //否则 splashSetting 等仍指向旧会话（其 listener 可能已被置空），
+                                //复用后 adapter 的 skip/show/click 等回调会走到旧实例而全部失效
+                                cacheValue.updateBaseSetting(adapter.baseSetting);
                                 //置换实现adapter
                                 adapter.baseSetting.replaceCacheAdapter(AdvanceUtil.getAdapterMapKey(adapter.sdkSupplier), cacheValue);
                             }
 
                         } catch (Exception e) {
                         }
+                        //缓存复用：重置聚合侧状态（渠道广告对象仍可播放，不重新加载、不调 destroyAd），
+                        //必须在 adapter.handleSucceed() 之前，保证其同步回调链能正常走到展示
+                        cacheValue.resetForReuse();
                         //通知广告成功依然是由当前adapter进行，不过show时使用的adapter将由被replaceCacheAdapter操作更新后的缓存adapter进行。
                         adapter.handleSucceed();
 

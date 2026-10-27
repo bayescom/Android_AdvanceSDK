@@ -7,6 +7,8 @@ import com.advance.advancelib.BuildConfig;
 import com.advance.custom.AdvanceCustomInit;
 import com.advance.itf.AdvancePrivacyController;
 import com.advance.model.AdvanceLogLevel;
+import com.advance.net.AdvanceSdkConfigManager;
+import com.advance.net.TrackRetryManager;
 import com.advance.utils.ActivityTracker;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.LogUtil;
@@ -85,6 +87,14 @@ public class AdvanceSDK {
 
             //初始化引入的渠道配置
             SupplierBridgeUtil.initSup();
+
+            //上报补发：注册网络可用性监听（Android 7+ 必须动态注册，幂等）；
+            //是否真正补发取决于服务端 tk_retry_config 是否开启，未开启时空操作。
+            TrackRetryManager.registerNetReceiver(context);
+
+            //配置拉取：先同步恢复磁盘缓存（首屏不漏控），再异步拉取 advance_sdk_config
+            //（内部分发频控 adspot_configs 与补发 tk_retry_config 两套配置）。
+            AdvanceSdkConfigManager.init();
 
             //跟踪activity信息
             ActivityTracker.getInstance().initialize(context);

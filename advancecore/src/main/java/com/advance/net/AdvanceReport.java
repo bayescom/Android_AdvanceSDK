@@ -19,8 +19,10 @@ import com.bayes.sdk.basic.device.BYDevice;
 import com.bayes.sdk.basic.net.BYNetRequest;
 import com.bayes.sdk.basic.net.BYReqCallBack;
 import com.bayes.sdk.basic.net.BYReqModel;
+import com.bayes.sdk.basic.trackretry.BYTrackClassifier;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYUtil;
+import com.bayes.sdk.basic.util.BYCatch;
 
 import org.json.JSONObject;
 
@@ -62,21 +64,62 @@ public class AdvanceReport {
 
     //    开始进行上报处理
     public static void startReport(final String urlString) {
+        startReport(urlString, "");
+    }
+
+    /**
+     * 带来源 tag 的上报。from 用于区分事件类型：
+     * 含 click / imp / win（或中文 点击 / 展示 / 竞胜）的"计费/对账类"事件走 L0 先落库模型（prepare/ack），
+     * 其余普通事件按 L1 处理。未开启补发时 prepare/ack/onReportFailed 均为空操作，行为不变。
+     */
+    public static void startReport(  String urlString, final String from) {
         try {
             BYReqModel request = new BYReqModel();
-            request.reqUrl = urlString;
+//            if (BYUtil.isDev()){
+//                urlString =  "http://www.测试上报异常";
+//            }
+            final String finalUrl = urlString;   // 关键：宏替换在调用方已完成，此处 url 即唯一键
+            request.reqUrl = finalUrl;
             request.timeoutMs = 10000;
+            // 重要事件（计费/对账类）先落库：曝光/点击/竞胜
+            boolean isMajor = false;
+            try {
+                String low = from == null ? "" : from.toLowerCase();
+                isMajor = low.contains("click") || low.contains("imp") || low.contains("win")
+                        || low.contains("点击") || low.contains("展示") || low.contains("竞胜");
+                if (isMajor) {
+                    TrackRetryManager.prepare(finalUrl);   // 返回 null 表示补发未开启，空操作
+                }
+            } catch (Throwable t) {
+                BYCatch.onCaught(t, false, BYCatch.LEVEL_WARN);
+            }
+            final boolean finalIsMajor = isMajor;
             //get请求 会自动重定向，上报不成功尝试重试上报
             BYNetRequest.get(request, new BYReqCallBack() {
                 @Override
                 public void onSuccess(String s) {
-                    String devTips = "上报成功,url=" + urlString + ",msg=" + s;
+                    String devTips = "上报成功,url=" + finalUrl + ",msg=" + s;
                     LogUtil.devDebugAuto(devTips, "上报成功");
+                    if (finalIsMajor) {
+                        TrackRetryManager.ack(finalUrl);   // 首次发送成功 → 出池
+                    }
                 }
 
                 @Override
                 public void onFailed(int i, String s) {
                     LogUtil.devDebug("上报失败, " + "code = " + i + ", msg = " + s);
+
+                    // 失败分类：永久错误（坏 URL / 重定向超限 / HTTP 4xx，429 除外）
+                    // 连补发池都不进，避免白烧重试次数与磁盘 blob。
+                    if (BYTrackClassifier.isBadUrl(finalUrl)
+                            || BYTrackClassifier.isPermanentFailure(i, s)) {
+                        LogUtil.w(  "[AdvanceReport] 永久错误，不入补发池 url=" + finalUrl);
+                        return;
+                    }
+                    // 失败 → 入待补发池（ToBid 模型：失败才落库）。
+                    // 注意：补发能力默认关闭，服务端下发 tk_retry_config 且 enable=1 才生效，
+                    // 未开启时这里是空操作，既有行为完全不变。
+                    TrackRetryManager.onReportFailed(finalUrl, from);
                 }
             });
         } catch (Throwable e) {
@@ -118,6 +161,7 @@ public class AdvanceReport {
             if (req.status >= 0) {
                 object.putOpt("status", req.status);
             }
+            object.putOpt("errcode", req.errCode);
 
             int delay = AdvanceConfig.getInstance().getReportDelayTime();
             if (delay > 0 && req.needDelay) {
@@ -336,7 +380,7 @@ public class AdvanceReport {
                     tk = replaceParameter(tk, AdvanceConstant.URL_REQID_TAG, reqid);
                 }
                 tk = replaceCachedInf(tk, adapter.getCacheModel());
-                AdvanceReport.startReport(tk);
+                AdvanceReport.startReport(tk, tag);
                 return tk;
             }
         }  catch (Throwable e) {

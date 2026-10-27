@@ -102,7 +102,13 @@ public class AdvanceLoader {
         return result;
     }
 
-    private static BaseParallelAdapter getAdapter(String clzName){
+    /**
+     * 通过类名反射创建 adapter（无参构造）。
+     *
+     * <p>供 initAdapterData 与「曝光后预加载」共用：预加载需要按当前 adapter 的类名创建一个
+     * 独立实例，走既有的 load 链路向渠道请求广告。
+     */
+    public static BaseParallelAdapter getAdapter(String clzName) {
         BaseParallelAdapter result = null;
         try {
             Class clz = Class.forName(clzName);

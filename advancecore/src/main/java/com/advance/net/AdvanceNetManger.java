@@ -380,8 +380,8 @@ public class AdvanceNetManger {
                 if (setting != null) {
 
                     //缓存配置类参数
-                    settingModel.enableStrategyCache = setting.optInt("use_cache", -1);
-                    settingModel.strategyCacheDuration = setting.optInt("cache_dur", -1);
+                    settingModel.enableStrategyCache = setting.optInt("enable_strategy_cache", -1);
+                    settingModel.strategyCacheDuration = setting.optInt("strategy_cache_duration", -1);
                     settingModel.delayReport = setting.optInt("report_delay", -1);
 
                     settingModel.reportVersionInf = setting.optInt("version_report", -1);
@@ -451,6 +451,15 @@ public class AdvanceNetManger {
                     ss.mediakey = mediakey;
                     ss.sdkTag = sdktag;
                     ss.id = id;
+                    ss.sdkSupID = job.optString("sdk_id");
+                    //渠道频控，跟随策略下发（request_limit 为 null 表示该渠道无频控）
+                    JSONObject requestLimit = job.optJSONObject("request_limit");
+                    if (requestLimit != null) {
+                        ss.dailyReqLimit = requestLimit.optInt("device_daily_req_limit", 0);
+                        ss.dailyImpLimit = requestLimit.optInt("device_daily_imp_limit", 0);
+                        ss.dailyClickLimit = requestLimit.optInt("device_daily_click_limit", 0);
+                        ss.dailyReqInterval = requestLimit.optInt("device_request_interval", 0);
+                    }
                     ss.name = name;
                     ss.mediaSecret = job.optString("mediasecret");
                     ss.price = job.optDouble("sdk_price", 0);

@@ -34,14 +34,19 @@ import com.advance.model.SdkSupplier;
 import com.advance.model.StrategyReadyInf;
 import com.advance.model.SupplierSettingModel;
 import com.advance.model.ValueDataModel;
+import com.advance.freqcap.AdvanceAdnFreqCapManager;
+import com.advance.freqcap.AdvanceFreqCapManager;
 import com.advance.net.AdvanceNetManger;
 import com.advance.net.AdvanceReport;
 import com.advance.utils.AdvanceUtil;
 import com.advance.utils.CustomADNUtil;
 import com.advance.utils.LogUtil;
+import com.bayes.sdk.basic.freqcap.BYFreqCapResult;
+import com.bayes.sdk.basic.freqcap.BYFreqCapType;
 import com.bayes.sdk.basic.itf.BYAbsCallBack;
 import com.bayes.sdk.basic.itf.BYBaseCallBack;
 import com.bayes.sdk.basic.util.BYCacheUtil;
+import com.bayes.sdk.basic.util.BYCatch;
 import com.bayes.sdk.basic.util.BYStringUtil;
 import com.bayes.sdk.basic.util.BYThreadPoolUtil;
 import com.bayes.sdk.basic.util.BYThreadUtil;
@@ -53,6 +58,7 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
@@ -60,7 +66,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     protected Context mContext;
     protected SoftReference<Activity> softReferenceActivity;
     protected AdvanceSelectListener advanceSelectListener;
-    public AdvanceError adError;
+//    public AdvanceError adError;
 
     AdvanceUtil advanceUtil;
     private boolean isUseCache = false;
@@ -572,6 +578,22 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                 LogUtil.e(BTAG + "-isValid- 未找到当前执行渠道");
                 return false;
             }
+
+            // ===== 展示闸门：两层任一曝光超限即不可展示（对齐 mercury isValid 的曝光闸门）=====
+            // 注意只判曝光配额，不判点击配额：click_limit 超限后仍允许展示（与 mercury 一致）
+            if (AdvanceFreqCapManager.isImpLimitReached(advanceAdspotId)) {
+                LogUtil.w(BTAG + "-isValid- 广告位曝光已达上限 adspotId=" + advanceAdspotId);
+                advanceError = AdvanceError.parseErr(AdvanceError.ERROR_FREQ_IMP_LIMIT, "曝光已达上限");
+                return false;
+            }
+            if (AdvanceAdnFreqCapManager.isImpressionBlocked(currentSdkSupplier)) {
+                LogUtil.w(BTAG + "-isValid- 渠道曝光已达上限 sdkSupID="
+                        + AdvanceAdnFreqCapManager.freqIdOf(currentSdkSupplier));
+                advanceError = AdvanceError.parseErr(AdvanceError.ERROR_FREQ_IMP_LIMIT, "渠道曝光已达上限");
+                return false;
+            }
+            // =================================================================================
+
             String adapterMapKey = AdvanceUtil.getAdapterMapKey(currentSdkSupplier);
             final BaseParallelAdapter adapter = supplierAdapters.get(adapterMapKey);
 
@@ -849,6 +871,29 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
         }
         //生成当前请求的唯一id
         reqId = BYUtil.getUUID();
+
+        //+ 频次控制：请求前置判定（覆盖 req_limit / req_interval / imp_limit / click_limit 四类）
+        try {
+            BYFreqCapResult capResult = AdvanceFreqCapManager.checkRequest(advanceAdspotId);
+            if (capResult != null && capResult.isBlock()) {
+                LogUtil.w(BTAG + "[FreqCap] 请求被拦截 adspotId=" + advanceAdspotId + " ，capResult = " + capResult);
+                AdvanceError capError = new AdvanceError(String.valueOf(freqCodeOf(capResult.type)),
+                        "频控拦截：" + capResult.type);
+//                if (capResult.type == BYFreqCapType.IMP || capResult.type == BYFreqCapType.CLK) {
+                // 曝光/点击超限：不允许回退缓存广告，直接失败（防止缓存广告绕过曝光闸门继续展示）
+                onAdvanceError(advanceSelectListener, capError);
+//                } else {
+//                    advanceError = capError;
+//                    // 请求次数/间隔受限：走缓存兜底（与 mercury onNoAd 语义一致）
+//                    HandleEmptySupplier();
+//                }
+                return;
+            }
+        } catch (Throwable t) {
+            // 频控异常绝不阻塞广告链路
+            BYCatch.onCaught(t, false, BYCatch.LEVEL_WARN);
+        }
+
         if (isUseCache) {
             LogUtil.high(BTAG + "优先使用策略缓存模式");
             try {
@@ -1023,6 +1068,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
             reqModel.reqId = reqId;
             reqModel.requestForceTimeout = true;
 
+
             //todo 23-06-25 注意线程运行情况
             AdvanceNetManger.requestSupplierList(reqModel, new BYAbsCallBack<ElevenModel>() {
                 @Override
@@ -1047,9 +1093,30 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                     }
                 }
             });
+
+            //+ 频次控制：请求已真正发出，提交计数（放在发起之后，确保真的发出才计数）
+            AdvanceFreqCapManager.consumeRequest(advanceAdspotId);
+            //+ 频次控制 end
+
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 频次类型 → advance 侧错误码（9940 请求上限 / 9941 请求间隔 / 9942 曝光上限 / 9943 点击上限）。
+     */
+    private static int freqCodeOf(BYFreqCapType type) {
+        if (type == BYFreqCapType.REQ) {
+            return AdvanceError.ERROR_FREQ_REQ_LIMIT;
+        } else if (type == BYFreqCapType.INTERVAL) {
+            return AdvanceError.ERROR_FREQ_REQ_INTERVAL;
+        } else if (type == BYFreqCapType.IMP) {
+            return AdvanceError.ERROR_FREQ_IMP_LIMIT;
+        } else if (type == BYFreqCapType.CLK) {
+            return AdvanceError.ERROR_FREQ_CLICK_LIMIT;
+        }
+        return AdvanceError.ERROR_FREQ_REQ_LIMIT;
     }
 
     private void HandleEmptySupplier() {
@@ -1106,6 +1173,14 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                 supplierMap.put(item.priority, item);
             }
         }
+
+        // ===== 渠道级（ADN）频次控制 =====
+        // 1) 配置跟随策略同步（merge 语义，含 device_daily_* 到基础库 schema 的字段映射）
+        AdvanceAdnFreqCapManager.syncFromSuppliers(elevenModel.suppliers);
+        // 2) 分组构建前剔除本轮被限渠道：只在这里过滤，否则组内成员无 adapter 永不回调，空耗到超时
+        filterBlockedSuppliers(elevenModel.suppliers, supplierMap);
+        // ===================================
+
         try {
             GMParams gmParams = elevenModel.gmParams;
             SdkSupplier gmSupInf = new SdkSupplier();
@@ -1196,7 +1271,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
 
             }
             //是否延迟上报，根据后台返回的字段来判断，默认false不延迟
-            isReportDelay = elevenModel.isReportDelay();
+//            isReportDelay = elevenModel.isReportDelay();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1470,6 +1545,47 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     }
 
     /**
+     * 渠道级（ADN）频次控制：剔除本轮被限流的渠道。
+     *
+     * <p>必须在分组构建前调用，且必须同时清理 list 与 supplierMap——
+     * 只清其一会导致组内存在"永远不回调"的成员，分组空耗到超时。
+     *
+     * @param suppliers   策略渠道列表（{@link #initAllAdapter} 的数据源）
+     * @param supplierMap 分组与 bidding 的数据源（key 为 priority）
+     */
+    private void filterBlockedSuppliers(ArrayList<SdkSupplier> suppliers,
+                                        HashMap<Integer, SdkSupplier> supplierMap) {
+        try {
+            if (suppliers == null || suppliers.isEmpty()) {
+                return;
+            }
+            Iterator<SdkSupplier> it = suppliers.iterator();
+            while (it.hasNext()) {
+                SdkSupplier s = it.next();
+                if (s == null) {
+                    it.remove();
+                    continue;
+                }
+
+                if (AdvanceAdnFreqCapManager.isRequestBlocked(s)) {
+                    LogUtil.w(BTAG + "[AdnFreqCap] 渠道被限流，本轮跳过 id=" + s.id
+                            + " name=" + s.name
+                            + " sdkSupID=" + AdvanceAdnFreqCapManager.freqIdOf(s));
+                    if (supplierMap != null) {
+                        supplierMap.remove(s.priority);
+                    }
+                    it.remove();
+                    continue;
+                }
+                // 放行：该渠道即将发起请求，提交计数
+                AdvanceAdnFreqCapManager.consumeRequest(s);
+            }
+        } catch (Throwable t) {
+            BYCatch.onCaught(t, true, BYCatch.LEVEL_WARN);
+        }
+    }
+
+    /**
      * 发生异常，如果有打底设置走打底广告
      */
     private void receivedAdErr() {
@@ -1588,8 +1704,13 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                 //发起曝光上报
                 AdvanceReport.replaceReportImp(supplier, parallelAdapter);
             }
+            //+ 频次控制：真实的曝光上报后提交计数。
+            //  adapterDidShow 每次真实展示只回调一次，Banner 刷新/信息流重绘不会重复计数。
+            AdvanceFreqCapManager.consumeImpression(advanceAdspotId);
+            //+ 频次控制（渠道级）：曝光计数同步提交，freqId 为渠道唯一 id sdkSupID
+            AdvanceAdnFreqCapManager.consumeImpression(supplier);
             //展现上报发起后进行被延迟的部分上报
-            startDelayReport();
+//            startDelayReport();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -1615,6 +1736,21 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
 //                AdvanceReport.reportToUrls(ctk);
 //            }
 
+//            点击已经发生，聚合层的clicktk上报依然进行，点击计数正常提交。
+            //+ 频次控制：点击闸门，静默拦截
+            //  聚合形态下渠道跳转发生在渠道 SDK 内部、早于本回调，此处无法回收渠道跳转；
+            //  故本闸门语义为「拦截聚合 clicktk 上报 + 独立拦截埋点（eventid=605）」，onAdClicked 仍正常回调（点击已真实发生）。
+            if (AdvanceFreqCapManager.isClickLimitReached(advanceAdspotId)) {
+                LogUtil.w(BTAG + " 今日点击已达上限，本次 clicktk 上报 adspotId=" + advanceAdspotId);
+//                AdvanceFreqCapManager.notifyClickBlocked(advanceAdspotId, getAdvanceId());
+            }
+
+            //+ 频次控制（渠道级）：点击闸门，两层任一拦截即拦截
+            if (AdvanceAdnFreqCapManager.isClickBlocked(supplier)) {
+                LogUtil.w(BTAG + " 渠道今日点击已达上限，本次 clicktk 上报 sdkSupID=" + AdvanceAdnFreqCapManager.freqIdOf(supplier));
+//                AdvanceAdnFreqCapManager.notifyClickBlocked(supplier, getAdvanceId());
+            }
+
             if (supplier != null) {
                 ArrayList<String> clicktk = supplier.clicktk;
                 if (clicktk != null && !clicktk.isEmpty() && supplierAdapters != null) {
@@ -1625,17 +1761,22 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                     }
                 }
             }
+
+            //+ 频次控制：点击已上报，提交计数
+            AdvanceFreqCapManager.consumeClick(advanceAdspotId);
+            //+ 频次控制（渠道级）：点击计数同步提交
+            AdvanceAdnFreqCapManager.consumeClick(supplier);
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
     private void switchReport(ArrayList<String> tk) {
-        if (isReportDelay && savedDelayReportList != null) {
-            savedDelayReportList.add(tk);
-        } else {
+//        if (isReportDelay && savedDelayReportList != null) {
+//            savedDelayReportList.add(tk);
+//        } else {
             AdvanceReport.reportToUrls(tk);
-        }
+//        }
     }
 
     void dispatchSupplierFailed(AdvanceErrListener listener) {
@@ -1649,30 +1790,31 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     /**
      * 整体失败回调，包括任意场景下的失败，方便在这里统一进行信息埋点上报\以及延迟上报的处理
      *
-     * @param listener     失败监听器
-     * @param advanceError 失败详细内容
+     * @param listener 失败监听器
+     * @param advErr   失败详细内容
      */
-    void onAdvanceError(final AdvanceErrListener listener, AdvanceError advanceError) {
+    void onAdvanceError(final AdvanceErrListener listener, AdvanceError advErr) {
         try {
             LogUtil.devDebug(BTAG + " onAdvanceError ");
             //先进行延迟上报
-            startDelayReport();
+//            startDelayReport();
+
+            if (advErr == null) {
+                LogUtil.simple("None SDK: sdk suppliers is empty, callback failed");
+                advErr = AdvanceError.parseErr(AdvanceError.ERROR_NONE_SDK);
+            }
+            LogUtil.devDebug(BTAG + " onAdFailed :  advErr = " + advErr.toString());
+
+            advanceError = advErr;
+            adStatus = AdStatus.FAILED;
             //回调开发者错误信息
             if (listener != null) {
-                if (advanceError == null) {
-                    LogUtil.simple("None SDK: sdk suppliers is empty, callback failed");
-                    advanceError = AdvanceError.parseErr(AdvanceError.ERROR_NONE_SDK);
-                }
-                LogUtil.devDebug(BTAG + " onAdFailed :  advanceError = " + advanceError.toString());
-
-                adError = advanceError;
-                adStatus = AdStatus.FAILED;
                 BYThreadUtil.switchMainThread(new BYBaseCallBack() {
                     @Override
                     public void call() {
-                        listener.onAdFailed(adError);
+                        listener.onAdFailed(advanceError);
                         if (baseGMCall != null) {
-                            baseGMCall.allFailed(adError);
+                            baseGMCall.allFailed(advanceError);
                         }
                     }
                 });
@@ -1695,21 +1837,23 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                 //SDK渠道全部加载失败了
                 report.status = 2;
             }
+            report.errCode = advanceError.code;
             //从发起请求到策略、广告失败的时间差
             long cost = System.currentTimeMillis() - requestTime;
             report.code = AdvanceConstant.TRACE_TOTAL_TIME;
             report.msg = cost + "";
 
-            if (AdvanceError.ERROR_NO_ACTIVITY.equals(advanceError.code)) {
+            if (AdvanceError.ERROR_NO_ACTIVITY.equals(advErr.code)) {
                 try {
                     JSONObject object = new JSONObject();
-                    object.putOpt("e_code", advanceError.code);
-                    object.putOpt("e_msg", advanceError.msg);
+                    object.putOpt("e_code", advErr.code);
+                    object.putOpt("e_msg", advErr.msg);
                     report.ext = object.toString();
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }
+            //todo reqid 去重
             doTrackReport(report);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -1719,22 +1863,22 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
     /**
      * 延迟上报在这里（全部失败时、广告曝光时）进行上报
      */
-    private void startDelayReport() {
-        try {
-            if (isReportDelay) {
-                //延迟上报执行之后需要重置状态，否则并行的后来产生的上报请求，会无法进行上报。
-                isReportDelay = false;
-
-                int size = savedDelayReportList.size();
-                LogUtil.max("delay report tkList size is " + size);
-                for (int i = 0; i < size; i++) {
-                    AdvanceReport.reportToUrls(savedDelayReportList.get(i));
-                }
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
+//    private void startDelayReport() {
+//        try {
+//            if (isReportDelay) {
+//                //延迟上报执行之后需要重置状态，否则并行的后来产生的上报请求，会无法进行上报。
+//                isReportDelay = false;
+//
+//                int size = savedDelayReportList.size();
+//                LogUtil.max("delay report tkList size is " + size);
+//                for (int i = 0; i < size; i++) {
+//                    AdvanceReport.reportToUrls(savedDelayReportList.get(i));
+//                }
+//            }
+//        } catch (Throwable e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * 统一处理渠道选择流程，支持并行、串行
@@ -2119,7 +2263,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                 winID = winSDK.id;
                 referBidInfo.put(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_ID, winID);
                 int winType = AdvanceConstant.BID_WIN_SDK_TYPE_NORMAL;
-                if (winSDK.useBidding()){
+                if (winSDK.useBidding()) {
                     winType = AdvanceConstant.BID_WIN_SDK_TYPE_BIDDING;
                 }
                 referBidInfo.put(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_TYPE, winType);
@@ -2134,7 +2278,7 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                             int resultStatus = supplier.resultStatus;
                             //只需通知广告返回成功的渠道
                             if (resultStatus == AdvanceConstant.SDK_RESULT_CODE_SUCC) {
-                                String pri =AdvanceUtil.getAdapterMapKey(supplier) ;
+                                String pri = AdvanceUtil.getAdapterMapKey(supplier);
                                 BaseParallelAdapter parallelAdapter = supplierAdapters.get(pri);
                                 if (parallelAdapter != null) {
                                     boolean isWin = BYStringUtil.isEqual(winID, supplier.id);
