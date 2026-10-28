@@ -179,8 +179,13 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter   {
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
-        if (rewardVideoAD != null && !isWin) {
-            rewardVideoAD.sendLossWin(winPrice);
+        if (rewardVideoAD != null) {
+            if (isWin) {
+                //竞胜通知，入参为竞败方最高价（二价）
+                rewardVideoAD.sendWin(getHighestLossPrice(referBidInfo));
+            } else {
+                rewardVideoAD.sendLossWin(winPrice);
+            }
         }
     }
 

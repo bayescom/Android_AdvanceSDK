@@ -423,8 +423,13 @@ public class MercuryRenderFeedAdapter extends AdvanceSelfRenderCustomAdapter {
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
-        if (nativeAD != null && !isWin) {
-            nativeAD.sendLossWin(winPrice);
+        if (nativeAD != null) {
+            if (isWin) {
+                //竞胜通知，入参为竞败方最高价（二价）
+                nativeAD.sendWin(getHighestLossPrice(referBidInfo));
+            } else {
+                nativeAD.sendLossWin(winPrice);
+            }
         }
     }
 }
