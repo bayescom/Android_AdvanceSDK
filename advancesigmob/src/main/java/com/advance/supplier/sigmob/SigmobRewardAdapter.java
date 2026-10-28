@@ -154,7 +154,7 @@ public class SigmobRewardAdapter extends AdvanceRewardCustomAdapter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return true;
+        return isSuccess;
     }
 
     public void showAd(Activity activity, Map<String, Object> localExtra, Map<String, Object> serverExtra) {

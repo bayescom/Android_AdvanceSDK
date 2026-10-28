@@ -19,13 +19,6 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter   {
     String TAG = "[MercuryRewardVideoAdapter] ";
     RewardVideoAD rewardVideoAD;
 
-    @Override
-    protected void destroy() {
-        if (rewardVideoAD!=null){
-            rewardVideoAD.destroy();
-        }
-        super.destroy();
-    }
 
     public void loadAd(Context context, Map<String, Object> localExtra, Map<String, Object> serverExtra) {
 
@@ -179,15 +172,20 @@ public class MercuryRewardVideoAdapter extends AdvanceRewardCustomAdapter   {
         if (rewardVideoAD != null) {
             return rewardVideoAD.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
-        if (rewardVideoAD != null && !isWin) {
-            rewardVideoAD.sendLossWin(winPrice);
+        if (rewardVideoAD != null) {
+            if (isWin) {
+                //竞胜通知，入参为竞败方最高价（二价）
+                rewardVideoAD.sendWin(getHighestLossPrice(referBidInfo));
+            } else {
+                rewardVideoAD.sendLossWin(winPrice);
+            }
         }
     }
 

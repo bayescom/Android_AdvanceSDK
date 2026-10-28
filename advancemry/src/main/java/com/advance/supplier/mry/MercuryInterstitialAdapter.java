@@ -126,7 +126,7 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
         if (interstitialAD != null) {
             return interstitialAD.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override
@@ -140,8 +140,13 @@ public class MercuryInterstitialAdapter extends AdvanceInterstitialCustomAdapter
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
-        if (interstitialAD != null && !isWin) {
-            interstitialAD.sendLossWin(winPrice);
+        if (interstitialAD != null) {
+            if (isWin) {
+                //竞胜通知，入参为竞败方最高价（二价）
+                interstitialAD.sendWin(getHighestLossPrice(referBidInfo));
+            } else {
+                interstitialAD.sendLossWin(winPrice);
+            }
         }
     }
 }

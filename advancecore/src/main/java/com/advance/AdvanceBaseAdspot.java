@@ -2219,11 +2219,13 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                     LogUtil.devDebug(BTAG + tag + "  start show :" + succSupplier.toString());
                     //parallelAdapter 会处理串并行得展示
                     callSDKSelected(succSupplier);
+                    //通知竞胜/败结果。必须放在 callLoaded 之前：
+                    //callLoaded 会同步回调开发者的 onAdLoaded，开发者可能在该回调里直接调用 show()，
+                    //若竞胜通知放在其后，mercury/vivo 等渠道的 sendWin 会晚于广告曝光送达（渠道要求曝光前通知）
+                    notifyBidResult(succSupplier);
                     //如果此时广告已经成功，会执行广告成功回调
                     parallelAdapter.callLoaded();
 
-                    //通知竞胜/败结果
-                    notifyBidResult(succSupplier);
                     //如果已经进行或show方法调用，这里直接继续show逻辑，需要验证渲染失败
                     //  2024/5/28 激励视频位置，因为新引入了可多次展示逻辑（tanx特殊场景下需要多次show），存在执行上逻辑异常
                     //  当广告最优已选出时，且调用过show方法，但是接着又有某一个广告返回了，重新执行了此处的命中逻辑
@@ -2268,6 +2270,9 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                 }
                 referBidInfo.put(AdvanceConstant.BID_RESULT_KEY_WIN_SDK_TYPE, winType);
                 winPrice = winSDK.price;
+
+                //竞败方最高价（二价），供渠道竞胜通知使用（如 mercury 的 sendWin、vivo 的 sendWinNotification）
+                referBidInfo.put(AdvanceConstant.BID_RESULT_KEY_HIGHEST_LOSS_PRICE, getHighestLossPrice(winID));
             }
 
             ArrayList<SdkSupplier> paraSupplierMembers = currentGroupInf.paraSupplierMembers;
@@ -2288,12 +2293,43 @@ public abstract class AdvanceBaseAdspot implements BaseSetting, RenderEvent {
                                 }
                             }
                         }
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                     }
                 }
             }
         } catch (Throwable e) {
         }
+    }
+
+    /**
+     * 计算「竞败方最高价」，即二价。
+     *
+     * <p>口径：同组内 {@code resultStatus} 为成功、且不是胜出方的渠道，取 {@code sdkSupplier.price} 的最大值。
+     * 取 price（已乘 bidRatio）而非 channelPrice，是为了与聚合的胜出判定（按 price 排序）保持同一口径。
+     *
+     * <p>只统计成功返回的渠道：未返回、失败、超时的渠道实际上没有出价，不应参与二价计算。
+     * 无竞败方（单渠道策略或其余渠道全部失败）时返回 0。
+     *
+     * @param winID 胜出渠道 id，与 isWin 判定使用同一字段，保证「谁是竞败方」的口径一致
+     */
+    private double getHighestLossPrice(String winID) {
+        double highest = 0;
+        try {
+            ArrayList<SdkSupplier> members = currentGroupInf == null ? null : currentGroupInf.paraSupplierMembers;
+            if (members != null) {
+                for (SdkSupplier supplier : members) {
+                    if (supplier != null
+                            && supplier.resultStatus == AdvanceConstant.SDK_RESULT_CODE_SUCC
+                            && !BYStringUtil.isEqual(winID, supplier.id)) {
+                        highest = Math.max(highest, supplier.price);
+                    }
+                }
+            }
+            LogUtil.devDebug(BTAG + "getHighestLossPrice = " + highest + " , winID = " + winID);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return highest;
     }
 
 

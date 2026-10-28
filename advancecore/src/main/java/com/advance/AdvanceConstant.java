@@ -98,5 +98,9 @@ public class AdvanceConstant {
     public static final int BID_WIN_SDK_TYPE_NORMAL = 0;
     public static final int BID_WIN_SDK_TYPE_BIDDING = 1;
 
+    //竞败方最高价（二价）：同组内除胜出方外、成功返回渠道的最高比价（sdkSupplier.price）。
+    //供渠道二价计费/竞胜通知使用，如 mercury 的 sendWin、vivo 的 sendWinNotification；无竞败方时为 0
+    public static final String BID_RESULT_KEY_HIGHEST_LOSS_PRICE = "highest_loss_price";
+
 
 }

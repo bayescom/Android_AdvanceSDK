@@ -186,15 +186,20 @@ public class MercurySplashAdapter extends AdvanceSplashCustomAdapter {
         if (mercurySplash != null) {
             return mercurySplash.isValid();
         }
-        return true;
+        return isSuccess;
     }
 
     @Override
     public void notifyBiddingResult(boolean isWin, double winPrice, Map<String, Object> referBidInfo) {
         LogUtil.simple(TAG + "notifyBiddingResult , isWin = " + isWin + " , winPrice = " +winPrice+ ", referBidInfo = " + referBidInfo);
 
-        if (mercurySplash != null && !isWin) {
-            mercurySplash.sendLossWin(winPrice);
+        if (mercurySplash != null) {
+            if (isWin) {
+                //竞胜通知，入参为竞败方最高价（二价）
+                mercurySplash.sendWin(getHighestLossPrice(referBidInfo));
+            } else {
+                mercurySplash.sendLossWin(winPrice);
+            }
         }
     }
 

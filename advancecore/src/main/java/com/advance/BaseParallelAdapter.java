@@ -287,6 +287,9 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
         adStatus = AdvanceConstant.AD_STATUS_DEFAULT;
         try {
             isDestroy = false;
+            //每次发起请求都重置成功标记，避免同一 adapter 实例二次 load 时残留上一次的 true，
+            //导致各渠道 isValid() 以 isSuccess 兜底时误判广告仍有效（缓存复用路径 resetForReuse 会重新置 true）
+            isSuccess = false;
             parallelListener = createParallelListener();
         } catch (Throwable e) {
             e.printStackTrace();
@@ -1220,6 +1223,32 @@ public abstract class BaseParallelAdapter implements AdvanceAdapterItf {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 从竞胜/竞败结果信息中读取「竞败方最高价」，即二价。
+     *
+     * <p>由 {@code AdvanceBaseAdspot.notifyBidResult()} 在调用各渠道 {@code notifyBiddingResult()}
+     * 之前写入 {@code referBidInfo}，供渠道竞胜通知使用（如 mercury 的 {@code sendWin}、
+     * vivo 的 {@code sendWinNotification}）。
+     *
+     * @param referBidInfo 竞胜/竞败信息，可能为 null
+     * @return 竞败方最高价；无竞败方、未下发或取值异常时返回 0
+     */
+    protected double getHighestLossPrice(Map<String, Object> referBidInfo) {
+        double price = 0;
+        try {
+            if (referBidInfo != null) {
+                Object value = referBidInfo.get(AdvanceConstant.BID_RESULT_KEY_HIGHEST_LOSS_PRICE);
+                //用 Number 转型而非直接强转 Double，避免跨进程传递/序列化后类型变化导致 ClassCastException
+                if (value instanceof Number) {
+                    price = ((Number) value).doubleValue();
+                }
+            }
+        } catch (Throwable e) {
+            BYCatch.onCaught(e, false, BYCatch.LEVEL_WARN);
+        }
+        return price;
     }
 
     /**
